@@ -1,43 +1,12 @@
--- Configuration
-MinDistance = 500
-MaxDistance = 750
-
-AttackAngle = 90
-AttackDrive = 1
-
-ClosingAngle = 40
-ClosingDrive = 1
-
-EscapeAngle = 120
-EscapeDrive = 1
-
-AllowedAngleError = 2
-
-MinDepth = 10
-LookAheadTimes = { 1, 5, 10 }
-LookAheadAngles = { -90, -45, -15, 0, 15, 45, 90 }
-
--- API constants
-WATER = 0
-LAND = 1
-AIR = 2
-
-YAWLEFT = 0
-YAWRIGHT = 1
-ROLLLEFT = 2
-ROLLRIGHT = 3
-NOSEUP = 4
-NOSEDOWN = 5
-INCREASE = 6
-DECREASE = 7
-MAINPROPULSION = 8
-
+--! naval-ai
+--@ commons pid
 -- Private variables
 Position = nil
 Yaw = 0
 Pitch = 0
 Roll = 0
 TargetInfo = nil
+YawPID = PID.create(YawPIDValues[1], YawPIDValues[2], YawPIDValues[3], -1.0, 1.0)
 
 function GetSelfInfo(I)
    Position = I:GetConstructPosition()
@@ -102,12 +71,12 @@ end
 
 function SetHeading(I, angle)
    angle = AvoidTerrain(I, angle)
-   if math.abs(angle) > AllowedAngleError then
-      if angle > 0 then
-         I:RequestControl(WATER, YAWRIGHT, 1)
-      else
-         I:RequestControl(WATER, YAWLEFT, 1)
-      end
+   local CV = YawPID:Control(angle)
+   --I:LogToHud(string.format("error = %f, CV = %f", angle, CV))
+   if CV > 0.0 then
+      I:RequestControl(WATER, YAWRIGHT, CV)
+   elseif CV < 0.0 then
+      I:RequestControl(WATER, YAWLEFT, -CV)
    end
 end
 
@@ -159,10 +128,9 @@ function Update(I)
    if I.AIMode == 'combat' then
       GetSelfInfo(I)
 
-      local drive = 0
       if GetTarget(I) then
          I:TellAiThatWeAreTakingControl()
-         drive = SetHeadingToTarget(I)
+         local drive = SetHeadingToTarget(I)
          SetSpeed(I, drive)
       end
    end
