@@ -41,36 +41,73 @@ function sign(n)
    end
 end
 
-function AvoidTerrain(I, angle)
+function Avoidance(I, angle)
+   -- Look for nearby friendlies
+   local CoM = I:GetConstructCenterOfMass()
+   local f_count,f_avoid = 0,Vector3.zero
+   local min_dist = math.huge
+   for i = 0,I:GetFriendlyCount()-1 do
+      local friend = I:GetFriendlyInfo(i)
+      if friend.Valid and friend.CenterOfMass.y < FriendlyIgnoreAbove then
+         local direction = friend.CenterOfMass - CoM
+         local distance = direction.magnitude
+         if distance < FriendlyMinDistance then
+            -- Don't stand so close to me
+            f_count = f_count + 1
+            f_avoid = f_avoid - direction.normalized / distance
+            min_dist = math.min(min_dist, distance)
+         end
+      end
+   end
+   if f_count > 0 then
+      f_avoid = f_avoid * min_dist * FriendlyAvoidanceWeight / f_count
+   end
+
+   --I:LogToHud(string.format("f_count = %d, f_avoid = %s", f_count, tostring(f_avoid)))
+
    -- For now, we scan in front rather than take actual velocity into account
    local offset = Vector3(0, 0, I:GetConstructMaxDimensions().z)
    local velocity = I:GetVelocityMagnitude()
-   local count,avoid = 0,Vector3.zero
+   local t_count,min_time = 0,math.huge
+   local t_avoid = Vector3.zero
    for i,t in pairs(LookAheadTimes) do
+      local forward = offset + Vector3.forward * t * velocity
+      local time_count,time_avoid = 0,Vector3.zero
       for j,a in pairs(LookAheadAngles) do
-         local pos = offset + Vector3.forward * t * velocity
-         pos = Quaternion.Euler(0, a, 0) * pos
+         local pos = Quaternion.Euler(0, a, 0) * forward
          if I:GetTerrainAltitudeForLocalPosition(pos) > -MinDepth then
-            count = count + 1
-            avoid = avoid - pos
+            time_count = time_count + 1
+            time_avoid = time_avoid - pos.normalized
          end
       end
+      if time_count > 0 then
+         time_avoid = time_avoid / (t * time_count)
+         t_count = t_count + time_count
+         t_avoid = t_avoid + time_avoid
+         min_time = math.min(min_time, t)
+      end
+   end
+   if t_count > 0 then
+      t_avoid = t_avoid * min_time * TerrainAvoidanceWeight
    end
 
    --I:LogToHud("count "..count.." avoid "..tostring(avoid))
 
-   if count == 0 then
+   if (f_count + t_count) == 0 then
       return angle
    else
+      local target = Quaternion.Euler(0, angle, 0) * Vector3.forward
+      target = target + f_avoid + t_avoid
+
       -- To world coordinates
-      avoid = Position + Quaternion.Euler(0, Yaw, 0) * avoid
+      target = Position + Quaternion.Euler(0, Yaw, 0) * target
       -- Vector3.Angle not working?
-      return -I:GetTargetPositionInfoForPosition(0, avoid.x, 0, avoid.z).Azimuth
+      return -I:GetTargetPositionInfoForPosition(0, target.x, 0, target.z).Azimuth
    end
 end
 
 function SetHeading(I, angle)
-   angle = AvoidTerrain(I, angle)
+   angle = Avoidance(I, angle)
    local CV = YawPID:Control(angle)
    --I:LogToHud(string.format("error = %f, CV = %f", angle, CV))
    if CV > 0.0 then
