@@ -1,16 +1,16 @@
 -- PID implementation
 PID = {}
 
-function PID.create(Kp, Ki, Kd, min, max)
+function PID.create(Kp, Ki, Kd, Min, Max)
    local self = {}
    local dt = 1.0 / 40.0
    self.Kp = Kp
    self.Kidt = Ki * dt
    self.Kddt = Kd / dt
-   self.integral = 0.0
-   self.lastError = 0.0
-   self.min = min
-   self.max = max
+   self.Integral = 0.0
+   self.LastError = 0.0
+   self.Min = Min
+   self.Max = Max
 
    -- Due to lack of setmetatable
    self.Reset = PID.Reset
@@ -20,28 +20,28 @@ function PID.create(Kp, Ki, Kd, min, max)
 end
 
 function PID:Reset()
-   self.integral = 0.0
-   self.lastError = 0.0
+   self.Integral = 0.0
+   self.LastError = 0.0
 end
 
-function PID:Control(error)
-   local integral = self.integral + error
-   local derivative = error - self.lastError
-   self.lastError = error
+function PID:Control(Error)
+   local Integral = self.Integral + Error
+   local Derivative = Error - self.LastError
+   self.LastError = Error
 
-   local CV = (self.Kp * error) +
-      (self.Kidt * integral) +
-      (self.Kddt * derivative)
+   local CV = (self.Kp * Error) +
+      (self.Kidt * Integral) +
+      (self.Kddt * Derivative)
 
    -- Windup prevention
-   if CV > self.max then
-      if integral <= self.integral then self.integral = integral end
-      return self.max
-   elseif CV < self.min then
-      if integral >= self.integral then self.integral = integral end
-      return self.min
+   if CV > self.Max then
+      if Integral <= self.Integral then self.Integral = Integral end
+      return self.Max
+   elseif CV < self.Min then
+      if Integral >= self.Integral then self.Integral = Integral end
+      return self.Min
    end
 
-   self.integral = integral
+   self.Integral = Integral
    return CV
 end
