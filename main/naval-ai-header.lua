@@ -17,11 +17,11 @@ EscapeAngle = 120
 EscapeDrive = 1
 EscapeEvasion = { 20, Mathf.PI / 5 }
 
-FriendlyMinDistance = 100
-FriendlyIgnoreAbove = 50
+ClearanceFactor = 3
+
+FriendlyMinDistance = 250
 FriendlyAvoidanceWeight = 10
 
-MinDepth = 10
 LookAheadTimes = { 1, 5, 10 }
 LookAheadAngles = { -90, -45, -15, 0, 15, 45, 90 }
 TerrainAvoidanceWeight = 10000

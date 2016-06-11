@@ -2,16 +2,29 @@
 --@ commons pid
 -- Private variables
 Position = nil
+CoM = nil
+Altitude = 0
 Yaw = 0
 Pitch = 0
 Roll = 0
 YawPID = PID.create(YawPIDValues[1], YawPIDValues[2], YawPIDValues[3], -1.0, 1.0)
 
-FirstRun = true
+FirstRun = nil
 Origin = nil
+ForwardOffset = 0
+UpClearance = 0
+DownClearance = 0
+
+function FirstRun(I)
+   FirstRun = nil
+
+   Origin = Position
+end
 
 function GetSelfInfo(I)
    Position = I:GetConstructPosition()
+   CoM = I:GetConstructCenterOfMass()
+   Altitude = CoM.y
 
    Yaw = I:GetConstructYaw()
 
@@ -28,7 +41,7 @@ function GetSelfInfo(I)
       Roll = Roll - 360
    end
 
-   --I:LogToHud(string.format("Yaw %f Pitch %f Roll %f", Yaw, Pitch, Roll))
+   --I:LogToHud(string.format("Yaw %f Pitch %f Roll %f Alt %f", Yaw, Pitch, Roll, Altitude))
 end
 
 function sign(n)
@@ -42,12 +55,23 @@ function sign(n)
 end
 
 function Avoidance(I, Bearing)
+   -- Our own dimensions
+   local MaxDim = I:GetConstructMaxDimensions()
+   ForwardOffset = Vector3(0, 0, MaxDim.z)
+
+   -- Required clearance above and below
+   local Height = MaxDim.y - I:GetConstructMinDimensions().y
+   local UpperEdge = Altitude + Height * ClearanceFactor
+   local LowerEdge = Altitude - Height * ClearanceFactor
+
    -- Look for nearby friendlies
-   local CoM = I:GetConstructCenterOfMass()
    local FCount,FAvoid,FMin = 0,Vector3.zero,math.huge
    for i = 0,I:GetFriendlyCount()-1 do
       local Friend = I:GetFriendlyInfo(i)
-      if Friend.Valid and Friend.CenterOfMass.y < FriendlyIgnoreAbove then
+      -- Only consider friendlies within our altitude range
+      local FriendAlt = Friend.ReferencePosition.y
+      if Friend.Valid and ((FriendAlt+Friend.NegativeSize.y) <= UpperEdge and
+                           (FriendAlt+Friend.PositiveSize.y) >= LowerEdge) then
          local Direction = Friend.CenterOfMass - CoM
          local Distance = Direction.magnitude
          if Distance < FriendlyMinDistance then
@@ -67,7 +91,6 @@ function Avoidance(I, Bearing)
    --I:LogToHud(string.format("FCount %d FAvoid %s", FCount, tostring(FAvoid)))
 
    -- For now, we scan in front rather than take actual velocity into account
-   local ForwardOffset = Vector3(0, 0, I:GetConstructMaxDimensions().z)
    local Speed = I:GetVelocityMagnitude()
    local TCount,TAvoid,TMin = 0,Vector3.zero,math.huge
    for i,t in pairs(LookAheadTimes) do
@@ -77,7 +100,7 @@ function Avoidance(I, Bearing)
       local TimeCount,TimeAvoid = 0,Vector3.zero
       for j,a in pairs(LookAheadAngles) do
          local pos = Quaternion.Euler(0, a, 0) * Forward
-         if I:GetTerrainAltitudeForLocalPosition(pos) > -MinDepth then
+         if I:GetTerrainAltitudeForLocalPosition(pos) > LowerEdge then
             TimeCount = TimeCount + 1
             TimeAvoid = TimeAvoid - pos.normalized
          end
@@ -187,10 +210,7 @@ function Update(I)
    if (ActivateWhenOn and AIMode == 'on') or AIMode == 'combat' then
       GetSelfInfo(I)
 
-      if FirstRun then
-         FirstRun = false
-         Origin = Position
-      end
+      if FirstRun then FirstRun(I) end
 
       if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end
 
