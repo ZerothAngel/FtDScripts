@@ -38,7 +38,7 @@ function sign(n)
    end
 end
 
-function Avoidance(I, Azimuth)
+function Avoidance(I, Bearing)
    -- Look for nearby friendlies
    local CoM = I:GetConstructCenterOfMass()
    local FCount,FAvoid,FMin = 0,Vector3.zero,math.huge
@@ -56,7 +56,9 @@ function Avoidance(I, Azimuth)
       end
    end
    if FCount > 0 then
+      -- Normalize according to closest friend and average out
       FAvoid = FAvoid * FMin * FriendlyAvoidanceWeight / FCount
+      -- NB Vector is world vector not local
    end
 
    --I:LogToHud(string.format("FCount %d FAvoid %s", FCount, tostring(FAvoid)))
@@ -87,30 +89,32 @@ function Avoidance(I, Azimuth)
       end
    end
    if TCount > 0 then
+      -- Normalize according to smallest time
       TAvoid = TAvoid * TMin * TerrainAvoidanceWeight
+      -- NB Vector is local vector
    end
 
    --I:LogToHud(string.format("TCount %d TAvoid %s", TCount, tostring(TAvoid)))
 
    if (FCount + TCount) == 0 then
-      return Azimuth
+      return Bearing
    else
-      -- Current target as given by Azimuth
-      local NewTarget = Quaternion.Euler(0, Azimuth, 0) * Vector3.forward
-      -- Sum of all avoidance vectors
-      NewTarget = NewTarget + FAvoid + TAvoid
+      -- Current target as given by Bearing
+      local NewTarget = Quaternion.Euler(0, Bearing, 0) * Vector3.forward
+      -- Sum of all local avoidance vectors
+      NewTarget = NewTarget + TAvoid
 
-      -- To world coordinates
-      NewTarget = Position + Quaternion.Euler(0, Yaw, 0) * NewTarget
-      -- Vector3.Angle not working?
+      -- To world coordinates, and add world vectors
+      NewTarget = Position + Quaternion.Euler(0, Yaw, 0) * NewTarget + FAvoid
+      -- Determine new bearing
       return -I:GetTargetPositionInfoForPosition(0, NewTarget.x, 0, NewTarget.z).Azimuth
    end
 end
 
-function SetHeading(I, Azimuth)
-   Azimuth = Avoidance(I, Azimuth)
-   local CV = YawPID:Control(Azimuth)
-   --I:LogToHud(string.format("Error = %f, CV = %f", Azimuth, CV))
+function AdjustHeading(I, Bearing)
+   Bearing = Avoidance(I, Bearing)
+   local CV = YawPID:Control(Bearing) -- SetPoint of 0
+   --I:LogToHud(string.format("Error = %f, CV = %f", Bearing, CV))
    if CV > 0.0 then
       I:RequestControl(WATER, YAWRIGHT, CV)
    elseif CV < 0.0 then
@@ -118,10 +122,10 @@ function SetHeading(I, Azimuth)
    end
 end
 
-function SetHeadingToTarget(I, TargetInfo)
+function AdjustHeadingToTarget(I, TargetInfo)
    local Distance = TargetInfo.GroundDistance
-   local Azimuth = -TargetInfo.Azimuth
-   --I:LogToHud(string.format("Distance %f Azimuth %f", Distance, Azimuth))
+   local Bearing = -TargetInfo.Azimuth
+   --I:LogToHud(string.format("Distance %f Bearing %f", Distance, Bearing))
 
    local State,TargetAngle,Drive = "escape",EscapeAngle,EscapeDrive
    if Distance > MaxDistance then
@@ -134,17 +138,17 @@ function SetHeadingToTarget(I, TargetInfo)
       Drive = AttackDrive
    end
 
-   Azimuth = Azimuth - sign(Azimuth)*TargetAngle
-   if Azimuth > 180 then Azimuth = Azimuth - 360 end
+   Bearing = Bearing - sign(Bearing)*TargetAngle
+   if Bearing > 180 then Bearing = Bearing - 360 end
 
-   --I:LogToHud(string.format("State %s Drive %f Azimuth %f", State, Drive, Azimuth))
+   --I:LogToHud(string.format("State %s Drive %f Bearing %f", State, Drive, Bearing))
 
-   SetHeading(I, Azimuth)
+   AdjustHeading(I, Bearing)
 
    return Drive
 end
 
-function SetSpeed(I, Drive)
+function SetDriveFraction(I, Drive)
    I:RequestControl(WATER, MAINPROPULSION, Drive)
 end
 
@@ -165,8 +169,8 @@ function Update(I)
       local TargetInfo = GetTarget(I)
       if TargetInfo then
          I:TellAiThatWeAreTakingControl()
-         local Drive = SetHeadingToTarget(I, TargetInfo)
-         SetSpeed(I, Drive)
+         local Drive = AdjustHeadingToTarget(I, TargetInfo)
+         SetDriveFraction(I, Drive)
       end
    end
 end
