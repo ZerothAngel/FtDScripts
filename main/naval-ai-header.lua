@@ -11,7 +11,7 @@ ClosingDrive = 1
 EscapeAngle = 120
 EscapeDrive = 1
 
-FriendlyMinDistance = 250
+FriendlyMinDistance = 100
 FriendlyIgnoreAbove = 50
 FriendlyAvoidanceWeight = 10
 
