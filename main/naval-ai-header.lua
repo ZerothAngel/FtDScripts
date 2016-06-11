@@ -19,8 +19,9 @@ EscapeEvasion = { 20, Mathf.PI / 5 }
 
 ClearanceFactor = 3
 
-FriendlyMinDistance = 250
-FriendlyAvoidanceWeight = 10
+FriendlyMinDistanceCombat = 250
+FriendlyMinDistanceIdle = 100
+FriendlyAvoidanceWeight = 100
 
 LookAheadTimes = { 1, 5, 10 }
 LookAheadAngles = { -90, -45, -15, 0, 15, 45, 90 }

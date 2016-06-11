@@ -11,9 +11,8 @@ YawPID = PID.create(YawPIDValues[1], YawPIDValues[2], YawPIDValues[3], -1.0, 1.0
 
 FirstRun = nil
 Origin = nil
-ForwardOffset = 0
-UpClearance = 0
-DownClearance = 0
+
+TargetInfo = nil
 
 function FirstRun(I)
    FirstRun = nil
@@ -66,15 +65,17 @@ function Avoidance(I, Bearing)
 
    -- Look for nearby friendlies
    local FCount,FAvoid,FMin = 0,Vector3.zero,math.huge
+   local MinDistance = TargetInfo and FriendlyMinDistanceCombat or FriendlyMinDistanceIdle
    for i = 0,I:GetFriendlyCount()-1 do
       local Friend = I:GetFriendlyInfo(i)
+      local FriendPosition = Friend.ReferencePosition
       -- Only consider friendlies within our altitude range
-      local FriendAlt = Friend.ReferencePosition.y
+      local FriendAlt = FriendPosition.y
       if Friend.Valid and ((FriendAlt+Friend.NegativeSize.y) <= UpperEdge and
                            (FriendAlt+Friend.PositiveSize.y) >= LowerEdge) then
-         local Direction = Friend.CenterOfMass - CoM
+         local Direction = FriendPosition - Position
          local Distance = Direction.magnitude
-         if Distance < FriendlyMinDistance then
+         if Distance < MinDistance then
             -- Don't stand so close to me
             FCount = FCount + 1
             FAvoid = FAvoid - Direction.normalized / Distance
@@ -162,7 +163,7 @@ function Evade(I, Bearing, Evasion)
    end
 end
 
-function AdjustHeadingToTarget(I, TargetInfo)
+function AdjustHeadingToTarget(I)
    local Distance = TargetInfo.GroundDistance
    local Bearing = -TargetInfo.Azimuth
    --I:LogToHud(string.format("Distance %f Bearing %f", Distance, Bearing))
@@ -198,11 +199,12 @@ end
 function GetTarget(I)
    for mindex = 0,I:GetNumberOfMainframes()-1 do
       for tindex = 0,I:GetNumberOfTargets(mindex)-1 do
-         local TargetInfo = I:GetTargetPositionInfo(mindex, tindex)
-         if TargetInfo.Valid then return TargetInfo end
+         TargetInfo = I:GetTargetPositionInfo(mindex, tindex)
+         if TargetInfo.Valid then return true end
       end
    end
-   return nil
+   TargetInfo = nil
+   return false
 end
 
 function Update(I)
@@ -215,9 +217,8 @@ function Update(I)
       if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end
 
       local Drive = 0
-      local TargetInfo = GetTarget(I)
-      if TargetInfo then
-         Drive = AdjustHeadingToTarget(I, TargetInfo)
+      if GetTarget(I) then
+         Drive = AdjustHeadingToTarget(I)
       elseif ReturnToOrigin then
          local Target = Origin - Position
          if Target.magnitude >= OriginMaxDistance then
