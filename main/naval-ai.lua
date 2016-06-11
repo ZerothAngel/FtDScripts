@@ -129,23 +129,36 @@ function AdjustHeadingToPoint(I, Point)
    AdjustHeading(I, -I:GetTargetPositionInfoForPosition(0, Point.x, 0, Point.z).Azimuth)
 end
 
+function Evade(I, Bearing, Evasion)
+   if Evasion then
+      local Evade = Bearing + Evasion[1] * Mathf.Cos(Evasion[2] * I:GetTimeSinceSpawn())
+      --I:LogToHud(string.format("Bearing %f Evade %f", Bearing, Evade))
+      return Evade
+   else
+      return Bearing
+   end
+end
+
 function AdjustHeadingToTarget(I, TargetInfo)
    local Distance = TargetInfo.GroundDistance
    local Bearing = -TargetInfo.Azimuth
    --I:LogToHud(string.format("Distance %f Bearing %f", Distance, Bearing))
 
-   local State,TargetAngle,Drive = "escape",EscapeAngle,EscapeDrive
+   local State,TargetAngle,Drive,Evasion = "escape",EscapeAngle,EscapeDrive,EscapeEvasion
    if Distance > MaxDistance then
       State = "closing"
       TargetAngle = ClosingAngle
       Drive = ClosingDrive
+      Evasion = ClosingEvasion
    elseif Distance > MinDistance then
       State = "attack"
       TargetAngle = AttackAngle
       Drive = AttackDrive
+      Evasion = AttackEvasion
    end
 
    Bearing = Bearing - sign(Bearing)*TargetAngle
+   Bearing = Evade(I, Bearing, Evasion)
    if Bearing > 180 then Bearing = Bearing - 360 end
 
    --I:LogToHud(string.format("State %s Drive %f Bearing %f", State, Drive, Bearing))
