@@ -21,3 +21,9 @@ LookAheadAngles = { -90, -45, -15, 0, 15, 45, 90 }
 TerrainAvoidanceWeight = 10000
 
 YawPIDValues = { 0.25, 0.0, 0.1 } -- P, I, D
+
+ReturnToOrigin = true
+ReturnDrive = 0.5
+OriginMaxDistance = 100
+
+ActivateWhenOn = false

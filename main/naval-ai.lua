@@ -7,6 +7,9 @@ Pitch = 0
 Roll = 0
 YawPID = PID.create(YawPIDValues[1], YawPIDValues[2], YawPIDValues[3], -1.0, 1.0)
 
+FirstRun = true
+Origin = nil
+
 function GetSelfInfo(I)
    Position = I:GetConstructPosition()
 
@@ -122,6 +125,10 @@ function AdjustHeading(I, Bearing)
    end
 end
 
+function AdjustHeadingToPoint(I, Point)
+   AdjustHeading(I, -I:GetTargetPositionInfoForPosition(0, Point.x, 0, Point.z).Azimuth)
+end
+
 function AdjustHeadingToTarget(I, TargetInfo)
    local Distance = TargetInfo.GroundDistance
    local Bearing = -TargetInfo.Azimuth
@@ -163,14 +170,28 @@ function GetTarget(I)
 end
 
 function Update(I)
-   if I.AIMode == 'combat' then
+   local AIMode = I.AIMode
+   if (ActivateWhenOn and AIMode == 'on') or AIMode == 'combat' then
       GetSelfInfo(I)
 
+      if FirstRun then
+         FirstRun = false
+         Origin = Position
+      end
+
+      if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end
+
+      local Drive = 0
       local TargetInfo = GetTarget(I)
       if TargetInfo then
-         I:TellAiThatWeAreTakingControl()
-         local Drive = AdjustHeadingToTarget(I, TargetInfo)
-         SetDriveFraction(I, Drive)
+         Drive = AdjustHeadingToTarget(I, TargetInfo)
+      elseif ReturnToOrigin then
+         local Target = Origin - Position
+         if Target.magnitude >= OriginMaxDistance then
+            AdjustHeadingToPoint(I, Origin)
+            Drive = ReturnDrive
+         end
       end
+      SetDriveFraction(I, Drive)
    end
 end
