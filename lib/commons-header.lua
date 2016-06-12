@@ -1,3 +1,7 @@
+-- Debugging
+Debugging = nil
+DebugToHud = true
+
 -- API constants
 WATER = 0
 LAND = 1

@@ -21,6 +21,8 @@ function FirstRun(I)
 end
 
 function GetSelfInfo(I)
+   local __func__ = "GetSelfInfo"
+
    Position = I:GetConstructPosition()
    CoM = I:GetConstructCenterOfMass()
    Altitude = CoM.y
@@ -40,7 +42,7 @@ function GetSelfInfo(I)
       Roll = Roll - 360
    end
 
-   --I:LogToHud(string.format("Yaw %f Pitch %f Roll %f Alt %f", Yaw, Pitch, Roll, Altitude))
+   if Debugging then Debug(I, __func__, "Yaw %f Pitch %f Roll %f Alt %f", Yaw, Pitch, Roll, Altitude) end
 end
 
 function sign(n)
@@ -54,6 +56,8 @@ function sign(n)
 end
 
 function Avoidance(I, Bearing)
+   local __func__ = "Avoidance"
+
    -- Our own dimensions
    local MaxDim = I:GetConstructMaxDimensions()
    ForwardOffset = Vector3(0, 0, MaxDim.z)
@@ -89,7 +93,7 @@ function Avoidance(I, Bearing)
       -- NB Vector is world vector not local
    end
 
-   --I:LogToHud(string.format("FCount %d FAvoid %s", FCount, tostring(FAvoid)))
+   if Debugging then Debug(I, __func__, "FCount %d FAvoid %s", FCount, tostring(FAvoid)) end
 
    -- For now, we scan in front rather than take actual velocity into account
    local Speed = I:GetVelocityMagnitude()
@@ -121,7 +125,7 @@ function Avoidance(I, Bearing)
       -- NB Vector is local vector
    end
 
-   --I:LogToHud(string.format("TCount %d TAvoid %s", TCount, tostring(TAvoid)))
+   if Debugging then Debug(I, __func__, "TCount %d TAvoid %s", TCount, tostring(TAvoid)) end
 
    if (FCount + TCount) == 0 then
       return Bearing
@@ -139,9 +143,11 @@ function Avoidance(I, Bearing)
 end
 
 function AdjustHeading(I, Bearing)
+   local __func__ = "AdjustHeading"
+
    Bearing = Avoidance(I, Bearing)
    local CV = YawPID:Control(Bearing) -- SetPoint of 0
-   --I:LogToHud(string.format("Error = %f, CV = %f", Bearing, CV))
+   if Debugging then Debug(I, __func__, "Error = %f, CV = %f", Bearing, CV) end
    if CV > 0.0 then
       I:RequestControl(WATER, YAWRIGHT, CV)
    elseif CV < 0.0 then
@@ -154,9 +160,11 @@ function AdjustHeadingToPoint(I, Point)
 end
 
 function Evade(I, Bearing, Evasion)
+   local __func__ = "Evade"
+
    if Evasion then
       local Evade = Bearing + Evasion[1] * Mathf.Cos(Evasion[2] * I:GetTimeSinceSpawn())
-      --I:LogToHud(string.format("Bearing %f Evade %f", Bearing, Evade))
+      if Debugging then Debug(I, __func__, "Bearing %f Evade %f", Bearing, Evade) end
       return Evade
    else
       return Bearing
@@ -164,9 +172,11 @@ function Evade(I, Bearing, Evasion)
 end
 
 function AdjustHeadingToTarget(I)
+   local __func__ = "AdjustHeadingToTarget"
+
    local Distance = TargetInfo.GroundDistance
    local Bearing = -TargetInfo.Azimuth
-   --I:LogToHud(string.format("Distance %f Bearing %f", Distance, Bearing))
+   if Debugging then Debug(I, __func__, "Distance %f Bearing %f", Distance, Bearing) end
 
    local State,TargetAngle,Drive,Evasion = "escape",EscapeAngle,EscapeDrive,EscapeEvasion
    if Distance > MaxDistance then
@@ -185,7 +195,7 @@ function AdjustHeadingToTarget(I)
    Bearing = Evade(I, Bearing, Evasion)
    if Bearing > 180 then Bearing = Bearing - 360 end
 
-   --I:LogToHud(string.format("State %s Drive %f Bearing %f", State, Drive, Bearing))
+   if Debugging then Debug(I, __func__, "State %s Drive %f Bearing %f", State, Drive, Bearing) end
 
    AdjustHeading(I, Bearing)
 
