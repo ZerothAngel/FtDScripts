@@ -35,32 +35,6 @@ EscapeEvasion = { 20, .25 }
 AirRaidAboveAltitude = 50
 AirRaidEvasion = { 40, .25 }
 
--- How much clearance to require above and below when
--- avoiding terrain and friendlies.
--- Ship's height is multiplied by this.
-ClearanceFactor = 3
-
--- Minimum distances for friendly avoidance
-FriendlyMinDistanceCombat = 250
-FriendlyMinDistanceIdle = 100
--- Friendly avoidance weight. Generally should be >1.
--- Set to 0 to disable friendly avoidance.
--- Greater number means it will begin to turn away sooner.
-FriendlyAvoidanceWeight = 1000
-
--- Terrain avoidance settings
--- How many seconds ahead (at current velocity) to sample
--- the terrain.
-LookAheadTimes = { 1, 5, 10 }
--- Relative bearings for sampling terrain. Note that the number
--- of look ahead times multiplied by the number of angles is
--- how many terrain samples it will check PER UPDATE. So keep
--- things reasonable.
-LookAheadAngles = { -90, -45, -15, 0, 15, 45, 90 }
--- Terrain avoidance weight. Should be >1, set to 0 to disable.
--- Greater number means it will begin to turn away sooner.
-TerrainAvoidanceWeight = 10000
-
 -- Yaw PID controller settings
 -- These default values have worked well for me on
 -- a variety of ships. YMMV.

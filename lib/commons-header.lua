@@ -2,6 +2,14 @@
 Debugging = nil
 DebugToHud = true
 
+-- Common global variables
+Position = nil
+CoM = nil
+Altitude = 0
+Yaw = 0
+Pitch = 0
+Roll = 0
+
 -- API constants
 WATER = 0
 LAND = 1
