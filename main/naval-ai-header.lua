@@ -1,8 +1,8 @@
 -- Configuration
-MinDistance = 500
-MaxDistance = 750
+MinDistance = 300
+MaxDistance = 500
 
-AttackAngle = 90
+AttackAngle = 80
 -- Drive fraction from -1 to 1
 AttackDrive = 1
 -- Degrees, time scale (period = pi / this)
@@ -16,6 +16,9 @@ ClosingEvasion = { 30, Mathf.PI / 5 }
 EscapeAngle = 120
 EscapeDrive = 1
 EscapeEvasion = { 20, Mathf.PI / 5 }
+
+AirRaidAboveAltitude = 50
+AirRaidEvasion = { 40, Mathf.PI / 10 }
 
 ClearanceFactor = 3
 

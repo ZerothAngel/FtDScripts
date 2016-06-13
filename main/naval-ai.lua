@@ -162,6 +162,10 @@ end
 function Evade(I, Bearing, Evasion)
    local __func__ = "Evade"
 
+   if AirRaidEvasion and TargetInfo.Position.y >= AirRaidAboveAltitude then
+      Evasion = AirRaidEvasion
+   end
+
    if Evasion then
       local Evade = Bearing + Evasion[1] * Mathf.Cos(Evasion[2] * I:GetTimeSinceSpawn())
       if Debugging then Debug(I, __func__, "Bearing %f Evade %f", Bearing, Evade) end
