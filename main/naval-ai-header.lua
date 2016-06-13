@@ -46,7 +46,7 @@ FriendlyMinDistanceIdle = 100
 -- Friendly avoidance weight. Generally should be >1.
 -- Set to 0 to disable friendly avoidance.
 -- Greater number means it will begin to turn away sooner.
-FriendlyAvoidanceWeight = 100
+FriendlyAvoidanceWeight = 1000
 
 -- Terrain avoidance settings
 -- How many seconds ahead (at current velocity) to sample
