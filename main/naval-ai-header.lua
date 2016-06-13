@@ -5,20 +5,20 @@ MaxDistance = 500
 AttackAngle = 80
 -- Drive fraction from -1 to 1
 AttackDrive = 1
--- Degrees, time scale (period = pi / this)
+-- Degrees, time scale (smaller = slower)
 -- Set to nil to disable
-AttackEvasion = { 5, Mathf.PI / 10 }
+AttackEvasion = { 10, .125 }
 
 ClosingAngle = 40
 ClosingDrive = 1
-ClosingEvasion = { 30, Mathf.PI / 5 }
+ClosingEvasion = { 30, .25 }
 
 EscapeAngle = 120
 EscapeDrive = 1
-EscapeEvasion = { 20, Mathf.PI / 5 }
+EscapeEvasion = { 20, .25 }
 
 AirRaidAboveAltitude = 50
-AirRaidEvasion = { 40, Mathf.PI / 10 }
+AirRaidEvasion = { 40, .25 }
 
 ClearanceFactor = 3
 

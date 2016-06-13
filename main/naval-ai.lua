@@ -11,13 +11,19 @@ YawPID = PID.create(YawPIDValues[1], YawPIDValues[2], YawPIDValues[3], -1.0, 1.0
 
 FirstRun = nil
 Origin = nil
+PerlinOffset = 0
 
 TargetInfo = nil
 
 function FirstRun(I)
+   local __func__ = "FirstRun"
+
    FirstRun = nil
 
    Origin = Position
+   PerlinOffset = 1000.0 * math.random()
+
+   if Debugging then Debug(I, __func__, "PerlinOffset %f", PerlinOffset) end
 end
 
 function GetSelfInfo(I)
@@ -167,7 +173,7 @@ function Evade(I, Bearing, Evasion)
    end
 
    if Evasion then
-      local Evade = Bearing + Evasion[1] * Mathf.Cos(Evasion[2] * I:GetTimeSinceSpawn())
+      local Evade = Bearing + Evasion[1] * (2.0 * Mathf.PerlinNoise(Evasion[2] * I:GetTimeSinceSpawn(), PerlinOffset) - 1.0)
       if Debugging then Debug(I, __func__, "Bearing %f Evade %f", Bearing, Evade) end
       return Evade
    else
