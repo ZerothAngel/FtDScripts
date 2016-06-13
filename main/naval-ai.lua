@@ -1,6 +1,6 @@
 --! naval-ai
 --@ commons pid
--- Private variables
+-- Global variables
 Position = nil
 CoM = nil
 Altitude = 0
@@ -15,6 +15,7 @@ PerlinOffset = 0
 
 TargetInfo = nil
 
+-- Called on first activation (not necessarily first Update)
 function FirstRun(I)
    local __func__ = "FirstRun"
 
@@ -26,6 +27,8 @@ function FirstRun(I)
    if Debugging then Debug(I, __func__, "PerlinOffset %f", PerlinOffset) end
 end
 
+-- Grab & save info about the ship, adjust them so they match
+-- the HUD's values.
 function GetSelfInfo(I)
    local __func__ = "GetSelfInfo"
 
@@ -51,6 +54,7 @@ function GetSelfInfo(I)
    if Debugging then Debug(I, __func__, "Yaw %f Pitch %f Roll %f Alt %f", Yaw, Pitch, Roll, Altitude) end
 end
 
+-- Because I didn't realize Mathf.Sign exists.
 function sign(n)
    if n < 0 then
       return -1
@@ -61,6 +65,7 @@ function sign(n)
    end
 end
 
+-- Modifies bearing to avoid any friendlies & terrain
 function Avoidance(I, Bearing)
    local __func__ = "Avoidance"
 
@@ -148,6 +153,7 @@ function Avoidance(I, Bearing)
    end
 end
 
+-- Adjusts heading toward relative bearing
 function AdjustHeading(I, Bearing)
    local __func__ = "AdjustHeading"
 
@@ -161,10 +167,12 @@ function AdjustHeading(I, Bearing)
    end
 end
 
+-- Adjust heading toward a given world point
 function AdjustHeadingToPoint(I, Point)
    AdjustHeading(I, -I:GetTargetPositionInfoForPosition(0, Point.x, 0, Point.z).Azimuth)
 end
 
+-- Modifies bearing by some amount for evasive maneuvers
 function Evade(I, Bearing, Evasion)
    local __func__ = "Evade"
 
@@ -181,6 +189,7 @@ function Evade(I, Bearing, Evasion)
    end
 end
 
+-- Adjusts heading according to configured behaviors
 function AdjustHeadingToTarget(I)
    local __func__ = "AdjustHeadingToTarget"
 
@@ -212,10 +221,12 @@ function AdjustHeadingToTarget(I)
    return Drive
 end
 
+-- Sets throttle
 function SetDriveFraction(I, Drive)
    I:RequestControl(WATER, MAINPROPULSION, Drive)
 end
 
+-- Finds first valid target on first mainframe
 function GetTarget(I)
    for mindex = 0,I:GetNumberOfMainframes()-1 do
       for tindex = 0,I:GetNumberOfTargets(mindex)-1 do
@@ -234,6 +245,7 @@ function Update(I)
 
       if FirstRun then FirstRun(I) end
 
+      -- Suppress default AI
       if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end
 
       local Drive = 0

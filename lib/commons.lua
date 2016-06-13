@@ -1,3 +1,5 @@
+-- Common functions
+
 function Debug(I, Subsystem, Message, ...)
    if not Subsystem or Debugging == Subsystem then
       local Formatted = string.format(Message, ...)
