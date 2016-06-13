@@ -21,7 +21,7 @@ function FirstRun(I)
 
    FirstRun = nil
 
-   Origin = Position
+   Origin = CoM
    PerlinOffset = 1000.0 * math.random()
 
    if Debugging then Debug(I, __func__, "PerlinOffset %f", PerlinOffset) end
@@ -83,12 +83,11 @@ function Avoidance(I, Bearing)
    local MinDistance = TargetInfo and FriendlyMinDistanceCombat or FriendlyMinDistanceIdle
    for i = 0,I:GetFriendlyCount()-1 do
       local Friend = I:GetFriendlyInfo(i)
-      local FriendPosition = Friend.ReferencePosition
       -- Only consider friendlies within our altitude range
-      local FriendAlt = FriendPosition.y
+      local FriendAlt = Friend.ReferencePosition.y
       if Friend.Valid and ((FriendAlt+Friend.NegativeSize.y) <= UpperEdge and
                            (FriendAlt+Friend.PositiveSize.y) >= LowerEdge) then
-         local Direction = FriendPosition - Position
+         local Direction = Friend.CenterOfMass - CoM
          local Distance = Direction.magnitude
          if Distance < MinDistance then
             -- Don't stand so close to me
@@ -252,7 +251,7 @@ function Update(I)
       if GetTarget(I) then
          Drive = AdjustHeadingToTarget(I)
       elseif ReturnToOrigin then
-         local Target = Origin - Position
+         local Target = Origin - CoM
          if Target.magnitude >= OriginMaxDistance then
             AdjustHeadingToPoint(I, Origin)
             Drive = ReturnDrive
