@@ -37,3 +37,9 @@ function GetSelfInfo(I)
 
    if Debugging then Debug(I, __func__, "Yaw %f Pitch %f Roll %f Alt %f", Yaw, Pitch, Roll, Altitude) end
 end
+
+-- Returns offset vector with target at same height as origin
+function PlanarVector(Origin, Target)
+   local NewTarget = Vector3(Target.x, Origin.y, Target.z)
+   return NewTarget - Origin, NewTarget
+end

@@ -131,7 +131,7 @@ function Update(I)
       if GetTarget(I) then
          Drive = AdjustHeadingToTarget(I)
       elseif ReturnToOrigin then
-         local Target = Origin - CoM
+         local Target,_ = PlanarVector(CoM, Origin)
          if Target.magnitude >= OriginMaxDistance then
             AdjustHeadingToPoint(I, Origin)
             Drive = ReturnDrive

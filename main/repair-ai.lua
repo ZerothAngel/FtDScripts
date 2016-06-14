@@ -14,8 +14,8 @@ function Imprint(I)
    local Closest = math.huge
    for i = 0,I:GetFriendlyCount()-1 do
       local Friend = I:GetFriendlyInfo(i)
-      local Direction = Friend.CenterOfMass - CoM
-      local Distance = Direction.magnitude
+      local Offset,_ = PlanarVector(CoM, Friend.CenterOfMass)
+      local Distance = Offset.magnitude
       if Distance < Closest then
          Closest = Distance
          ParentID = Friend.Id
@@ -67,9 +67,11 @@ function AdjustHeadingToParent(I)
    local Parent = I:GetFriendlyInfoById(ParentID)
    if Parent and Parent.Valid then
       local ParentCoM = Parent.CenterOfMass + ParentOffset
-      local Offset = ParentCoM - CoM
+      local Offset,_ = PlanarVector(CoM, ParentCoM)
       local Distance = Offset.magnitude
       local Direction = Offset / Distance
+      -- Not so sure about this intercept formula, since it will tend
+      -- to stay parallel with parent if we don't cap InterceptTime
       local RelativeVelocity = I:GetVelocityVector() - Parent.Velocity
       local RelativeSpeed = Vector3.Dot(RelativeVelocity, Direction)
       local InterceptTime = 10
@@ -126,7 +128,7 @@ function Update(I)
          ParentID = nil
 
          if ReturnToOrigin then
-            local Target = Origin - CoM
+            local Target,_ = PlanarVector(CoM, Origin)
             if Target.magnitude >= OriginMaxDistance then
                AdjustHeadingToPoint(I, Origin)
                Drive = ReturnDrive

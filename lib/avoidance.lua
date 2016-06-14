@@ -23,12 +23,12 @@ function Avoidance(I, Bearing)
       local FriendAlt = Friend.ReferencePosition.y
       if Friend.Valid and ((FriendAlt+Friend.NegativeSize.y) <= UpperEdge and
                            (FriendAlt+Friend.PositiveSize.y) >= LowerEdge) then
-         local Direction = Friend.CenterOfMass - CoM
-         local Distance = Direction.magnitude
+         local Offset,_ = PlanarVector(CoM, Friend.CenterOfMass)
+         local Distance = Offset.magnitude
          if Distance < MinDistance then
             -- Don't stand so close to me
             FCount = FCount + 1
-            FAvoid = FAvoid - Direction.normalized / Distance
+            FAvoid = FAvoid - Offset / (Distance * Distance) -- i.e. Offset.normalized / Distance
             FMin = math.min(FMin, Distance)
          end
       end
