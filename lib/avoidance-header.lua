@@ -2,7 +2,7 @@
 -- center of mass when avoiding terrain and friendlies.
 -- Ship's height is multiplied by this. Should be >.5 with
 -- .5 meaning check exactly the ship's height (not recommended)
-ClearanceFactor = 3
+ClearanceFactor = 1
 
 -- Minimum distances for friendly avoidance
 FriendlyMinDistanceCombat = 250
