@@ -1,4 +1,6 @@
 --@ commons
+-- Avoidance module
+
 -- Modifies bearing to avoid any friendlies & terrain
 function Avoidance(I, Bearing)
    local __func__ = "Avoidance"
