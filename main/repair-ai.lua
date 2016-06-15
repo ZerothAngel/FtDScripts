@@ -63,7 +63,7 @@ function AdjustHeadingToPoint(I, Point)
 end
 
 function AdjustHeadingToParent(I)
-   local Drive = 0
+   local Drive = LoiterDrive
    local Parent = I:GetFriendlyInfoById(ParentID)
    if Parent and Parent.Valid then
       local ParentCoM = Parent.CenterOfMass + ParentOffset
@@ -74,16 +74,16 @@ function AdjustHeadingToParent(I)
       -- to stay parallel with parent if we don't cap InterceptTime
       local RelativeVelocity = I:GetVelocityVector() - Parent.Velocity
       local RelativeSpeed = Vector3.Dot(RelativeVelocity, Direction)
-      local InterceptTime = 10
+      local InterceptTime = 0
       if RelativeSpeed > 0.0 then
          InterceptTime = Distance / RelativeSpeed
          InterceptTime = math.min(InterceptTime, 10)
       end
 
       local TargetPoint = ParentCoM + Parent.Velocity * InterceptTime
-      if Distance > 10 then
+      if Distance > ParentMaxDistance then
          AdjustHeadingToPoint(I, TargetPoint)
-         Drive = 1
+         Drive = ClosingDrive
       end
    end
    return Drive

@@ -4,7 +4,13 @@
 ActivateWhenOn = false
 
 -- Offset from parent. Note the Y value is ignored.
-ParentOffset = Vector3(10, 0, 25)
+ParentOffset = Vector3(25, 0, 25)
+ParentMaxDistance = 25
+-- Throttle when distance from parent is >ParentMaxDistance
+ClosingDrive = 1
+-- Throttle when within ParentMaxDistance
+-- Probably not a good idea for hydrofoil-based subs to stop
+LoiterDrive = 0.2
 
 -- Yaw PID controller settings
 -- These default values have worked well for me on
