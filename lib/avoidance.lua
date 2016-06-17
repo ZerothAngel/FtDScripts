@@ -20,9 +20,9 @@ function Avoidance(I, Bearing)
    for i = 0,I:GetFriendlyCount()-1 do
       local Friend = I:GetFriendlyInfo(i)
       -- Only consider friendlies within our altitude range
-      local FriendAlt = Friend.ReferencePosition.y
-      if Friend.Valid and ((FriendAlt+Friend.NegativeSize.y) <= UpperEdge and
-                           (FriendAlt+Friend.PositiveSize.y) >= LowerEdge) then
+      if Friend.Valid and
+         (Friend.AxisAlignedBoundingBoxMinimum.y <= UpperEdge and
+          Friend.AxisAlignedBoundingBoxMaximum.y >= LowerEdge) then
          local Offset,_ = PlanarVector(CoM, Friend.CenterOfMass)
          local Distance = Offset.magnitude
          if Distance < MinDistance then
