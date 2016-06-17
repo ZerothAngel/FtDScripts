@@ -15,7 +15,7 @@ function Avoidance(I, Bearing)
    local LowerEdge = Altitude - Height * ClearanceFactor
 
    -- Look for nearby friendlies
-   local FCount,FAvoid,FMin = 0,Vector3.zero,math.huge
+   local FCount,FAvoid = 0,Vector3.zero
    local MinDistance = TargetInfo and FriendlyMinDistanceCombat or FriendlyMinDistanceIdle
    for i = 0,I:GetFriendlyCount()-1 do
       local Friend = I:GetFriendlyInfo(i)
@@ -28,14 +28,13 @@ function Avoidance(I, Bearing)
          if Distance < MinDistance then
             -- Don't stand so close to me
             FCount = FCount + 1
-            FAvoid = FAvoid - Offset / (Distance * Distance) -- i.e. Offset.normalized / Distance
-            FMin = math.min(FMin, Distance)
+            FAvoid = FAvoid - Offset * (MinDistance - Distance) / Distance -- i.e. (MinDistance - Distance) * Offset.normalized
          end
       end
    end
    if FCount > 0 then
-      -- Normalize according to closest friend and average out
-      FAvoid = FAvoid * FMin * FriendlyAvoidanceWeight / FCount
+      -- Normalize according to MinDistance and average out
+      FAvoid = FAvoid * FriendlyAvoidanceWeight / (MinDistance * FCount)
       -- NB Vector is world vector not local
    end
 
