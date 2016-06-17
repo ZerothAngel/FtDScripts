@@ -1,8 +1,14 @@
--- How much clearance to require above and below the
--- center of mass when avoiding terrain and friendlies.
--- Ship's height is multiplied by this. Should be >.5 with
--- .5 meaning check exactly the ship's height (not recommended)
-ClearanceFactor = 1
+-- AVOIDANCE CONFIGURATION
+
+-- How much clearance to require above and below when avoiding
+-- terrain and friendlies.
+-- Ship's height is multiplied by this and then centered around
+-- the ship's physical midpoint (not necessarily the center of mass).
+-- ClearanceFactor of 1 means to check exactly the ship's lower
+-- and upper bounds.
+-- Rotations (pitch, roll) are not accounted for, so it's best to
+-- have some padding.
+ClearanceFactor = 2
 
 -- Minimum distances for friendly avoidance
 FriendlyMinDistanceCombat = 250

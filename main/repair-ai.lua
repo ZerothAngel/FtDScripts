@@ -17,6 +17,8 @@ function FirstRun(I)
    FirstRun = nil
 
    Origin = CoM
+
+   AvoidanceFirstRun(I)
 end
 
 -- Because I didn't realize Mathf.Sign exists.

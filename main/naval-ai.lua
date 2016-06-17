@@ -19,6 +19,8 @@ function FirstRun(I)
    PerlinOffset = 1000.0 * math.random()
 
    if Debugging then Debug(I, __func__, "PerlinOffset %f", PerlinOffset) end
+
+   AvoidanceFirstRun(I)
 end
 
 -- Because I didn't realize Mathf.Sign exists.

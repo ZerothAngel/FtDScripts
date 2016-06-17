@@ -1,18 +1,32 @@
 --@ commons
 -- Avoidance module
+Dimensions = nil
+HalfDimensions = nil
+MidPoint = nil
+ForwardOffset = nil
+
+function AvoidanceFirstRun(I)
+   -- TODO Should this stuff only be determined once?
+   local MaxDim = I:GetConstructMaxDimensions()
+   local MinDim = I:GetConstructMinDimensions()
+   Dimensions = MaxDim - MinDim
+   HalfDimensions = Dimensions / 2
+   MidPoint = MinDim + HalfDimensions -- Relative to Position and no rotation (local)
+
+   -- Use longest (half) XZ dimension as ForwardOffset
+   ForwardOffset = math.max(HalfDimensions.x, HalfDimensions.z)
+   -- Convert to forward-facing vector
+   ForwardOffset = Vector3(0, 0, ForwardOffset)
+end
 
 -- Modifies bearing to avoid any friendlies & terrain
 function Avoidance(I, Bearing)
    local __func__ = "Avoidance"
 
-   -- Our own dimensions
-   local MaxDim = I:GetConstructMaxDimensions()
-   local ForwardOffset = Vector3(0, 0, MaxDim.z)
-
    -- Required clearance above and below
-   local Height = MaxDim.y - I:GetConstructMinDimensions().y
-   local UpperEdge = Altitude + Height * ClearanceFactor
-   local LowerEdge = Altitude - Height * ClearanceFactor
+   local PositionY = Position.y + MidPoint.y -- Not necessarily Altitude
+   local UpperEdge = PositionY + HalfDimensions.y * ClearanceFactor
+   local LowerEdge = PositionY - HalfDimensions.y * ClearanceFactor
 
    -- Look for nearby friendlies
    local FCount,FAvoid = 0,Vector3.zero
@@ -41,7 +55,7 @@ function Avoidance(I, Bearing)
    if Debugging then Debug(I, __func__, "FCount %d FAvoid %s", FCount, tostring(FAvoid)) end
 
    -- For now, we scan in front rather than take actual velocity into account
-   local Speed = I:GetVelocityMagnitude()
+   local Speed = I:GetForwardsVelocityMagnitude()
    local TCount,TAvoid,TMin = 0,Vector3.zero,math.huge
    for i,t in pairs(LookAheadTimes) do
       -- Distance to look
@@ -50,7 +64,7 @@ function Avoidance(I, Bearing)
       local TimeCount,TimeAvoid = 0,Vector3.zero
       for j,a in pairs(LookAheadAngles) do
          local pos = Quaternion.Euler(0, a, 0) * Forward
-         if I:GetTerrainAltitudeForLocalPosition(pos) > LowerEdge then
+         if I:GetTerrainAltitudeForLocalPosition(MidPoint + pos) >= LowerEdge then
             TimeCount = TimeCount + 1
             TimeAvoid = TimeAvoid - pos.normalized
          end
