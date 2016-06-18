@@ -10,9 +10,12 @@
 -- have some padding.
 ClearanceFactor = 2
 
--- Minimum distances for friendly avoidance
-FriendlyMinDistanceCombat = 250
-FriendlyMinDistanceIdle = 100
+-- Distance to check for friendlies. Friendlies beyond this
+-- distance are ignored.
+FriendlyCheckDistance = 500
+-- Will begin to turn away once it looks like a collision
+-- will happen within this many seconds.
+FriendlyAvoidanceTime = 20
 -- Friendly avoidance weight. Generally should be >1.
 -- Set to 0 to disable friendly avoidance.
 -- Greater number means it will begin to turn away sooner.

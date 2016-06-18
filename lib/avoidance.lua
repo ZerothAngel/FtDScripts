@@ -30,7 +30,7 @@ function Avoidance(I, Bearing)
 
    -- Look for nearby friendlies
    local FCount,FAvoid = 0,Vector3.zero
-   local MinDistance = TargetInfo and FriendlyMinDistanceCombat or FriendlyMinDistanceIdle
+   local Velocity = I:GetVelocityVector()
    for i = 0,I:GetFriendlyCount()-1 do
       local Friend = I:GetFriendlyInfo(i)
       -- Only consider friendlies within our altitude range
@@ -39,16 +39,22 @@ function Avoidance(I, Bearing)
           Friend.AxisAlignedBoundingBoxMaximum.y >= LowerEdge) then
          local Offset,_ = PlanarVector(CoM, Friend.CenterOfMass)
          local Distance = Offset.magnitude
-         if Distance < MinDistance then
-            -- Don't stand so close to me
-            FCount = FCount + 1
-            FAvoid = FAvoid - Offset * (MinDistance - Distance) / Distance -- i.e. (MinDistance - Distance) * Offset.normalized
+         if Distance < FriendlyCheckDistance then
+            -- Calculate relative speed along offset vector
+            local Direction = Offset / Distance -- aka Offset.normalized
+            local RelativeVelocity = Velocity - Friend.Velocity
+            local RelativeSpeed = Vector3.Dot(RelativeVelocity, Direction)
+            if RelativeSpeed > 0.0 and Distance / RelativeSpeed < FriendlyAvoidanceTime then
+               -- Collision imminent
+               FCount = FCount + 1
+               FAvoid = FAvoid - Direction
+            end
          end
       end
    end
    if FCount > 0 then
-      -- Normalize according to MinDistance and average out
-      FAvoid = FAvoid * FriendlyAvoidanceWeight / (MinDistance * FCount)
+      -- Average out
+      FAvoid = FAvoid * FriendlyAvoidanceWeight / FCount
       -- NB Vector is world vector not local
    end
 
