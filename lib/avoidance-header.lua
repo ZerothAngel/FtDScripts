@@ -21,7 +21,7 @@ FriendlyAvoidanceWeight = 1000
 -- Terrain avoidance settings
 -- How many seconds ahead (at current speed) to sample
 -- the terrain.
-LookAheadTimes = { 1, 5, 10 }
+LookAheadTimes = { .25, 5, 10 }
 -- Relative bearings for sampling terrain. Note that the number
 -- of look ahead times multiplied by the number of angles is
 -- how many terrain samples it will check PER UPDATE. So keep
