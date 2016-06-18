@@ -1,7 +1,11 @@
 --! naval-ai
 --@ avoidance commons pid
--- Global variables
+-- Secret configurables to turn it into a cheap 2D-only aviation AI
+AttackRuns = false
 Mode = WATER
+
+-- Global variables
+Attacking = true
 
 YawPID = PID.create(YawPIDValues[1], YawPIDValues[2], YawPIDValues[3], -1.0, 1.0)
 
@@ -86,11 +90,16 @@ function AdjustHeadingToTarget(I)
       TargetAngle = ClosingAngle
       Drive = ClosingDrive
       Evasion = ClosingEvasion
+      Attacking = true
    elseif Distance > MinDistance then
-      State = "attack"
-      TargetAngle = AttackAngle
-      Drive = AttackDrive
-      Evasion = AttackEvasion
+      if not AttackRuns or Attacking then
+         State = "attack"
+         TargetAngle = AttackAngle
+         Drive = AttackDrive
+         Evasion = AttackEvasion
+      end
+   elseif Distance <= MinDistance then
+      Attacking = false
    end
 
    Bearing = Bearing - sign(Bearing)*TargetAngle
