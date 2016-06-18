@@ -1,6 +1,8 @@
 --! naval-ai
 --@ avoidance commons pid
 -- Global variables
+Mode = WATER
+
 YawPID = PID.create(YawPIDValues[1], YawPIDValues[2], YawPIDValues[3], -1.0, 1.0)
 
 FirstRun = nil
@@ -42,9 +44,9 @@ function AdjustHeading(I, Bearing)
    local CV = YawPID:Control(Bearing) -- SetPoint of 0
    if Debugging then Debug(I, __func__, "Error = %f, CV = %f", Bearing, CV) end
    if CV > 0.0 then
-      I:RequestControl(WATER, YAWRIGHT, CV)
+      I:RequestControl(Mode, YAWRIGHT, CV)
    elseif CV < 0.0 then
-      I:RequestControl(WATER, YAWLEFT, -CV)
+      I:RequestControl(Mode, YAWLEFT, -CV)
    end
 end
 
@@ -104,7 +106,7 @@ end
 
 -- Sets throttle
 function SetDriveFraction(I, Drive)
-   I:RequestControl(WATER, MAINPROPULSION, Drive)
+   I:RequestControl(Mode, MAINPROPULSION, Drive)
 end
 
 -- Finds first valid target on first mainframe
