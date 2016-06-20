@@ -1,10 +1,8 @@
 --! hover
---@ commons pid
+--@ commons gettarget pid
 AltitudePID = PID.create(AltitudePIDValues[1], AltitudePIDValues[2], AltitudePIDValues[3], CanReverseBlades and -30 or 0, 30)
 
 Spinners = {}
-
-TargetInfo = nil
 
 function ClassifySpinners(I)
    local __func__ = "ClassifySpinners"
@@ -25,18 +23,6 @@ function ClassifySpinners(I)
          end
       end
    end
-end
-
--- Finds first valid target on first mainframe
-function GetTarget(I)
-   for mindex = 0,I:GetNumberOfMainframes()-1 do
-      for tindex = 0,I:GetNumberOfTargets(mindex)-1 do
-         TargetInfo = I:GetTargetPositionInfo(mindex, tindex)
-         if TargetInfo.Valid then return true end
-      end
-   end
-   TargetInfo = nil
-   return false
 end
 
 function Update(I)

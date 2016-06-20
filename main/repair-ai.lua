@@ -1,13 +1,11 @@
 --! repair-ai
---@ avoidance commons pid spairs
+--@ avoidance commons gettarget pid spairs
 Mode = WATER
 
 YawPID = PID.create(YawPIDValues[1], YawPIDValues[2], YawPIDValues[3], -1.0, 1.0)
 
 FirstRun = nil
 Origin = nil
-
-TargetInfo = nil
 
 ParentID = nil
 RepairTargetID = nil
@@ -157,18 +155,6 @@ function Imprint(I)
          end
       end
    end
-end
-
--- Finds first valid target on first mainframe
-function GetTarget(I)
-   for mindex = 0,I:GetNumberOfMainframes()-1 do
-      for tindex = 0,I:GetNumberOfTargets(mindex)-1 do
-         TargetInfo = I:GetTargetPositionInfo(mindex, tindex)
-         if TargetInfo.Valid then return true end
-      end
-   end
-   TargetInfo = nil
-   return false
 end
 
 function Update(I)

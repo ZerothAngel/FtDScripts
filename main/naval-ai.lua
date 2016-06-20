@@ -1,5 +1,5 @@
 --! naval-ai
---@ avoidance commons pid
+--@ avoidance commons gettarget pid
 -- Secret configurables to turn it into a cheap 2D-only aviation AI
 AttackRuns = false
 Mode = WATER
@@ -12,8 +12,6 @@ YawPID = PID.create(YawPIDValues[1], YawPIDValues[2], YawPIDValues[3], -1.0, 1.0
 FirstRun = nil
 Origin = nil
 PerlinOffset = 0
-
-TargetInfo = nil
 
 -- Called on first activation (not necessarily first Update)
 function FirstRun(I)
@@ -116,18 +114,6 @@ end
 -- Sets throttle
 function SetDriveFraction(I, Drive)
    I:RequestControl(Mode, MAINPROPULSION, Drive)
-end
-
--- Finds first valid target on first mainframe
-function GetTarget(I)
-   for mindex = 0,I:GetNumberOfMainframes()-1 do
-      for tindex = 0,I:GetNumberOfTargets(mindex)-1 do
-         TargetInfo = I:GetTargetPositionInfo(mindex, tindex)
-         if TargetInfo.Valid then return true end
-      end
-   end
-   TargetInfo = nil
-   return false
 end
 
 function Update(I)
