@@ -14,6 +14,12 @@ AltitudeLookAhead = { 5, 30 }
 DesiredAltitudeCombat = 100
 DesiredAltitudeIdle = 100
 
+-- First number is altitude variation
+-- Second is time scale, which should generally be <1.
+-- Smaller is slower.
+-- Set to nil to disable, e.g. Evasion = nil
+Evasion = { 5, .25 }
+
 -- Set to true if the script is allowed to reverse
 -- the blades to descend quicker
 CanReverseBlades = true

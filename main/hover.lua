@@ -3,7 +3,14 @@
 -- Hover module
 AltitudePID = PID.create(AltitudePIDValues[1], AltitudePIDValues[2], AltitudePIDValues[3], CanReverseBlades and -30 or 0, 30)
 
-Spinners = {}
+FirstRun = nil
+PerlinOffset = 0
+
+function FirstRun(I)
+   FirstRun = nil
+
+   PerlinOffset = 1000.0 * math.random()
+end
 
 -- Gather spinners that contribute to the local up or down
 -- directions.
@@ -12,7 +19,7 @@ Spinners = {}
 function ClassifySpinners(I)
    local __func__ = "ClassifySpinners"
 
-   Spinners = {}
+   local Spinners = {}
    for i = 0,I:GetSpinnerCount()-1 do
       -- TODO Regular spinner support?
       if I:IsSpinnerDedicatedHelispinner(i) then
@@ -29,12 +36,16 @@ function ClassifySpinners(I)
          end
       end
    end
+
+   return Spinners
 end
 
 function Update(I)
    local __func__ = "Update"
 
-   ClassifySpinners(I)
+   if FirstRun then FirstRun(I) end
+
+   local Spinners = ClassifySpinners(I)
 
    if I.AIMode ~= "off" then
       GetSelfInfo(I)
@@ -42,6 +53,11 @@ function Update(I)
       local DesiredAltitude
       if GetTarget(I) then
          DesiredAltitude = DesiredAltitudeCombat
+
+         -- Modify by Evasion, if set
+         if Evasion then
+            DesiredAltitude = DesiredAltitude + Evasion[1] * (2.0 * Mathf.PerlinNoise(Evasion[2] * I:GetTimeSinceSpawn(), PerlinOffset) - 1.0)
+         end
       else
          DesiredAltitude = DesiredAltitudeIdle
       end
