@@ -2,10 +2,12 @@
 --@ yawthrottle avoidance commons gettarget pid
 -- Secret configurables to turn it into a cheap 2D-only aviation AI
 AttackRuns = false
+ForceAttackTime = 15
 Mode = WATER
 
 -- Global variables
 Attacking = true
+LastAttackTime = 0
 
 FirstRun = nil
 Origin = nil
@@ -67,13 +69,18 @@ function AdjustHeadingToTarget(I)
       TargetAngle = ClosingAngle
       Drive = ClosingDrive
       Evasion = ClosingEvasion
+
       Attacking = true
    elseif Distance > MinDistance then
-      if not AttackRuns or Attacking then
+      local Now = I:GetTimeSinceSpawn()
+      if not AttackRuns or Attacking or (LastAttackTime + ForceAttackTime) <= Now then
          State = "attack"
          TargetAngle = AttackAngle
          Drive = AttackDrive
          Evasion = AttackEvasion
+
+         Attacking = true
+         LastAttackTime = Now
       end
    elseif Distance <= MinDistance then
       Attacking = false
