@@ -23,17 +23,6 @@ function FirstRun(I)
    AvoidanceFirstRun(I)
 end
 
--- Because I didn't realize Mathf.Sign exists.
-function sign(n)
-   if n < 0 then
-      return -1
-   elseif n > 0 then
-      return 1
-   else
-      return 0
-   end
-end
-
 -- Adjusts heading toward relative bearing
 function AdjustHeading(I, Bearing)
    local __func__ = "AdjustHeading"
