@@ -1,13 +1,11 @@
 --! naval-ai
---@ avoidance commons gettarget pid
+--@ yawthrottle avoidance commons gettarget pid
 -- Secret configurables to turn it into a cheap 2D-only aviation AI
 AttackRuns = false
 Mode = WATER
 
 -- Global variables
 Attacking = true
-
-YawPID = PID.create(YawPIDValues[1], YawPIDValues[2], YawPIDValues[3], -1.0, 1.0)
 
 FirstRun = nil
 Origin = nil
@@ -36,25 +34,6 @@ function sign(n)
    else
       return 0
    end
-end
-
--- Adjusts heading toward relative bearing
-function AdjustHeading(I, Bearing)
-   local __func__ = "AdjustHeading"
-
-   Bearing = Avoidance(I, Bearing)
-   local CV = YawPID:Control(Bearing) -- SetPoint of 0
-   if Debugging then Debug(I, __func__, "Error = %f, CV = %f", Bearing, CV) end
-   if CV > 0.0 then
-      I:RequestControl(Mode, YAWRIGHT, CV)
-   elseif CV < 0.0 then
-      I:RequestControl(Mode, YAWLEFT, -CV)
-   end
-end
-
--- Adjust heading toward a given world point
-function AdjustHeadingToPoint(I, Point)
-   AdjustHeading(I, -I:GetTargetPositionInfoForPosition(0, Point.x, 0, Point.z).Azimuth)
 end
 
 -- Modifies bearing by some amount for evasive maneuvers
@@ -109,11 +88,6 @@ function AdjustHeadingToTarget(I)
    AdjustHeading(I, Bearing)
 
    return Drive
-end
-
--- Sets throttle
-function SetDriveFraction(I, Drive)
-   I:RequestControl(Mode, MAINPROPULSION, Drive)
 end
 
 function Update(I)
