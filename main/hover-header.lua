@@ -2,13 +2,23 @@
 
 -- If false, your desired altitudes are relative to
 -- the ground (or sea level, if over water)
+-- If true, then no terrain checking will be done.
 AbsoluteAltitude = false
 
 -- How many seconds to look ahead, in terms of velocity
 -- You can have any number of points (within reason)
 -- If you have terrain avoidance, the furthest point
 -- should probably be farther than its look-ahead.
-AltitudeLookAhead = { 5, 30 }
+AltitudeLookAhead = { 1, 2, 3, 5, 8, 13, 21, 34 }
+-- By default, the horizontal center and both sides of the ship
+-- are extended forward and used to check the terrain.
+-- If you have a particularly wide ship, you may want to check
+-- more points. Use this to increase the number of subdivisions
+-- between the center and the sides. Set to 0 for no extra
+-- points, 1 for 1 extra between center and side (so 2
+-- additional total), etc. Don't go too crazy, because it will
+-- increase the number of terrain checks dramatically.
+TerrainCheckSubdivisions = 0
 
 -- Desired altitudes
 DesiredAltitudeCombat = 100
