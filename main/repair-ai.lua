@@ -1,5 +1,5 @@
 --! repair-ai
---@ yawthrottle avoidance commons gettarget pid spairs
+--@ yawthrottle avoidance commons gettarget spairs
 Mode = WATER
 
 FirstRun = nil

@@ -1,5 +1,5 @@
 --! naval-ai
---@ yawthrottle avoidance commons gettarget pid
+--@ yawthrottle avoidance commons gettarget
 -- Secret configurables to turn it into a cheap 2D-only aviation AI
 AttackRuns = false
 ForceAttackTime = 15
