@@ -28,11 +28,19 @@ FriendlyAvoidanceWeight = 10
 -- How many seconds ahead (at current speed) to sample
 -- the terrain.
 LookAheadTimes = { .25, 1, 2, 3, 5, 8, 13, 21 }
--- Bearings for sampling terrain. Note that the number
--- of look ahead times multiplied by the number of angles is
--- how many terrain samples it will check PER UPDATE. So keep
--- things reasonable.
-LookAheadAngles = { -75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75 }
+-- When there's an obstacle in front, this is how far (in degrees)
+-- left and right to check for an opening. Should probably be <45
+LookAheadAngle = 30
+-- By default, the horizontal center and both sides of the ship
+-- (after accounting for ClearanceFactor) are extended forward
+-- and used to check the terrain. If you have a particularly
+-- wide ship, you may want to check more points. Use this to
+-- increase the number of subdivisions between the center and
+-- the sides. Set to 0 for no extra points, 1 for 1 extra
+-- between center and side (so 2 additional total), etc.
+-- Don't go too crazy, because it will increase the number of
+-- terrain checks dramatically.
+TerrainAvoidanceSubdivisions = 0
 -- Terrain avoidance weight. Should be >1, set to 0 to disable.
 -- Greater number means it will begin to turn away sooner.
 TerrainAvoidanceWeight = 100

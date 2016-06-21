@@ -1,8 +1,11 @@
---@ commons gettarget
+--@ commons getvectorangle gettarget
 -- Avoidance module
 Dimensions = nil
 HalfDimensions = nil
 MidPoint = nil
+VerticalClearance = 0
+SideClearance = 0
+CheckPoints = {}
 
 function AvoidanceFirstRun(I)
    -- TODO Should this stuff only be determined once?
@@ -11,6 +14,46 @@ function AvoidanceFirstRun(I)
    Dimensions = MaxDim - MinDim
    HalfDimensions = Dimensions / 2
    MidPoint = MinDim + HalfDimensions -- Relative to Position and no rotation (local)
+
+   VerticalClearance = HalfDimensions.y * ClearanceFactor
+   SideClearance = HalfDimensions.x * ClearanceFactor
+
+   -- Construct forward row of points (from which to base terrain avoidance checks)
+   -- Note origin is position
+   CheckPoints[1] = Vector3(0, 0, MaxDim.z)
+   CheckPoints[2] = Vector3(-SideClearance, 0, MaxDim.z)
+   CheckPoints[3] = Vector3(SideClearance, 0, MaxDim.z)
+   if TerrainAvoidanceSubdivisions > 0 then
+      local Delta = SideClearance / (TerrainAvoidanceSubdivisions+1)
+      for i=1,TerrainAvoidanceSubdivisions do
+         local x = i * Delta
+         CheckPoints[#CheckPoints+1] = Vector3(-x, 0, MaxDim.z)
+         CheckPoints[#CheckPoints+1] = Vector3(x, 0, MaxDim.z)
+      end
+   end
+end
+
+function GetTerrainHits(I, Angle, LowerEdge, Speed)
+   local Hits = 0
+   local Rotation = Quaternion.Euler(0, Angle, 0) -- NB Angle is world
+   for i,Start in pairs(CheckPoints) do
+      local Blocked = false
+      for j,t in pairs(LookAheadTimes) do
+         if Blocked then
+            -- Just assume all points beyond the previous are blocked as well
+            -- Also means the closer the obstacle, the greater the # of hits
+            Hits = Hits + 1
+         else
+            local Point = Start + Vector3.forward * Speed * t
+            -- TODO Someday take Y-axis velocity into account as well
+            if I:GetTerrainAltitudeForPosition(Position + Rotation * Point) >= LowerEdge then
+               Hits = Hits + 1
+               Blocked = true
+            end
+         end
+      end
+   end
+   return Hits
 end
 
 -- Modifies bearing to avoid any friendlies & terrain
@@ -19,8 +62,8 @@ function Avoidance(I, Bearing)
 
    -- Required clearance above and below
    local PositionY = Position.y + MidPoint.y -- Not necessarily Altitude
-   local UpperEdge = PositionY + HalfDimensions.y * ClearanceFactor
-   local LowerEdge = PositionY - HalfDimensions.y * ClearanceFactor
+   local UpperEdge = PositionY + VerticalClearance
+   local LowerEdge = PositionY - VerticalClearance
 
    local Velocity = I:GetVelocityVector()
    local Speed = Velocity.magnitude
@@ -74,21 +117,23 @@ function Avoidance(I, Bearing)
 
    local TCount,TAvoid = 0,Vector3.zero
    if TerrainAvoidanceWeight > 0 then
-      for i,a in pairs(LookAheadAngles) do
-         local Direction = Quaternion.Euler(0, Yaw+a, 0) * Vector3.forward
-         local Blocked = false
-         for j,t in pairs(LookAheadTimes) do
-            -- Distance to look
-            local pos = Direction * Speed * t
-            if Blocked or I:GetTerrainAltitudeForPosition(CoM + pos) >= LowerEdge then
-               TCount = TCount + 1
-               TAvoid = TAvoid - pos.normalized
-               Blocked = true
-            end
+      local VelocityAngle = GetVectorAngle(Velocity)
+      if Debugging then Debug(I, __func__, "VelocityAngle %f", VelocityAngle) end
+      -- Check directly forward (w.r.t. velocity)
+      local ForwardHits = GetTerrainHits(I, VelocityAngle, LowerEdge, Speed)
+      if ForwardHits > 0 then
+         -- Look for an exit
+         local LeftHits = GetTerrainHits(I, VelocityAngle-LookAheadAngle, LowerEdge, Speed)
+         local RightHits = GetTerrainHits(I, VelocityAngle+LookAheadAngle, LowerEdge, Speed)
+         -- And steer left or right accordingly
+         if LeftHits < RightHits then
+            TAvoid = Vector3.left
+         else
+            -- NB Right is also favored in the case where they look the same
+            TAvoid = Vector3.right
          end
-      end
-      if TCount > 0 then
-         TAvoid = TAvoid * TerrainAvoidanceWeight
+         TCount = ForwardHits + LeftHits + RightHits
+         TAvoid = Quaternion.Euler(0, Yaw, 0) * TAvoid * TerrainAvoidanceWeight
       end
    end
 
