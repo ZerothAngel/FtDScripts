@@ -163,6 +163,7 @@ function Update(I)
             end
          end
       end
+      ClassifyPropulsionSpinners(I)
       SetThrottle(I, Drive)
    end
 end
