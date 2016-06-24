@@ -23,6 +23,6 @@ function AdjustHeadingToPoint(I, Point)
 end
 
 -- Sets throttle
-function SetDriveFraction(I, Drive)
+function SetThrottle(I, Drive)
    I:RequestControl(Mode, MAINPROPULSION, Drive)
 end

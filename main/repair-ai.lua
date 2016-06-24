@@ -163,6 +163,6 @@ function Update(I)
             end
          end
       end
-      SetDriveFraction(I, Drive)
+      SetThrottle(I, Drive)
    end
 end
