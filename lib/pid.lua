@@ -1,12 +1,17 @@
 -- PID implementation
 PID = {}
 
-function PID.create(Kp, Ki, Kd, Min, Max)
+-- Note: Set Ti to nil to eliminate integral term
+function PID.create(Kp, Ti, Td, Min, Max)
    local self = {}
    local dt = 1.0 / 40.0
    self.Kp = Kp
-   self.Kidt = Ki * dt
-   self.Kddt = Kd / dt
+   if Ti then
+      self.Kidt = Kp * dt / Ti
+   else
+      self.Kidt = 0
+   end
+   self.Kddt = Kp * Td / dt
    self.Integral = 0.0
    self.LastError = 0.0
    self.Min = Min
