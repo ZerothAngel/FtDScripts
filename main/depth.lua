@@ -33,6 +33,7 @@ function Update(I)
          local Height = I:GetTerrainAltitudeForPosition(CoM)
          -- Now check look-ahead values
          local Velocity = I:GetVelocityVector()
+         Velocity.y = 0
          local Speed = Velocity.magnitude
          local VelocityAngle = GetVectorAngle(Velocity)
          Height = math.max(Height, GetTerrainHeight(I, VelocityAngle, Speed))

@@ -66,6 +66,7 @@ function Avoidance(I, Bearing)
    local LowerEdge = PositionY - VerticalClearance
 
    local Velocity = I:GetVelocityVector()
+   Velocity.y = 0
    local Speed = Velocity.magnitude
 
    -- Look for nearby friendlies
