@@ -1,5 +1,5 @@
 --! hover
---@ commons getvectorangle gettarget pid
+--@ commons getvectorangle gettarget pid spinnercontrol
 -- Hover module
 AltitudePID = PID.create(AltitudePIDValues[1], AltitudePIDValues[2], AltitudePIDValues[3], CanReverseBlades and -30 or 0, 30)
 
@@ -7,6 +7,8 @@ FirstRun = nil
 PerlinOffset = 0
 
 CheckPoints = {}
+
+LiftSpinners = SpinnerControl.create(Vector3.up, false, true)
 
 function FirstRun(I)
    FirstRun = nil
@@ -44,40 +46,12 @@ function GetTerrainHeight(I, Angle, Speed)
    return Height
 end
 
--- Gather spinners that contribute to the local up or down
--- directions.
--- TODO Proper handling of dedi-spinner's up fraction.
--- But it's currently a write-only value...
-function ClassifySpinners(I)
-   local __func__ = "ClassifySpinners"
-
-   local Spinners = {}
-   for i = 0,I:GetSpinnerCount()-1 do
-      -- TODO Regular spinner support?
-      if I:IsSpinnerDedicatedHelispinner(i) then
-         local Info = I:GetSpinnerInfo(i)
-         local UpFraction = Vector3.Dot(Info.LocalRotation * Vector3.up,
-                                        Vector3.up)
-         if math.abs(UpFraction) > 0.001 then -- Sometimes there's -0
-            if Debugging then Debug(I, __func__, "Index %d UpFraction %f", i, UpFraction) end
-            local Spinner = {
-               Index = i,
-               UpFraction = UpFraction
-            }
-            Spinners[#Spinners+1] = Spinner
-         end
-      end
-   end
-
-   return Spinners
-end
-
 function Update(I)
    local __func__ = "Update"
 
    if FirstRun then FirstRun(I) end
 
-   local Spinners = ClassifySpinners(I)
+   LiftSpinners:Classify(I)
 
    if I.AIMode ~= "off" then
       GetSelfInfo(I)
@@ -111,15 +85,9 @@ function Update(I)
 
       if Debugging then Debug(I, __func__, "Altitude %f CV %f", Altitude, CV) end
 
-      for i,Spinner in pairs(Spinners) do
-         -- FIXME Currently not sure what to do with UpFraction that
-         -- isn't 1 or -1, but dividing seems like the way to go?
-         I:SetSpinnerContinuousSpeed(Spinner.Index, CV / Spinner.UpFraction)
-      end
+      LiftSpinners:SetSpeed(I, CV)
    else
       -- If AI is off, turn all lift spinners off
-      for i,Spinner in pairs(Spinners) do
-         I:SetSpinnerContinuousSpeed(Spinner.Index, 0)
-      end
+      LiftSpinners:SetSpeed(I, 0)
    end
 end
