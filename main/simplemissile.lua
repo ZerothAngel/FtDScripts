@@ -54,8 +54,8 @@ end
 
 function SimpleMissile_Update(I)
    if GetTarget(I) then
-      for i = 0,I:GetLuaTransceiverCount() do
-         for j = 0,I:GetLuaControlledMissileCount(i) do
+      for i = 0,I:GetLuaTransceiverCount()-1 do
+         for j = 0,I:GetLuaControlledMissileCount(i)-1 do
             local Missile = I:GetLuaControlledMissileInfo(i, j)
             if Missile.Valid then
                local AimPoint = Guide(Missile.Position, Missile.Velocity,
