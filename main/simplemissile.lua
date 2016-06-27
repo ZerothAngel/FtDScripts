@@ -3,6 +3,7 @@
 -- SimpleMissile module
 TargetInfo = nil
 
+-- Custom GetTarget since we only care about TargetInfo rather than TargetPositionInfo
 function GetTarget(I)
    for mindex = 0,I:GetNumberOfMainframes()-1 do
       for tindex = 0,I:GetNumberOfTargets(mindex)-1 do
@@ -14,6 +15,8 @@ function GetTarget(I)
    return false
 end
 
+-- Standard ballistic (i.e. assumes constant projectile velocity) formula.
+-- Given that we definitively know the target's velocity, it works great.
 function Guide(Position, Velocity, AimPoint, TargetVelocity)
    local Offset = AimPoint - Position
    local Distance = Offset.magnitude
@@ -28,6 +31,8 @@ function Guide(Position, Velocity, AimPoint, TargetVelocity)
    return AimPoint + TargetVelocity * InterceptTime
 end
 
+-- Samples terrain in direction of Velocity up to (and including) Distance meters away.
+-- Return highest terrain seen (or 0 if all underwater)
 function GetTerrainHeight(I, Position, Velocity, Distance)
    if LookAheadResolution <= 0 then return 0 end
 
@@ -44,22 +49,28 @@ function GetTerrainHeight(I, Position, Velocity, Distance)
    return math.max(Height, 0)
 end
 
+-- Modifies AimPoint for pop-up behavior
 function PopUp(I, Position, Velocity, AimPoint)
    local NewTarget = Vector3(AimPoint.x, Position.y, AimPoint.z)
    local GroundOffset = NewTarget - Position
    local GroundDistance = GroundOffset.magnitude
 
    if GroundDistance < PopUpTerminalDistance then
+      -- Always return real aim point when within terminal distance
       return AimPoint
    elseif GroundDistance < PopUpDistance then
+      -- Begin pop-up
       local GroundDirection = GroundOffset / GroundDistance
       local ToTerminal = GroundDistance - PopUpTerminalDistance
+      -- New aim point is toward target at edge of terminal distance
       local NewAimPoint = Position + GroundDirection * ToTerminal
       local Height = GetTerrainHeight(I, Position, Velocity, ToTerminal)
       NewAimPoint.y = Height + PopUpAltitude
       return NewAimPoint
    elseif Position.y > 0 then
+      -- Closing
       local GroundDirection = GroundOffset / GroundDistance
+      -- Simply hug the surface by calculating the aim point some meters (PopUpSkimDistance) out
       local NewAimPoint = Position + GroundDirection * PopUpSkimDistance
       local Height = GetTerrainHeight(I, Position, Velocity, PopUpSkimDistance)
       NewAimPoint.y = Height + PopUpSkimAltitude
@@ -70,6 +81,7 @@ function PopUp(I, Position, Velocity, AimPoint)
    end
 end
 
+-- Main update loop
 function SimpleMissile_Update(I)
    if GetTarget(I) then
       local TargetPosition = TargetInfo.Position
@@ -100,8 +112,8 @@ function SimpleMissile_Update(I)
    end
 end
 
-Main = Periodic.create(10, SimpleMissile_Update)
+SimpleMissile = Periodic.create(UpdateRate, SimpleMissile_Update)
 
 function Update(I)
-   Main:Tick(I)
+   SimpleMissile:Tick(I)
 end
