@@ -1,7 +1,5 @@
 --! avoidancetest
 --@ yawthrottle avoidance commons
-Mode = WATER
-
 FirstRun = nil
 
 function FirstRun(I)

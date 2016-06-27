@@ -1,7 +1,6 @@
 --! repair-ai
 --@ yawthrottle avoidance commons gettarget spairs
-Mode = WATER
-
+-- Repair AI module
 FirstRun = nil
 Origin = nil
 

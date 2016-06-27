@@ -1,2 +1,0 @@
--- GetTarget
-TargetInfo = nil

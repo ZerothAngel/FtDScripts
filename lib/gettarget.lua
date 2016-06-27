@@ -1,3 +1,6 @@
+-- GetTarget module
+TargetInfo = nil
+
 -- Finds first valid target on first mainframe
 function GetTarget(I)
    for mindex = 0,I:GetNumberOfMainframes()-1 do

@@ -1,3 +1,11 @@
+-- Commons module
+Position = nil
+CoM = nil
+Altitude = 0
+Yaw = 0
+Pitch = 0
+Roll = 0
+
 -- Simple logging wrapper with formatting support
 -- Callers should still check Debugging to avoid evaluating arguments
 function Debug(I, Subsystem, Message, ...)
