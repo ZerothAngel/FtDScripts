@@ -28,7 +28,23 @@ function Guide(Position, Velocity, AimPoint, TargetVelocity)
    return AimPoint + TargetVelocity * InterceptTime
 end
 
-function PopUp(Position, AimPoint)
+function GetTerrainHeight(I, Position, Velocity, Distance)
+   if LookAheadResolution <= 0 then return 0 end
+
+   local Height = -500
+   local PlanarVelocity = Vector3(Velocity.x, 0, Velocity.z)
+   local Direction = PlanarVelocity.normalized
+
+   for d = 0,Distance-1,LookAheadResolution do
+      Height = math.max(Height, I:GetTerrainAltitudeForPosition(Position + Direction * d))
+   end
+
+   Height = math.max(Height, I:GetTerrainAltitudeForPosition(Position + Direction * Distance))
+
+   return math.max(Height, 0)
+end
+
+function PopUp(I, Position, Velocity, AimPoint)
    local NewTarget = Vector3(AimPoint.x, Position.y, AimPoint.z)
    local GroundOffset = NewTarget - Position
    local GroundDistance = GroundOffset.magnitude
@@ -39,12 +55,14 @@ function PopUp(Position, AimPoint)
       local GroundDirection = GroundOffset / GroundDistance
       local ToTerminal = GroundDistance - PopUpTerminalDistance
       local NewAimPoint = Position + GroundDirection * ToTerminal
-      NewAimPoint.y = PopUpAltitude
+      local Height = GetTerrainHeight(I, Position, Velocity, ToTerminal)
+      NewAimPoint.y = Height + PopUpAltitude
       return NewAimPoint
    elseif Position.y > 0 then
       local GroundDirection = GroundOffset / GroundDistance
       local NewAimPoint = Position + GroundDirection * PopUpSkimDistance
-      NewAimPoint.y = PopUpSkimAltitude
+      local Height = GetTerrainHeight(I, Position, Velocity, PopUpSkimDistance)
+      NewAimPoint.y = Height + PopUpSkimAltitude
       return NewAimPoint
    else
       -- Below the surface, head straight up
@@ -54,16 +72,25 @@ end
 
 function SimpleMissile_Update(I)
    if GetTarget(I) then
+      local TargetPosition = TargetInfo.Position
+      local TargetAimPoint = TargetInfo.AimPointPosition
+      local TargetVelocity = TargetInfo.Velocity
+      local TargetGround = I:GetTerrainAltitudeForPosition(TargetPosition)
+      TargetGround = math.max(TargetGround, 0)
+      DoPopUp = (TargetPosition.y - TargetGround) <= AirTargetAltitude
+
       for i = 0,I:GetLuaTransceiverCount()-1 do
          for j = 0,I:GetLuaControlledMissileCount(i)-1 do
             local Missile = I:GetLuaControlledMissileInfo(i, j)
             if Missile.Valid then
-               local AimPoint = Guide(Missile.Position, Missile.Velocity,
-                                      TargetInfo.AimPointPosition,
-                                      TargetInfo.Velocity)
+               local MissilePosition = Missile.Position
+               local MissileVelocity = Missile.Velocity
+               local AimPoint = Guide(MissilePosition, MissileVelocity,
+                                      TargetAimPoint, TargetVelocity)
 
-               if TargetInfo.Position.y <= AirTargetAltitude then
-                  AimPoint = PopUp(Missile.Position, AimPoint)
+               if DoPopUp then
+                  AimPoint = PopUp(I, MissilePosition, MissileVelocity,
+                                   AimPoint)
                end
 
                I:SetLuaControlledMissileAimPoint(i, j, AimPoint.x, AimPoint.y, AimPoint.z)
