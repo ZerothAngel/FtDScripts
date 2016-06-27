@@ -50,7 +50,7 @@ function GetTerrainHeight(I, Position, Velocity, Distance)
 end
 
 -- Modifies AimPoint for pop-up behavior
-function PopUp(I, Position, Velocity, AimPoint)
+function PopUp(I, Position, Velocity, AimPoint, TargetGround)
    local NewTarget = Vector3(AimPoint.x, Position.y, AimPoint.z)
    local GroundOffset = NewTarget - Position
    local GroundDistance = GroundOffset.magnitude
@@ -65,7 +65,7 @@ function PopUp(I, Position, Velocity, AimPoint)
       -- New aim point is toward target at edge of terminal distance
       local NewAimPoint = Position + GroundDirection * ToTerminal
       local Height = GetTerrainHeight(I, Position, Velocity, ToTerminal)
-      NewAimPoint.y = Height + PopUpAltitude
+      NewAimPoint.y = math.max(TargetGround + PopUpAltitude, Height + PopUpSkimAltitude)
       return NewAimPoint
    elseif Position.y > 0 then
       -- Closing
@@ -102,7 +102,7 @@ function SimpleMissile_Update(I)
 
                if DoPopUp then
                   AimPoint = PopUp(I, MissilePosition, MissileVelocity,
-                                   AimPoint)
+                                   AimPoint, TargetGround)
                end
 
                I:SetLuaControlledMissileAimPoint(i, j, AimPoint.x, AimPoint.y, AimPoint.z)
