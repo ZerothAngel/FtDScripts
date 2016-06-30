@@ -67,7 +67,7 @@ function PopUp(I, Position, Velocity, AimPoint, TargetGround)
       local Height = GetTerrainHeight(I, Position, Velocity, ToTerminal)
       NewAimPoint.y = math.max(TargetGround + PopUpAltitude, Height + PopUpSkimAltitude)
       return NewAimPoint
-   elseif Position.y > 0 then
+   elseif Position.y > MinimumAltitude then
       -- Closing
       local GroundDirection = GroundOffset / GroundDistance
       -- Simply hug the surface by calculating the aim point some meters (PopUpSkimDistance) out
@@ -103,6 +103,8 @@ function SimpleMissile_Update(I)
                if DoPopUp then
                   AimPoint = PopUp(I, MissilePosition, MissileVelocity,
                                    AimPoint, TargetGround)
+               elseif MissilePosition.y < MinimumAltitude then
+                  AimPoint = Vector3(MissilePosition.x, MinimumAltitude, MissilePosition.z)
                end
 
                I:SetLuaControlledMissileAimPoint(i, j, AimPoint.x, AimPoint.y, AimPoint.z)

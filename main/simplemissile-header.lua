@@ -6,6 +6,16 @@
 -- (see below). Set to -500 or lower to disable pop up behavior.
 AirTargetAltitude = 10
 
+-- Minimum altitude for the missile. If below this altitude,
+-- the missile will try to climb straight up.
+-- Should be lower than both pop up altitudes below (if using
+-- pop up behavior).
+-- Set to -500 or lower if this missile is actually a torpedo
+-- that's meant to stay underwater.
+-- If it's actually a torpedo, you may also want to disable
+-- pop up behavior above. (Pop up torpedo? Hmmm...)
+MinimumAltitude = 0
+
 -- POP-UP SETTINGS
 
 -- Altitude to skim the surface
