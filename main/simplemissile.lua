@@ -50,7 +50,7 @@ function GetTerrainHeight(I, Position, Velocity, Distance)
 end
 
 -- Modifies AimPoint for pop-up behavior
-function PopUp(I, Position, Velocity, AimPoint, TargetGround)
+function PopUp(I, Position, Velocity, AimPoint, TargetGround, Time, Offset)
    local NewTarget = Vector3(AimPoint.x, Position.y, AimPoint.z)
    local GroundOffset = NewTarget - Position
    local GroundDistance = GroundOffset.magnitude
@@ -74,6 +74,10 @@ function PopUp(I, Position, Velocity, AimPoint, TargetGround)
       local NewAimPoint = Position + GroundDirection * PopUpSkimDistance
       local Height = GetTerrainHeight(I, Position, Velocity, PopUpSkimDistance)
       NewAimPoint.y = Height + PopUpSkimAltitude
+      if Evasion then
+         local Perp = Vector3.Cross(GroundDirection, Vector3.up)
+         NewAimPoint = NewAimPoint + Perp * Evasion[1] * (2 * Mathf.PerlinNoise(Evasion[2] * Time, Offset) - 1)
+      end
       return NewAimPoint
    else
       -- Below the surface, head straight up
@@ -83,6 +87,8 @@ end
 
 -- Main update loop
 function SimpleMissile_Update(I)
+   local Time = I:GetTimeSinceSpawn()
+
    if GetTarget(I) then
       local TargetPosition = TargetInfo.Position
       local TargetAimPoint = TargetInfo.AimPointPosition
@@ -101,8 +107,9 @@ function SimpleMissile_Update(I)
                                       TargetAimPoint, TargetVelocity)
 
                if DoPopUp then
+                  local Offset = i * 37 + j
                   AimPoint = PopUp(I, MissilePosition, MissileVelocity,
-                                   AimPoint, TargetGround)
+                                   AimPoint, TargetGround, Time, Offset)
                elseif MissilePosition.y < MinimumAltitude then
                   AimPoint = Vector3(MissilePosition.x, MinimumAltitude, MissilePosition.z)
                end

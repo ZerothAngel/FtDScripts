@@ -25,6 +25,11 @@ PopUpSkimAltitude = 3
 -- altitude quicker).
 -- This also affects terrain hugging, see below.
 PopUpSkimDistance = 50
+-- Evasion settings while closing
+-- First number is magnitude of evasion in meters (to each side)
+-- Second number is time scale, smaller is slower. <1 recommended.
+-- Set whole thing to nil to disable, e.g. Evasion = nil
+Evasion = { 20, .25 }
 -- Ground distance from target to pop-up
 PopUpDistance = 250
 -- Altitude to pop-up to
