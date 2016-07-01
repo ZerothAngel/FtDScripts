@@ -1,5 +1,5 @@
 --! naval-ai
---@ yawthrottle avoidance commons gettarget
+--@ yawthrottle avoidance commons gettargetpositioninfo
 -- Naval AI module
 Attacking = true
 LastAttackTime = 0
@@ -37,7 +37,7 @@ end
 function Evade(I, Bearing, Evasion)
    local __func__ = "Evade"
 
-   if AirRaidEvasion and TargetInfo.Position.y >= AirRaidAboveAltitude then
+   if AirRaidEvasion and TargetPositionInfo.Position.y >= AirRaidAboveAltitude then
       Evasion = AirRaidEvasion
    end
 
@@ -54,8 +54,8 @@ end
 function AdjustHeadingToTarget(I)
    local __func__ = "AdjustHeadingToTarget"
 
-   local Distance = TargetInfo.GroundDistance
-   local Bearing = -TargetInfo.Azimuth
+   local Distance = TargetPositionInfo.GroundDistance
+   local Bearing = -TargetPositionInfo.Azimuth
    if Debugging then Debug(I, __func__, "Distance %f Bearing %f", Distance, Bearing) end
 
    local State,TargetAngle,Drive,Evasion = "escape",EscapeAngle,EscapeDrive,EscapeEvasion
@@ -103,7 +103,7 @@ function Update(I)
       if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end
 
       local Drive = 0
-      if GetTarget(I) then
+      if GetTargetPositionInfo(I) then
          Drive = AdjustHeadingToTarget(I)
       elseif ReturnToOrigin then
          local Target,_ = PlanarVector(CoM, Origin)

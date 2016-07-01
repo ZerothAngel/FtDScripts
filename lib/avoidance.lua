@@ -1,4 +1,4 @@
---@ commons getvectorangle gettarget
+--@ commons getvectorangle gettargetpositioninfo
 -- Avoidance module
 Dimensions = nil
 HalfDimensions = nil
@@ -73,7 +73,7 @@ function Avoidance(I, Bearing)
    local FCount,FAvoid = 0,Vector3.zero
    if FriendlyAvoidanceWeight > 0 then
       local AvoidanceTime,MinDistance = 0,0
-      if TargetInfo then
+      if TargetPositionInfo then
          AvoidanceTime = FriendlyAvoidanceCombat[1]
          MinDistance = FriendlyAvoidanceCombat[2]
       else

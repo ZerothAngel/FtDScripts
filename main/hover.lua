@@ -1,5 +1,5 @@
 --! hover
---@ terraincheck commons getvectorangle gettarget pid spinnercontrol
+--@ terraincheck commons getvectorangle gettargetpositioninfo pid spinnercontrol
 -- Hover module
 AltitudePID = PID.create(AltitudePIDValues[1], AltitudePIDValues[2], AltitudePIDValues[3], CanReverseBlades and -30 or 0, 30)
 
@@ -27,7 +27,7 @@ function Update(I)
       GetSelfInfo(I)
 
       local DesiredAltitude
-      if GetTarget(I) then
+      if GetTargetPositionInfo(I) then
          DesiredAltitude = DesiredAltitudeCombat
 
          -- Modify by Evasion, if set

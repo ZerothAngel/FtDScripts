@@ -1,20 +1,6 @@
 --! popupmissile
---@ quadraticintercept periodic
+--@ quadraticintercept gettargetinfo periodic
 -- Pop up missile module
-TargetInfo = nil
-
--- Custom GetTarget since we only care about TargetInfo rather than TargetPositionInfo
-function GetTarget(I)
-   for mindex = 0,I:GetNumberOfMainframes()-1 do
-      for tindex = 0,I:GetNumberOfTargets(mindex)-1 do
-         TargetInfo = I:GetTargetInfo(mindex, tindex)
-         if TargetInfo.Valid then return true end
-      end
-   end
-   TargetInfo = nil
-   return false
-end
-
 -- Samples terrain in direction of Velocity up to (and including) Distance meters away.
 -- Return highest terrain seen (or 0 if all underwater)
 function GetTerrainHeight(I, Position, Velocity, Distance)
@@ -73,7 +59,7 @@ end
 function PopUpMissile_Update(I)
    local Time = I:GetTimeSinceSpawn()
 
-   if GetTarget(I) then
+   if GetTargetInfo(I) then
       local TargetPosition = TargetInfo.Position
       local TargetAimPoint = TargetInfo.AimPointPosition
       local TargetVelocity = TargetInfo.Velocity

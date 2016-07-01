@@ -1,5 +1,5 @@
 --! depth
---@ terraincheck commons getvectorangle gettarget pid
+--@ terraincheck commons getvectorangle gettargetpositioninfo pid
 -- Hydrofoil sea depth module
 HydrofoilPID = PID.create(HydrofoilPIDValues[1], HydrofoilPIDValues[2], HydrofoilPIDValues[3], -45, 45)
 
@@ -20,7 +20,7 @@ function Update(I)
       GetSelfInfo(I)
 
       local DesiredDepth,Absolute
-      if GetTarget(I) then
+      if GetTargetPositionInfo(I) then
          DesiredDepth,Absolute = DesiredDepthCombat[1],DesiredDepthCombat[2]
       else
          DesiredDepth,Absolute = DesiredDepthIdle[1],DesiredDepthIdle[2]

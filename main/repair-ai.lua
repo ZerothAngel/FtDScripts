@@ -1,5 +1,5 @@
 --! repair-ai
---@ yawthrottle avoidance commons gettarget spairs
+--@ yawthrottle avoidance commons gettargetpositioninfo spairs
 -- Repair AI module
 FirstRun = nil
 Origin = nil
@@ -141,7 +141,7 @@ function Update(I)
       if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end
 
       local Drive = 0
-      if GetTarget(I) then
+      if GetTargetPositionInfo(I) then
          if not ParentID then
             Imprint(I)
          end
