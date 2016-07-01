@@ -15,20 +15,68 @@ function GetTarget(I)
    return false
 end
 
--- Standard ballistic (i.e. assumes constant projectile velocity) formula.
--- Given that we definitively know the target's velocity, it works great.
-function Guide(Position, Velocity, AimPoint, TargetVelocity)
-   local Offset = AimPoint - Position
-   local Distance = Offset.magnitude
-   local Direction = Offset / Distance -- aka Offset.normalized
-   local RelativeVelocity = Velocity - TargetVelocity
-   local RelativeSpeed = Vector3.Dot(RelativeVelocity, Direction)
+-- Returns solution(s) to a quadratic equation in table form.
+-- Table will be empty if solutions are imaginary or invalid.
+function QuadraticSolver(a, b, c)
+   if a == 0 then
+      -- Actually linear
+      if b ~= 0 then
+         return { -c / b }
+      else
+         return {} -- Division by zero...
+      end
+   else
+      -- Discriminant
+      local disc = b * b - 4 * a * c
+      local twoA = 2 * a
+      if disc < 0 then
+         return {} -- Imaginary
+      elseif disc == 0 then
+         -- Single solution
+         return { -b / twoA }
+      else
+         -- Two solutions
+         local root = Mathf.Sqrt(disc)
+         local t1 = (-b + root) / twoA
+         local t2 = (-b - root) / twoA
+         return { t1, t2 }
+      end
+   end
+end
+
+-- Quadratic intercept formula
+function QuadraticIntercept(Position, Velocity, Target, TargetVelocity)
+   local Offset = Target - Position
+   -- Apparently you can apply binomial expansion to vectors
+   -- ...as long as it's 2nd degree only
+   local a = Vector3.Dot(TargetVelocity, TargetVelocity) - Vector3.Dot(Velocity, Velocity)  -- aka difference of squares of velocity magnitudes
+   local b = 2 * Vector3.Dot(Offset, TargetVelocity)
+   local c = Vector3.Dot(Offset, Offset) -- Offset.magnitude squared
+   local Solutions = QuadraticSolver(a, b, c)
    local InterceptTime = 1
-   if RelativeSpeed > 0.0 then
-      InterceptTime = Distance / RelativeSpeed
+   -- Pick smallest positive intercept time
+   if #Solutions == 1 then
+      local t = Solutions[1]
+      if t > 0 then InterceptTime = t end
+   elseif #Solutions == 2 then
+      local t1 = Solutions[1]
+      local t2 = Solutions[2]
+      if t1 < t2 then
+         if t1 > 0 then
+            InterceptTime = t1
+         elseif t2 > 0 then
+            InterceptTime = t2
+         end
+      else
+         if t2 > 0 then
+            InterceptTime = t2
+         elseif t1 > 0 then
+            InterceptTime = t1
+         end
+      end
    end
 
-   return AimPoint + TargetVelocity * InterceptTime
+   return Target + TargetVelocity * InterceptTime
 end
 
 -- Samples terrain in direction of Velocity up to (and including) Distance meters away.
@@ -103,8 +151,10 @@ function SimpleMissile_Update(I)
             if Missile.Valid then
                local MissilePosition = Missile.Position
                local MissileVelocity = Missile.Velocity
-               local AimPoint = Guide(MissilePosition, MissileVelocity,
-                                      TargetAimPoint, TargetVelocity)
+               local AimPoint = QuadraticIntercept(MissilePosition,
+                                                   MissileVelocity,
+                                                   TargetAimPoint,
+                                                   TargetVelocity)
 
                if DoPopUp then
                   local Offset = i * 37 + j
