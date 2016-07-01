@@ -1,6 +1,6 @@
---! simplemissile
+--! popupmissile
 --@ quadraticintercept periodic
--- SimpleMissile module
+-- Pop up missile module
 TargetInfo = nil
 
 -- Custom GetTarget since we only care about TargetInfo rather than TargetPositionInfo
@@ -70,7 +70,7 @@ function PopUp(I, Position, Velocity, AimPoint, TargetGround, Time, Offset)
 end
 
 -- Main update loop
-function SimpleMissile_Update(I)
+function PopUpMissile_Update(I)
    local Time = I:GetTimeSinceSpawn()
 
    if GetTarget(I) then
@@ -107,8 +107,8 @@ function SimpleMissile_Update(I)
    end
 end
 
-SimpleMissile = Periodic.create(UpdateRate, SimpleMissile_Update)
+PopUpMissile = Periodic.create(UpdateRate, PopUpMissile_Update)
 
 function Update(I)
-   SimpleMissile:Tick(I)
+   PopUpMissile:Tick(I)
 end
