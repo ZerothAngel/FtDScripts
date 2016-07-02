@@ -1,5 +1,5 @@
 --! naval-ai
---@ yawthrottle avoidance commons gettargetpositioninfo
+--@ yawthrottle avoidance commons gettargetpositioninfo periodic
 -- Naval AI module
 Attacking = true
 LastAttackTime = 0
@@ -92,7 +92,7 @@ function AdjustHeadingToTarget(I)
    return Drive
 end
 
-function Update(I)
+function NavalAI_Update(I)
    local AIMode = I.AIMode
    if (ActivateWhenOn and AIMode == 'on') or AIMode == 'combat' then
       GetSelfInfo(I)
@@ -115,4 +115,10 @@ function Update(I)
       ClassifyPropulsionSpinners(I)
       SetThrottle(I, Drive)
    end
+end
+
+NavalAI = Periodic.create(UpdateRate, NavalAI_Update)
+
+function Update(I)
+   NavalAI:Tick(I)
 end

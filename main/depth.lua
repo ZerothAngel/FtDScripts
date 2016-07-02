@@ -1,7 +1,7 @@
 --! depth
---@ terraincheck commons getvectorangle gettargetpositioninfo pid
+--@ terraincheck commons getvectorangle gettargetpositioninfo pid periodic
 -- Hydrofoil sea depth module
-HydrofoilPID = PID.create(HydrofoilPIDValues[1], HydrofoilPIDValues[2], HydrofoilPIDValues[3], -45, 45)
+HydrofoilPID = PID.create(HydrofoilPIDValues[1], HydrofoilPIDValues[2], HydrofoilPIDValues[3], -45, 45, UpdateRate)
 
 FirstRun = nil
 
@@ -11,7 +11,7 @@ function FirstRun(I)
    TerrainCheckFirstRun(I)
 end
 
-function Update(I)
+function Depth_Update(I)
    local __func__ = "Update"
 
    if FirstRun then FirstRun(I) end
@@ -48,4 +48,10 @@ function Update(I)
 
       I:Component_SetFloatLogicAll(HYDROFOIL, CV)
    end
+end
+
+Depth = Periodic.create(UpdateRate, Depth_Update)
+
+function Update(I)
+   Depth:Tick(I)
 end

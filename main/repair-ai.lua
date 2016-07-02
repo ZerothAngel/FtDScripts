@@ -1,5 +1,5 @@
 --! repair-ai
---@ yawthrottle avoidance commons gettargetpositioninfo spairs
+--@ yawthrottle avoidance commons gettargetpositioninfo spairs periodic
 -- Repair AI module
 FirstRun = nil
 Origin = nil
@@ -130,7 +130,7 @@ function Imprint(I)
    end
 end
 
-function Update(I)
+function RepairAI_Update(I)
    local AIMode = I.AIMode
    if (ActiateWhenOn and I.AIMode == 'on') or AIMode == 'combat' then
       GetSelfInfo(I)
@@ -165,4 +165,10 @@ function Update(I)
       ClassifyPropulsionSpinners(I)
       SetThrottle(I, Drive)
    end
+end
+
+RepairAI = Periodic.create(UpdateRate, RepairAI_Update)
+
+function Update(I)
+   RepairAI:Tick(I)
 end

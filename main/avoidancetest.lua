@@ -1,5 +1,5 @@
 --! avoidancetest
---@ yawthrottle avoidance commons
+--@ yawthrottle avoidance commons periodic
 FirstRun = nil
 
 function FirstRun(I)
@@ -8,7 +8,7 @@ function FirstRun(I)
    AvoidanceFirstRun(I)
 end
 
-function Update(I)
+function AvoidanceTest_Update(I)
    local AIMode = I.AIMode
    if (ActivateWhenOn and AIMode == 'on') or AIMode == 'combat' then
       GetSelfInfo(I)
@@ -21,4 +21,10 @@ function Update(I)
       -- Just go as straight as possible
       AdjustHeading(I, 0)
    end
+end
+
+AvoidanceTest = Periodic.create(UpdateRate, AvoidanceTest_Update)
+
+function Update(I)
+   AvoidanceTest:Tick(I)
 end

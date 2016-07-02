@@ -15,3 +15,8 @@ MinDepth = 30
 -- Start with { 1, nil, 0 } and tune from there.
 -- Setting Ti to nil eliminates integral component.
 HydrofoilPIDValues = { 1, nil, 0 } -- Kp, Ti, Td
+
+-- How often to run. At 1, it will run every update. At 10,
+-- it will run every 10th update. The lower it is, the more
+-- responsive it will be, but it will also take more processing time.
+UpdateRate = 4
