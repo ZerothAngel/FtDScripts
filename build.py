@@ -10,6 +10,7 @@ import subprocess
 SCRIPT_DIRECTORIES = [
     'lib',
     'main',
+    'missile',
 ]
 
 OUTPUT_PATTERN = os.path.join('out', '{}.lua')

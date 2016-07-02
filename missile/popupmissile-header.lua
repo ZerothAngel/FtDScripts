@@ -1,4 +1,4 @@
--- CONFIGURATION
+-- POP-UP SETTINGS
 
 -- Targets below this altitude will be considered surface
 -- targets. The missile will approach surface targets
@@ -15,8 +15,6 @@ AirTargetAltitude = 10
 -- If it's actually a torpedo, you may also want to disable
 -- pop up behavior above. (Pop up torpedo? Hmmm...)
 MinimumAltitude = 0
-
--- POP-UP SETTINGS
 
 -- Altitude to skim the surface
 PopUpSkimAltitude = 3
@@ -51,12 +49,4 @@ PopUpTerminalDistance = 100
 -- Set to a non-positive number to disable terrain hugging
 -- (guidance will then always assume you and your target are
 -- in/over the ocean...)
-LookAheadResolution = 3
-
--- MISCELLANEOUS
-
--- The update rate, i.e. run every UpdateRate calls to Update method.
--- Set to 1 to update every call.
--- Setting to e.g. 10 means to run every 10th call.
--- Smaller means more responsive, but also means more processor usage.
-UpdateRate = 10
+PU_LookAheadResolution = 3
