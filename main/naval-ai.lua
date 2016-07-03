@@ -102,7 +102,7 @@ function NavalAI_Update(I)
       -- Suppress default AI
       if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end
 
-      local Drive = 0
+      local Drive = nil
       if GetTargetPositionInfo(I) then
          Drive = AdjustHeadingToTarget(I)
       elseif ReturnToOrigin then
@@ -110,10 +110,17 @@ function NavalAI_Update(I)
          if Target.magnitude >= OriginMaxDistance then
             AdjustHeadingToPoint(I, Origin)
             Drive = ReturnDrive
+         else
+            Drive = 0
          end
+      else
+         -- Just continue along with avoidance active
+         AdjustHeading(I, 0)
       end
-      ClassifyPropulsionSpinners(I)
-      SetThrottle(I, Drive)
+      if Drive then
+         ClassifyPropulsionSpinners(I)
+         SetThrottle(I, Drive)
+      end
    end
 end
 
