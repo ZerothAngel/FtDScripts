@@ -51,3 +51,8 @@ function PlanarVector(Origin, Target)
    local NewTarget = Vector3(Target.x, Origin.y, Target.z)
    return NewTarget - Origin, NewTarget
 end
+
+-- Get bearing toward a given world point
+function GetBearingToPoint(I, Point)
+   return -I:GetTargetPositionInfoForPosition(0, Point.x, 0, Point.z).Azimuth
+end

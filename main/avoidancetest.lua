@@ -19,7 +19,7 @@ function AvoidanceTest_Update(I)
       if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end
 
       -- Just go as straight as possible
-      AdjustHeading(I, 0)
+      AdjustHeading(I, Avoidance(I, 0))
    end
 end
 

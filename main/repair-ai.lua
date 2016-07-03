@@ -43,7 +43,8 @@ function AdjustHeadingToRepairTarget(I)
 
       local TargetPoint = RepairTargetCoM + RepairTarget.Velocity * InterceptTime
       if Distance > ApproachMaxDistance then
-         AdjustHeadingToPoint(I, TargetPoint)
+         local Bearing = GetBearingToPoint(I, TargetPoint)
+         AdjustHeading(I, Avoidance(I, Bearing))
          Drive = ClosingDrive
       end
    end
@@ -157,7 +158,8 @@ function RepairAI_Update(I)
          if ReturnToOrigin then
             local Target,_ = PlanarVector(CoM, Origin)
             if Target.magnitude >= OriginMaxDistance then
-               AdjustHeadingToPoint(I, Origin)
+               local Bearing = GetBearingToPoint(I, Origin)
+               AdjustHeading(I, Avoidance(I, Bearing))
                Drive = ReturnDrive
             end
          end

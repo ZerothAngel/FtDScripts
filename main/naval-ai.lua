@@ -87,7 +87,7 @@ function AdjustHeadingToTarget(I)
 
    if Debugging then Debug(I, __func__, "State %s Drive %f Bearing %f", State, Drive, Bearing) end
 
-   AdjustHeading(I, Bearing)
+   AdjustHeading(I, Avoidance(I, Bearing))
 
    return Drive
 end
@@ -108,14 +108,15 @@ function NavalAI_Update(I)
       elseif ReturnToOrigin then
          local Target,_ = PlanarVector(CoM, Origin)
          if Target.magnitude >= OriginMaxDistance then
-            AdjustHeadingToPoint(I, Origin)
+            local Bearing = GetBearingToPoint(I, Origin)
+            AdjustHeading(I, Avoidance(I, Bearing))
             Drive = ReturnDrive
          else
             Drive = 0
          end
       else
          -- Just continue along with avoidance active
-         AdjustHeading(I, 0)
+         AdjustHeading(I, Avoidance(I, 0))
       end
       if Drive then
          ClassifyPropulsionSpinners(I)

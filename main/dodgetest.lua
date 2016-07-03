@@ -2,12 +2,6 @@
 --@ yawthrottle commons quadraticsolver spairs periodic
 DodgeDirections = { Vector3.left, Vector3.right, Vector3.left, Vector3.right }
 
-function FirstRun(I)
-   FirstRun = nil
-
-   AvoidanceFirstRun(I)
-end
-
 -- Returns impact point on XZ plane at given altitude
 -- Returns nil if no impact on the plane
 function PredictImpact(I, Altitude, Projectile)
@@ -121,11 +115,7 @@ function DodgeTest_Update(I)
    if I.AIMode == 'off' then
       GetSelfInfo(I)
 
-      if FirstRun then FirstRun(I) end
-
-      local Bearing = 0
-      Bearing = Dodge(I, Bearing)
-      AdjustHeading(I, Bearing)
+      AdjustHeading(I, Dodge(I, 0))
    end
 end
 
