@@ -1,6 +1,9 @@
 --! repair-ai
---@ yawthrottle avoidance commons gettargetpositioninfo spairs periodic
+--@ yawthrottle avoidance commons quadraticintercept gettargetpositioninfo
+--@ spairs periodic
 -- Repair AI module
+ThrottlePID = PID.create(ThrottlePIDValues[1], ThrottlePIDValues[2], ThrottlePIDValues[3], -1, 1, UpdateRate)
+
 FirstRun = nil
 Origin = nil
 
@@ -18,37 +21,62 @@ function FirstRun(I)
    AvoidanceFirstRun(I)
 end
 
+-- Scale up desired speed depending on angle between velocities
+function MatchSpeed(Velocity, TargetVelocity, Faster)
+   local Speed = Velocity.magnitude
+   local TargetSpeed = TargetVelocity.magnitude
+   -- Already calculated magnitudes...
+   local VelocityDirection = Velocity / Speed
+   local TargetVelocityDirection = TargetVelocity / TargetSpeed
+
+   local CosAngle = Vector3.Dot(TargetVelocityDirection, VelocityDirection)
+   if CosAngle > 0 then
+      local DesiredSpeed = TargetSpeed
+      DesiredSpeed = DesiredSpeed + Mathf.Sign(Faster) * RelativeApproachSpeed
+      return math.max(MinimumSpeed, DesiredSpeed),Speed,CosAngle
+   else
+      -- Angle between velocities >= 90 degrees, go minimum speed
+      return MinimumSpeed,Speed,CosAngle
+   end
+end
+
 function AdjustHeadingToRepairTarget(I)
    local __func__ = "AdjustHeadingToRepairTarget"
 
-   local Drive = LoiterDrive
    local RepairTarget = I:GetFriendlyInfoById(RepairTargetID)
    if RepairTarget and RepairTarget.Valid then
       if Debugging then Debug(I, __func__, "RepairTarget %s", RepairTarget.BlueprintName) end
 
-      local RepairTargetCoM = RepairTarget.CenterOfMass + RepairTargetOffset
-      local Offset,_ = PlanarVector(CoM, RepairTargetCoM)
+      local RepairTargetCoM = RepairTarget.CenterOfMass + RepairTarget.ForwardVector * RepairTargetOffset.z + RepairTarget.RightVector * RepairTargetOffset.x
+      local Offset,TargetPosition = PlanarVector(CoM, RepairTargetCoM)
       local Distance = Offset.magnitude
       local Direction = Offset / Distance
-      -- Not so sure about this intercept formula, since it will tend
-      -- to stay parallel with parent if we don't cap InterceptTime
-      local RelativeVelocity = I:GetVelocityVector() - RepairTarget.Velocity
-      local RelativeSpeed = Vector3.Dot(RelativeVelocity, Direction)
-      local InterceptTime = 1
-      if RelativeSpeed > 0.0 then
-         InterceptTime = Distance / RelativeSpeed
-         InterceptTime = math.min(InterceptTime, 10)
-         InterceptTime = math.max(InterceptTime, 1)
-      end
 
-      local TargetPoint = RepairTargetCoM + RepairTarget.Velocity * InterceptTime
+      local Velocity = I:GetVelocityVector()
+      Velocity.y = 0
+      local TargetVelocity = Vector3(RepairTarget.Velocity.x, 0, RepairTarget.Velocity.z)
+      local TargetPoint = QuadraticIntercept(CoM, Velocity, TargetPosition, TargetVelocity)
+
+      local Bearing = GetBearingToPoint(I, TargetPoint)
+      AdjustHeading(I, Avoidance(I, Bearing))
+
       if Distance > ApproachMaxDistance then
-         local Bearing = GetBearingToPoint(I, TargetPoint)
-         AdjustHeading(I, Avoidance(I, Bearing))
-         Drive = ClosingDrive
+         -- Go full throttle and catch up
+         return ClosingDrive
+      else
+         -- Only go faster if target is ahead of us
+         local Faster = Vector3.Dot(I:GetConstructForwardVector(), Direction)
+         -- Attempt to match speed
+         local DesiredSpeed,Speed = MatchSpeed(Velocity, TargetVelocity, Faster)
+         local Error = DesiredSpeed - Speed
+         local CV = ThrottlePID:Control(Error)
+         local Drive = CurrentThrottle + CV
+         Drive = math.max(0, Drive)
+         Drive = math.min(1, Drive)
+         if Debugging then Debug(I, __func__, "Error = %f Drive = %f", Error, Drive) end
+         return Drive
       end
    end
-   return Drive
 end
 
 function CalculateRepairTargetWeight(I, Distance, ParentDistance, Friend)
@@ -153,14 +181,25 @@ function RepairAI_Update(I)
             Drive = AdjustHeadingToRepairTarget(I)
          end
       else
-         ParentID = nil
-
          if ReturnToOrigin then
+            ParentID = nil
+
             local Target,_ = PlanarVector(CoM, Origin)
             if Target.magnitude >= OriginMaxDistance then
                local Bearing = GetBearingToPoint(I, Origin)
                AdjustHeading(I, Avoidance(I, Bearing))
                Drive = ReturnDrive
+            end
+         else
+            -- Basically always active, as if in combat
+            if not ParentID then
+               Imprint(I)
+            end
+            if ParentID then
+               SelectRepairTarget(I)
+            end
+            if RepairTargetID then
+               Drive = AdjustHeadingToRepairTarget(I)
             end
          end
       end

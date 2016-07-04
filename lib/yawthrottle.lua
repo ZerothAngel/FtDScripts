@@ -4,6 +4,8 @@ YawPID = PID.create(YawPIDValues[1], YawPIDValues[2], YawPIDValues[3], -1.0, 1.0
 
 PropulsionSpinners = SpinnerControl.create(Vector3.forward, UseSpinners, UseDediSpinners)
 
+CurrentThrottle = 0
+
 function ClassifyPropulsionSpinners(I)
    PropulsionSpinners:Classify(I)
 end
@@ -26,4 +28,5 @@ end
 function SetThrottle(I, Drive)
    I:RequestControl(Mode, MAINPROPULSION, Drive)
    PropulsionSpinners:SetSpeed(I, Drive * 30)
+   CurrentThrottle = Drive
 end
