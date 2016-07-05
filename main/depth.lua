@@ -46,7 +46,7 @@ function Depth_Update(I)
 
       local CV = HydrofoilPID:Control(DesiredDepth - Altitude)
 
-      I:Component_SetFloatLogicAll(HYDROFOIL, CV)
+      I:Component_SetFloatLogicAll(HYDROFOIL, Mathf.Sign(I:GetForwardsVelocityMagnitude()) * CV)
    end
 end
 
