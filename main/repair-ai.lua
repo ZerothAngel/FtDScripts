@@ -145,6 +145,7 @@ end
 
 function Imprint(I)
    ParentID = nil
+   RepairTargetID = nil
    local Closest = math.huge
    for i = 0,I:GetFriendlyCount()-1 do
       local Friend = I:GetFriendlyInfo(i)
@@ -183,6 +184,7 @@ function RepairAI_Update(I)
       else
          if ReturnToOrigin then
             ParentID = nil
+            RepairTargetID = nil
 
             local Target,_ = PlanarVector(CoM, Origin)
             if Target.magnitude >= OriginMaxDistance then
@@ -205,6 +207,9 @@ function RepairAI_Update(I)
       end
       ClassifyPropulsionSpinners(I)
       SetThrottle(I, Drive)
+   else
+      ParentID = nil
+      RepairTargetID = nil
    end
 end
 
