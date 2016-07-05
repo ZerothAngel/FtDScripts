@@ -5,7 +5,7 @@ ActivateWhenOn = false
 
 -- Offset from repair target's center of mass.
 -- Note the Y value is ignored.
-RepairTargetOffset = Vector3(25, 0, 25)
+RepairTargetOffset = Vector3(0, 0, 25)
 -- If farther away than this, set throttle to ClosingDrive (below)
 ApproachMaxDistance = 100
 -- Throttle when distance from repair target is >ApproachMaxDistance
