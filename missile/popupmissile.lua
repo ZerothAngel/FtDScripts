@@ -61,7 +61,7 @@ function PopUpMissile.PopUp(I, Position, Velocity, AimPoint, TargetGround, Time,
       return NewAimPoint
    else
       -- Below the surface, head straight up
-      return Vector3(Position.x, PopUpSkimAltitude, Position.z)
+      return Vector3(Position.x, MinimumAltitude+PopUpSkimDistance, Position.z)
    end
 end
 
