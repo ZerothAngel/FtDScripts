@@ -1,4 +1,4 @@
---@ quadraticintercept gettargetinfo periodic
+--@ quadraticintercept
 -- BottomAttackTorpedo implementation
 BottomAttackTorpedo = {}
 
