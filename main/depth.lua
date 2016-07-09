@@ -16,7 +16,7 @@ function Depth_Update(I)
 
    if FirstRun then FirstRun(I) end
 
-   if I.AIMode ~= "off" then
+   if not I:IsDocked() and I.AIMode ~= "off" then
       GetSelfInfo(I)
 
       local DesiredDepth,Absolute

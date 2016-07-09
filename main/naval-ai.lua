@@ -94,7 +94,8 @@ end
 
 function NavalAI_Update(I)
    local AIMode = I.AIMode
-   if (ActivateWhenOn and AIMode == 'on') or AIMode == 'combat' then
+   if not I:IsDocked() and ((ActivateWhenOn and AIMode == "on") or
+                            AIMode == "combat") then
       GetSelfInfo(I)
 
       if FirstRun then FirstRun(I) end

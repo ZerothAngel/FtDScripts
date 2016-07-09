@@ -162,7 +162,8 @@ end
 
 function RepairAI_Update(I)
    local AIMode = I.AIMode
-   if (ActiateWhenOn and I.AIMode == 'on') or AIMode == 'combat' then
+   if not I:IsDocked() and ((ActiateWhenOn and I.AIMode == "on") or
+                            AIMode == "combat") then
       GetSelfInfo(I)
 
       if FirstRun then FirstRun(I) end

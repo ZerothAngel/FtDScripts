@@ -21,6 +21,9 @@ function Update(I)
 
    if FirstRun then FirstRun(I) end
 
+   -- Do this here to avoid classifying spinners if docked
+   if I:IsDocked() then return end
+
    LiftSpinners:Classify(I)
 
    if I.AIMode ~= "off" then

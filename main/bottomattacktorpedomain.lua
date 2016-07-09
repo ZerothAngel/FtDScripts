@@ -16,7 +16,9 @@ end
 
 -- Main update loop
 function MissileMain_Update(I)
-   MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
+   if not I:IsDocked() then
+      MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
+   end
 end
 
 MissileMain = Periodic.create(UpdateRate, MissileMain_Update)
