@@ -4,6 +4,11 @@
 -- If above this altitude, intercept as normal.
 JavelinAirTargetAltitude = 10
 
+-- Minimum altitude for the missile. If below this altitude,
+-- the missile will try to climb straight up.
+-- Should be lower than JavelinClosingHeight below.
+JavelinMinimumAltitude = 0
+
 -- When closing on the target, this is the height (above the target)
 -- to cruise at.
 JavelinClosingHeight = 100

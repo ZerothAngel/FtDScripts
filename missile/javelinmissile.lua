@@ -45,7 +45,10 @@ function JavelinMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition,
    local MissileVelocity = Missile.Velocity
    local AimPoint = QuadraticIntercept(MissilePosition, MissileVelocity, TargetAimPoint, TargetVelocity)
 
-   if self.DoTopAttack then
+   if MissilePosition.y < JavelinMinimumAltitude then
+      -- Below the surface, head straight up
+      AimPoint = Vector3(MissilePosition.x, JavelinMinimumAltitude+1000, MissilePosition.z)
+   elseif self.DoTopAttack then
       local Offset = TransceiverIndex * 37 + MissileIndex
       AimPoint = JavelinMissile.TopAttack(I, MissilePosition, MissileVelocity,
                                           AimPoint, self.TargetGround,
