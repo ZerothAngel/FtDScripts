@@ -47,21 +47,18 @@ function PopUpMissile.PopUp(I, Position, Velocity, AimPoint, TargetGround, Time,
       local Height = PopUpMissile.GetTerrainHeight(I, Position, Velocity, ToTerminal)
       NewAimPoint.y = math.max(TargetGround + PopUpAltitude, Height + PopUpSkimAltitude)
       return NewAimPoint
-   elseif Position.y > MinimumAltitude then
+   else
       -- Closing
       local GroundDirection = GroundOffset / GroundDistance
       -- Simply hug the surface by calculating the aim point some meters (PopUpSkimDistance) out
       local NewAimPoint = Position + GroundDirection * PopUpSkimDistance
       local Height = PopUpMissile.GetTerrainHeight(I, Position, Velocity, PopUpSkimDistance)
       NewAimPoint.y = Height + PopUpSkimAltitude
-      if Evasion then
+      if PopUpEvasion then
          local Perp = Vector3.Cross(GroundDirection, Vector3.up)
-         NewAimPoint = NewAimPoint + Perp * Evasion[1] * (2 * Mathf.PerlinNoise(Evasion[2] * Time, Offset) - 1)
+         NewAimPoint = NewAimPoint + Perp * PopUpEvasion[1] * (2 * Mathf.PerlinNoise(PopUpEvasion[2] * Time, Offset) - 1)
       end
       return NewAimPoint
-   else
-      -- Below the surface, head straight up
-      return Vector3(Position.x, MinimumAltitude+PopUpSkimDistance, Position.z)
    end
 end
 
@@ -70,7 +67,7 @@ end
 function PopUpMissile:SetTarget(I, TargetPosition, TargetAimPoint, TargetVelocity, TargetInfo)
    self.Time = I:GetTimeSinceSpawn()
    self.TargetGround = math.max(I:GetTerrainAltitudeForPosition(TargetPosition), 0)
-   self.DoPopUp = (TargetPosition.y - self.TargetGround) <= AirTargetAltitude
+   self.DoPopUp = (TargetPosition.y - self.TargetGround) <= PopUpAirTargetAltitude
 end
 
 function PopUpMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile)
@@ -78,13 +75,14 @@ function PopUpMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, T
    local MissileVelocity = Missile.Velocity
    local AimPoint = QuadraticIntercept(MissilePosition, MissileVelocity, TargetAimPoint, TargetVelocity)
 
-   if self.DoPopUp then
+   if MissilePosition.y < PopUpMinimumAltitude then
+      -- Below the surface, head straight up
+      AimPoint = Vector3(MissilePosition.x, PopUpMinimumAltitude+1000, MissilePosition.z)
+   elseif self.DoPopUp then
       local Offset = TransceiverIndex * 37 + MissileIndex
       AimPoint = PopUpMissile.PopUp(I, MissilePosition, MissileVelocity,
                                     AimPoint, self.TargetGround, self.Time,
                                     Offset)
-   elseif MissilePosition.y < MinimumAltitude then
-      AimPoint = Vector3(MissilePosition.x, MinimumAltitude, MissilePosition.z)
    end
 
    return AimPoint

@@ -4,7 +4,7 @@
 -- targets. The missile will approach surface targets
 -- by skimming the surface and then "popping up" near the target
 -- (see below). Set to -500 or lower to disable pop up behavior.
-AirTargetAltitude = 10
+PopUpAirTargetAltitude = 10
 
 -- Minimum altitude for the missile. If below this altitude,
 -- the missile will try to climb straight up.
@@ -14,24 +14,29 @@ AirTargetAltitude = 10
 -- that's meant to stay underwater.
 -- If it's actually a torpedo, you may also want to disable
 -- pop up behavior above. (Pop up torpedo? Hmmm...)
-MinimumAltitude = 0
+PopUpMinimumAltitude = 0
 
 -- Altitude to skim the surface
 PopUpSkimAltitude = 3
+
 -- When skimming, this is the distance toward the target
 -- that it will aim for (smaller means it reaches skimming
 -- altitude quicker).
 -- This also affects terrain hugging, see below.
 PopUpSkimDistance = 50
+
 -- Evasion settings while closing
 -- First number is magnitude of evasion in meters (to each side)
 -- Second number is time scale, smaller is slower. <1 recommended.
 -- Set whole thing to nil to disable, e.g. Evasion = nil
-Evasion = { 20, .25 }
+PopUpEvasion = { 20, .25 }
+
 -- Ground distance from target to pop-up
 PopUpDistance = 250
+
 -- Altitude to pop-up to
 PopUpAltitude = 30
+
 -- Within this ground distance, the missile will follow a simple
 -- intercept course (such as when targeting air targets)
 PopUpTerminalDistance = 100
