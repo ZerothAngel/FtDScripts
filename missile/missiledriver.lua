@@ -143,7 +143,7 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
          for _,QueueMissile in pairs(QueueMissiles) do
             local Guidance = GuidanceInfos[QueueMissile.GuidanceIndex]
             local tindex,mindex = QueueMissile.TransceiverIndex,QueueMissile.MissileIndex
-            local AimPoint = Guidance.Controller:Guide(I, tindex, mindex, TargetPosition, TargetAimPoint, TargetVelocity, QueueMissile.Missile)
+            local AimPoint = Guidance.Controller:Guide(I, tindex, mindex, TargetPosition, TargetAimPoint, TargetVelocity, QueueMissile.Missile, Now)
 
             I:SetLuaControlledMissileAimPoint(tindex, mindex, AimPoint.x, AimPoint.y, AimPoint.z)
          end

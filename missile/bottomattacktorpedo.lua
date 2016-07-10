@@ -54,7 +54,7 @@ function BottomAttackTorpedo:SetTarget(I, TargetPosition, TargetAimPoint, Target
    self.TargetDepth = math.min(TargetPosition.y, 0)
 end
       
-function BottomAttackTorpedo:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile)
+function BottomAttackTorpedo:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile, Now)
    local MissilePosition = Missile.Position
    local MissileVelocity = Missile.Velocity
    local AimPoint = QuadraticIntercept(MissilePosition, MissileVelocity, TargetAimPoint, TargetVelocity)

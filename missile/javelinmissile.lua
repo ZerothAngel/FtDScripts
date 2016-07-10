@@ -35,12 +35,11 @@ end
 -- JavelinMissile instance methods
 
 function JavelinMissile:SetTarget(I, TargetPosition, TargetAimPoint, TargetVelocity, TargetInfo)
-   self.Time = I:GetTimeSinceSpawn()
    self.TargetGround = math.max(I:GetTerrainAltitudeForPosition(TargetPosition), 0)
    self.DoTopAttack = (TargetPosition.y - self.TargetGround) <= JavelinAirTargetAltitude
 end
 
-function JavelinMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile)
+function JavelinMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile, Now)
    local MissilePosition = Missile.Position
    local MissileVelocity = Missile.Velocity
    local AimPoint = QuadraticIntercept(MissilePosition, MissileVelocity, TargetAimPoint, TargetVelocity)
@@ -52,7 +51,7 @@ function JavelinMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition,
       local Offset = TransceiverIndex * 37 + MissileIndex
       AimPoint = JavelinMissile.TopAttack(I, MissilePosition, MissileVelocity,
                                           AimPoint, self.TargetGround,
-                                          self.Time, Offset)
+                                          Now, Offset)
    end
 
    return AimPoint

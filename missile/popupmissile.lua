@@ -65,12 +65,11 @@ end
 -- PopUpMissile instance methods
 
 function PopUpMissile:SetTarget(I, TargetPosition, TargetAimPoint, TargetVelocity, TargetInfo)
-   self.Time = I:GetTimeSinceSpawn()
    self.TargetGround = math.max(I:GetTerrainAltitudeForPosition(TargetPosition), 0)
    self.DoPopUp = (TargetPosition.y - self.TargetGround) <= PopUpAirTargetAltitude
 end
 
-function PopUpMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile)
+function PopUpMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile, Now)
    local MissilePosition = Missile.Position
    local MissileVelocity = Missile.Velocity
    local AimPoint = QuadraticIntercept(MissilePosition, MissileVelocity, TargetAimPoint, TargetVelocity)
@@ -81,7 +80,7 @@ function PopUpMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, T
    elseif self.DoPopUp then
       local Offset = TransceiverIndex * 37 + MissileIndex
       AimPoint = PopUpMissile.PopUp(I, MissilePosition, MissileVelocity,
-                                    AimPoint, self.TargetGround, self.Time,
+                                    AimPoint, self.TargetGround, Now,
                                     Offset)
    end
 
