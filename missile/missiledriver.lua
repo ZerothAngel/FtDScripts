@@ -2,6 +2,7 @@
 LastTransceiverCount = 0
 TransceiverGuidances = {}
 MissileTargets = {}
+LastTimeTargetSeen = nil
 
 function GatherTargets(I, GuidanceInfos)
    local TargetsByPriority = {}
@@ -33,8 +34,11 @@ function GatherTargets(I, GuidanceInfos)
 end
 
 function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
+   local Now = I:GetTimeSinceSpawn()
    local TargetsByPriority, TargetsById = GatherTargets(I, GuidanceInfos)
    if #TargetsByPriority > 0 then
+      LastTimeTargetSeen = Now
+
       local TransceiverCount = I:GetLuaTransceiverCount()
       if TransceiverCount ~= LastTranceiverCount then
          -- Reset cached guidances if transceiver count changed
@@ -148,5 +152,14 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
       -- Overwrite old targets with newly-saved targets. Gets rid of
       -- dead missiles.
       MissileTargets = NewMissileTargets
+   elseif LastTimeTargetSeen and (LastTimeTargetSeen+DetonateAfter) < Now then
+      LastTimeTargetSeen = nil
+
+      -- Detonate all missiles
+      for tindex = 0,I:GetLuaTransceiverCount()-1 do
+         for mindex = 0,I:GetLuaControlledMissileCount(tindex)-1 do
+            I:DetonateLuaControlledMissile(tindex, mindex)
+         end
+      end
    end
 end
