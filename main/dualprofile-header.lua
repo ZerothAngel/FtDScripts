@@ -1,14 +1,27 @@
 -- CONFIGURATION
 
--- NOTE: The following config is for sea-skimming "pop-up" missiles.
--- There are more examples below it, including:
---  Javelin-style top-attack
---  Bottom-attack torpedoes
---  Sea-skimming pop-under missiles
+-- Minimum and maximum altitudes for each profile, used for target selection.
+-- Note: This only governs missiles in-flight. You should still set the
+-- min/max altitudes correctly in your Local Weapon Controller.
+-- The first number is the minimum altitude.
+-- The second is the maximum altitude.
+VerticalMinMaxAltitude = { -25, 9999 }
+HorizontalMinMaxAltitude = { -9999, 15 }
+
+-- PROFILE CONFIGURATION
+
+-- Both profiles must be named "VerticalConfig" and "HorizontalConfig"
+
+-- The following defaults set up sea-skimming pop-up missiles for
+-- vertical launch, bottom-attack torpedoes for horizontal launch.
+
+-- More examples follow the HorizontalConfig section.
 
 -- Always be sure each setting ends with a comma!
 
-Config = {
+-- VERTICAL MISSILE PROFILE
+
+VerticalConfig = {
    -- GENERAL SETTINGS
 
    -- If the target's elevation (that is, altitude relative to the ground
@@ -99,9 +112,33 @@ Config = {
    LookAheadResolution = 3,
 }
 
+-- HORIZONTAL MISSILE PROFILE
+
+-- Bottom-attack torpedoes
+HorizontalConfig = {
+   SpecialAttackElevation = 9999, -- Always use special attack profile
+   MinimumAltitude = -500,
+   ClosingDistance = 50,
+   ClosingAboveSeaLevel = false,
+   ClosingElevation = 10, -- i.e. Minimum altitude above seabed
+   ClosingAltitude = -150,
+   ClosingAltitudeRelativeTo = 2, -- i.e. relative to target's depth, which is never more than 0
+   Evasion = nil,
+   SpecialManeuverDistance = 150, -- No special maneuver phase
+   SpecialManeuverAboveSeaLevel = true,
+   SpecialManeuverElevation = 3,
+   SpecialManeuverAltitude = 30,
+   SpecialManeuverAltitudeRelativeTo = 3,
+   TerminalDistance = 150,
+   LookAheadTime = 5,
+   LookAheadResolution = 3,
+}
+
+-- MORE PROFILE EXAMPLES
+
 -- Javelin-style top-attack profile
--- Change "JavelinConfig" to simply "Config" to overwrite the
--- above settings.
+-- Change "JavelinConfig" to either "VerticalConfig" or "HorizontalConfig"
+-- to overwrite the above settings.
 JavelinConfig = {
    SpecialAttackElevation = 10,
    MinimumAltitude = 0,
@@ -121,31 +158,9 @@ JavelinConfig = {
    LookAheadResolution = 0, -- No need to look at terrain
 }
 
--- Bottom-attack torpedoes
--- Change "TorpedoConfig" to simply "Config" to overwrite the
--- above settings.
-TorpedoConfig = {
-   SpecialAttackElevation = 9999, -- Always use special attack profile
-   MinimumAltitude = -500,
-   ClosingDistance = 50,
-   ClosingAboveSeaLevel = false,
-   ClosingElevation = 10, -- i.e. Minimum altitude above seabed
-   ClosingAltitude = -150,
-   ClosingAltitudeRelativeTo = 2, -- i.e. relative to target's depth, which is never more than 0
-   Evasion = nil,
-   SpecialManeuverDistance = 150, -- No special maneuver phase
-   SpecialManeuverAboveSeaLevel = true,
-   SpecialManeuverElevation = 3,
-   SpecialManeuverAltitude = 30,
-   SpecialManeuverAltitudeRelativeTo = 3,
-   TerminalDistance = 150,
-   LookAheadTime = 5,
-   LookAheadResolution = 3,
-}
-
 -- Sea-skimming pop-under missiles
--- Change "PopUnderConfig" to simply "Config" to overwrite the
--- above settings.
+-- Change "PopUnderConfig" to either "VerticalConfig" or "HorizontalConfig"
+-- to overwrite the above settings.
 -- Note that you will probably need at least 1 torpedo propeller and
 -- a ballast tank to use these settings.
 -- You might be able to forego both if you make the TerminalDistance and
