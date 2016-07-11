@@ -11,9 +11,9 @@ function GatherTargets(I, GuidanceInfos)
    for _,mindex in pairs(PreferredMainframes) do
       for tindex = 0,I:GetNumberOfTargets(mindex)-1 do
          local TargetInfo = I:GetTargetInfo(mindex, tindex)
-         local TargetId = TargetInfo.Id
-         -- Only if valid, isn't salvage, and hasn't been seen yet.
-         if TargetInfo.Valid and TargetInfo.Protected and not TargetsById[TargetId] then
+         -- Only if valid and isn't salvage
+         if TargetInfo.Valid and TargetInfo.Protected then
+            local TargetId = TargetInfo.Id
             local Position = TargetInfo.Position
             local Target = {
                Id = TargetId,
@@ -30,6 +30,11 @@ function GatherTargets(I, GuidanceInfos)
             TargetsById[TargetId] = Target
          end
       end
+
+      -- Currently, all AIs seemingly see all targets. Once we've successfully queried one,
+      -- there's no point in querying the others.
+      -- NB Can't distinguish between querying a dead mainframe and getting no targets...
+      if #TargetsByPriority > 0 then break end
    end
 
    return TargetsByPriority, TargetsById
