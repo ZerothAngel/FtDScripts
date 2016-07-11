@@ -8,13 +8,15 @@ function GatherTargets(I, GuidanceInfos)
    local TargetsByPriority = {}
    local TargetsById = {}
 
-   for mindex = 0,I:GetNumberOfMainframes()-1 do
+   for _,mindex in pairs(PreferredMainframes) do
       for tindex = 0,I:GetNumberOfTargets(mindex)-1 do
          local TargetInfo = I:GetTargetInfo(mindex, tindex)
-         if TargetInfo.Valid and TargetInfo.Protected then
+         local TargetId = TargetInfo.Id
+         -- Only if valid, isn't salvage, and hasn't been seen yet.
+         if TargetInfo.Valid and TargetInfo.Protected and not TargetsById[TargetId] then
             local Position = TargetInfo.Position
             local Target = {
-               Id = TargetInfo.Id,
+               Id = TargetId,
                Position = Position,
                AimPoint = TargetInfo.AimPointPosition,
                Velocity = TargetInfo.Velocity,
@@ -25,7 +27,7 @@ function GatherTargets(I, GuidanceInfos)
             end
             Target.CanTarget = CanTarget
             table.insert(TargetsByPriority, Target)
-            TargetsById[TargetInfo.Id] = Target
+            TargetsById[TargetId] = Target
          end
       end
    end
