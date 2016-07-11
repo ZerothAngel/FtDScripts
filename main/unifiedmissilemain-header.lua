@@ -89,7 +89,7 @@ Config = {
    -- TERRAIN HUGGING
 
    -- How many seconds at current speed to look-ahead
-   LookAheadTime = 5,
+   LookAheadTime = 2,
 
    -- Look-ahead resolution in meters. The smaller it is, the more samples
    -- will be taken (and more processing...)
@@ -117,7 +117,7 @@ JavelinConfig = {
    SpecialManeuverAltitude = 30,
    SpecialManeuverAltitudeRelativeTo = 3,
    TerminalDistance = 150,
-   LookAheadTime = 5,
+   LookAheadTime = 2,
    LookAheadResolution = 0, -- No need to look at terrain
 }
 
@@ -139,7 +139,7 @@ TorpedoConfig = {
    SpecialManeuverAltitude = 30,
    SpecialManeuverAltitudeRelativeTo = 3,
    TerminalDistance = 150,
-   LookAheadTime = 5,
+   LookAheadTime = 2,
    LookAheadResolution = 3,
 }
 
@@ -165,6 +165,6 @@ PopUnderConfig = {
    SpecialManeuverAltitude = -50,
    SpecialManeuverAltitudeRelativeTo = 2, -- i.e. 50 meters below target's depth
    TerminalDistance = 150,
-   LookAheadTime = 5,
+   LookAheadTime = 2,
    LookAheadResolution = 3,
 }
