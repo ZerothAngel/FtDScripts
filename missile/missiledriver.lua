@@ -58,6 +58,8 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
       -- table is overwritten.
       local NewMissileTargets = {}
 
+      -- We want to group missiles up by target so SetTarget methods are only
+      -- called once per target. This is done here.
       local GuidanceQueue = {}
 
       for tindex = 0,TransceiverCount-1 do
@@ -74,14 +76,15 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
          for mindex = 0,I:GetLuaControlledMissileCount(tindex)-1 do
             local Missile = I:GetLuaControlledMissileInfo(tindex, mindex)
             if Missile.Valid then
-               local MissileTargetId = MissileTargets[Missile.Id]
+               local MissileId = Missile.Id
+               local MissileTargetId = MissileTargets[MissileId]
                if not MissileTargetId then
                   -- Brand new missile, select highest priority that
                   -- this missile can target
                   for _,Target in pairs(TargetsByPriority) do
                      if Target.CanTarget[GuidanceIndex] then
                         MissileTargetId = Target.Id
-                        NewMissileTargets[Missile.Id] = MissileTargetId
+                        NewMissileTargets[MissileId] = MissileTargetId
                         break
                      end
                   end
@@ -95,15 +98,16 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
                   if not Target then
                      -- Saved target is gone, select closest target that
                      -- this missile can target
+                     local MissilePosition = Missile.Position
                      local ClosestDistance = math.huge -- Actually squared
                      for _,T in pairs(TargetsByPriority) do
                         if T.CanTarget[GuidanceIndex] then
-                           local Offset = T.Position - Missile.Position
+                           local Offset = T.Position - MissilePosition
                            local Distance = Offset.sqrMagnitude
 
                            if Distance < ClosestDistance then
                               MissileTargetId = T.Id
-                              NewMissileTargets[Missile.Id] = MissileTargetId
+                              NewMissileTargets[MissileId] = MissileTargetId
                               Target = T
 
                               ClosestDistance = Distance
@@ -111,12 +115,14 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
                         end
                      end
                   else
-                     -- Save for next loop
-                     NewMissileTargets[Missile.Id] = MissileTargetId
+                     -- Save for next update
+                     NewMissileTargets[MissileId] = MissileTargetId
                   end
                end
 
                if Target then
+                  -- Add queue entry to guide this missile to its target (once all
+                  -- missiles have been checked)
                   QueueMissiles = GuidanceQueue[Target.Id]
                   if not QueueMissiles then
                      -- First time we've queued up for this target this update
@@ -134,7 +140,6 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
             end
          end
       end
-
 
       -- Process guidance queue
       for TargetId,QueueMissiles in pairs(GuidanceQueue) do

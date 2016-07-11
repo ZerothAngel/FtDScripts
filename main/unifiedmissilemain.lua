@@ -1,6 +1,6 @@
 --! unifiedmissile
 --@ missiledriver unifiedmissile periodic
--- Pop up missile main
+-- Unified missile main
 MyMissile = UnifiedMissile.create(Config)
 
 GuidanceInfos = {
