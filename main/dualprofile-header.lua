@@ -27,6 +27,8 @@ VerticalConfig = {
    -- If the target's elevation (that is, altitude relative to the ground
    -- it is over) is below this, use the special attack profile (closing,
    -- special maneuver, etc.).
+   -- Note that the "ground" is capped at 0 (sea level), so keep this in
+   -- mind for submarine targets. Their elevation will always be negative.
    -- If not using the special attack profile, it will intercept as normal.
    -- Set to like -999 to disable the special attack profile.
    -- Set it to like 9999 to always use the special attack profile.
