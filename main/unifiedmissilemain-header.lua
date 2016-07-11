@@ -33,7 +33,7 @@ Config = {
 
    -- The missile can have up to 3 phases: closing, special maneuver, terminal.
    -- To disable the special maneuver phase, set SpecialManeuverDistance
-   -- to the same as TerminalDistance.
+   -- to nil.
 
    -- Distance to aim toward target when closing.
    -- Smaller means it will reach closing elevation/altitude sooner,
@@ -64,7 +64,7 @@ Config = {
    Evasion = { 20, .25 },
 
    -- Ground distance from target at which to perform the special maneuver.
-   -- Set to the same as TerminalDistance (below) to disable.
+   -- Set to nil to disable.
    SpecialManeuverDistance = 250,
 
    -- Whether the special maneuver phase takes place above or below sea level.
@@ -111,7 +111,7 @@ JavelinConfig = {
    ClosingAltitude = 100,
    ClosingAltitudeRelativeTo = 3, -- i.e. relative to target's ground
    Evasion = { 20, .25 },
-   SpecialManeuverDistance = 150, -- No special maneuver phase
+   SpecialManeuverDistance = nil, -- No special maneuver phase
    SpecialManeuverAboveSeaLevel = true,
    SpecialManeuverElevation = 3,
    SpecialManeuverAltitude = 30,
@@ -133,7 +133,7 @@ TorpedoConfig = {
    ClosingAltitude = -150,
    ClosingAltitudeRelativeTo = 2, -- i.e. relative to target's depth, which is never more than 0
    Evasion = nil,
-   SpecialManeuverDistance = 150, -- No special maneuver phase
+   SpecialManeuverDistance = nil, -- No special maneuver phase
    SpecialManeuverAboveSeaLevel = true,
    SpecialManeuverElevation = 3,
    SpecialManeuverAltitude = 30,

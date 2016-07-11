@@ -113,10 +113,11 @@ function UnifiedMissile:SpecialAttack(I, Position, Velocity, AimPoint, Now, Offs
    local GroundDistance = GroundOffset.magnitude
 
    local TerminalDistance = self.TerminalDistance
+   local SpecialManeuverDistance = self.SpecialManeuverDistance
    if GroundDistance < TerminalDistance then
       -- Always return real aim point when within terminal distance
       return AimPoint
-   elseif GroundDistance < self.SpecialManeuverDistance then
+   elseif SpecialManeuverDistance and GroundDistance < SpecialManeuverDistance then
       -- Begin special maneuver, if any. Generally a pop-up or pop-under.
       local GroundDirection = GroundOffset / GroundDistance
       local ToTerminal = GroundDistance - TerminalDistance
