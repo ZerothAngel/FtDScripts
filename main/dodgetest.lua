@@ -1,6 +1,6 @@
 --! dodgetest
 --@ yawthrottle commons quadraticsolver spairs periodic
-DodgeDirections = { Vector3.left, Vector3.right, Vector3.left, Vector3.right }
+DodgeDirections = { -45, 45, -45, 45 }
 
 -- Returns impact point on XZ plane at given altitude
 -- Returns nil if no impact on the plane
@@ -10,7 +10,7 @@ function PredictImpact(I, Altitude, Projectile)
    local ProjectileVelocity = Projectile.Velocity
    local Gravity = I:GetGravityForAltitude(ProjectileAltitude).y
 
-   local a = 0.5 * Gravity
+   local a = 0 -- 0.5 * Gravity can't see non-missiles yet
    local b = ProjectileVelocity.y
    local c = ProjectileAltitude - Altitude
    local Solutions = QuadraticSolver(a, b, c)
@@ -53,7 +53,7 @@ function PredictImpactQuadrant(I, Velocity, Projectile)
    local ImpactPoint,ImpactTime = PredictImpact(I, Altitude, Projectile)
    if not ImpactPoint then return nil end
 
-   -- Move it to local frame of reference
+   -- Move it to local frame of reference centered on predicted CoM
    ImpactPoint = ImpactPoint - (CoM + Velocity * ImpactTime)
    ImpactPoint = Quaternion.Euler(0, -Yaw, 0) * ImpactPoint
 
@@ -80,34 +80,30 @@ function Dodge(I, Bearing)
    local Velocity = I:GetVelocityVector()
 
    local Dodges = {}
-   for mindex = 0,I:GetNumberOfMainframes()-1 do
-      for pindex = 0,I:GetNumberOfWarnings(mindex)-1 do
-         local Projectile = I:GetMissileWarning(mindex, pindex)
-         if Projectile.Valid then
-            local Quadrant,ImpactTime = PredictImpactQuadrant(I, Velocity, Projectile)
-            if Quadrant then
-               Dodges[ImpactTime] = Quadrant
-            end
+   local mindex = 0
+   for pindex = 0,I:GetNumberOfWarnings(mindex)-1 do
+      local Projectile = I:GetMissileWarning(mindex, pindex)
+      if Projectile.Valid then
+         local Quadrant,ImpactTime = PredictImpactQuadrant(I, Velocity, Projectile)
+         if Quadrant then
+            Dodges[ImpactTime] = Quadrant
          end
       end
    end
 
-   local DodgeCount,DodgeVector = 0,Vector3.zero
+   local DodgeAngle = 0
    for t,Quadrant in spairs(Dodges) do
       if Debugging then Debug(I, __func__, "Quadrant = %d, ImpactTime = %f", Quadrant, t) end
-      DodgeVector = DodgeVector + DodgeDirections[Quadrant]
-      DodgeCount = DodgeCount + 1
+      DodgeAngle = DodgeDirections[Quadrant]
       break
    end
 
-   -- DodgeVector is local
-   if DodgeCount == 0 then
+   if DodgeAngle == 0 then
       return Bearing
    else
-      local NewTarget = Quaternion.Euler(0, Bearing, 0) * Vector3.forward
-      NewTarget = NewTarget + DodgeVector * DodgeWeight
-      NewTarget = Quaternion.Euler(0, Yaw, 0) * NewTarget
-      return -I:GetTargetPositionInfoForPosition(0, NewTarget.x, 0, NewTarget.z).Azimuth
+      Bearing = Bearing + DodgeAngle
+      if math.abs(Bearing) > 180 then Bearing = Bearing - Mathf.Sign(Bearing) * 360 end
+      return Bearing
    end
 end
 
