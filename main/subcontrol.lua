@@ -8,6 +8,10 @@ DepthPID = PID.create(DepthPIDValues[1], DepthPIDValues[2], DepthPIDValues[3], -
 LastHydrofoilCount = 0
 HydrofoilInfos = {}
 
+LastDriveMaintainerCount = 0
+ManualDepthDriveMaintainer = nil
+ManualDesiredDepth = 0
+
 function GetHydrofoilSign(BlockInfo)
    -- Check if hydrofoil's forward vector lies on Z-axis and up vector lies on Y-axis.
    local DotZ = BlockInfo.LocalForwards.z
@@ -70,6 +74,33 @@ function SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
    end
 end
 
+function GetManualDesiredDepth(I)
+   local DriveMaintainerCount = I:Component_GetCount(DRIVEMAINTAINER)
+   if DriveMaintainerCount ~= LastDriveMaintainerCount then
+      -- Clear cached index
+      ManualDepthDriveMaintainer = nil
+      LastDriveMaintainerCount = DriveMaintainerCount
+   end
+
+   if not ManualDepthDriveMaintainer then
+      -- Look for the first one facing the direction we want
+      for i = 0,DriveMaintainerCount-1 do
+         local BlockInfo = I:Component_GetBlockInfo(DRIVEMAINTAINER, i)
+         if Vector3.Dot(BlockInfo.LocalForwards, ManualDepthDriveMaintainerFacing) > 0.001 then
+            ManualDepthDriveMaintainer = i
+            break
+         end
+      end
+   
+      if not ManualDepthDriveMaintainer then
+         -- Still don't have one, just return last setting
+         return ManualDesiredDepth
+      end
+   end
+
+   return I:Component_GetFloatLogic(DRIVEMAINTAINER, ManualDepthDriveMaintainer)
+end
+
 function SubControl_Update(I)
    if not I:IsDocked() and I.AIMode ~= "off" then
       GetSelfInfo(I)
@@ -77,10 +108,23 @@ function SubControl_Update(I)
       local DepthCV = 0
       if ControlDepth then
          local DesiredDepth,Absolute
-         if GetTargetPositionInfo(I) then
-            DesiredDepth,Absolute = DesiredDepthCombat[1],DesiredDepthCombat[2]
+         if not ManualDepthDriveMaintainerFacing then
+            -- Use configured depths
+            if GetTargetPositionInfo(I) then
+               DesiredDepth,Absolute = DesiredDepthCombat[1],DesiredDepthCombat[2]
+            else
+               DesiredDepth,Absolute = DesiredDepthIdle[1],DesiredDepthIdle[2]
+            end
          else
-            DesiredDepth,Absolute = DesiredDepthIdle[1],DesiredDepthIdle[2]
+            -- Manual depth control
+            ManualDesiredDepth = GetManualDesiredDepth(I)
+            if ManualDesiredDepth > 0 then
+               -- Relative
+               DesiredDepth,Absolute = (500 - ManualDesiredDepth*500),false
+            else
+               -- Absolute
+               DesiredDepth,Absolute = -ManualDesiredDepth*500,true
+            end
          end
 
          if Absolute then
