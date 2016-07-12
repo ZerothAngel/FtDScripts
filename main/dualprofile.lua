@@ -7,17 +7,17 @@ MyHorizontal = UnifiedMissile.create(HorizontalConfig)
 GuidanceInfos = {
    {
       Controller = MyVertical,
-      CanTarget = function (I, TargetInfo)
-         local Altitude = TargetInfo.Position.y
-         return Altitude >= VerticalMinMaxAltitude[1] and Altitude <= VerticalMinMaxAltitude[2]
-      end
+      MinAltitude = VerticalLimits.MinAltitude,
+      MaxAltitude = VerticalLimits.MaxAltitude,
+      MinRange = VerticalLimits.MinRange * VerticalLimits.MinRange,
+      MaxRange = VerticalLimits.MaxRange * VerticalLimits.MaxRange,
    },
    {
       Controller = MyHorizontal,
-      CanTarget = function (I, TargetInfo)
-         local Altitude = TargetInfo.Position.y
-         return Altitude >= HorizontalMinMaxAltitude[1] and Altitude <= HorizontalMinMaxAltitude[2]
-      end
+      MinAltitude = HorizontalLimits.MinAltitude,
+      MaxAltitude = HorizontalLimits.MaxAltitude,
+      MinRange = HorizontalLimits.MinRange * HorizontalLimits.MinRange,
+      MaxRange = HorizontalLimits.MaxRange * HorizontalLimits.MaxRange,
    }
 }
 
@@ -29,11 +29,7 @@ end
 function SelectGuidance(I, BlockInfo)
    -- Really simple. Vertical launcher = vertical profile,
    -- horizontal launcher = horizontal profile
-   if IsVertical(BlockInfo) then
-      return 1
-   else
-      return 2
-   end
+   return IsVertical(BlockInfo) and 1 or 2
 end
 
 -- Main update loop

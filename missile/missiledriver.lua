@@ -8,24 +8,31 @@ function GatherTargets(I, GuidanceInfos)
    local TargetsByPriority = {}
    local TargetsById = {}
 
+   local Position = I:GetConstructPosition()
+
    for _,mindex in pairs(PreferredMainframes) do
       for tindex = 0,I:GetNumberOfTargets(mindex)-1 do
          local TargetInfo = I:GetTargetInfo(mindex, tindex)
          -- Only if valid and isn't salvage
          if TargetInfo.Valid and TargetInfo.Protected then
             local TargetId = TargetInfo.Id
-            local Position = TargetInfo.Position
+            local TargetPosition = TargetInfo.Position
             local Target = {
                Id = TargetId,
-               Position = Position,
+               Position = TargetPosition,
                AimPoint = TargetInfo.AimPointPosition,
                Velocity = TargetInfo.Velocity,
             }
             local CanTarget = {}
+            local InRange = {}
+            local Altitude = TargetPosition.y
+            local Range = (TargetPosition - Position).sqrMagnitude
             for _,GuidanceInfo in pairs(GuidanceInfos) do
-               table.insert(CanTarget, GuidanceInfo.CanTarget(I, TargetInfo))
+               table.insert(CanTarget, Altitude >= GuidanceInfo.MinAltitude and Altitude <= GuidanceInfo.MaxAltitude)
+               table.insert(InRange, Range >= GuidanceInfo.MinRange and Range <= GuidanceInfo.MaxRange)
             end
             Target.CanTarget = CanTarget
+            Target.InRange = InRange
             table.insert(TargetsByPriority, Target)
             TargetsById[TargetId] = Target
          end
@@ -82,7 +89,7 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
                   -- Brand new missile, select highest priority that
                   -- this missile can target
                   for _,Target in pairs(TargetsByPriority) do
-                     if Target.CanTarget[GuidanceIndex] then
+                     if Target.CanTarget[GuidanceIndex] and Target.InRange[GuidanceIndex] then
                         MissileTargetId = Target.Id
                         NewMissileTargets[MissileId] = MissileTargetId
                         break

@@ -1,12 +1,25 @@
 -- CONFIGURATION
 
--- Minimum and maximum altitudes for each profile, used for target selection.
--- Note: This only governs missiles in-flight. You should still set the
--- min/max altitudes correctly in your Local Weapon Controller.
--- The first number is the minimum altitude.
--- The second is the maximum altitude.
-VerticalMinMaxAltitude = { -25, 9999 }
-HorizontalMinMaxAltitude = { -9999, 15 }
+-- Altitude and range limits for each profile, used for target selection.
+-- They should generally match the settings on the Local Weapon Controller
+-- for each set of missile launchers.
+
+-- It will prevent locking onto high-priority targets that are farther
+-- than your missiles' max range or re-locking onto targets your missiles
+-- can't hit (e.g. torpedoes re-locking onto air targets).
+VerticalLimits = {
+   MinRange = 0,
+   MaxRange = 9999,
+   MinAltitude = -25,
+   MaxAltitude = 9999,
+}
+
+HorizontalLimits = {
+   MinRange = 0,
+   MaxRange = 9999,
+   MinAltitude = -500,
+   MaxAltitude = 15,
+}
 
 -- PROFILE CONFIGURATION
 

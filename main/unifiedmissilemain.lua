@@ -6,7 +6,10 @@ MyMissile = UnifiedMissile.create(Config)
 GuidanceInfos = {
    {
       Controller = MyMissile,
-      CanTarget = function (I, TargetInfo) return true end
+      MinAltitude = Limits.MinAltitude,
+      MaxAltitude = Limits.MaxAltitude,
+      MinRange = Limits.MinRange * Limits.MinRange,
+      MaxRange = Limits.MaxRange * Limits.MaxRange,
    }
 }
 
