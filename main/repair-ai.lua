@@ -1,8 +1,8 @@
 --! repair-ai
 --@ yawthrottle avoidance commons quadraticintercept gettargetpositioninfo
---@ spairs periodic
+--@ spairs pid periodic
 -- Repair AI module
-ThrottlePID = PID.create(ThrottlePIDValues[1], ThrottlePIDValues[2], ThrottlePIDValues[3], -1, 1, UpdateRate)
+ThrottlePID = PID.create(ThrottlePIDConfig, -1, 1, UpdateRate)
 
 FirstRun = nil
 Origin = nil

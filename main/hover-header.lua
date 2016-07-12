@@ -23,4 +23,8 @@ CanReverseBlades = true
 -- most ships (very small overshoot).
 -- { 1, nil, 0 } is a good starting point when tuning,
 -- but probably too slow.
-AltitudePIDValues = { 5, 5, 0.3 } -- Kp, Ti, Td
+AltitudePIDConfig = {
+   Kp = 5,
+   Ti = 5,
+   Td = 0.3,
+}

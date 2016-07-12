@@ -1,7 +1,7 @@
 --! hover
 --@ terraincheck commons getvectorangle gettargetpositioninfo pid spinnercontrol
 -- Hover module
-AltitudePID = PID.create(AltitudePIDValues[1], AltitudePIDValues[2], AltitudePIDValues[3], CanReverseBlades and -30 or 0, 30)
+AltitudePID = PID.create(AltitudePIDConfig, CanReverseBlades and -30 or 0, 30)
 
 FirstRun = nil
 PerlinOffset = 0

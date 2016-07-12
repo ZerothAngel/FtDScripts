@@ -1,9 +1,9 @@
 --! subcontrol
 --@ terraincheck commons getvectorangle gettargetpositioninfo pid periodic
 -- Hydrofoil submarine control module
-RollPID = PID.create(RollPIDValues[1], RollPIDValues[2], RollPIDValues[3], -1, 1, UpdateRate)
-PitchPID = PID.create(PitchPIDValues[1], PitchPIDValues[2], PitchPIDValues[3], -1, 1, UpdateRate)
-DepthPID = PID.create(DepthPIDValues[1], DepthPIDValues[2], DepthPIDValues[3], -1, 1, UpdateRate)
+RollPID = PID.create(RollPIDConfig, -1, 1, UpdateRate)
+PitchPID = PID.create(PitchPIDConfig, -1, 1, UpdateRate)
+DepthPID = PID.create(DepthPIDConfig, -1, 1, UpdateRate)
 
 LastHydrofoilCount = 0
 HydrofoilInfos = {}

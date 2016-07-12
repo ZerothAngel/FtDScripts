@@ -2,17 +2,17 @@
 PID = {}
 
 -- Note: Set Ti to nil to eliminate integral term
-function PID.create(Kp, Ti, Td, Min, Max, UpdateRate)
+function PID.create(Config, Min, Max, UpdateRate)
    local self = {}
    if not UpdateRate then UpdateRate = 1 end
    local dt = UpdateRate / 40
-   self.Kp = Kp
-   if Ti then
-      self.Kidt = Kp * dt / Ti
+   self.Kp = Config.Kp
+   if Config.Ti then
+      self.Kidt = Config.Kp * dt / Config.Ti
    else
       self.Kidt = 0
    end
-   self.Kddt = Kp * Td / dt
+   self.Kddt = Config.Kp * Config.Td / dt
    self.Integral = 0.0
    self.LastError = 0.0
    self.Min = Min

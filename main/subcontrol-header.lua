@@ -32,9 +32,21 @@ MinDepth = 50
 -- PID values for hydrofoils
 -- Start with { 1, nil, 0 } and tune from there.
 -- Setting Ti to nil eliminates integral component.
-RollPIDValues = { .01, 40, .4 } -- { Kp, Ti, Td }
-PitchPIDValues = { .1, 20, .5 } -- { Kp, Ti, Td }
-DepthPIDValues = { 1, nil, 0 } -- { Kp, Ti, Td }
+RollPIDConfig = {
+   Kp = .01,
+   Ti = 40,
+   Td = .4,
+}
+PitchPIDConfig = {
+   Kp = .1,
+   Ti = 20,
+   Td = .5,
+}
+DepthPIDConfig = {
+   Kp = 1,
+   Ti = nil,
+   Td = 0,
+}
 
 -- How often to run. At 1, it will run every update. At 10,
 -- it will run every 10th update. The lower it is, the more

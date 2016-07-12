@@ -18,7 +18,11 @@ RelativeApproachSpeed = 1
 MinimumSpeed = 2
 -- Constants for throttle PID, used when within ApproachMaxDistance
 -- { 1, nil, 0 } is a good but rough starting point
-ThrottlePIDValues = { .01, nil, .5 } -- Kp, Ti, Td
+ThrottlePIDConfig = {
+   Kp = .01,
+   Ti = nil,
+   Td = .5,
+}
 
 -- When considering other repair targets, they must
 -- be within this distance and within this altitude range
