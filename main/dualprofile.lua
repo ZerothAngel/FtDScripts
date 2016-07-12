@@ -22,8 +22,7 @@ GuidanceInfos = {
 }
 
 function IsVertical(Info)
-   -- NB If perpendicular, it's usually never exactly 0
-   return math.abs(Vector3.Dot(Info.LocalForwards, Vector3.up)) > 0.001
+   return math.abs(Info.LocalForwards.y) > 0.001
 end
 
 -- Returns index into GuidanceInfos

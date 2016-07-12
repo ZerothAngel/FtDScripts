@@ -10,10 +10,9 @@ HydrofoilInfos = {}
 
 function GetHydrofoilSign(BlockInfo)
    -- Check if hydrofoil's forward vector lies on Z-axis and up vector lies on Y-axis.
-   -- Probably don't need dot product (can just check signs), but just to be safe...
-   local DotZ = Vector3.Dot(BlockInfo.LocalForwards, Vector3.forward)
-   local DotY = Vector3.Dot(BlockInfo.LocalRotation * Vector3.up, Vector3.up)
-   if math.abs(DotZ) > 0.001 and math.abs(DotY) > 0.001 then -- It's never exactly zero
+   local DotZ = BlockInfo.LocalForwards.z
+   local DotY = (BlockInfo.LocalRotation * Vector3.up).y
+   if math.abs(DotZ) > 0.001 and math.abs(DotY) > 0.001 then
       -- Facing forwards or backwards on XZ plane, return appropriate sign
       return Mathf.Sign(DotZ) * Mathf.Sign(DotY)
    else
