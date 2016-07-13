@@ -1,13 +1,12 @@
 -- PID implementation
 PID = {}
 
--- Note: Set Ti to nil to eliminate integral term
 function PID.create(Config, Min, Max, UpdateRate)
    local self = {}
    if not UpdateRate then UpdateRate = 1 end
    local dt = UpdateRate / 40
    self.Kp = Config.Kp
-   if Config.Ti then
+   if Config.Ti ~= 0 then
       self.Kidt = Config.Kp * dt / Config.Ti
    else
       self.Kidt = 0
@@ -19,15 +18,9 @@ function PID.create(Config, Min, Max, UpdateRate)
    self.Max = Max
 
    -- Due to lack of setmetatable
-   self.Reset = PID.Reset
    self.Control = PID.Control
 
    return self
-end
-
-function PID:Reset()
-   self.Integral = 0.0
-   self.LastError = 0.0
 end
 
 function PID:Control(Error)

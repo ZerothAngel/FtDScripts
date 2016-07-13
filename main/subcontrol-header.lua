@@ -41,8 +41,7 @@ DesiredDepthIdle = {
 MinDepth = 50
 
 -- PID values for hydrofoils
--- Start with { 1, nil, 0 } and tune from there.
--- Setting Ti to nil eliminates integral component.
+-- Start with { 1, 0, 0 } and tune from there.
 RollPIDConfig = {
    Kp = .01,
    Ti = 40,
@@ -55,7 +54,7 @@ PitchPIDConfig = {
 }
 DepthPIDConfig = {
    Kp = 1,
-   Ti = nil,
+   Ti = 0,
    Td = 0,
 }
 

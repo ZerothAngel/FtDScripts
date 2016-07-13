@@ -17,10 +17,10 @@ RelativeApproachSpeed = 1
 -- Probably not a good idea for hydrofoil-based subs to stop
 MinimumSpeed = 2
 -- Constants for throttle PID, used when within ApproachMaxDistance
--- { 1, nil, 0 } is a good but rough starting point
+-- { 1, 0, 0 } is a good but rough starting point
 ThrottlePIDConfig = {
    Kp = .01,
-   Ti = nil,
+   Ti = 0,
    Td = .5,
 }
 

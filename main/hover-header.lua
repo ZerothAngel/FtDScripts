@@ -21,7 +21,7 @@ CanReverseBlades = true
 
 -- PID values. These default values work for me in
 -- most ships (very small overshoot).
--- { 1, nil, 0 } is a good starting point when tuning,
+-- { 1, 0, 0 } is a good starting point when tuning,
 -- but probably too slow.
 AltitudePIDConfig = {
    Kp = 5,
