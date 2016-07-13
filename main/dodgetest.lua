@@ -1,5 +1,5 @@
 --! dodgetest
---@ yawthrottle commons quadraticsolver spairs periodic
+--@ yawthrottle debug getselfinfo quadraticsolver spairs periodic
 DodgeDirections = { -45, 45, -45, 45 }
 
 -- Returns impact point on XZ plane at given altitude

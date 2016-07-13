@@ -1,4 +1,4 @@
---@ commons getvectorangle gettargetpositioninfo
+--@ debug planarvector getvectorangle gettargetpositioninfo
 -- Avoidance module
 Dimensions = nil
 HalfDimensions = nil

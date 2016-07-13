@@ -1,5 +1,5 @@
 --! hover
---@ terraincheck commons getvectorangle gettargetpositioninfo pid spinnercontrol
+--@ terraincheck debug getselfinfo getvectorangle gettargetpositioninfo pid spinnercontrol
 -- Hover module
 AltitudePID = PID.create(AltitudePIDConfig, CanReverseBlades and -30 or 0, 30)
 

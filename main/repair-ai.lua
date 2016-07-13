@@ -1,6 +1,6 @@
 --! repair-ai
---@ yawthrottle avoidance commons quadraticintercept gettargetpositioninfo
---@ spairs pid periodic
+--@ yawthrottle avoidance debug getselfinfo planarvector getbearingtopoint
+--@ quadraticintercept gettargetpositioninfo spairs pid periodic
 -- Repair AI module
 ThrottlePID = PID.create(ThrottlePIDConfig, -1, 1, UpdateRate)
 

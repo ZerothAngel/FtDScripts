@@ -1,5 +1,5 @@
 --! avoidancetest
---@ yawthrottle avoidance commons periodic
+--@ yawthrottle getselfinfo avoidance periodic
 FirstRun = nil
 
 function FirstRun(I)

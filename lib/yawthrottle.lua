@@ -1,4 +1,4 @@
---@ commons pid spinnercontrol
+--@ api debug pid spinnercontrol
 -- Yaw & throttle module
 YawPID = PID.create(YawPIDConfig, -1.0, 1.0, UpdateRate)
 
