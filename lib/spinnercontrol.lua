@@ -9,6 +9,7 @@ function SpinnerControl.create(Axis, UseSpinners, UseDediSpinners)
    self.Axis = Axis
    self.UseSpinners = UseSpinners
    self.UseDediSpinners = UseDediSpinners
+   self.LastSpinnerCount = 0
    self.Spinners = {}
 
    if UseSpinners or UseDediSpinners then
@@ -26,8 +27,13 @@ end
 -- along the desired axis. Should be called per Update.
 -- (Assumption is that damage changes indices...)
 function SpinnerControl:Classify(I)
+   local SpinnerCount = I:GetSpinnerCount()
+   -- If the count hasn't changed since last check, do nothing.
+   if SpinnerCount == self.LastSpinnerCount then return end
+
+   self.LastSpinnerCount = SpinnerCount
    self.Spinners = {}
-   for i = 0,I:GetSpinnerCount()-1 do
+   for i = 0,SpinnerCount-1 do
       local IsDedi = I:IsSpinnerDedicatedHelispinner(i)
       if ((self.UseSpinners and not IsDedi) or
           (self.UseDediSpinners and IsDedi)) then
@@ -41,7 +47,7 @@ function SpinnerControl:Classify(I)
                Index = i,
                Fraction = Fraction
             }
-            self.Spinners[#self.Spinners+1] = Spinner
+            table.insert(self.Spinners, Spinner)
          end
       end
    end
