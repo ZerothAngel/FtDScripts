@@ -58,6 +58,11 @@ DepthPIDConfig = {
    Td = 0,
 }
 
+-- If true then the angles of hydrofoils closer to the Center of Mass
+-- (on both X and Z axes) will be scaled up in proportion to the
+-- distance of the furthest hydrofoil.
+ScaleByCoMOffset = true
+
 -- How often to run. At 1, it will run every update. At 10,
 -- it will run every 10th update. The lower it is, the more
 -- responsive it will be, but it will also take more processing time.
