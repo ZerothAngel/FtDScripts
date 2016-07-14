@@ -1,3 +1,5 @@
+-- YAW & PROPULSION
+
 -- Yaw PID controller settings
 -- These default values have worked well for me on
 -- a variety of ships. YMMV.

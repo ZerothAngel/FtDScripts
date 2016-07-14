@@ -10,27 +10,34 @@
 -- have some padding.
 ClearanceFactor = 2
 
+-- FRIENDLY AVOIDANCE
+
 -- Distance to check for friendlies. Friendlies beyond this
 -- distance are ignored.
 FriendlyCheckDistance = 500
+
 -- Each of the following has two numbers:
 -- The first is a duration of time in seconds. If a collision
 -- looks imminent within this time, it will turn away.
 -- The second is the absolute minimum distance to be from friendlies.
 FriendlyAvoidanceCombat = { 20, 100 }
 FriendlyAvoidanceIdle = { 10, 100 }
+
 -- Friendly avoidance weight. Generally should be >1.
 -- Set to 0 to disable friendly avoidance.
 -- Greater number means it will begin to turn away sooner.
 FriendlyAvoidanceWeight = 10
 
--- Terrain avoidance settings
+-- TERRAIN AVOIDANCE
+
 -- How many seconds ahead (at current speed) to sample
 -- the terrain.
 LookAheadTimes = { .25, 1, 2, 3, 5, 8, 13, 21 }
+
 -- When there's an obstacle in front, this is how far (in degrees)
 -- left and right to check for an opening. Should probably be <45
 LookAheadAngle = 30
+
 -- By default, the horizontal center and both sides of the ship
 -- (after accounting for ClearanceFactor) are extended forward
 -- and used to check the terrain. If you have a particularly
@@ -41,6 +48,7 @@ LookAheadAngle = 30
 -- Don't go too crazy, because it will increase the number of
 -- terrain checks dramatically.
 TerrainAvoidanceSubdivisions = 0
+
 -- Terrain avoidance weight. Should be >1, set to 0 to disable.
 -- Greater number means it will begin to turn away sooner.
 TerrainAvoidanceWeight = 100
