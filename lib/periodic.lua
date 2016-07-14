@@ -14,9 +14,12 @@ function Periodic.create(Period, Function)
 end
 
 function Periodic:Tick(I)
-   self.Ticks = self.Ticks + 1
-   if self.Ticks >= self.Period then
+   local Ticks = self.Ticks
+   Ticks = Ticks + 1
+   if Ticks >= self.Period then
       self.Ticks = 0
       self.Function(I)
+   else
+      self.Ticks = Ticks
    end
 end
