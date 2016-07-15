@@ -1,4 +1,4 @@
---@ api getselfinfo pid spinnercontrol
+--@ api getselfinfo normalizebearing pid spinnercontrol
 -- Yaw & throttle module
 YawPID = PID.create(YawPIDConfig, -1.0, 1.0)
 
@@ -8,35 +8,48 @@ DesiredHeading = nil
 DesiredThrottle = nil
 CurrentThrottle = 0
 
--- Normalizes a bearing to [-180, 180].
--- Input should be within [-360, 360].
-function NormalizeBearing(Bearing)
-   if math.abs(Bearing) > 180 then
-      Bearing = Bearing - Mathf.Sign(Bearing) * 360
-   end
-   return Bearing
+-- Sets heading to an absolute value, 0 is north, 90 is east
+function SetHeading(Heading)
+   DesiredHeading = Heading % 360
 end
 
 -- Adjusts heading toward relative bearing
 function AdjustHeading(Bearing)
-   DesiredHeading = NormalizeBearing(Yaw + Bearing)
+   SetHeading(Yaw + Bearing)
 end
 
--- Sets throttle
-function SetThrottle(Drive)
-   DesiredThrottle = Drive
-end
-
--- Resets heading/throttle so they won't be touched this update
--- (unless explicitly set again)
-function YawThrottle_Reset()
+-- Resets heading so yaw will no longer be modified
+function ResetHeading()
    DesiredHeading = nil
+end
+
+-- Sets throttle. Throttle should be [-1, 1]
+function SetThrottle(Throttle)
+   DesiredThrottle = math.max(-1, math.min(1, Throttle))
+end
+
+-- Adjusts throttle by some delta
+-- NB CurrentThrottle does not change until YawThrottle_Update is called.
+function AdjustThrottle(Delta)
+   SetThrottle(CurrentThrottle + Delta)
+end
+
+-- Resets throttle so drives will no longer be modified
+function ResetThrottle()
    DesiredThrottle = nil
 end
 
-function YawThrottle_Update(I)
-   local __func__ = "YawThrottle_Update"
+-- Resets heading/throttle so they will no longer be modified
+-- (unless explicitly set again)
+function YawThrottle_Reset()
+   ResetHeading()
+   ResetThrottle()
+end
 
+-- Controls ship according to desired heading/throttle.
+-- Should be called every update.
+-- Default AI should be suppressed beforehand, if needed.
+function YawThrottle_Update(I)
    if DesiredHeading then
       local Error = NormalizeBearing(DesiredHeading - Yaw)
 
