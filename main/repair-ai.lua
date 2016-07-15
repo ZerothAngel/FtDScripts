@@ -1,25 +1,18 @@
 --! repair-ai
 --@ yawthrottle avoidance debug getselfinfo planarvector getbearingtopoint
---@ quadraticintercept gettargetpositioninfo spairs pid periodic
+--@ quadraticintercept gettargetpositioninfo spairs pid firstrun periodic
 -- Repair AI module
 ThrottlePID = PID.create(ThrottlePIDConfig, -1, 1, UpdateRate)
 
-FirstRun = nil
 Origin = nil
 
 ParentID = nil
 RepairTargetID = nil
 
--- Called on first activation (not necessarily first Update)
-function FirstRun(I)
-   local __func__ = "FirstRun"
-
-   FirstRun = nil
-
+function RepairAI_FirstRun(I)
    Origin = CoM
-
-   AvoidanceFirstRun(I)
 end
+AddFirstRun(RepairAI_FirstRun)
 
 -- Scale up desired speed depending on angle between velocities
 function MatchSpeed(Velocity, TargetVelocity, Faster)
@@ -161,8 +154,6 @@ function Imprint(I)
 end
 
 function RepairAI_Update(I)
-   if FirstRun then FirstRun(I) end
-
    YawThrottle_Reset()
 
    local Drive = 0
@@ -210,6 +201,8 @@ function Update(I)
    if not I:IsDocked() and ((ActiateWhenOn and I.AIMode == "on") or
                             AIMode == "combat") then
       GetSelfInfo(I)
+
+      if FirstRun then FirstRun(I) end
 
       -- Suppress default AI
       if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end

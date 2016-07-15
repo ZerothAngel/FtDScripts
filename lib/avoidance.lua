@@ -1,4 +1,4 @@
---@ debug planarvector getvectorangle gettargetpositioninfo
+--@ debug planarvector getvectorangle gettargetpositioninfo firstrun
 -- Avoidance module
 Dimensions = nil
 HalfDimensions = nil
@@ -7,7 +7,7 @@ VerticalClearance = 0
 SideClearance = 0
 CheckPoints = {}
 
-function AvoidanceFirstRun(I)
+function Avoidance_FirstRun(I)
    -- TODO Should this stuff only be determined once?
    local MaxDim = I:GetConstructMaxDimensions()
    local MinDim = I:GetConstructMinDimensions()
@@ -32,6 +32,7 @@ function AvoidanceFirstRun(I)
       end
    end
 end
+AddFirstRun(Avoidance_FirstRun)
 
 function GetTerrainHits(I, Angle, LowerEdge, Speed)
    local Hits = 0

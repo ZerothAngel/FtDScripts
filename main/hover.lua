@@ -1,27 +1,21 @@
 --! hover
 --@ terraincheck getselfinfo getvectorangle gettargetpositioninfo
---@ pid spinnercontrol periodic
+--@ pid spinnercontrol firstrun periodic
 -- Hover module
 AltitudePID = PID.create(AltitudePIDConfig, CanReverseBlades and -30 or 0, 30)
 
-FirstRun = nil
 PerlinOffset = 0
 
 LiftSpinners = SpinnerControl.create(Vector3.up, false, true)
 
 DesiredAltitude = 0
 
-function FirstRun(I)
-   FirstRun = nil
-
+function Hover_FirstRun(I)
    PerlinOffset = 1000.0 * math.random()
-
-   TerrainCheckFirstRun(I)
 end
+AddFirstRun(Hover_FirstRun)
 
 function Update_Hover(I)
-   if FirstRun then FirstRun(I) end
-
    if GetTargetPositionInfo(I) then
       DesiredAltitude = DesiredAltitudeCombat
 
@@ -54,6 +48,8 @@ function Update(I)
    local CV = 0
    if not I:IsDocked() and I.AIMode ~= "off" then
       GetSelfInfo(I)
+
+      if FirstRun then FirstRun(I) end
 
       Hover:Tick(I)
 

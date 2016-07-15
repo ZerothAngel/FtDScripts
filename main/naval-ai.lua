@@ -1,27 +1,18 @@
 --! naval-ai
 --@ yawthrottle avoidance debug getselfinfo planarvector getbearingtopoint
---@ gettargetpositioninfo periodic
+--@ gettargetpositioninfo firstrun periodic
 -- Naval AI module
 Attacking = true
 LastAttackTime = 0
 
-FirstRun = nil
 Origin = nil
 PerlinOffset = 0
 
--- Called on first activation (not necessarily first Update)
-function FirstRun(I)
-   local __func__ = "FirstRun"
-
-   FirstRun = nil
-
+function NavalAI_FirstRun(I)
    Origin = CoM
    PerlinOffset = 1000.0 * math.random()
-
-   if Debugging then Debug(I, __func__, "PerlinOffset %f", PerlinOffset) end
-
-   AvoidanceFirstRun(I)
 end
+AddFirstRun(NavalAI_FirstRun)
 
 -- Because I didn't realize Mathf.Sign exists.
 function sign(n)
@@ -94,8 +85,6 @@ function AdjustHeadingToTarget(I)
 end
 
 function NavalAI_Update(I)
-   if FirstRun then FirstRun(I) end
-
    YawThrottle_Reset()
 
    local Drive = nil
@@ -126,6 +115,8 @@ function Update(I)
    if not I:IsDocked() and ((ActivateWhenOn and AIMode == "on") or
                             AIMode == "combat") then
       GetSelfInfo(I)
+
+      if FirstRun then FirstRun(I) end
 
       -- Suppress default AI
       if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end

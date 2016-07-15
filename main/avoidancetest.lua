@@ -1,16 +1,6 @@
 --! avoidancetest
---@ yawthrottle getselfinfo avoidance periodic
-FirstRun = nil
-
-function FirstRun(I)
-   FirstRun = nil
-
-   AvoidanceFirstRun(I)
-end
-
+--@ yawthrottle getselfinfo avoidance firstrun periodic
 function AvoidanceTest_Update(I)
-   if FirstRun then FirstRun(I) end
-
    YawThrottle_Reset()
 
    -- Just go as straight as possible
@@ -23,6 +13,8 @@ function Update(I)
    local AIMode = I.AIMode
    if (ActivateWhenOn and AIMode == 'on') or AIMode == 'combat' then
       GetSelfInfo(I)
+
+      if FirstRun then FirstRun(I) end
 
       -- Suppress default AI
       if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end

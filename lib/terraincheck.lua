@@ -1,8 +1,9 @@
+--@ firstrun
 -- Terrain following module
 TerrainCheckPoints = {}
 
 -- Pre-calculate check points for terrain following
-function TerrainCheckFirstRun(I)
+function TerrainCheck_FirstRun(I)
    -- Same idea as avoidance module. Origin is current position.
    local MaxDim = I:GetConstructMaxDimensions()
    local MinDim = I:GetConstructMinDimensions()
@@ -20,6 +21,7 @@ function TerrainCheckFirstRun(I)
       end
    end
 end
+AddFirstRun(TerrainCheck_FirstRun)
 
 -- Using pre-calculated check points, scan ahead at the given angle
 -- (using Speed * look-ahead time) and return maximum height of terrain.
