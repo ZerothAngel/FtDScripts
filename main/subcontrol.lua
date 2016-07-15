@@ -2,9 +2,11 @@
 --@ terraincheck api debug getselfinfo getvectorangle gettargetpositioninfo
 --@ pid periodic
 -- Hydrofoil submarine control module
-RollPID = PID.create(RollPIDConfig, -1, 1, UpdateRate)
-PitchPID = PID.create(PitchPIDConfig, -1, 1, UpdateRate)
-DepthPID = PID.create(DepthPIDConfig, -1, 1, UpdateRate)
+RollPID = PID.create(RollPIDConfig, -1, 1)
+PitchPID = PID.create(PitchPIDConfig, -1, 1)
+DepthPID = PID.create(DepthPIDConfig, -1, 1)
+
+DesiredDepth = 0
 
 LastHydrofoilCount = 0
 HydrofoilInfos = {}
@@ -141,47 +143,56 @@ function GetManualDesiredDepth(I)
 end
 
 function SubControl_Update(I)
+   if ControlDepth then
+      local Absolute
+      if not ManualDepthDriveMaintainerFacing then
+         -- Use configured depths
+         if GetTargetPositionInfo(I) then
+            DesiredDepth,Absolute = DesiredDepthCombat.Depth,DesiredDepthCombat.Absolute
+         else
+            DesiredDepth,Absolute = DesiredDepthIdle.Depth,DesiredDepthIdle.Absolute
+         end
+      else
+         -- Manual depth control
+         ManualDesiredDepth = GetManualDesiredDepth(I)
+         if ManualDesiredDepth > 0 then
+            -- Relative
+            DesiredDepth,Absolute = (500 - ManualDesiredDepth*500),false
+         else
+            -- Absolute
+            DesiredDepth,Absolute = -ManualDesiredDepth*500,true
+         end
+      end
+
+      if Absolute then
+         DesiredDepth = -DesiredDepth
+      else
+         -- First check CoM's height
+         local Height = I:GetTerrainAltitudeForPosition(CoM)
+         -- Now check look-ahead values
+         local Velocity = I:GetVelocityVector()
+         Velocity.y = 0
+         local Speed = Velocity.magnitude
+         local VelocityAngle = GetVectorAngle(Velocity)
+         Height = math.max(Height, GetTerrainHeight(I, VelocityAngle, Speed))
+         DesiredDepth = DesiredDepth + Height
+         -- No higher than sea level
+         DesiredDepth = math.min(DesiredDepth, -MinDepth)
+      end
+   end
+end
+
+SubControl = Periodic.create(UpdateRate, SubControl_Update)
+
+function Update(I)
    if not I:IsDocked() and I.AIMode ~= "off" then
       GetSelfInfo(I)
 
+      SubControl:Tick(I)
+
+      -- This stuff needs to happen every update, regardless of UpdateRate
       local DepthCV = 0
       if ControlDepth then
-         local DesiredDepth,Absolute
-         if not ManualDepthDriveMaintainerFacing then
-            -- Use configured depths
-            if GetTargetPositionInfo(I) then
-               DesiredDepth,Absolute = DesiredDepthCombat.Depth,DesiredDepthCombat.Absolute
-            else
-               DesiredDepth,Absolute = DesiredDepthIdle.Depth,DesiredDepthIdle.Absolute
-            end
-         else
-            -- Manual depth control
-            ManualDesiredDepth = GetManualDesiredDepth(I)
-            if ManualDesiredDepth > 0 then
-               -- Relative
-               DesiredDepth,Absolute = (500 - ManualDesiredDepth*500),false
-            else
-               -- Absolute
-               DesiredDepth,Absolute = -ManualDesiredDepth*500,true
-            end
-         end
-
-         if Absolute then
-            DesiredDepth = -DesiredDepth
-         else
-            -- First check CoM's height
-            local Height = I:GetTerrainAltitudeForPosition(CoM)
-            -- Now check look-ahead values
-            local Velocity = I:GetVelocityVector()
-            Velocity.y = 0
-            local Speed = Velocity.magnitude
-            local VelocityAngle = GetVectorAngle(Velocity)
-            Height = math.max(Height, GetTerrainHeight(I, VelocityAngle, Speed))
-            DesiredDepth = DesiredDepth + Height
-            -- No higher than sea level
-            DesiredDepth = math.min(DesiredDepth, -MinDepth)
-         end
-
          DepthCV = DepthPID:Control(DesiredDepth - Altitude)
       end
 
@@ -190,10 +201,4 @@ function SubControl_Update(I)
 
       SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
    end
-end
-
-SubControl = Periodic.create(UpdateRate, SubControl_Update)
-
-function Update(I)
-   SubControl:Tick(I)
 end
