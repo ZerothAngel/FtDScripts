@@ -1,5 +1,5 @@
 --! hover
---@ terraincheck debug getselfinfo getvectorangle gettargetpositioninfo
+--@ terraincheck getselfinfo getvectorangle gettargetpositioninfo
 --@ pid spinnercontrol periodic
 -- Hover module
 AltitudePID = PID.create(AltitudePIDConfig, CanReverseBlades and -30 or 0, 30)
@@ -8,6 +8,8 @@ FirstRun = nil
 PerlinOffset = 0
 
 LiftSpinners = SpinnerControl.create(Vector3.up, false, true)
+
+DesiredAltitude = 0
 
 function FirstRun(I)
    FirstRun = nil
@@ -18,57 +20,47 @@ function FirstRun(I)
 end
 
 function Update_Hover(I)
-   local __func__ = "Update"
-
    if FirstRun then FirstRun(I) end
 
-   -- Do this here to avoid classifying spinners if docked
-   if I:IsDocked() then return end
+   if GetTargetPositionInfo(I) then
+      DesiredAltitude = DesiredAltitudeCombat
 
-   LiftSpinners:Classify(I)
-
-   if I.AIMode ~= "off" then
-      GetSelfInfo(I)
-
-      local DesiredAltitude
-      if GetTargetPositionInfo(I) then
-         DesiredAltitude = DesiredAltitudeCombat
-
-         -- Modify by Evasion, if set
-         if Evasion then
-            DesiredAltitude = DesiredAltitude + Evasion[1] * (2.0 * Mathf.PerlinNoise(Evasion[2] * I:GetTimeSinceSpawn(), PerlinOffset) - 1.0)
-         end
-      else
-         DesiredAltitude = DesiredAltitudeIdle
+      -- Modify by Evasion, if set
+      if Evasion then
+         DesiredAltitude = DesiredAltitude + Evasion[1] * (2.0 * Mathf.PerlinNoise(Evasion[2] * I:GetTimeSinceSpawn(), PerlinOffset) - 1.0)
       end
-
-      if not AbsoluteAltitude then
-         -- First check CoM's height
-         local Height = I:GetTerrainAltitudeForPosition(CoM)
-         -- Now check look-ahead values
-         local Velocity = I:GetVelocityVector()
-         Velocity.y = 0
-         local Speed = Velocity.magnitude
-         local VelocityAngle = GetVectorAngle(Velocity)
-         Height = math.max(Height, GetTerrainHeight(I, VelocityAngle, Speed))
-         -- Finally, don't fly lower than sea level
-         Height = math.max(Height, 0)
-         DesiredAltitude = DesiredAltitude + Height
-      end
-
-      local CV = AltitudePID:Control(DesiredAltitude - Altitude)
-
-      if Debugging then Debug(I, __func__, "Altitude %f CV %f", Altitude, CV) end
-
-      LiftSpinners:SetSpeed(I, CV)
    else
-      -- If AI is off, turn all lift spinners off
-      LiftSpinners:SetSpeed(I, 0)
+      DesiredAltitude = DesiredAltitudeIdle
+   end
+
+   if not AbsoluteAltitude then
+      -- First check CoM's height
+      local Height = I:GetTerrainAltitudeForPosition(CoM)
+      -- Now check look-ahead values
+      local Velocity = I:GetVelocityVector()
+      Velocity.y = 0
+      local Speed = Velocity.magnitude
+      local VelocityAngle = GetVectorAngle(Velocity)
+      Height = math.max(Height, GetTerrainHeight(I, VelocityAngle, Speed))
+      -- Finally, don't fly lower than sea level
+      Height = math.max(Height, 0)
+      DesiredAltitude = DesiredAltitude + Height
    end
 end
 
 Hover = Periodic.create(UpdateRate, Update_Hover)
 
 function Update(I)
-   Hover:Tick(I)
+   local CV = 0
+   if not I:IsDocked() and I.AIMode ~= "off" then
+      GetSelfInfo(I)
+
+      Hover:Tick(I)
+
+      CV = AltitudePID:Control(DesiredAltitude - Altitude)
+   end
+
+   -- Set spinner speed every update
+   LiftSpinners:Classify(I)
+   LiftSpinners:SetSpeed(I, CV)
 end
