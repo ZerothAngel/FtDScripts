@@ -115,7 +115,7 @@ end
 DodgeTest = Periodic.create(UpdateRate, DodgeTest_Update)
 
 function Update(I)
-   if I.AIMode == 'off' then
+   if I.AIMode == "off" then
       GetSelfInfo(I)
 
       DodgeTest:Tick(I)

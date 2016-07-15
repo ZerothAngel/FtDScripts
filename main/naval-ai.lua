@@ -118,10 +118,10 @@ function Update(I)
 
       if FirstRun then FirstRun(I) end
 
-      -- Suppress default AI
-      if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end
-
       NavalAI:Tick(I)
+
+      -- Suppress default AI
+      if AIMode == "combat" then I:TellAiThatWeAreTakingControl() end
 
       YawThrottle_Update(I)
    end
