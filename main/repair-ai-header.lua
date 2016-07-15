@@ -21,7 +21,7 @@ MinimumSpeed = 2
 ThrottlePIDConfig = {
    Kp = .01,
    Ti = 0,
-   Td = .5,
+   Td = .125,
 }
 
 -- When considering other repair targets, they must

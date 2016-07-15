@@ -44,13 +44,13 @@ MinDepth = 50
 -- Start with { 1, 0, 0 } and tune from there.
 RollPIDConfig = {
    Kp = .01,
-   Ti = 40,
-   Td = .4,
+   Ti = 10,
+   Td = .1,
 }
 PitchPIDConfig = {
    Kp = .1,
-   Ti = 20,
-   Td = .5,
+   Ti = 5,
+   Td = .125,
 }
 DepthPIDConfig = {
    Kp = 1,
