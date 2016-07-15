@@ -94,42 +94,44 @@ function AdjustHeadingToTarget(I)
 end
 
 function NavalAI_Update(I)
-   local AIMode = I.AIMode
-   if not I:IsDocked() and ((ActivateWhenOn and AIMode == "on") or
-                            AIMode == "combat") then
-      if FirstRun then FirstRun(I) end
+   if FirstRun then FirstRun(I) end
 
-      -- Suppress default AI
-      if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end
+   YawThrottle_Reset()
 
-      YawThrottle_Reset()
-
-      local Drive = nil
-      if GetTargetPositionInfo(I) then
-         Drive = AdjustHeadingToTarget(I)
-      elseif ReturnToOrigin then
-         local Target,_ = PlanarVector(CoM, Origin)
-         if Target.magnitude >= OriginMaxDistance then
-            local Bearing = GetBearingToPoint(I, Origin)
-            AdjustHeading(Avoidance(I, Bearing))
-            Drive = ReturnDrive
-         else
-            Drive = 0
-         end
+   local Drive = nil
+   if GetTargetPositionInfo(I) then
+      Drive = AdjustHeadingToTarget(I)
+   elseif ReturnToOrigin then
+      local Target,_ = PlanarVector(CoM, Origin)
+      if Target.magnitude >= OriginMaxDistance then
+         local Bearing = GetBearingToPoint(I, Origin)
+         AdjustHeading(Avoidance(I, Bearing))
+         Drive = ReturnDrive
       else
-         -- Just continue along with avoidance active
-         AdjustHeading(Avoidance(I, 0))
+         Drive = 0
       end
-      if Drive then
-         SetThrottle(Drive)
-      end
+   else
+      -- Just continue along with avoidance active
+      AdjustHeading(Avoidance(I, 0))
+   end
+   if Drive then
+      SetThrottle(Drive)
    end
 end
 
 NavalAI = Periodic.create(UpdateRate, NavalAI_Update)
 
 function Update(I)
-   GetSelfInfo(I)
-   NavalAI:Tick(I)
-   YawThrottle_Update(I)
+   local AIMode = I.AIMode
+   if not I:IsDocked() and ((ActivateWhenOn and AIMode == "on") or
+                            AIMode == "combat") then
+      GetSelfInfo(I)
+
+      -- Suppress default AI
+      if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end
+
+      NavalAI:Tick(I)
+
+      YawThrottle_Update(I)
+   end
 end

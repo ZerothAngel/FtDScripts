@@ -107,17 +107,19 @@ function Dodge(I, Bearing)
 end
 
 function DodgeTest_Update(I)
-   if I.AIMode == 'off' then
-      YawThrottle_Reset()
+   YawThrottle_Reset()
 
-      AdjustHeading(Dodge(I, 0))
-   end
+   AdjustHeading(Dodge(I, 0))
 end
 
 DodgeTest = Periodic.create(UpdateRate, DodgeTest_Update)
 
 function Update(I)
-   GetSelfInfo(I)
-   DodgeTest:Tick(I)
-   YawThrottle_Update(I)
+   if I.AIMode == 'off' then
+      GetSelfInfo(I)
+
+      DodgeTest:Tick(I)
+
+      YawThrottle_Update(I)
+   end
 end

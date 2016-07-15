@@ -161,18 +161,34 @@ function Imprint(I)
 end
 
 function RepairAI_Update(I)
-   local AIMode = I.AIMode
-   if not I:IsDocked() and ((ActiateWhenOn and I.AIMode == "on") or
-                            AIMode == "combat") then
-      if FirstRun then FirstRun(I) end
+   if FirstRun then FirstRun(I) end
 
-      -- Suppress default AI
-      if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end
+   YawThrottle_Reset()
 
-      YawThrottle_Reset()
+   local Drive = 0
+   if GetTargetPositionInfo(I) then
+      if not ParentID then
+         Imprint(I)
+      end
+      if ParentID then
+         SelectRepairTarget(I)
+      end
+      if RepairTargetID then
+         Drive = AdjustHeadingToRepairTarget(I)
+      end
+   else
+      if ReturnToOrigin then
+         ParentID = nil
+         RepairTargetID = nil
 
-      local Drive = 0
-      if GetTargetPositionInfo(I) then
+         local Target,_ = PlanarVector(CoM, Origin)
+         if Target.magnitude >= OriginMaxDistance then
+            local Bearing = GetBearingToPoint(I, Origin)
+            AdjustHeading(Avoidance(I, Bearing))
+            Drive = ReturnDrive
+         end
+      else
+         -- Basically always active, as if in combat
          if not ParentID then
             Imprint(I)
          end
@@ -182,41 +198,27 @@ function RepairAI_Update(I)
          if RepairTargetID then
             Drive = AdjustHeadingToRepairTarget(I)
          end
-      else
-         if ReturnToOrigin then
-            ParentID = nil
-            RepairTargetID = nil
-
-            local Target,_ = PlanarVector(CoM, Origin)
-            if Target.magnitude >= OriginMaxDistance then
-               local Bearing = GetBearingToPoint(I, Origin)
-               AdjustHeading(Avoidance(I, Bearing))
-               Drive = ReturnDrive
-            end
-         else
-            -- Basically always active, as if in combat
-            if not ParentID then
-               Imprint(I)
-            end
-            if ParentID then
-               SelectRepairTarget(I)
-            end
-            if RepairTargetID then
-               Drive = AdjustHeadingToRepairTarget(I)
-            end
-         end
       end
-      SetThrottle(Drive)
-   else
-      ParentID = nil
-      RepairTargetID = nil
    end
+   SetThrottle(Drive)
 end
 
 RepairAI = Periodic.create(UpdateRate, RepairAI_Update)
 
 function Update(I)
-   GetSelfInfo(I)
-   RepairAI:Tick(I)
-   YawThrottle_Update(I)
+   local AIMode = I.AIMode
+   if not I:IsDocked() and ((ActiateWhenOn and I.AIMode == "on") or
+                            AIMode == "combat") then
+      GetSelfInfo(I)
+
+      -- Suppress default AI
+      if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end
+
+      RepairAI:Tick(I)
+
+      YawThrottle_Update(I)
+   else
+      ParentID = nil
+      RepairTargetID = nil
+   end
 end
