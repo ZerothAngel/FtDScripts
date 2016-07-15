@@ -1,4 +1,4 @@
---@ firstrun
+--@ getselfinfo firstrun
 -- Terrain following module
 TerrainCheckPoints = {}
 
@@ -16,8 +16,8 @@ function TerrainCheck_FirstRun(I)
       local Delta = HalfDimensions.x / (TerrainCheckSubdivisions+1)
       for i=1,TerrainCheckSubdivisions do
          local x = i * Delta
-         TerrainCheckPoints[#TerrainCheckPoints+1] = Vector3(-x, 0, MaxDim.z)
-         TerrainCheckPoints[#TerrainCheckPoints+1] = Vector3(x, 0, MaxDim.z)
+         table.insert(TerrainCheckPoints, Vector3(-x, 0, MaxDim.z))
+         table.insert(TerrainCheckPoints, Vector3(x, 0, MaxDim.z))
       end
    end
 end
