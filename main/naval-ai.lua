@@ -14,17 +14,6 @@ function NavalAI_FirstRun(I)
 end
 AddFirstRun(NavalAI_FirstRun)
 
--- Because I didn't realize Mathf.Sign exists.
-function sign(n)
-   if n < 0 then
-      return -1
-   elseif n > 0 then
-      return 1
-   else
-      return 0
-   end
-end
-
 -- Modifies bearing by some amount for evasive maneuvers
 function Evade(I, Bearing, Evasion)
    local __func__ = "Evade"
@@ -73,7 +62,7 @@ function AdjustHeadingToTarget(I)
       Attacking = false
    end
 
-   Bearing = Bearing - sign(Bearing)*TargetAngle
+   Bearing = Bearing - Mathf.Sign(Bearing) * TargetAngle
    Bearing = Evade(I, Bearing, Evasion)
    if Bearing > 180 then Bearing = Bearing - 360 end
 
