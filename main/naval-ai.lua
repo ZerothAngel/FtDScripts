@@ -82,7 +82,7 @@ function NavalAI_Update(I)
    elseif ReturnToOrigin then
       local Target,_ = PlanarVector(CoM, Origin)
       if Target.magnitude >= OriginMaxDistance then
-         local Bearing = GetBearingToPoint(I, Origin)
+         local Bearing = GetBearingToPoint(Origin)
          AdjustHeading(Avoidance(I, Bearing))
          Drive = ReturnDrive
       else
