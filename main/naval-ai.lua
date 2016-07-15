@@ -88,7 +88,7 @@ function AdjustHeadingToTarget(I)
 
    if Debugging then Debug(I, __func__, "State %s Drive %f Bearing %f", State, Drive, Bearing) end
 
-   AdjustHeading(I, Avoidance(I, Bearing))
+   AdjustHeading(Avoidance(I, Bearing))
 
    return Drive
 end
@@ -97,12 +97,12 @@ function NavalAI_Update(I)
    local AIMode = I.AIMode
    if not I:IsDocked() and ((ActivateWhenOn and AIMode == "on") or
                             AIMode == "combat") then
-      GetSelfInfo(I)
-
       if FirstRun then FirstRun(I) end
 
       -- Suppress default AI
       if AIMode == 'combat' then I:TellAiThatWeAreTakingControl() end
+
+      YawThrottle_Reset()
 
       local Drive = nil
       if GetTargetPositionInfo(I) then
@@ -111,18 +111,17 @@ function NavalAI_Update(I)
          local Target,_ = PlanarVector(CoM, Origin)
          if Target.magnitude >= OriginMaxDistance then
             local Bearing = GetBearingToPoint(I, Origin)
-            AdjustHeading(I, Avoidance(I, Bearing))
+            AdjustHeading(Avoidance(I, Bearing))
             Drive = ReturnDrive
          else
             Drive = 0
          end
       else
          -- Just continue along with avoidance active
-         AdjustHeading(I, Avoidance(I, 0))
+         AdjustHeading(Avoidance(I, 0))
       end
       if Drive then
-         ClassifyPropulsionSpinners(I)
-         SetThrottle(I, Drive)
+         SetThrottle(Drive)
       end
    end
 end
@@ -130,5 +129,7 @@ end
 NavalAI = Periodic.create(UpdateRate, NavalAI_Update)
 
 function Update(I)
+   GetSelfInfo(I)
    NavalAI:Tick(I)
+   YawThrottle_Update(I)
 end

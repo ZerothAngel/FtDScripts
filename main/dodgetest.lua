@@ -101,22 +101,23 @@ function Dodge(I, Bearing)
    if DodgeAngle == 0 then
       return Bearing
    else
-      Bearing = Bearing + DodgeAngle
-      if math.abs(Bearing) > 180 then Bearing = Bearing - Mathf.Sign(Bearing) * 360 end
+      Bearing = NormalizeBearing(Bearing + DodgeAngle)
       return Bearing
    end
 end
 
 function DodgeTest_Update(I)
    if I.AIMode == 'off' then
-      GetSelfInfo(I)
+      YawThrottle_Reset()
 
-      AdjustHeading(I, Dodge(I, 0))
+      AdjustHeading(Dodge(I, 0))
    end
 end
 
 DodgeTest = Periodic.create(UpdateRate, DodgeTest_Update)
 
 function Update(I)
+   GetSelfInfo(I)
    DodgeTest:Tick(I)
+   YawThrottle_Update(I)
 end
