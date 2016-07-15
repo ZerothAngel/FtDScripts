@@ -45,7 +45,6 @@ end
 Hover = Periodic.create(UpdateRate, Update_Hover)
 
 function Update(I)
-   local CV = 0
    if not I:IsDocked() and I.AIMode ~= "off" then
       GetSelfInfo(I)
 
@@ -53,10 +52,9 @@ function Update(I)
 
       Hover:Tick(I)
 
-      CV = AltitudePID:Control(DesiredAltitude - Altitude)
+      -- Set spinner speed every update
+      local CV = AltitudePID:Control(DesiredAltitude - Altitude)
+      LiftSpinners:Classify(I)
+      LiftSpinners:SetSpeed(I, CV)
    end
-
-   -- Set spinner speed every update
-   LiftSpinners:Classify(I)
-   LiftSpinners:SetSpeed(I, CV)
 end
