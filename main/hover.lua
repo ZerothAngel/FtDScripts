@@ -1,5 +1,6 @@
 --! hover
---@ terraincheck debug getselfinfo getvectorangle gettargetpositioninfo pid spinnercontrol
+--@ terraincheck debug getselfinfo getvectorangle gettargetpositioninfo
+--@ pid spinnercontrol periodic
 -- Hover module
 AltitudePID = PID.create(AltitudePIDConfig, CanReverseBlades and -30 or 0, 30)
 
@@ -16,7 +17,7 @@ function FirstRun(I)
    TerrainCheckFirstRun(I)
 end
 
-function Update(I)
+function Update_Hover(I)
    local __func__ = "Update"
 
    if FirstRun then FirstRun(I) end
@@ -64,4 +65,10 @@ function Update(I)
       -- If AI is off, turn all lift spinners off
       LiftSpinners:SetSpeed(I, 0)
    end
+end
+
+Hover = Periodic.create(UpdateRate, Update_Hover)
+
+function Update(I)
+   Hover:Tick(I)
 end
