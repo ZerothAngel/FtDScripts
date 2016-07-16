@@ -1,8 +1,7 @@
---@ getselfinfo firstrun
+--@ getselfinfo firstrun debug
 -- Terrain following module
 TerrainCheckPoints = {}
-TerrainCheckForwardOffset = 0
-TerrainCheckRearOffset = 0
+CurrentMaxVerticalSpeed = 1
 
 -- Pre-calculate check points for terrain following
 function TerrainCheck_FirstRun(I)
@@ -11,9 +10,9 @@ function TerrainCheck_FirstRun(I)
    local Dimensions = MaxDim - MinDim
    local HalfDimensions = Dimensions / 2
 
-   TerrainCheckPoints[1] = 0
-   TerrainCheckPoints[2] = -HalfDimensions.x
-   TerrainCheckPoints[3] = HalfDimensions.x
+   table.insert(TerrainCheckPoints, 0)
+   table.insert(TerrainCheckPoints, -HalfDimensions.x)
+   table.insert(TerrainCheckPoints, HalfDimensions.x)
    if TerrainCheckSubdivisions > 0 then
       local Delta = HalfDimensions.x / (TerrainCheckSubdivisions+1)
       for i=1,TerrainCheckSubdivisions do
@@ -23,31 +22,56 @@ function TerrainCheck_FirstRun(I)
       end
    end
 
-   TerrainCheckForwardOffset = MaxDim.z
-   TerrainCheckRearOffset = MinDim.z
+   if not TerrainCheckResolution then
+      TerrainCheckResolution = HalfDimensions.z
+   end
+   if TerrainCheckMaxVerticalSpeed then
+      CurrentMaxVerticalSpeed = TerrainCheckMaxVerticalSpeed
+   end
 end
 AddFirstRun(TerrainCheck_FirstRun)
 
 -- Using pre-calculated check points, scan ahead a certain distance
 -- (using Velocity * look-ahead time) and return maximum height of terrain.
-function GetTerrainHeight(I, Velocity)
-   -- Start with point under CoM
-   local Height = I:GetTerrainAltitudeForPosition(CoM)
+function GetTerrainHeight(I, Velocity, MinAltitude, MaxAltitude)
+   local __func__ = "GetTerrainHeight"
+
+   local Height = MinAltitude
    local Speed = Velocity.magnitude
    local Direction = Velocity / Speed
    local Perp = Vector3.Cross(Direction, Vector3.up)
 
+   -- Determine how far to look ahead
+   local LookAheadTime
+   if TerrainCheckLookAheadTime then
+      LookAheadTime = TerrainCheckLookAheadTime
+   else
+      -- If using dynamic vertical speed, update that first.
+      -- Note: Only care about positive vertical speeds.
+      -- Don't count falling!
+      if not TerrainCheckMaxVerticalSpeed and Velocity.y > CurrentMaxVerticalSpeed then
+         CurrentMaxVerticalSpeed = Velocity.y
+         if Debugging then Debug(I, __func__, "CurrentMaxVerticalSpeed = %.2f", CurrentMaxVerticalSpeed) end
+      end
+
+      local RemainingAltitude = math.max(0, MaxAltitude - Altitude)
+      LookAheadTime = math.max(1, TerrainCheckBufferFactor * RemainingAltitude / CurrentMaxVerticalSpeed)
+      if Debugging then Debug(I, __func__, "LookAheadTime = %.2f", LookAheadTime) end
+   end
+   local MaxDistance = Speed * LookAheadTime
+   if Debugging then Debug(I, __func__, "MaxDistance = %.2f", MaxDistance) end
+
    -- Calculate (mid-point) distances for this velocity once
    local Distances = {}
-   for _,t in pairs(TerrainCheckLookAhead) do
-      table.insert(Distances, Position + Direction * (TerrainCheckForwardOffset + Speed * t))
+   for d = 0,MaxDistance-1,TerrainCheckResolution do
+      table.insert(Distances, CoM + Direction * d)
    end
 
-   -- Add the forward and rear of the vehicle
-   table.insert(Distances, Position + Direction * TerrainCheckForwardOffset)
-   table.insert(Distances, Position + Direction * TerrainCheckRearOffset)
+   -- Make sure end point is also checked
+   -- (Generally it won't be evenly divisible by TerrainCheckResolution)
+   table.insert(Distances, CoM + Direction * MaxDistance)
 
-   for i,Offset in pairs(TerrainCheckPoints) do
+   for _,Offset in pairs(TerrainCheckPoints) do
       local Side = Perp * Offset
       for _,Distance in pairs(Distances) do
          local TestPoint = Distance + Side

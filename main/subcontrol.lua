@@ -169,7 +169,7 @@ function SubControl_Update(I)
       else
          -- Look ahead at terrain
          local Velocity = I:GetVelocityVector()
-         DesiredDepth = DesiredDepth + GetTerrainHeight(I, Velocity)
+         DesiredDepth = DesiredDepth + GetTerrainHeight(I, Velocity, -500, -MinDepth)
          -- No higher than MinDepth
          DesiredDepth = math.min(DesiredDepth, -MinDepth)
       end

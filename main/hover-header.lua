@@ -9,6 +9,13 @@ AbsoluteAltitude = false
 DesiredAltitudeCombat = 100
 DesiredAltitudeIdle = 100
 
+-- Only used when AbsoluteAltitude is false AND TerrainCheckLookAheadTime
+-- (see below) is nil.
+-- This helps determine look ahead distance.
+-- Think of it as the tallest obstacle the terrain checker will try to
+-- fly over.
+MaxAltitude = 300
+
 -- First number is altitude variation
 -- Second is time scale, which should generally be <1.
 -- Smaller is slower.

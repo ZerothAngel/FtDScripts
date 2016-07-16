@@ -30,7 +30,7 @@ function Update_Hover(I)
    if not AbsoluteAltitude then
       -- Look ahead at the terrain, but don't fly lower than sea level
       local Velocity = I:GetVelocityVector()
-      local Height = math.max(0, GetTerrainHeight(I, Velocity))
+      local Height = GetTerrainHeight(I, Velocity, 0, MaxAltitude)
       DesiredAltitude = DesiredAltitude + Height
    end
 end
