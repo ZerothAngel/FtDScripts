@@ -167,16 +167,10 @@ function SubControl_Update(I)
       if Absolute then
          DesiredDepth = -DesiredDepth
       else
-         -- First check CoM's height
-         local Height = I:GetTerrainAltitudeForPosition(CoM)
-         -- Now check look-ahead values
+         -- Look ahead at terrain
          local Velocity = I:GetVelocityVector()
-         Velocity.y = 0
-         local Speed = Velocity.magnitude
-         local VelocityAngle = GetVectorAngle(Velocity)
-         Height = math.max(Height, GetTerrainHeight(I, VelocityAngle, Speed))
-         DesiredDepth = DesiredDepth + Height
-         -- No higher than sea level
+         DesiredDepth = DesiredDepth + GetTerrainHeight(I, Velocity)
+         -- No higher than MinDepth
          DesiredDepth = math.min(DesiredDepth, -MinDepth)
       end
    end

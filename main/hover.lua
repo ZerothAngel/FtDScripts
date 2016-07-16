@@ -28,16 +28,9 @@ function Update_Hover(I)
    end
 
    if not AbsoluteAltitude then
-      -- First check CoM's height
-      local Height = I:GetTerrainAltitudeForPosition(CoM)
-      -- Now check look-ahead values
+      -- Look ahead at the terrain, but don't fly lower than sea level
       local Velocity = I:GetVelocityVector()
-      Velocity.y = 0
-      local Speed = Velocity.magnitude
-      local VelocityAngle = GetVectorAngle(Velocity)
-      Height = math.max(Height, GetTerrainHeight(I, VelocityAngle, Speed))
-      -- Finally, don't fly lower than sea level
-      Height = math.max(Height, 0)
+      local Height = math.max(0, GetTerrainHeight(I, Velocity))
       DesiredAltitude = DesiredAltitude + Height
    end
 end
