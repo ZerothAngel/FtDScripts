@@ -8,7 +8,7 @@
 -- and upper bounds.
 -- Rotations (pitch, roll) are not accounted for, so it's best to
 -- have some padding.
-ClearanceFactor = 2
+ClearanceFactor = 1.1
 
 -- FRIENDLY AVOIDANCE
 
@@ -32,19 +32,27 @@ FriendlyAvoidanceWeight = 10
 
 -- How many seconds ahead (at current speed) to sample
 -- the terrain.
-LookAheadTimes = { .25, 1, 2, 3, 5, 8, 13, 21 }
+-- At minimum, it should be the time it takes for your ship to
+-- complete a 90-degree turn.
+LookAheadTime = 20
+
+-- Look-ahead resolution, in meters. The smaller it is, the more
+-- samples of the terrain will be taken.
+-- Probably shouldn't be larger than the length of your ship.
+-- Set to nil to automatically use a quarter of your ship's length.
+LookAheadResolution = nil
 
 -- When there's an obstacle in front, this is how far (in degrees)
 -- left and right to check for an opening. Should probably be <45
 LookAheadAngle = 30
 
--- By default, the horizontal center and both sides of the ship
+-- By default, the horizontal midpoint and both sides of the ship
 -- (after accounting for ClearanceFactor) are extended forward
 -- and used to check the terrain. If you have a particularly
 -- wide ship, you may want to check more points. Use this to
--- increase the number of subdivisions between the center and
+-- increase the number of subdivisions between the midpoint and
 -- the sides. Set to 0 for no extra points, 1 for 1 extra
--- between center and side (so 2 additional total), etc.
+-- between midpoint and side (so 2 additional total), etc.
 -- Don't go too crazy, because it will increase the number of
 -- terrain checks dramatically.
 TerrainAvoidanceSubdivisions = 0

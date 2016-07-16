@@ -1,53 +1,72 @@
---@ debug planarvector getvectorangle gettargetpositioninfo firstrun
+--@ planarvector getvectorangle gettargetpositioninfo getbearingtopoint
+--@ firstrun debug
 -- Avoidance module
-Dimensions = nil
-HalfDimensions = nil
 MidPoint = nil
 VerticalClearance = 0
-SideClearance = 0
 CheckPoints = {}
 
+-- Used for tiebreakers
+PreviousTAvoid = Vector3.right
+
 function Avoidance_FirstRun(I)
-   -- TODO Should this stuff only be determined once?
    local MaxDim = I:GetConstructMaxDimensions()
    local MinDim = I:GetConstructMinDimensions()
-   Dimensions = MaxDim - MinDim
-   HalfDimensions = Dimensions / 2
+   local Dimensions = MaxDim - MinDim
+   local HalfDimensions = Dimensions / 2
    MidPoint = MinDim + HalfDimensions -- Relative to Position and no rotation (local)
 
    VerticalClearance = HalfDimensions.y * ClearanceFactor
-   SideClearance = HalfDimensions.x * ClearanceFactor
+   local SideClearance = HalfDimensions.x * ClearanceFactor
 
    -- Construct forward row of points (from which to base terrain avoidance checks)
-   -- Note origin is position
-   CheckPoints[1] = Vector3(0, 0, MaxDim.z)
-   CheckPoints[2] = Vector3(-SideClearance, 0, MaxDim.z)
-   CheckPoints[3] = Vector3(SideClearance, 0, MaxDim.z)
+   -- Note origin is CoM
+   table.insert(CheckPoints, 0)
+   table.insert(CheckPoints, -SideClearance)
+   table.insert(CheckPoints, SideClearance)
    if TerrainAvoidanceSubdivisions > 0 then
       local Delta = SideClearance / (TerrainAvoidanceSubdivisions+1)
       for i=1,TerrainAvoidanceSubdivisions do
          local x = i * Delta
-         CheckPoints[#CheckPoints+1] = Vector3(-x, 0, MaxDim.z)
-         CheckPoints[#CheckPoints+1] = Vector3(x, 0, MaxDim.z)
+         table.insert(CheckPoints, -x)
+         table.insert(CheckPoints, x)
       end
+   end
+
+   if not LookAheadResolution then
+      LookAheadResolution = HalfDimensions.z / 2
    end
 end
 AddFirstRun(Avoidance_FirstRun)
 
 function GetTerrainHits(I, Angle, LowerEdge, Speed)
+   local __func__ = "GetTerrainHits"
+
    local Hits = 0
    local Rotation = Quaternion.Euler(0, Angle, 0) -- NB Angle is world
-   for i,Start in pairs(CheckPoints) do
+
+   local MaxDistance = Speed * LookAheadTime
+   if Debugging then Debug(I, __func__, "MaxDistance = %.2f", MaxDistance) end
+
+   -- Calculate (mid-point) distances for this velocity once
+   local Distances = {}
+   for d = 0,MaxDistance-1,LookAheadResolution do
+      table.insert(Distances, d)
+   end
+
+   -- Make sure end point is also checked
+   -- (Generally it won't be evenly divisible by LookAheadResolution)
+   table.insert(Distances, MaxDistance)
+
+   for _,Offset in pairs(CheckPoints) do
       local Blocked = false
-      for j,t in pairs(LookAheadTimes) do
+      for _,Distance in pairs(Distances) do
          if Blocked then
             -- Just assume all points beyond the previous are blocked as well
             -- Also means the closer the obstacle, the greater the # of hits
             Hits = Hits + 1
          else
-            local Point = Start + Vector3.forward * Speed * t
-            -- TODO Someday take Y-axis velocity into account as well
-            if I:GetTerrainAltitudeForPosition(Position + Rotation * Point) >= LowerEdge then
+            local TestPoint = CoM + Rotation * Vector3(Offset, 0, Distance)
+            if I:GetTerrainAltitudeForPosition(TestPoint) >= LowerEdge then
                Hits = Hits + 1
                Blocked = true
             end
@@ -120,22 +139,26 @@ function Avoidance(I, Bearing)
    local TCount,TAvoid = 0,Vector3.zero
    if TerrainAvoidanceWeight > 0 then
       local VelocityAngle = GetVectorAngle(Velocity)
-      if Debugging then Debug(I, __func__, "VelocityAngle %f", VelocityAngle) end
       -- Check directly forward (w.r.t. velocity)
       local ForwardHits = GetTerrainHits(I, VelocityAngle, LowerEdge, Speed)
       if ForwardHits > 0 then
          -- Look for an exit
          local LeftHits = GetTerrainHits(I, VelocityAngle-LookAheadAngle, LowerEdge, Speed)
          local RightHits = GetTerrainHits(I, VelocityAngle+LookAheadAngle, LowerEdge, Speed)
+         if Debugging then Debug(I, __func__, "ForwardHits = %d, LeftHits = %d, RightHits = %d", ForwardHits, LeftHits, RightHits) end
          -- And steer left or right accordingly
          if LeftHits < RightHits then
             TAvoid = Vector3.left
-         else
-            -- NB Right is also favored in the case where they look the same
+         elseif RightHits < LeftHits then
             TAvoid = Vector3.right
+         else
+            TAvoid = PreviousTAvoid
          end
+         PreviousTAvoid = TAvoid
          TCount = ForwardHits + LeftHits + RightHits
          TAvoid = Quaternion.Euler(0, Yaw, 0) * TAvoid * TerrainAvoidanceWeight
+      else
+         PreviousTAvoid = Vector3.right
       end
    end
 
@@ -147,8 +170,8 @@ function Avoidance(I, Bearing)
       -- Current target as given by Bearing
       local NewTarget = Quaternion.Euler(0, Yaw+Bearing, 0) * Vector3.forward
       -- Add avoidance vectors
-      NewTarget = Position + NewTarget + FAvoid + TAvoid
+      NewTarget = CoM + NewTarget + FAvoid + TAvoid
       -- Determine new bearing
-      return -I:GetTargetPositionInfoForPosition(0, NewTarget.x, 0, NewTarget.z).Azimuth
+      return GetBearingToPoint(NewTarget)
    end
 end
