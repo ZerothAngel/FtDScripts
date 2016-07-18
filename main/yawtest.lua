@@ -1,25 +1,43 @@
 --! yawtest
---@ yawthrottle getselfinfo firstrun periodic
+--@ yawthrottle getselfinfo firstrun eventdriver
 MyHeading = -90
 LastTurn = nil
 
 ThrottleIndex = 0
 
-function YawTest_Update(I)
-   YawThrottle_Reset()
+YawTest = EventDriver.create()
 
+function YawTest_FirstRun(I)
+   YawTest:Schedule(0, YawTest_Throttle)
+end
+AddFirstRun(YawTest_FirstRun)
+
+function YawTest_Throttle(I)
+   if VaryThrottle then
+      ThrottleIndex = ThrottleIndex + 1
+      local Throttle = ThrottleSettings[ThrottleIndex]
+      ThrottleIndex = ThrottleIndex % #ThrottleSettings
+
+      I:LogToHud(string.format("New throttle! %.0f%%", Throttle * 100))
+      SetThrottle(Throttle)
+
+      -- Get up to speed before changing heading
+      YawTest:Schedule(ThrottleDelay, YawTest_Heading)
+   else
+      ResetThrottle()
+
+      YawTest:Schedule(0, YawTest_Heading)
+   end
+end
+
+function YawTest_Heading(I)
    MyHeading = (MyHeading + 90) % 360
    I:LogToHud(string.format("New heading! %f degrees", MyHeading))
    SetHeading(MyHeading)
-   if VaryThrottle then
-      ThrottleIndex = ThrottleIndex + 1
-      SetThrottle(ThrottleSettings[ThrottleIndex])
-      ThrottleIndex = ThrottleIndex % #ThrottleSettings
-   end
    LastTurn = { I:GetTimeSinceSpawn(), CoM }
-end
 
-YawTest = Periodic.create(UpdateRate, YawTest_Update)
+   YawTest:Schedule(HeadingDelay, YawTest_Throttle)
+end
 
 function Update(I)
    local AIMode = I.AIMode
@@ -28,7 +46,7 @@ function Update(I)
 
       if FirstRun then FirstRun(I) end
 
-      if LastTurn and Mathf.DeltaAngle(Yaw, MyHeading) < 0.1 then
+      if LastTurn and math.abs(Mathf.DeltaAngle(Yaw, MyHeading)) < 0.1 then
          local DeltaTime = I:GetTimeSinceSpawn() - LastTurn[1]
          local Distance = (CoM - LastTurn[2]).magnitude
          local Message = string.format("Time: %.2f s, Distance: %.2f m", DeltaTime, Distance)
