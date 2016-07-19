@@ -1,8 +1,6 @@
--- Switches to enable/disable control of each axis.
-ControlRoll = true
-ControlPitch = true
+-- ROLL/PITCH STABILIZATION
 
--- PID values for propulsion
+-- PID values for stabilization using propulsion elements.
 -- Start with { 1, 0, 0 } and tune from there.
 RollPIDConfig = {
    Kp = .1,
