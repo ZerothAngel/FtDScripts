@@ -37,8 +37,8 @@ function ClassifyPropulsion(I)
             local Info = {
                Index = i,
                LocalSign = LocalSign,
-               RollScale = Sign(CoMOffset.x),
-               PitchScale = Sign(CoMOffset.z),
+               RollSign = ControlRoll and Sign(CoMOffset.x) or 0,
+               PitchSign = ControlPitch and Sign(CoMOffset.z) or 0,
             }
             table.insert(PropulsionInfos, Info)
          end
@@ -55,14 +55,26 @@ function SetPropulsionThrust(I, RollCV, PitchCV)
 
    -- And set drive fraction accordingly
    for _,Info in pairs(PropulsionInfos) do
-      -- Sum up inputs and constrain
-      local Output = RollCV * Info.RollScale + PitchCV * Info.PitchScale
-      Output = math.max(0, math.min(1, Output))
-      -- If pointing the other way, set output to 0
-      if (Output * Info.LocalSign) < 0 then
-         Output = 0
+      local RollSign,PitchSign = Info.RollSign,Info.PitchSign
+      if RollSign ~= 0 or PitchSign ~= 0 then
+         -- Sum up inputs and constrain
+         local Output = RollCV * RollSign + PitchCV * PitchSign
+         Output = math.max(0, math.min(1, Output))
+         -- If pointing the other way, set output to 0
+         if (Output * Info.LocalSign) < 0 then
+            Output = 0
+         end
+         I:Component_SetFloatLogic(PROPULSION, Info.Index, Output)
       end
-      I:Component_SetFloatLogic(PROPULSION, Info.Index, Output)
+   end
+end
+
+function Stabilizer_Update(I)
+   if ControllRoll or ControlPitch then
+      local RollCV = ControlRoll and RollPID:Control(-Roll) or 0
+      local PitchCV = ControlPitch and PitchPID:Control(-Pitch) or 0
+
+      SetPropulsionThrust(I, RollCV, PitchCV)
    end
 end
 
@@ -70,9 +82,6 @@ function Update(I)
    if not I:IsDocked() and I.AIMode ~= "off" then
       GetSelfInfo(I)
 
-      local RollCV = ControlRoll and RollPID:Control(-Roll) or 0
-      local PitchCV = ControlPitch and PitchPID:Control(-Pitch) or 0
-
-      SetPropulsionThrust(I, RollCV, PitchCV)
+      Stabilizer_Update(I)
    end
 end
