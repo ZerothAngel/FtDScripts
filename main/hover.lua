@@ -1,5 +1,5 @@
 --! hover
---@ terraincheck getselfinfo getvectorangle gettargetpositioninfo
+--@ terraincheck getselfinfo gettargetpositioninfo
 --@ pid spinnercontrol firstrun periodic
 -- Hover module
 AltitudePID = PID.create(AltitudePIDConfig, CanReverseBlades and -30 or 0, 30)
