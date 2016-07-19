@@ -1,6 +1,6 @@
 --! naval-ai
---@ yawthrottle avoidance debug getselfinfo planarvector getbearingtopoint
---@ gettargetpositioninfo firstrun periodic
+--@ getselfinfo planarvector getbearingtopoint firstrun periodic
+--@ debug gettargetpositioninfo avoidance yawthrottle
 -- Naval AI module
 Attacking = true
 LastAttackTime = 0

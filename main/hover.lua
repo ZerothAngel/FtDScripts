@@ -1,6 +1,6 @@
 --! hover
---@ stabilizer terraincheck
---@ pid spinnercontrol gettargetpositioninfo getselfinfo firstrun periodic
+--@ pid spinnercontrol getselfinfo firstrun periodic
+--@ gettargetpositioninfo terraincheck stabilizer
 -- Hover module
 AltitudePID = PID.create(AltitudePIDConfig, CanReverseBlades and -30 or 0, 30)
 

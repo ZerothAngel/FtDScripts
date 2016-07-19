@@ -1,6 +1,6 @@
 --! subcontrol
---@ terraincheck api debug getselfinfo gettargetpositioninfo
---@ pid firstrun periodic
+--@ api pid getselfinfo firstrun periodic
+--@ debug gettargetpositioninfo terraincheck
 -- Hydrofoil submarine control module
 RollPID = PID.create(RollPIDConfig, -1, 1)
 PitchPID = PID.create(PitchPIDConfig, -1, 1)
