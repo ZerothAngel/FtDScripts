@@ -14,10 +14,3 @@ PitchPIDConfig = {
    Ti = 5,
    Td = .1,
 }
-
--- If true then the thrust of propulsion closer to the Center of Mass
--- (on both X and Z axes) will be scaled up in proportion to the
--- distance of the furthest propulsion.
--- Note: Leave false, doesn't seem to work as well as it does with
--- hydrofoils.
-ScaleByCoMOffset = false
