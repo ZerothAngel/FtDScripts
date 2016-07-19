@@ -1,6 +1,6 @@
 --! hover
---@ terraincheck getselfinfo gettargetpositioninfo
---@ pid spinnercontrol firstrun periodic
+--@ stabilizer terraincheck
+--@ pid spinnercontrol gettargetpositioninfo getselfinfo firstrun periodic
 -- Hover module
 AltitudePID = PID.create(AltitudePIDConfig, CanReverseBlades and -30 or 0, 30)
 
@@ -49,5 +49,7 @@ function Update(I)
       local CV = AltitudePID:Control(DesiredAltitude - Altitude)
       LiftSpinners:Classify(I)
       LiftSpinners:SetSpeed(I, CV)
+
+      Stabilizer_Update(I)
    end
 end
