@@ -159,25 +159,24 @@ TorpedoConfig = {
 -- Sea-skimming pop-under missiles
 -- Change "PopUnderConfig" to simply "Config" to overwrite the
 -- above settings.
--- Note that you will probably need at least 1 torpedo propeller and
--- a ballast tank to use these settings.
--- You might be able to forego both if you make the TerminalDistance and
--- SpecialManeuverDistance smaller, i.e. 50 and 75 respectively.
+-- Needs a lot of experimentation, but the following settings
+-- work for me using 6-block missiles: Fin x3, Var thruster (300 thrust),
+-- Torpedo prop, Fuel x2, Lua receiver, Warhead x4.
 PopUnderConfig = {
    SpecialAttackElevation = 10,
-   MinimumAltitude = -100, -- Should be lower than SpecialManeuverAltitude
+   MinimumAltitude = -50, -- Should be lower than SpecialManeuverAltitude
    ClosingDistance = 50,
    ClosingAboveSeaLevel = true,
    ClosingElevation = 3,
    ClosingAltitude = nil,
    ClosingAltitudeRelativeTo = 0,
    Evasion = { 20, .25 },
-   SpecialManeuverDistance = 250,
+   SpecialManeuverDistance = 110,
    SpecialManeuverAboveSeaLevel = false,
    SpecialManeuverElevation = 10,
-   SpecialManeuverAltitude = -50,
-   SpecialManeuverAltitudeRelativeTo = 2, -- i.e. 50 meters below target's depth
-   TerminalDistance = 150,
+   SpecialManeuverAltitude = -25,
+   SpecialManeuverAltitudeRelativeTo = 2, -- i.e. 25 meters below target's depth
+   TerminalDistance = 50,
    LookAheadTime = 2,
    LookAheadResolution = 3,
 }
