@@ -1,4 +1,4 @@
--- CONFIGURATION
+-- DUAL PROFILE MISSILES
 
 -- Altitude and range limits for each profile, used for target selection.
 -- They should generally match the settings on the Local Weapon Controller

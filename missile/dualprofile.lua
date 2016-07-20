@@ -1,6 +1,5 @@
---! dualprofile
 --@ missiledriver unifiedmissile periodic
--- Dual profile main
+-- Dual profile module
 MyVertical = UnifiedMissile.create(VerticalConfig)
 MyHorizontal = UnifiedMissile.create(HorizontalConfig)
 
@@ -37,10 +36,4 @@ function MissileMain_Update(I)
    if not I:IsDocked() then
       MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
    end
-end
-
-MissileMain = Periodic.create(UpdateRate, MissileMain_Update)
-
-function Update(I)
-   MissileMain:Tick(I)
 end
