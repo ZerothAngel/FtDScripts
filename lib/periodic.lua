@@ -1,10 +1,10 @@
 -- Periodic implementation
 Periodic = {}
 
-function Periodic.create(Period, Function)
+function Periodic.create(Period, Function, Start)
    local self = {}
 
-   self.Ticks = Period
+   self.Ticks = Start and Start or Period
    self.Period = Period
    self.Function = Function
 
