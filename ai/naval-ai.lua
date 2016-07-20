@@ -1,5 +1,4 @@
---! naval-ai
---@ getselfinfo planarvector getbearingtopoint firstrun periodic
+--@ planarvector getbearingtopoint firstrun
 --@ debug gettargetpositioninfo avoidance yawthrottle
 -- Naval AI module
 Attacking = true
@@ -94,24 +93,5 @@ function NavalAI_Update(I)
    end
    if Drive then
       SetThrottle(Drive)
-   end
-end
-
-NavalAI = Periodic.create(UpdateRate, NavalAI_Update)
-
-function Update(I)
-   local AIMode = I.AIMode
-   if not I:IsDocked() and ((ActivateWhenOn and AIMode == "on") or
-                            AIMode == "combat") then
-      GetSelfInfo(I)
-
-      if FirstRun then FirstRun(I) end
-
-      NavalAI:Tick(I)
-
-      -- Suppress default AI
-      if AIMode == "combat" then I:TellAiThatWeAreTakingControl() end
-
-      YawThrottle_Update(I)
    end
 end

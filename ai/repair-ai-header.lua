@@ -1,8 +1,3 @@
--- CONFIGURATION
-
--- Set to true to control ship when AI set to "on" as well
-ActivateWhenOn = false
-
 -- Offset from repair target's center of mass.
 -- Note the Y value is ignored.
 RepairTargetOffset = Vector3(0, 0, 25)
@@ -54,8 +49,3 @@ ReturnDrive = 0.5
 -- Should be quite generous, depending on your ship's turning
 -- radius.
 OriginMaxDistance = 250
-
--- How often to run. At 1, it will run every update. At 10,
--- it will run every 10th update. The lower it is, the more
--- responsive it will be, but it will also take more processing time.
-UpdateRate = 4

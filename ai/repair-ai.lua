@@ -1,6 +1,5 @@
---! repair-ai
---@ getselfinfo planarvector getbearingtopoint quadraticintercept
---@ spairs pid firstrun periodic
+--@ planarvector getbearingtopoint quadraticintercept
+--@ spairs pid firstrun
 --@ debug gettargetpositioninfo avoidance yawthrottle
 -- Repair AI module
 ThrottlePID = PID.create(ThrottlePIDConfig, -1, 1, UpdateRate)
@@ -193,26 +192,4 @@ function RepairAI_Update(I)
       end
    end
    SetThrottle(Drive)
-end
-
-RepairAI = Periodic.create(UpdateRate, RepairAI_Update)
-
-function Update(I)
-   local AIMode = I.AIMode
-   if not I:IsDocked() and ((ActiateWhenOn and I.AIMode == "on") or
-                            AIMode == "combat") then
-      GetSelfInfo(I)
-
-      if FirstRun then FirstRun(I) end
-
-      RepairAI:Tick(I)
-
-      -- Suppress default AI
-      if AIMode == "combat" then I:TellAiThatWeAreTakingControl() end
-
-      YawThrottle_Update(I)
-   else
-      ParentID = nil
-      RepairTargetID = nil
-   end
 end
