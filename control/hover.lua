@@ -1,6 +1,5 @@
---! hover
---@ pid spinnercontrol getselfinfo firstrun periodic
---@ gettargetpositioninfo terraincheck stabilizer
+--@ pid spinnercontrol firstrun
+--@ gettargetpositioninfo terraincheck
 -- Hover module
 AltitudePID = PID.create(AltitudePIDConfig, CanReverseBlades and -30 or 0, 30)
 
@@ -15,7 +14,7 @@ function Hover_FirstRun(I)
 end
 AddFirstRun(Hover_FirstRun)
 
-function Update_Hover(I)
+function Hover_Control(I)
    if GetTargetPositionInfo(I) then
       DesiredAltitude = DesiredAltitudeCombat
 
@@ -35,21 +34,8 @@ function Update_Hover(I)
    end
 end
 
-Hover = Periodic.create(UpdateRate, Update_Hover)
-
-function Update(I)
-   if not I:IsDocked() and I.AIMode ~= "off" then
-      GetSelfInfo(I)
-
-      if FirstRun then FirstRun(I) end
-
-      Hover:Tick(I)
-
-      -- Set spinner speed every update
-      local CV = AltitudePID:Control(DesiredAltitude - Altitude)
-      LiftSpinners:Classify(I)
-      LiftSpinners:SetSpeed(I, CV)
-
-      Stabilizer_Update(I)
-   end
+function Hover_Update(I)
+   local CV = AltitudePID:Control(DesiredAltitude - Altitude)
+   LiftSpinners:Classify(I)
+   LiftSpinners:SetSpeed(I, CV)
 end

@@ -1,5 +1,4 @@
---! subcontrol
---@ api pid getselfinfo firstrun periodic
+--@ api pid
 --@ debug gettargetpositioninfo terraincheck
 -- Hydrofoil submarine control module
 RollPID = PID.create(RollPIDConfig, -1, 1)
@@ -142,7 +141,7 @@ function GetManualDesiredDepth(I)
    return I:Component_GetFloatLogic(DRIVEMAINTAINER, ManualDepthDriveMaintainer)
 end
 
-function SubControl_Update(I)
+function SubControl_Control(I)
    if ControlDepth then
       local Absolute
       if not ManualDepthDriveMaintainerFacing then
@@ -176,21 +175,10 @@ function SubControl_Update(I)
    end
 end
 
-SubControl = Periodic.create(UpdateRate, SubControl_Update)
+function SubControl_Update(I)
+   local RollCV = ControlRoll and RollPID:Control(-Roll) or 0
+   local PitchCV = ControlPitch and PitchPID:Control(-Pitch) or 0
+   local DepthCV = ControlDepth and DepthPID:Control(DesiredDepth - Altitude) or 0
 
-function Update(I)
-   if FirstRun then FirstRun(I) end
-
-   if not I:IsDocked() and I.AIMode ~= "off" then
-      GetSelfInfo(I)
-
-      SubControl:Tick(I)
-
-      -- This stuff needs to happen every update, regardless of UpdateRate
-      local RollCV = ControlRoll and RollPID:Control(-Roll) or 0
-      local PitchCV = ControlPitch and PitchPID:Control(-Pitch) or 0
-      local DepthCV = ControlDepth and DepthPID:Control(DesiredDepth - Altitude) or 0
-
-      SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
-   end
+   SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
 end

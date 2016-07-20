@@ -9,6 +9,7 @@ import subprocess
 
 SCRIPT_DIRECTORIES = [
     'ai',
+    'control',
     'lib',
     'main',
     'missile',
