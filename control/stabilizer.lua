@@ -50,8 +50,8 @@ function Stabilizer_Update(I)
          local RollSign,PitchSign = Info.RollSign,Info.PitchSign
          if RollSign ~= 0 or PitchSign ~= 0 then
             -- Sum up inputs and constrain
-            local Output = math.max(0, RollCV * RollSign) + math.max(0, PitchCV * PitchSign)
-            Output = math.min(10, Output)
+            local Output = RollCV * RollSign + PitchCV * PitchSign
+            Output = math.max(0, math.min(10, Output))
             I:Component_SetFloatLogic(PROPULSION, Info.Index, Output / 10)
          end
       end
