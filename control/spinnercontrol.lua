@@ -38,14 +38,12 @@ function SpinnerControl:Classify(I)
       if ((self.UseSpinners and not IsDedi) or
           (self.UseDediSpinners and IsDedi)) then
          local Info = I:GetSpinnerInfo(i)
-         -- Not true fraction (need to take arcsin and divide by pi/2)
-         -- But good enough if we assume all/most spinners are axis-aligned
-         local Fraction = Vector3.Dot(Info.LocalRotation * Vector3.up,
-                                      self.Axis)
-         if math.abs(Fraction) > 0.001 then
+         local DotZ = Vector3.Dot(Info.LocalRotation * Vector3.up,
+                                  self.Axis)
+         if math.abs(DotZ) > 0.001 then
             local Spinner = {
                Index = i,
-               Fraction = Fraction
+               Sign = Mathf.Sign(DotZ),
             }
             table.insert(self.Spinners, Spinner)
          end
@@ -56,8 +54,6 @@ end
 -- Sets spinner speed, Speed can be -30 to 30 (radians/second)
 function SpinnerControl:SetSpeed(I, Speed)
    for i,Spinner in pairs(self.Spinners) do
-      -- TODO Still not sure whether to divide or multiply fraction
-      -- Maybe one day when I mess with dedispinners on spinners
-      I:SetSpinnerContinuousSpeed(Spinner.Index, Speed / Spinner.Fraction)
+      I:SetSpinnerContinuousSpeed(Spinner.Index, Speed * Spinner.Sign)
    end
 end
