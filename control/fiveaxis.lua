@@ -103,9 +103,13 @@ function FiveAxis_Update(I)
 
    ClassifyPropulsion(I)
 
+   -- RequestThrustControl and its thrust balancing is a bit weird.
+   -- Thrusters on the same facing placed offset of the CoM must have at
+   -- least another thruster on the opposite side of the CoM.
+   -- Otherwise no output will be produced on that side.
    if DesiredHeading or DesiredPosition then
       -- Blip all thrusters
-      for i = 0,11 do
+      for i = 0,5 do
          I:RequestThrustControl(i)
       end
    else
