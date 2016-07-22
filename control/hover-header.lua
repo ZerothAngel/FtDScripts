@@ -39,3 +39,13 @@ AltitudePIDConfig = {
    Ti = 5,
    Td = 0.3,
 }
+
+-- The weird thing about dedicated heliblade spinners is that "always up"
+-- only means "up" when rotating clockwise. When oriented upside down,
+-- they don't behave in the expected/intuitive way. You have to rotate
+-- it clockwise rather than counter-clockwise as you would when the
+-- "always up fraction" is 0.
+-- Set to true if the dedicated heliblade spinners have a positive
+-- "always up fraction." Note that Lua scripts can't read this value, so
+-- it is best to set it on the spinner to 1 or 0.
+DediSpinnersAlwaysUp = true

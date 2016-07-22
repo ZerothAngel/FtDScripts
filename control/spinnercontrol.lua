@@ -3,12 +3,13 @@ SpinnerControl = {}
 
 -- Note: Axis should be a unit vector depicting the positive direction
 -- Typically Vector3.up, Vector3.forward, etc.
-function SpinnerControl.create(Axis, UseSpinners, UseDediSpinners)
+function SpinnerControl.create(Axis, UseSpinners, UseDediSpinners, AlwaysUp)
    local self = {}
 
    self.Axis = Axis
    self.UseSpinners = UseSpinners
    self.UseDediSpinners = UseDediSpinners
+   self.AlwaysUp = AlwaysUp
    self.LastSpinnerCount = 0
    self.Spinners = {}
 
@@ -33,17 +34,19 @@ function SpinnerControl:Classify(I)
 
    self.LastSpinnerCount = SpinnerCount
    self.Spinners = {}
+
+   local UseSpinners,UseDediSpinners,AlwaysUp,Axis = self.UseSpinners,self.UseDediSpinners,self.AlwaysUp,self.Axis
    for i = 0,SpinnerCount-1 do
       local IsDedi = I:IsSpinnerDedicatedHelispinner(i)
-      if ((self.UseSpinners and not IsDedi) or
-          (self.UseDediSpinners and IsDedi)) then
+      if ((UseSpinners and not IsDedi) or
+          (UseDediSpinners and IsDedi)) then
          local Info = I:GetSpinnerInfo(i)
          local DotZ = Vector3.Dot(Info.LocalRotation * Vector3.up,
-                                  self.Axis)
+                                  Axis)
          if math.abs(DotZ) > 0.001 then
             local Spinner = {
                Index = i,
-               Sign = Mathf.Sign(DotZ),
+               Sign = AlwaysUp and 1 or Mathf.Sign(DotZ),
             }
             table.insert(self.Spinners, Spinner)
          end
