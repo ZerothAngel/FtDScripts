@@ -45,7 +45,7 @@ function AdjustPositionToTarget(I)
    local Offset = ToTarget * (Distance - AttackDistance) + Evade(I, Perp, Evasion)
    AdjustHeading(Bearing)
    SetPositionOffset(Offset)
-   SetPitch(TargetPitch)
+   SetPitch((TargetPositionInfo.Position.y >= AirTargetAboveAltitude) and TargetPitch.Air or TargetPitch.Surface)
 end
 
 function GunshipAI_Update(I)
