@@ -22,17 +22,16 @@ function FiveAxisTest_Update(I)
 end
 
 function Update(I)
-   local AIMode = I.AIMode
-   if not I:IsDocked() and AIMode ~= "off" then
+   if not I:IsDocked() then
       GetSelfInfo(I)
 
       if FirstRun then FirstRun(I) end
 
-      if (ActivateWhenOn and AIMode == "on") or AIMode == "combat" then
+      if ActivateWhen[I.AIMode] then
          FiveAxisTest:Tick(I)
 
          -- Suppress default AI
-         if AIMode == "combat" then I:TellAiThatWeAreTakingControl() end
+         I:TellAiThatWeAreTakingControl()
       else
          FiveAxis_Reset()
       end

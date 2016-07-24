@@ -40,8 +40,7 @@ function YawTest_Heading(I)
 end
 
 function Update(I)
-   local AIMode = I.AIMode
-   if (ActivateWhenOn and AIMode == "on") or AIMode == "combat" then
+   if ActivateWhen[I.AIMode] then
       GetSelfInfo(I)
 
       if FirstRun then FirstRun(I) end
@@ -58,7 +57,7 @@ function Update(I)
       YawTest:Tick(I)
 
       -- Suppress default AI
-      if AIMode == "combat" then I:TellAiThatWeAreTakingControl() end
+      I:TellAiThatWeAreTakingControl()
 
       YawThrottle_Update(I)
    end

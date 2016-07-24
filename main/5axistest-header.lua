@@ -1,7 +1,11 @@
 -- CONFIGURATION
 
--- Set to true to control ship when AI set to "on" as well
-ActivateWhenOn = false
+-- Activate on these AI modes. Valid keys are "off", "on", "combat",
+-- "patrol", and "fleetmove".
+ActivateWhen = {
+--   on = true,
+   combat = true,
+}
 
 TestSteps = {
    {

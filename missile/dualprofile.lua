@@ -33,7 +33,5 @@ end
 
 -- Main update loop
 function MissileMain_Update(I)
-   if not I:IsDocked() then
-      MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
-   end
+   MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
 end

@@ -4,9 +4,7 @@
 RepairAI = Periodic.create(UpdateRate, RepairAI_Update)
 
 function Update(I)
-   local AIMode = I.AIMode
-   if not I:IsDocked() and ((ActiateWhenOn and I.AIMode == "on") or
-                            AIMode == "combat") then
+   if not I:IsDocked() and ActivateWhen[I.AIMode] then
       GetSelfInfo(I)
 
       if FirstRun then FirstRun(I) end
@@ -14,7 +12,7 @@ function Update(I)
       RepairAI:Tick(I)
 
       -- Suppress default AI
-      if AIMode == "combat" then I:TellAiThatWeAreTakingControl() end
+      I:TellAiThatWeAreTakingControl()
 
       YawThrottle_Update(I)
    else
