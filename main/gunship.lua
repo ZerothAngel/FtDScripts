@@ -2,11 +2,9 @@
 --@ getvectorangle planarvector getselfinfo firstrun periodic
 --@ gettargetpositioninfo fiveaxis hover
 -- Gunship AI module
-Origin = nil
 PerlinOffset = 0
 
 function GunshipAI_FirstRun(I)
-   Origin = CoM
    PerlinOffset = 1000.0 * math.random()
 end
 AddFirstRun(GunshipAI_FirstRun)
@@ -48,18 +46,45 @@ function AdjustPositionToTarget(I)
    SetPitch((TargetPositionInfo.Position.y >= AirTargetAboveAltitude) and TargetPitch.Air or TargetPitch.Surface)
 end
 
+function ConditionalSetPosition(Pos)
+   local Offset,_ = PlanarVector(CoM, Pos)
+   if Offset.magnitude >= OriginMaxDistance then
+      -- Only change heading if not in combat
+      if not TargetPositionInfo then
+         SetHeading(GetVectorAngle(Offset))
+      end
+      SetPositionOffset(Offset)
+   end
+end
+
 function GunshipAI_Update(I)
    FiveAxis_Reset()
 
+   local AIMode = I.AIMode
    if GetTargetPositionInfo(I) then
       AdjustPositionToTarget(I)
-   elseif ReturnToOrigin then
-      local Offset,_ = PlanarVector(CoM, Origin)
-      if Offset.magnitude >= OriginMaxDistance then
-         SetHeading(GetVectorAngle(Offset))
-         SetPosition(Origin)
+   else
+      if AIMode == "combat" and ReturnToOrigin then
+         ConditionalSetPosition(I.Waypoint)
       end
       SetPitch(0)
+   end
+
+   if AIMode == "patrol" or (AIMode == "fleetmove" and I.IsFlagship) then
+      -- Note: I.Waypoint is the strategic waypoint. What is the actual
+      -- patrol/tactical waypoint?
+      ConditionalSetPosition(I.Waypoint)
+   elseif AIMode == "fleetmove" then
+      local Flagship = I.Fleet.Flagship
+      if Flagship.Valid then
+         local FlagshipRotation = Flagship.Rotation
+         -- NB We don't bother with OriginMaxDistance
+         -- This leads to tighter formations.
+         SetPosition(Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition)
+         if not TargetPositionInfo then
+            SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
+         end
+      end
    end
 end
 
@@ -75,11 +100,11 @@ function Update(I)
 
       Hover:Tick(I)
 
-      if (ActivateWhenOn and AIMode == "on") or AIMode == "combat" then
+      if (ActivateWhenOn and AIMode == "on") or AIMode ~= "on" then
          GunshipAI:Tick(I)
 
          -- Suppress default AI
-         if AIMode == "combat" then I:TellAiThatWeAreTakingControl() end
+         I:TellAiThatWeAreTakingControl()
       else
          FiveAxis_Reset()
       end
