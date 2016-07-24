@@ -4,11 +4,9 @@
 Attacking = true
 LastAttackTime = 0
 
-Origin = nil
 PerlinOffset = 0
 
 function NavalAI_FirstRun(I)
-   Origin = CoM
    PerlinOffset = 1000.0 * math.random()
 end
 AddFirstRun(NavalAI_FirstRun)
@@ -79,9 +77,9 @@ function NavalAI_Update(I)
    if GetTargetPositionInfo(I) then
       Drive = AdjustHeadingToTarget(I)
    elseif ReturnToOrigin then
-      local Target,_ = PlanarVector(CoM, Origin)
+      local Target,_ = PlanarVector(CoM, I.Waypoint)
       if Target.magnitude >= OriginMaxDistance then
-         local Bearing = GetBearingToPoint(Origin)
+         local Bearing = GetBearingToPoint(I.Waypoint)
          AdjustHeading(Avoidance(I, Bearing))
          Drive = ReturnDrive
       else

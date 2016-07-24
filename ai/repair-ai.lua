@@ -4,15 +4,8 @@
 -- Repair AI module
 ThrottlePID = PID.create(ThrottlePIDConfig, -1, 1, UpdateRate)
 
-Origin = nil
-
 ParentID = nil
 RepairTargetID = nil
-
-function RepairAI_FirstRun(I)
-   Origin = CoM
-end
-AddFirstRun(RepairAI_FirstRun)
 
 -- Scale up desired speed depending on angle between velocities
 function MatchSpeed(Velocity, TargetVelocity, Faster)
@@ -172,9 +165,9 @@ function RepairAI_Update(I)
          ParentID = nil
          RepairTargetID = nil
 
-         local Target,_ = PlanarVector(CoM, Origin)
+         local Target,_ = PlanarVector(CoM, I.Waypoint)
          if Target.magnitude >= OriginMaxDistance then
-            local Bearing = GetBearingToPoint(Origin)
+            local Bearing = GetBearingToPoint(I.Waypoint)
             AdjustHeading(Avoidance(I, Bearing))
             Drive = ReturnDrive
          end
