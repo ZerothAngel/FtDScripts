@@ -2,6 +2,24 @@
 
 A collection of From the Depths Lua scripts and the libraries/modules used to build them.
 
+## Scripts ##
+
+I'll only list the interesting scripts (the ones not used for research or testing).
+
+  * airship &mdash; Combo script: naval-ai + hover + dualprofile
+  * dualprofile &mdash; Dual-profile missile script, using a separate unifiedmissile instance for vertically- and horizontally-launched missiles.
+  * gunship &mdash; Gunship AI, dedicated heliblade spinner for lift, jets for 5-axis control (yaw, pitch, roll, forward/backward, right/left).
+  * hover &mdash; Dedicated heliblade spinner for lift, jets for 2-axis control (pitch, roll). Meant for use in combination with a 2D AI.
+  * naval-ai &mdash; Naval AI with terrain/friendly avoidance and pseudo-random evasive maneuvers.
+  * repair-ai &mdash; Advanced repair AI (2D only) with terrain/friendly avoidance.
+  * repairheli &mdash; Combo script: repair-ai + hover
+  * repairsub &mdash; Combo script: repair-ai + subcontrol
+  * stabilizer &mdash; 2-axis control (pitch, roll).
+  * subcontrol &mdash; Hydrofoil script with pitch, roll, depth control + manual depth option.
+  * submarine &mdash; Combo script: naval-ai + subcontrol + dualprofile
+  * unifiedmissile &mdash; Highly configurable advanced missile script that supports a variety of attack profiles.
+  * warship &mdash; Combo script: naval-ai + dualprofile
+
 ## Building ##
 
 Simply run build.py which is a Python 3 script. Assembled scripts will be written to the *out* directory.
