@@ -1,9 +1,5 @@
 -- HOVER CONTROL
 
--- Switches to enable/disable control of each axis.
-ControlRoll = true
-ControlPitch = true
-
 -- If false, your desired altitudes are relative to
 -- the ground (or sea level, if over water)
 -- If true, then no terrain checking will be done.
