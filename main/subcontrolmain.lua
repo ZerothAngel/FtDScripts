@@ -4,7 +4,7 @@
 SubControl = Periodic.create(UpdateRate, SubControl_Control)
 
 function Update(I)
-   if not I:IsDocked() and I.AIMode ~= "off" then
+   if not I:IsDocked() then
       GetSelfInfo(I)
 
       if FirstRun then FirstRun(I) end
