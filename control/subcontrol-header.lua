@@ -5,6 +5,17 @@ ControlRoll = true
 ControlPitch = true
 ControlDepth = true
 
+-- Switch to manual depth control on these AI modes. Valid keys are "off",
+-- "on", "combat", "patrol", and "fleetmove".
+-- Only used when ManualDepthDriveMaintainerFacing below is non-nil.
+ManualDepthWhen = {
+   off = true,
+   on = true,
+   combat = true,
+   patrol = true,
+   fleetmove = true,
+}
+
 -- Manual depth control (optional, default disabled)
 -- There's no easy way to get input from the player, so this is a bit of
 -- a hack.

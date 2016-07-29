@@ -144,14 +144,7 @@ end
 function SubControl_Control(I)
    if ControlDepth then
       local Absolute
-      if not ManualDepthDriveMaintainerFacing then
-         -- Use configured depths
-         if GetTargetPositionInfo(I) then
-            DesiredDepth,Absolute = DesiredDepthCombat.Depth,DesiredDepthCombat.Absolute
-         else
-            DesiredDepth,Absolute = DesiredDepthIdle.Depth,DesiredDepthIdle.Absolute
-         end
-      else
+      if ManualDepthDriveMaintainerFacing and ManualDepthWhen[I.AIMode] then
          -- Manual depth control
          ManualDesiredDepth = GetManualDesiredDepth(I)
          if ManualDesiredDepth > 0 then
@@ -160,6 +153,13 @@ function SubControl_Control(I)
          else
             -- Absolute
             DesiredDepth,Absolute = -ManualDesiredDepth*500,true
+         end
+      else
+         -- Use configured depths
+         if GetTargetPositionInfo(I) then
+            DesiredDepth,Absolute = DesiredDepthCombat.Depth,DesiredDepthCombat.Absolute
+         else
+            DesiredDepth,Absolute = DesiredDepthIdle.Depth,DesiredDepthIdle.Absolute
          end
       end
 
