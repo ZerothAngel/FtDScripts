@@ -8,7 +8,12 @@ function Periodic.create(Period, Function, Start)
    self.Period = Period
    self.Function = Function
 
-   self.Tick = Periodic.Tick
+   if Period then
+      self.Tick = Periodic.Tick
+   else
+      -- If Period is nil, Tick does nothing
+      self.Tick = function (self, I) end
+   end
 
    return self
 end
