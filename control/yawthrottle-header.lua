@@ -13,4 +13,4 @@ YawPIDConfig = {
 -- To use forward (or reverse!) spinners as propulsion,
 -- set either or both of the following options to true.
 UseSpinners = false
-UseDediSpinners = false
+UseDediBlades = false

@@ -44,4 +44,4 @@ AltitudePIDConfig = {
 -- Set to true if the dedicated heliblade spinners have a positive
 -- "always up fraction." Note that Lua scripts can't read this value, so
 -- it is best to set it on the spinner to 1 or 0.
-DediSpinnersAlwaysUp = true
+DediBladesAlwaysUp = true

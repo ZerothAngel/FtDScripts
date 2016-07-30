@@ -2,7 +2,7 @@
 -- Yaw & throttle module
 YawPID = PID.create(YawPIDConfig, -1.0, 1.0)
 
-PropulsionSpinners = SpinnerControl.create(Vector3.forward, UseSpinners, UseDediSpinners)
+PropulsionSpinners = SpinnerControl.create(Vector3.forward, UseSpinners, UseDediBlades)
 
 DesiredHeading = nil
 DesiredThrottle = nil

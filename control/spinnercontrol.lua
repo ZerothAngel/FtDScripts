@@ -3,17 +3,17 @@ SpinnerControl = {}
 
 -- Note: Axis should be a unit vector depicting the positive direction
 -- Typically Vector3.up, Vector3.forward, etc.
-function SpinnerControl.create(Axis, UseSpinners, UseDediSpinners, AlwaysUp)
+function SpinnerControl.create(Axis, UseSpinners, UseDediBlades, AlwaysUp)
    local self = {}
 
    self.Axis = Axis
    self.UseSpinners = UseSpinners
-   self.UseDediSpinners = UseDediSpinners
+   self.UseDediBlades = UseDediBlades
    self.AlwaysUp = AlwaysUp
    self.LastSpinnerCount = 0
    self.Spinners = {}
 
-   if UseSpinners or UseDediSpinners then
+   if UseSpinners or UseDediBlades then
       self.Classify = SpinnerControl.Classify
    else
       -- Not using spinners at all, so just make Classify do nothing
@@ -35,11 +35,11 @@ function SpinnerControl:Classify(I)
    self.LastSpinnerCount = SpinnerCount
    self.Spinners = {}
 
-   local UseSpinners,UseDediSpinners,AlwaysUp,Axis = self.UseSpinners,self.UseDediSpinners,self.AlwaysUp,self.Axis
+   local UseSpinners,UseDediBlades,AlwaysUp,Axis = self.UseSpinners,self.UseDediBlades,self.AlwaysUp,self.Axis
    for i = 0,SpinnerCount-1 do
       local IsDedi = I:IsSpinnerDedicatedHelispinner(i)
       if ((UseSpinners and not IsDedi) or
-          (UseDediSpinners and IsDedi)) then
+          (UseDediBlades and IsDedi)) then
          local Info = I:GetSpinnerInfo(i)
          local DotZ = Vector3.Dot(Info.LocalRotation * Vector3.up,
                                   Axis)

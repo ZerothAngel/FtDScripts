@@ -5,7 +5,7 @@ AltitudePID = PID.create(AltitudePIDConfig, CanReverseBlades and -30 or 0, 30)
 
 PerlinOffset = 0
 
-LiftSpinners = SpinnerControl.create(Vector3.up, false, true, DediSpinnersAlwaysUp)
+LiftSpinners = SpinnerControl.create(Vector3.up, false, true, DediBladesAlwaysUp)
 
 DesiredAltitude = 0
 
