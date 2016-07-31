@@ -177,7 +177,7 @@ end
 
 function SubControl_Update(I)
    local RollCV = ControlRoll and RollPID:Control(-Roll) or 0
-   local PitchCV = ControlPitch and PitchPID:Control(-Pitch) or 0
+   local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - Pitch) or 0
    local DepthCV = ControlDepth and DepthPID:Control(DesiredDepth - Altitude) or 0
 
    SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)

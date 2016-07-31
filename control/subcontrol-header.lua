@@ -53,6 +53,9 @@ DesiredDepthIdle = {
 -- Should be 0 or positive.
 MinDepth = 50
 
+-- Desired pitch.
+DesiredPitch = 0
+
 -- PID values for hydrofoils
 -- Start with { 1, 0, 0 } and tune from there.
 RollPIDConfig = {
