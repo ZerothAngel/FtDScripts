@@ -34,19 +34,19 @@ function YawTest_Heading(I)
    MyHeading = (MyHeading + 90) % 360
    I:LogToHud(string.format("New heading! %f degrees", MyHeading))
    SetHeading(MyHeading)
-   LastTurn = { I:GetTimeSinceSpawn(), CoM }
+   LastTurn = { Now, CoM }
 
    YawTest:Schedule(HeadingDelay, YawTest_Throttle)
 end
 
 function Update(I)
-   if ActivateWhen[I.AIMode] then
+   if not I:IsDocked() and ActivateWhen[I.AIMode] then
       GetSelfInfo(I)
 
       if FirstRun then FirstRun(I) end
 
       if LastTurn and math.abs(Mathf.DeltaAngle(Yaw, MyHeading)) < 0.1 then
-         local DeltaTime = I:GetTimeSinceSpawn() - LastTurn[1]
+         local DeltaTime = Now - LastTurn[1]
          local Distance = (CoM - LastTurn[2]).magnitude
          local Message = string.format("Time: %.2f s, Distance: %.2f m", DeltaTime, Distance)
          I:Log(Message)

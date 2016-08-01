@@ -7,16 +7,18 @@ end
 TabulaRasa = Periodic.create(UpdateRate, TabulaRasa_Update)
 
 function Update(I)
-   if ActivateWhen[I.AIMode] then
+   if not I:IsDocked() then
       GetSelfInfo(I)
 
       if FirstRun then FirstRun(I) end
 
-      TabulaRasa:Tick(I)
+      if ActivateWhen[I.AIMode] then
+         TabulaRasa:Tick(I)
 
-      -- Suppress default AI
-      I:TellAiThatWeAreTakingControl()
+         -- Suppress default AI
+         I:TellAiThatWeAreTakingControl()
 
-      YawThrottle_Update(I)
+         YawThrottle_Update(I)
+      end
    end
 end

@@ -48,7 +48,6 @@ function GatherTargets(I, GuidanceInfos)
 end
 
 function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
-   local Now = I:GetTimeSinceSpawn()
    local TargetsByPriority, TargetsById = GatherTargets(I, GuidanceInfos)
    if #TargetsByPriority > 0 then
       LastTimeTargetSeen = Now
@@ -162,7 +161,7 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
          for _,QueueMissile in pairs(QueueMissiles) do
             local Guidance = GuidanceInfos[QueueMissile.GuidanceIndex]
             local tindex,mindex = QueueMissile.TransceiverIndex,QueueMissile.MissileIndex
-            local AimPoint = Guidance.Controller:Guide(I, tindex, mindex, TargetPosition, TargetAimPoint, TargetVelocity, QueueMissile.Missile, Now)
+            local AimPoint = Guidance.Controller:Guide(I, tindex, mindex, TargetPosition, TargetAimPoint, TargetVelocity, QueueMissile.Missile)
 
             I:SetLuaControlledMissileAimPoint(tindex, mindex, AimPoint.x, AimPoint.y, AimPoint.z)
          end

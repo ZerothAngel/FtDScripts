@@ -107,7 +107,7 @@ function UnifiedMissile:SpecialAttackAltitude(I, Position, Velocity, AboveSeaLev
 end
 
 -- Modification of the aim point to give the missile its flavor
-function UnifiedMissile:SpecialAttack(I, Position, Velocity, AimPoint, Now, Offset)
+function UnifiedMissile:SpecialAttack(I, Position, Velocity, AimPoint, Offset)
    local NewTarget = Vector3(AimPoint.x, Position.y, AimPoint.z)
    local GroundOffset = NewTarget - Position
    local GroundDistance = GroundOffset.magnitude
@@ -156,7 +156,7 @@ function UnifiedMissile:SetTarget(I, TargetPosition, TargetAimPoint, TargetVeloc
    self.DoSpecialAttack = (TargetAltitude - self.TargetGround) <= self.SpecialAttackElevation
 end
 
-function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile, Now)
+function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile)
    local MissilePosition = Missile.Position
    local MissileVelocity = Missile.Velocity
    local AimPoint = QuadraticIntercept(MissilePosition, MissileVelocity, TargetAimPoint, TargetVelocity)
@@ -167,7 +167,7 @@ function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition,
       AimPoint = Vector3(MissilePosition.x, MinimumAltitude+1000, MissilePosition.z)
    elseif self.DoSpecialAttack then
       local Offset = TransceiverIndex * 37 + MissileIndex -- Used for Perlin noise lookup
-      AimPoint = self:SpecialAttack(I, MissilePosition, MissileVelocity, AimPoint, Now, Offset)
+      AimPoint = self:SpecialAttack(I, MissilePosition, MissileVelocity, AimPoint, Offset)
    end
 
    return AimPoint

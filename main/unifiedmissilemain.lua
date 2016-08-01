@@ -19,13 +19,16 @@ end
 
 -- Main update loop
 function MissileMain_Update(I)
-   if not I:IsDocked() then
-      MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
-   end
+   MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
 end
 
 MissileMain = Periodic.create(UpdateRate, MissileMain_Update)
 
+Now = 0
+
 function Update(I)
-   MissileMain:Tick(I)
+   if not I:IsDocked() then
+      Now = I:GetTimeSinceSpawn()
+      MissileMain:Tick(I)
+   end
 end

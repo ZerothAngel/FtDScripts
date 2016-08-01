@@ -102,6 +102,11 @@ end
 
 Interceptor = Periodic.create(UpdateRate, Interceptor_Update)
 
+Now = 0
+
 function Update(I)
-   Interceptor:Tick(I)
+   if not I:IsDocked() then
+      Now = I:GetTimeSinceSpawn()
+      Interceptor:Tick(I)
+   end
 end

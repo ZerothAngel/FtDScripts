@@ -2,7 +2,7 @@
 --@ spairs pid firstrun
 --@ debug gettargetpositioninfo avoidance yawthrottle
 -- Repair AI module
-ThrottlePID = PID.create(ThrottlePIDConfig, -1, 1, UpdateRate)
+ThrottlePID = PID.create(ThrottlePIDConfig, -1, 1)
 
 ParentID = nil
 RepairTargetID = nil

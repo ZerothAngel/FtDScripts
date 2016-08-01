@@ -25,10 +25,19 @@ check_getselfinfo() {
   return 0
 }
 
+check_now() {
+  if egrep '(^|\W)Now\W' "$1" >/dev/null; then
+    if ! egrep '\W*Now\W*=\W*I:GetTimeSinceSpawn' "$1" >/dev/null; then
+      echo "missing Now"
+      return 1
+    fi
+  fi
+}
+
 for f in out/*.lua; do
   if lua52 -l dummy "$f"; then
     echo -n "$f: "
-    if check_firstrun "$f" && check_getselfinfo "$f"; then
+    if check_firstrun "$f" && check_getselfinfo "$f" && check_now "$f"; then
       echo "ok"
     fi
   fi

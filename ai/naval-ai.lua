@@ -20,7 +20,7 @@ function Evade(I, Bearing, Evasion)
    end
 
    if Evasion then
-      local Evade = Bearing + Evasion[1] * (2.0 * Mathf.PerlinNoise(Evasion[2] * I:GetTimeSinceSpawn(), PerlinOffset) - 1.0)
+      local Evade = Bearing + Evasion[1] * (2.0 * Mathf.PerlinNoise(Evasion[2] * Now, PerlinOffset) - 1.0)
       if Debugging then Debug(I, __func__, "Bearing %f Evade %f", Bearing, Evade) end
       return Evade
    else
@@ -45,7 +45,6 @@ function AdjustHeadingToTarget(I)
 
       Attacking = true
    elseif Distance > MinDistance then
-      local Now = I:GetTimeSinceSpawn()
       if not AttackRuns or Attacking or (LastAttackTime + ForceAttackTime) <= Now then
          State = "attack"
          TargetAngle = AttackAngle

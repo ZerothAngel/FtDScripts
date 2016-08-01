@@ -11,7 +11,7 @@ AddFirstRun(GunshipAI_FirstRun)
 -- Modifies bearing by some amount for evasive maneuvers
 function Evade(I, Perp, Evasion)
    if Evasion then
-      return Perp * Evasion[1] * (2.0 * Mathf.PerlinNoise(Evasion[2] * I:GetTimeSinceSpawn(), PerlinOffset) - 1.0)
+      return Perp * Evasion[1] * (2.0 * Mathf.PerlinNoise(Evasion[2] * Now, PerlinOffset) - 1.0)
    else
       return Vector3.zero
    end

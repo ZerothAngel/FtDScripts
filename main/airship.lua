@@ -15,7 +15,6 @@ function Update(I)
       Hover:Tick(I)
 
       if ActivateWhen[I.AIMode] then
-
          NavalAI:Tick(I)
 
          -- Suppress default AI

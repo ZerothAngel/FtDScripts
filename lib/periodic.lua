@@ -4,12 +4,12 @@ Periodic = {}
 function Periodic.create(Period, Function, Start)
    local self = {}
 
-   self.Ticks = Start and Start or Period
-   self.Period = Period
-   self.Function = Function
-
    if Period then
-      self.Tick = Periodic.Tick
+      self.Period = Period / 40 - .0125 -- Shorten by half a frame
+      self.Function = Function
+      self.Offset = Start and (Start / 40) or 0
+
+      self.Tick = Periodic.FirstTick
    else
       -- If Period is nil, Tick does nothing
       self.Tick = function (self, I) end
@@ -19,12 +19,15 @@ function Periodic.create(Period, Function, Start)
 end
 
 function Periodic:Tick(I)
-   local Ticks = self.Ticks
-   Ticks = Ticks + 1
-   if Ticks >= self.Period then
-      self.Ticks = 0
+   if Now >= self.Next then
+      self.Next = Now + self.Period
       self.Function(I)
-   else
-      self.Ticks = Ticks
    end
+end
+
+function Periodic:FirstTick(I)
+   -- Because Now isn't valid until... now.
+   self.Next = Now + self.Offset
+   self.Tick = Periodic.Tick
+   self:Tick(I)
 end

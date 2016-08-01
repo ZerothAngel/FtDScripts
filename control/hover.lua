@@ -20,7 +20,7 @@ function Hover_Control(I)
 
       -- Modify by Evasion, if set
       if Evasion then
-         DesiredAltitude = DesiredAltitude + Evasion[1] * (2.0 * Mathf.PerlinNoise(Evasion[2] * I:GetTimeSinceSpawn(), PerlinOffset) - 1.0)
+         DesiredAltitude = DesiredAltitude + Evasion[1] * (2.0 * Mathf.PerlinNoise(Evasion[2] * Now, PerlinOffset) - 1.0)
       end
    else
       DesiredAltitude = DesiredAltitudeIdle

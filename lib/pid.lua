@@ -1,36 +1,36 @@
 -- PID implementation
 PID = {}
 
-function PID.create(Config, Min, Max, UpdateRate)
+function PID.create(Config, Min, Max)
    local self = {}
-   if not UpdateRate then UpdateRate = 1 end
-   local dt = UpdateRate / 40
    self.Kp = Config.Kp
    if Config.Ti ~= 0 then
-      self.Kidt = Config.Kp * dt / Config.Ti
+      self.Ki = Config.Kp / Config.Ti
    else
-      self.Kidt = 0
+      self.Ki = 0
    end
-   self.Kddt = Config.Kp * Config.Td / dt
+   self.Kd = Config.Kp * Config.Td
    self.Integral = 0.0
    self.LastError = 0.0
    self.Min = Min
    self.Max = Max
 
    -- Due to lack of setmetatable
-   self.Control = PID.Control
+   self.Control = PID.FirstControl
 
    return self
 end
 
 function PID:Control(Error)
-   local Integral = self.Integral + Error
-   local Derivative = Error - self.LastError
+   local dt = Now - self.LastTime
+   local Integral = self.Integral + Error * dt
+   local Derivative = (Error - self.LastError) / dt
    self.LastError = Error
+   self.LastTime = Now
 
    local CV = (self.Kp * Error) +
-      (self.Kidt * Integral) +
-      (self.Kddt * Derivative)
+      (self.Ki * Integral) +
+      (self.Kd * Derivative)
 
    -- Windup prevention
    if CV > self.Max then
@@ -43,4 +43,12 @@ function PID:Control(Error)
 
    self.Integral = Integral
    return CV
+end
+
+function PID:FirstControl(Error)
+   -- Call the real one next time
+   self.Control = PID.Control
+   -- Just set LastTime and return 0 for now
+   self.LastTime = Now
+   return 0
 end

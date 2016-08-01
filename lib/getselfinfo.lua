@@ -1,5 +1,6 @@
 --@ debug
 -- GetSelfInfo module
+Now = 0
 Position = nil
 CoM = nil
 Altitude = 0
@@ -12,6 +13,7 @@ Roll = 0
 function GetSelfInfo(I)
    local __func__ = "GetSelfInfo"
 
+   Now = I:GetTimeSinceSpawn()
    Position = I:GetConstructPosition()
    CoM = I:GetConstructCenterOfMass()
    Altitude = CoM.y
