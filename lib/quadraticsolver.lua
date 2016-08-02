@@ -19,7 +19,7 @@ function QuadraticSolver(a, b, c)
          return { -b / twoA }
       else
          -- Two solutions
-         local root = Mathf.Sqrt(disc)
+         local root = math.sqrt(disc)
          local t1 = (-b + root) / twoA
          local t2 = (-b - root) / twoA
          return { t1, t2 }
