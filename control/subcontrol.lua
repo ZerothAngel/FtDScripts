@@ -1,4 +1,4 @@
---@ api pid
+--@ api pid manualcontroller
 --@ debug gettargetpositioninfo terraincheck
 -- Hydrofoil submarine control module
 RollPID = PID.create(RollPIDConfig, -1, 1)
@@ -10,9 +10,7 @@ DesiredDepth = 0
 LastHydrofoilCount = 0
 HydrofoilInfos = {}
 
-LastDriveMaintainerCount = 0
-ManualDepthDriveMaintainer = nil
-ManualDesiredDepth = 0
+ManualDepthController = ManualController.create(ManualDepthDriveMaintainerFacing)
 
 function GetHydrofoilSign(BlockInfo)
    -- Check if hydrofoil's forward vector lies on Z-axis and up vector lies on Y-axis.
@@ -114,39 +112,12 @@ function SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
    end
 end
 
-function GetManualDesiredDepth(I)
-   local DriveMaintainerCount = I:Component_GetCount(DRIVEMAINTAINER)
-   if DriveMaintainerCount ~= LastDriveMaintainerCount then
-      -- Clear cached index
-      ManualDepthDriveMaintainer = nil
-      LastDriveMaintainerCount = DriveMaintainerCount
-   end
-
-   if not ManualDepthDriveMaintainer then
-      -- Look for the first one facing the direction we want
-      for i = 0,DriveMaintainerCount-1 do
-         local BlockInfo = I:Component_GetBlockInfo(DRIVEMAINTAINER, i)
-         if Vector3.Dot(BlockInfo.LocalForwards, ManualDepthDriveMaintainerFacing) > 0.001 then
-            ManualDepthDriveMaintainer = i
-            break
-         end
-      end
-   
-      if not ManualDepthDriveMaintainer then
-         -- Still don't have one, just return last setting
-         return ManualDesiredDepth
-      end
-   end
-
-   return I:Component_GetFloatLogic(DRIVEMAINTAINER, ManualDepthDriveMaintainer)
-end
-
 function SubControl_Control(I)
    if ControlDepth then
       local Absolute
       if ManualDepthDriveMaintainerFacing and ManualDepthWhen[I.AIMode] then
          -- Manual depth control
-         ManualDesiredDepth = GetManualDesiredDepth(I)
+         ManualDesiredDepth = ManualDepthController:GetReading(I)
          if ManualDesiredDepth > 0 then
             -- Relative
             DesiredDepth,Absolute = (500 - ManualDesiredDepth*500),false
