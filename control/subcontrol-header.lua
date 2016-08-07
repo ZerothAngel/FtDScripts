@@ -48,10 +48,11 @@ DesiredDepthIdle = {
    Absolute = true
 }
 
--- Minimum depth.
+-- Minimum & maximum depth
 -- Only valid when desired depth is relative.
 -- Should be 0 or positive.
 MinDepth = 50
+MaxDepth = 500
 
 -- Desired pitch.
 DesiredPitch = 0
