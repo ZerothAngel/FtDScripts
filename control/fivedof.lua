@@ -1,5 +1,5 @@
 --@ api getselfinfo normalizebearing sign pid
--- Five-axis module (Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
+-- 5DoF module (Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
 YawPID = PID.create(YawPIDConfig, -10, 10)
 PitchPID = PID.create(PitchPIDConfig, -10, 10)
 RollPID = PID.create(RollPIDConfig, -10, 10)
@@ -45,7 +45,7 @@ function SetPitch(Angle)
    DesiredPitch = Angle
 end
 
-function FiveAxis_Reset()
+function FiveDoF_Reset()
    ResetHeading()
    ResetPosition()
 end
@@ -87,7 +87,7 @@ function ClassifyPropulsion(I)
    end
 end
 
-function FiveAxis_Update(I)
+function FiveDoF_Update(I)
    local YawCV = DesiredHeading and YawPID:Control(NormalizeBearing(DesiredHeading - Yaw)) or 0
    local PitchCV = PitchPID:Control(DesiredPitch - Pitch)
    local RollCV = RollPID:Control(-Roll)

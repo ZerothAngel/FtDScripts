@@ -1,16 +1,16 @@
---! 5axistest
+--! 5doftest
 --@ getselfinfo firstrun eventdriver
---@ fiveaxis
-FiveAxisTest = EventDriver.create()
+--@ fivedof
+FiveDoFTest = EventDriver.create()
 
-function FiveAxisTest_FirstRun(I)
-   FiveAxisTest:Schedule(0, FiveAxisTest_Update)
+function FiveDoFTest_FirstRun(I)
+   FiveDoFTest:Schedule(0, FiveDoFTest_Update)
 end
-AddFirstRun(FiveAxisTest_FirstRun)
+AddFirstRun(FiveDoFTest_FirstRun)
 
 TestIndex = 0
 
-function FiveAxisTest_Update(I)
+function FiveDoFTest_Update(I)
    TestIndex = TestIndex + 1
    I:LogToHud(string.format("Test step #%d!", TestIndex))
    local TestStep = TestSteps[TestIndex]
@@ -18,7 +18,7 @@ function FiveAxisTest_Update(I)
    SetPositionOffset(TestStep.Offset)
    TestIndex = TestIndex % #TestSteps
 
-   FiveAxisTest:Schedule(StepDelay, FiveAxisTest_Update)
+   FiveDoFTest:Schedule(StepDelay, FiveDoFTest_Update)
 end
 
 function Update(I)
@@ -28,14 +28,14 @@ function Update(I)
       if FirstRun then FirstRun(I) end
 
       if ActivateWhen[I.AIMode] then
-         FiveAxisTest:Tick(I)
+         FiveDoFTest:Tick(I)
 
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
       else
-         FiveAxis_Reset()
+         FiveDoF_Reset()
       end
 
-      FiveAxis_Update(I)
+      FiveDoF_Update(I)
    end
 end

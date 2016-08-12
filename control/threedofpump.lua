@@ -1,6 +1,6 @@
 --@ api sign pid manualcontroller
 --@ gettargetpositioninfo terraincheck
--- Three-Axis Pump module (Altitude, Pitch, Roll)
+-- 3DoF Pump module (Altitude, Pitch, Roll)
 AltitudePID = PID.create(AltitudePIDConfig, -10, 10)
 PitchPID = PID.create(PitchPIDConfig, -10, 10)
 RollPID = PID.create(RollPIDConfig, -10, 10)
@@ -31,7 +31,7 @@ function ClassifyPumps(I)
    end
 end
       
-function ThreeAxisPump_Control(I)
+function ThreeDoFPump_Control(I)
    if ManualAltitudeDriveMaintainerFacing and ManualAltitudeWhen[I.AIMode] then
       DesiredAltitude = HalfMaxManualAltitude + ManualAltitudeController:GetReading(I) * HalfMaxManualAltitude
    else
@@ -50,7 +50,7 @@ function ThreeAxisPump_Control(I)
    end
 end
 
-function ThreeAxisPump_Update(I)
+function ThreeDoFPump_Update(I)
    local AltitudeCV = AltitudePID:Control(DesiredAltitude - Altitude)
    local PitchCV = ControlPitch and PitchPID:Control(-Pitch) or 0
    local RollCV = ControlRoll and RollPID:Control(-Roll) or 0

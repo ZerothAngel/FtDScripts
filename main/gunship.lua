@@ -19,11 +19,11 @@ function Update(I)
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
       else
-         FiveAxis_Reset()
+         FiveDoF_Reset()
       end
 
       Hover_Update(I)
-      FiveAxis_Update(I)
+      FiveDoF_Update(I)
 
       MissileMain:Tick(I)
    end

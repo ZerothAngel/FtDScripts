@@ -1,4 +1,4 @@
--- THREE-AXIS PUMP CONFIGURATION
+-- 3DOF PUMP CONFIGURATION
 
 -- Switch to manual altitude control on these AI modes. Valid keys are "off",
 -- "on", "combat", "patrol", and "fleetmove".

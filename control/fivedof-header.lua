@@ -1,4 +1,4 @@
--- FIVE-AXIS CONFIGURATION
+-- 5DOF CONFIGURATION
 
 YawPIDConfig = {
    Kp = .3,

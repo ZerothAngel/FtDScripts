@@ -1,5 +1,5 @@
 --@ getvectorangle planarvector
---@ gettargetpositioninfo fiveaxis
+--@ gettargetpositioninfo fivedof
 -- Gunship AI module
 PerlinOffset = 0
 
@@ -57,7 +57,7 @@ function ConditionalSetPosition(Pos)
 end
 
 function GunshipAI_Update(I)
-   FiveAxis_Reset()
+   FiveDoF_Reset()
 
    local AIMode = I.AIMode
    if GetTargetPositionInfo(I) then
