@@ -35,7 +35,7 @@ end
 -- Controls upward/downward facing propulsion elements to stabilize roll/pitch
 -- Should be called every update.
 function Stabilizer_Update(I)
-   if ControllRoll or ControlPitch then
+   if ControlRoll or ControlPitch then
       local RollCV = ControlRoll and RollPID:Control(-Roll) or 0
       local PitchCV = ControlPitch and PitchPID:Control(-Pitch) or 0
 
