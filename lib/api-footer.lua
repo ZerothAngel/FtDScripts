@@ -25,3 +25,4 @@ TRACTORBEAM = 7 -- boolean
 HYDROFOIL = 8 -- float
 PROPULSION = 9 -- float
 SHIELDPROJECTOR = 10 -- float/int
+HELIUMPUMP = 11 -- float/bool
