@@ -1,31 +1,16 @@
---@ planarvector getbearingtopoint firstrun
+--@ planarvector getbearingtopoint evasion
 --@ debug gettargetpositioninfo avoidance yawthrottle
 -- Naval AI module
 Attacking = true
 LastAttackTime = 0
 
-PerlinOffset = 0
-
-function NavalAI_FirstRun(I)
-   PerlinOffset = 1000.0 * math.random()
-end
-AddFirstRun(NavalAI_FirstRun)
-
 -- Modifies bearing by some amount for evasive maneuvers
-function Evade(I, Bearing, Evasion)
-   local __func__ = "Evade"
-
+function Evade(Evasion, Bearing)
    if AirRaidEvasion and TargetPositionInfo.Position.y >= AirRaidAboveAltitude then
       Evasion = AirRaidEvasion
    end
 
-   if Evasion then
-      local Evade = Bearing + Evasion[1] * (2.0 * Mathf.PerlinNoise(Evasion[2] * Now, PerlinOffset) - 1.0)
-      if Debugging then Debug(I, __func__, "Bearing %f Evade %f", Bearing, Evade) end
-      return Evade
-   else
-      return Bearing
-   end
+   return CalculateEvasion(Evasion, Bearing)
 end
 
 -- Adjusts heading according to configured behaviors
@@ -59,7 +44,7 @@ function AdjustHeadingToTarget(I)
    end
 
    Bearing = Bearing - Mathf.Sign(Bearing) * TargetAngle
-   Bearing = Evade(I, Bearing, Evasion)
+   Bearing = Evade(Evasion, Bearing)
    if Bearing > 180 then Bearing = Bearing - 360 end
 
    if Debugging then Debug(I, __func__, "State %s Drive %f Bearing %f", State, Drive, Bearing) end

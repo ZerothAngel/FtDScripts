@@ -1,9 +1,7 @@
---@ pid spinnercontrol manualcontroller firstrun
+--@ pid spinnercontrol manualcontroller evasion
 --@ gettargetpositioninfo terraincheck
 -- Hover module
 AltitudePID = PID.create(AltitudePIDConfig, CanReverseBlades and -30 or 0, 30)
-
-PerlinOffset = 0
 
 LiftSpinners = SpinnerControl.create(Vector3.up, false, true, DediBladesAlwaysUp)
 
@@ -12,22 +10,12 @@ DesiredAltitude = 0
 ManualAltitudeController = ManualController.create(ManualAltitudeDriveMaintainerFacing)
 HalfMaxManualAltitude = MaxManualAltitude / 2
 
-function Hover_FirstRun(I)
-   PerlinOffset = 1000.0 * math.random()
-end
-AddFirstRun(Hover_FirstRun)
-
 function Hover_Control(I)
    if ManualAltitudeDriveMaintainerFacing and ManualAltitudeWhen[I.AIMode] then
       DesiredAltitude = HalfMaxManualAltitude + ManualAltitudeController:GetReading(I) * HalfMaxManualAltitude
    else
       if GetTargetPositionInfo(I) then
-         DesiredAltitude = DesiredAltitudeCombat
-
-         -- Modify by Evasion, if set
-         if Evasion then
-            DesiredAltitude = DesiredAltitude + Evasion[1] * (2.0 * Mathf.PerlinNoise(Evasion[2] * Now, PerlinOffset) - 1.0)
-         end
+         DesiredAltitude = CalculateEvasion(Evasion, DesiredAltitudeCombat)
       else
          DesiredAltitude = DesiredAltitudeIdle
       end

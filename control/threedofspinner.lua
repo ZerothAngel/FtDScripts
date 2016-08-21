@@ -1,11 +1,9 @@
---@ api sign pid manualcontroller firstrun
+--@ api sign pid manualcontroller evasion
 --@ gettargetpositioninfo terraincheck
 -- 3DoF Spinner module (Altitude, Pitch, Roll)
 AltitudePID = PID.create(AltitudePIDConfig, -30, 30)
 PitchPID = PID.create(PitchPIDConfig, -30, 30)
 RollPID = PID.create(RollPIDConfig, -30, 30)
-
-PerlinOffset = 0
 
 DesiredAltitude = 0
 
@@ -14,11 +12,6 @@ HalfMaxManualAltitude = MaxManualAltitude / 2
 
 LastSpinnerCount = 0
 Spinners = {}
-
-function ThreeDoFSpinner_FirstRun(I)
-   PerlinOffset = 1000.0 * math.random()
-end
-AddFirstRun(ThreeDoFSpinner_FirstRun)
 
 function ThreeDoFSpinner_ClassifySpinners(I)
    local SpinnerCount = I:GetSpinnerCount()
@@ -52,12 +45,7 @@ function ThreeDoFSpinner_Control(I)
       DesiredAltitude = HalfMaxManualAltitude + ManualAltitudeController:GetReading(I) * HalfMaxManualAltitude
    else
       if GetTargetPositionInfo(I) then
-         DesiredAltitude = DesiredAltitudeCombat
-
-         -- Modify by Evasion, if set
-         if Evasion then
-            DesiredAltitude = DesiredAltitude + Evasion[1] * (2.0 * Mathf.PerlinNoise(Evasion[2] * Now, PerlinOffset) - 1.0)
-         end
+         DesiredAltitude = CalculateEvasion(Evasion, DesiredAltitudeCombat)
       else
          DesiredAltitude = DesiredAltitudeIdle
       end

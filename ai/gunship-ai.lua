@@ -1,17 +1,10 @@
---@ getvectorangle planarvector
+--@ getvectorangle planarvector evasion
 --@ gettargetpositioninfo fivedof
 -- Gunship AI module
-PerlinOffset = 0
-
-function GunshipAI_FirstRun(I)
-   PerlinOffset = 1000.0 * math.random()
-end
-AddFirstRun(GunshipAI_FirstRun)
-
--- Modifies bearing by some amount for evasive maneuvers
-function Evade(I, Perp, Evasion)
+-- Modifies vector by some amount for evasive maneuvers
+function Evade(Evasion, Perp)
    if Evasion then
-      return Perp * Evasion[1] * (2.0 * Mathf.PerlinNoise(Evasion[2] * Now, PerlinOffset) - 1.0)
+      return Perp * CalculateEvasion(Evasion, 0)
    else
       return Vector3.zero
    end
@@ -39,7 +32,7 @@ function AdjustPositionToTarget(I)
 
    local Bearing = -TargetPositionInfo.Azimuth
    Bearing = Bearing - Mathf.Sign(Bearing) * TargetAngle
-   local Offset = ToTarget * (Distance - AttackDistance) + Evade(I, Perp, Evasion)
+   local Offset = ToTarget * (Distance - AttackDistance) + Evade(Evasion, Perp)
    AdjustHeading(Bearing)
    SetPositionOffset(Offset)
    SetPitch((TargetPositionInfo.Position.y >= AirTargetAboveAltitude) and TargetPitch.Air or TargetPitch.Surface)
