@@ -33,7 +33,7 @@ function SetPosition(Pos)
    DesiredPosition = Vector3(Pos.x, Pos.y, Pos.z)
 end
 
-function SetPositionOffset(Offset)
+function AdjustPosition(Offset)
    DesiredPosition = CoM + Offset
 end
 

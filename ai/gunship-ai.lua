@@ -34,7 +34,7 @@ function AdjustPositionToTarget(I)
    Bearing = Bearing - Mathf.Sign(Bearing) * TargetAngle
    local Offset = ToTarget * (Distance - AttackDistance) + Evade(Evasion, Perp)
    AdjustHeading(Bearing)
-   SetPositionOffset(Offset)
+   AdjustPosition(Offset)
    SetPitch((TargetPositionInfo.Position.y >= AirTargetAboveAltitude) and TargetPitch.Air or TargetPitch.Surface)
 end
 
@@ -45,7 +45,7 @@ function ConditionalSetPosition(Pos)
       if not TargetPositionInfo then
          SetHeading(GetVectorAngle(Offset))
       end
-      SetPositionOffset(Offset)
+      AdjustPosition(Offset)
    end
 end
 

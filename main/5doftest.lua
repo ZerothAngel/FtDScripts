@@ -15,7 +15,7 @@ function FiveDoFTest_Update(I)
    I:LogToHud(string.format("Test step #%d!", TestIndex))
    local TestStep = TestSteps[TestIndex]
    SetHeading(TestStep.Heading)
-   SetPositionOffset(TestStep.Offset)
+   AdjustPosition(TestStep.Offset)
    TestIndex = TestIndex % #TestSteps
 
    FiveDoFTest:Schedule(StepDelay, FiveDoFTest_Update)
