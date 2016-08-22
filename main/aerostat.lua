@@ -1,4 +1,4 @@
---! 3dofpump
+--! aerostat
 --@ getselfinfo firstrun periodic
 --@ threedofpump altitudecontrol
 ThreeDoFPump = Periodic.create(UpdateRate, Altitude_Control)
