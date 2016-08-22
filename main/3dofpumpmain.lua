@@ -1,7 +1,7 @@
 --! 3dofpump
 --@ getselfinfo firstrun periodic
---@ threedofpump
-ThreeDoFPump = Periodic.create(UpdateRate, ThreeDoFPump_Control)
+--@ threedofpump altitudecontrol
+ThreeDoFPump = Periodic.create(UpdateRate, Altitude_Control)
 
 function Update(I)
    if not I:IsDocked() then

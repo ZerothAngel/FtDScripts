@@ -1,7 +1,7 @@
 --! subcontrol
 --@ getselfinfo firstrun periodic
---@ subcontrol
-SubControl = Periodic.create(UpdateRate, SubControl_Control)
+--@ subcontrol depthcontrol
+SubControl = Periodic.create(UpdateRate, Depth_Control)
 
 function Update(I)
    if not I:IsDocked() then

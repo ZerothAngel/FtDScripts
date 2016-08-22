@@ -1,7 +1,7 @@
 --! hover
 --@ getselfinfo firstrun periodic
---@ stabilizer hover
-Hover = Periodic.create(UpdateRate, Hover_Control)
+--@ stabilizer hover altitudecontrol
+Hover = Periodic.create(UpdateRate, Altitude_Control)
 
 function Update(I)
    if not I:IsDocked() then

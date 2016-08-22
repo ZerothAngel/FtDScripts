@@ -1,9 +1,9 @@
 --! airship
 --@ getselfinfo firstrun periodic
---@ dualprofile threedofspinner naval-ai
+--@ dualprofile threedofspinner altitudecontrol naval-ai
 -- Airship main
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
-Quadcopter = Periodic.create(Quadcopter_UpdateRate, ThreeDoFSpinner_Control, 1)
+Quadcopter = Periodic.create(Quadcopter_UpdateRate, Altitude_Control, 1)
 NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
 
 function Update(I)

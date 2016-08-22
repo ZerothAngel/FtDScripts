@@ -1,7 +1,7 @@
 --! quadcopter
 --@ getselfinfo firstrun periodic
---@ threedofspinner
-ThreeDoFSpinner = Periodic.create(UpdateRate, ThreeDoFSpinner_Control)
+--@ threedofspinner altitudecontrol
+ThreeDoFSpinner = Periodic.create(UpdateRate, Altitude_Control)
 
 function Update(I)
    if not I:IsDocked() then

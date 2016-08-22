@@ -1,9 +1,9 @@
 --! submarine
 --@ getselfinfo firstrun periodic
---@ dualprofile subcontrol naval-ai
+--@ dualprofile subcontrol depthcontrol naval-ai
 -- Submarine main
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
-SubControl = Periodic.create(SubControl_UpdateRate, SubControl_Control, 1)
+SubControl = Periodic.create(SubControl_UpdateRate, Depth_Control, 1)
 NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
 
 function Update(I)

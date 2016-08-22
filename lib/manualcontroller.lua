@@ -1,3 +1,4 @@
+--@ api
 -- ManualController implementation
 ManualController = {}
 

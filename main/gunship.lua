@@ -1,8 +1,8 @@
 --! gunship
 --@ getselfinfo firstrun periodic
---@ dualprofile hover gunship-ai
+--@ dualprofile hover altitudecontrol gunship-ai
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
-Hover = Periodic.create(Hover_UpdateRate, Hover_Control, 1)
+Hover = Periodic.create(Hover_UpdateRate, Altitude_Control, 1)
 GunshipAI = Periodic.create(AI_UpdateRate, GunshipAI_Update)
 
 function Update(I)

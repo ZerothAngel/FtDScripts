@@ -1,8 +1,8 @@
 --! repairsub
 --@ getselfinfo firstrun periodic
---@ subcontrol repair-ai
+--@ subcontrol depthcontrol repair-ai
 -- Repair submarine main
-SubControl = Periodic.create(SubControl_UpdateRate, SubControl_Control, 1)
+SubControl = Periodic.create(SubControl_UpdateRate, Depth_Control, 1)
 RepairAI = Periodic.create(AI_UpdateRate, RepairAI_Update)
 
 function Update(I)

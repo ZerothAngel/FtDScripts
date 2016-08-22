@@ -1,16 +1,26 @@
---@ api pid manualcontroller
---@ debug gettargetpositioninfo terraincheck
+--@ api pid
 -- Hydrofoil submarine control module
 RollPID = PID.create(RollPIDConfig, -1, 1)
 PitchPID = PID.create(PitchPIDConfig, -1, 1)
 DepthPID = PID.create(DepthPIDConfig, -1, 1)
 
-DesiredDepth = 0
+DesiredAltitude = 0
+DesiredPitch = 0
 
 LastHydrofoilCount = 0
 HydrofoilInfos = {}
 
-ManualDepthController = ManualController.create(ManualDepthDriveMaintainerFacing)
+function SetAltitude(Alt)
+   DesiredAltitude = Alt
+end
+
+function AdjustAltitude(Delta)
+   DesiredAltitude = Altitude + Delta
+end
+
+function SetPitch(Angle)
+   DesiredPitch = Angle
+end
 
 function GetHydrofoilSign(BlockInfo)
    -- Check if hydrofoil's forward vector lies on Z-axis and up vector lies on Y-axis.
@@ -95,8 +105,6 @@ function ClassifyHydrofoils(I)
 end
 
 function SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
-   local __func__ = "SetHydrofoilAngles"
-
    ClassifyHydrofoils(I)
 
    -- In case vehicle is going in reverse...
@@ -107,49 +115,14 @@ function SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
       local Output = (RollCV * Info.RollScale + PitchCV * Info.PitchScale + DepthCV) * 45
       Output = math.max(-45, math.min(45, Output))
 
-      if Debugging then Debug(I, __func__, "#%d Total = %f", Info.Index, Total) end
       I:Component_SetFloatLogic(HYDROFOIL, Info.Index, VehicleSign * Info.LocalSign * Output)
-   end
-end
-
-function SubControl_Control(I)
-   if ControlDepth then
-      local Absolute
-      if ManualDepthDriveMaintainerFacing and ManualDepthWhen[I.AIMode] then
-         -- Manual depth control
-         ManualDesiredDepth = ManualDepthController:GetReading(I)
-         if ManualDesiredDepth > 0 then
-            -- Relative
-            DesiredDepth,Absolute = (500 - ManualDesiredDepth*500),false
-         else
-            -- Absolute
-            DesiredDepth,Absolute = -ManualDesiredDepth*500,true
-         end
-      else
-         -- Use configured depths
-         if GetTargetPositionInfo(I) then
-            DesiredDepth,Absolute = DesiredDepthCombat.Depth,DesiredDepthCombat.Absolute
-         else
-            DesiredDepth,Absolute = DesiredDepthIdle.Depth,DesiredDepthIdle.Absolute
-         end
-      end
-
-      if Absolute then
-         DesiredDepth = -DesiredDepth
-      else
-         -- Look ahead at terrain
-         local Velocity = I:GetVelocityVector()
-         DesiredDepth = DesiredDepth + GetTerrainHeight(I, Velocity, -(MaxDepth + DesiredDepth), -MinDepth)
-         -- No higher than MinDepth
-         DesiredDepth = math.min(DesiredDepth, -MinDepth)
-      end
    end
 end
 
 function SubControl_Update(I)
    local RollCV = ControlRoll and RollPID:Control(-Roll) or 0
    local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - Pitch) or 0
-   local DepthCV = ControlDepth and DepthPID:Control(DesiredDepth - Altitude) or 0
+   local DepthCV = ControlDepth and DepthPID:Control(DesiredAltitude - Altitude) or 0
 
    SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
 end

@@ -1,8 +1,8 @@
 --! repairheli
 --@ getselfinfo firstrun periodic
---@ stabilizer hover repair-ai
+--@ stabilizer hover altitudecontrol repair-ai
 -- Repair submarine main
-Hover = Periodic.create(Hover_UpdateRate, Hover_Control)
+Hover = Periodic.create(Hover_UpdateRate, Altitude_Control)
 RepairAI = Periodic.create(AI_UpdateRate, RepairAI_Update)
 
 function Update(I)

@@ -1,17 +1,26 @@
---@ api sign pid manualcontroller evasion
---@ gettargetpositioninfo terraincheck
+--@ sign pid
 -- 3DoF Spinner module (Altitude, Pitch, Roll)
 AltitudePID = PID.create(AltitudePIDConfig, -30, 30)
 PitchPID = PID.create(PitchPIDConfig, -30, 30)
 RollPID = PID.create(RollPIDConfig, -30, 30)
 
 DesiredAltitude = 0
-
-ManualAltitudeController = ManualController.create(ManualAltitudeDriveMaintainerFacing)
-HalfMaxManualAltitude = MaxManualAltitude / 2
+DesiredPitch = 0
 
 LastSpinnerCount = 0
 Spinners = {}
+
+function SetAltitude(Alt)
+   DesiredAltitude = Alt
+end
+
+function AdjustAltitude(Delta)
+   DesiredAltitude = Altitude + Delta
+end
+
+function SetPitch(Angle)
+   DesiredPitch = Angle
+end
 
 function ThreeDoFSpinner_ClassifySpinners(I)
    local SpinnerCount = I:GetSpinnerCount()
@@ -37,25 +46,6 @@ function ThreeDoFSpinner_ClassifySpinners(I)
             end
          end
       end
-   end
-end
-
-function ThreeDoFSpinner_Control(I)
-   if ManualAltitudeDriveMaintainerFacing and ManualAltitudeWhen[I.AIMode] then
-      DesiredAltitude = HalfMaxManualAltitude + ManualAltitudeController:GetReading(I) * HalfMaxManualAltitude
-   else
-      if GetTargetPositionInfo(I) then
-         DesiredAltitude = CalculateEvasion(Evasion, DesiredAltitudeCombat)
-      else
-         DesiredAltitude = DesiredAltitudeIdle
-      end
-   end
-
-   if not AbsoluteAltitude then
-      -- Look ahead at the terrain, but don't fly lower than sea level
-      local Velocity = I:GetVelocityVector()
-      local Height = GetTerrainHeight(I, Velocity, 0, MaxAltitude)
-      DesiredAltitude = DesiredAltitude + Height
    end
 end
 
