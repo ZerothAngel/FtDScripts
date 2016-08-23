@@ -8,6 +8,7 @@ I'll only list the interesting scripts (the ones not used for research or testin
 
 ### AI Replacements ###
 
+  * [gatherer-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gatherer-ai.lua) &mdash; Gatherer AI (2D only) with terrain/friendly avoidance.
   * [gunship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunship.lua) &mdash; Gunship AI, dedicated heliblade spinner for lift, jets for 5-axis control (yaw, pitch, roll, forward/backward, right/left).
   * [naval-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/naval-ai.lua) &mdash; Naval AI with terrain/friendly avoidance and pseudo-random evasive maneuvers. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=20953))
   * [repair-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repair-ai.lua) &mdash; Advanced repair AI (2D only) with terrain/friendly avoidance. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=20998))
@@ -27,6 +28,7 @@ I'll only list the interesting scripts (the ones not used for research or testin
 ### Combo Scripts ###
 
   * [airship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airship.lua) &mdash; Combo script: naval-ai + quadcopter + dualprofile
+  * [gatherer](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gatherer.lua) &mdash; Combo script: gatherer-ai + quadcopter
   * [repairheli](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repairheli.lua) &mdash; Combo script: repair-ai + hover
   * [repairsub](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repairsub.lua) &mdash; Combo script: repair-ai + subcontrol
   * [submarine](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/submarine.lua) &mdash; Combo script: naval-ai + subcontrol + dualprofile
