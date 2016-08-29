@@ -6,12 +6,12 @@ ControlPitch = true
 
 -- PID values
 AltitudePIDConfig = {
-   Kp = .5,
+   Kp = 5,
    Ti = 5,
    Td = .3,
 }
 PitchPIDConfig = {
-   Kp = .5,
+   Kp = 5,
    Ti = 5,
    Td = .3,
 }
