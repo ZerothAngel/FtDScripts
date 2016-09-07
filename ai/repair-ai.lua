@@ -1,6 +1,6 @@
 --@ planarvector getbearingtopoint quadraticintercept
 --@ spairs pid firstrun
---@ debug gettargetpositioninfo avoidance yawthrottle
+--@ debug gettargetpositioninfo avoidance
 -- Repair AI module
 ThrottlePID = PID.create(ThrottlePIDConfig, -1, 1)
 
@@ -147,7 +147,7 @@ function Imprint(I)
 end
 
 function RepairAI_Update(I)
-   YawThrottle_Reset()
+   Control_Reset()
 
    local Drive = 0
    if GetTargetPositionInfo(I) then

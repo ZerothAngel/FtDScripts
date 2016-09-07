@@ -1,5 +1,5 @@
 --@ planarvector getbearingtopoint evasion
---@ spairs avoidance yawthrottle
+--@ spairs avoidance
 -- Gatherer AI module
 function GetTargets(I)
    local Targets = {}
@@ -30,7 +30,7 @@ function GetResourceZones(I, ReferencePosition)
 end
 
 function GathererAI_Update(I)
-   YawThrottle_Reset()
+   Control_Reset()
 
    local Drive = nil
 

@@ -1,5 +1,5 @@
 --@ planarvector getbearingtopoint evasion
---@ debug gettargetpositioninfo avoidance yawthrottle
+--@ debug gettargetpositioninfo avoidance
 -- Naval AI module
 Attacking = true
 LastAttackTime = 0
@@ -55,7 +55,7 @@ function AdjustHeadingToTarget(I)
 end
 
 function NavalAI_Update(I)
-   YawThrottle_Reset()
+   Control_Reset()
 
    local Drive = nil
    if GetTargetPositionInfo(I) then

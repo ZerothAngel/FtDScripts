@@ -1,10 +1,12 @@
 --! airship
 --@ getselfinfo firstrun periodic
---@ dualprofile threedofspinner altitudecontrol naval-ai
+--@ dualprofile threedofspinner altitudecontrol yawthrottle naval-ai
 -- Airship main
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
 Quadcopter = Periodic.create(Quadcopter_UpdateRate, Altitude_Control, 1)
 NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
+
+Control_Reset = YawThrottle_Reset
 
 function Update(I)
    if not I:IsDocked() then

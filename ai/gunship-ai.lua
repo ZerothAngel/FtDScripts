@@ -1,5 +1,5 @@
 --@ getvectorangle planarvector evasion
---@ gettargetpositioninfo fivedof
+--@ gettargetpositioninfo
 -- Gunship AI module
 -- Modifies vector by some amount for evasive maneuvers
 function Evade(Evasion, Perp)
@@ -50,7 +50,7 @@ function ConditionalSetPosition(Pos)
 end
 
 function GunshipAI_Update(I)
-   FiveDoF_Reset()
+   Control_Reset()
 
    local AIMode = I.AIMode
    if GetTargetPositionInfo(I) then

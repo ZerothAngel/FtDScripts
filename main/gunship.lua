@@ -1,9 +1,11 @@
 --! gunship
 --@ getselfinfo firstrun periodic
---@ dualprofile hover altitudecontrol gunship-ai
+--@ dualprofile hover altitudecontrol fivedof gunship-ai
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
 Hover = Periodic.create(Hover_UpdateRate, Altitude_Control, 1)
 GunshipAI = Periodic.create(AI_UpdateRate, GunshipAI_Update)
+
+Control_Reset = FiveDoF_Reset
 
 function Update(I)
    if not I:IsDocked() then

@@ -1,9 +1,11 @@
 --! repairheli
 --@ getselfinfo firstrun periodic
---@ stabilizer hover altitudecontrol repair-ai
+--@ stabilizer hover altitudecontrol yawthrottle repair-ai
 -- Repair submarine main
 Hover = Periodic.create(Hover_UpdateRate, Altitude_Control)
 RepairAI = Periodic.create(AI_UpdateRate, RepairAI_Update)
+
+Control_Reset = YawThrottle_Reset
 
 function Update(I)
    if not I:IsDocked() then

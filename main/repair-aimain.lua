@@ -1,7 +1,9 @@
 --! repair-ai
 --@ getselfinfo firstrun periodic
---@ repair-ai
+--@ yawthrottle repair-ai
 RepairAI = Periodic.create(UpdateRate, RepairAI_Update)
+
+Control_Reset = YawThrottle_Reset
 
 function Update(I)
    if not I:IsDocked() and ActivateWhen[I.AIMode] then

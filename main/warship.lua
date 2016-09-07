@@ -1,9 +1,11 @@
 --! warship
 --@ getselfinfo firstrun periodic
---@ dualprofile naval-ai
+--@ dualprofile yawthrottle naval-ai
 -- Warship main
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 1)
 NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
+
+Control_Reset = YawThrottle_Reset
 
 function Update(I)
    if not I:IsDocked() then

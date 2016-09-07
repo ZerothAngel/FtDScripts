@@ -1,9 +1,11 @@
 --! repairquad
 --@ getselfinfo firstrun periodic
---@ threedofspinner altitudecontrol repair-ai
+--@ threedofspinner altitudecontrol yawthrottle repair-ai
 -- Quadcopter repair AI
 ThreeDoFSpinner = Periodic.create(Quadcopter_UpdateRate, Altitude_Control)
 RepairAI = Periodic.create(AI_UpdateRate, RepairAI_Update)
+
+Control_Reset = YawThrottle_Reset
 
 function Update(I)
    if not I:IsDocked() then

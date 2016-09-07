@@ -1,9 +1,11 @@
 --! gatherer
 --@ getselfinfo firstrun periodic
---@ threedofspinner altitudecontrol gatherer-ai
+--@ threedofspinner altitudecontrol yawthrottle gatherer-ai
 -- Gatherer main
 Quadcopter = Periodic.create(Quadcopter_UpdateRate, Altitude_Control, 1)
 GathererAI = Periodic.create(AI_UpdateRate, GathererAI_Update)
+
+Control_Reset = YawThrottle_Reset
 
 function Update(I)
    if not I:IsDocked() then

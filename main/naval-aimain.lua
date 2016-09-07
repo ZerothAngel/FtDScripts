@@ -1,7 +1,9 @@
 --! naval-ai
 --@ getselfinfo firstrun periodic
---@ naval-ai
+--@ yawthrottle naval-ai
 NavalAI = Periodic.create(UpdateRate, NavalAI_Update)
+
+Control_Reset = YawThrottle_Reset
 
 function Update(I)
    if not I:IsDocked() and ActivateWhen[I.AIMode] then

@@ -1,7 +1,9 @@
 --! gatherer-ai
 --@ getselfinfo firstrun periodic
---@ gatherer-ai
+--@ yawthrottle gatherer-ai
 GathererAI = Periodic.create(UpdateRate, GathererAI_Update)
+
+Control_Reset = YawThrottle_Reset
 
 function Update(I)
    if not I:IsDocked() and ActivateWhen[I.AIMode] then
