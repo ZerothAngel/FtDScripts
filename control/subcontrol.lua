@@ -6,6 +6,7 @@ DepthPID = PID.create(DepthPIDConfig, -1, 1)
 
 DesiredAltitude = 0
 DesiredPitch = 0
+DesiredRoll = 0
 
 LastHydrofoilCount = 0
 HydrofoilInfos = {}
@@ -20,6 +21,10 @@ end
 
 function SetPitch(Angle)
    DesiredPitch = Angle
+end
+
+function SetRoll(Angle)
+   DesiredRoll = Angle
 end
 
 function GetHydrofoilSign(BlockInfo)
@@ -120,7 +125,7 @@ function SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
 end
 
 function SubControl_Update(I)
-   local RollCV = ControlRoll and RollPID:Control(-Roll) or 0
+   local RollCV = ControlRoll and RollPID:Control(DesiredRoll - Roll) or 0
    local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - Pitch) or 0
    local DepthCV = ControlDepth and DepthPID:Control(DesiredAltitude - Altitude) or 0
 

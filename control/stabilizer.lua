@@ -6,6 +6,17 @@ PitchPID = PID.create(PitchPIDConfig, -10, 10)
 LastPropulsionCount = 0
 PropulsionInfos = {}
 
+DesiredPitch = 0
+DesiredRoll = 0
+
+function SetPitch(Angle)
+   DesiredPitch = Angle
+end
+
+function SetRoll(Angle)
+   DesiredRoll = Angle
+end
+
 -- Determine sign and location of propulsion elements
 function ClassifyPropulsion(I)
    local PropulsionCount = I:Component_GetCount(PROPULSION)
@@ -36,8 +47,8 @@ end
 -- Should be called every update.
 function Stabilizer_Update(I)
    if ControlRoll or ControlPitch then
-      local RollCV = ControlRoll and RollPID:Control(-Roll) or 0
-      local PitchCV = ControlPitch and PitchPID:Control(-Pitch) or 0
+      local RollCV = ControlRoll and RollPID:Control(DesiredRoll - Roll) or 0
+      local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - Pitch) or 0
 
       ClassifyPropulsion(I)
 

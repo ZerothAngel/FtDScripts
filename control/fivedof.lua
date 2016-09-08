@@ -12,6 +12,7 @@ PropulsionInfos = {}
 DesiredHeading = nil
 DesiredPosition = nil
 DesiredPitch = 0
+DesiredRoll = 0
 
 -- Sets heading to an absolute value, 0 is north, 90 is east
 function SetHeading(Heading)
@@ -43,6 +44,10 @@ end
 
 function SetPitch(Angle)
    DesiredPitch = Angle
+end
+
+function SetRoll(Angle)
+   DesiredRoll = Angle
 end
 
 function FiveDoF_Reset()
@@ -90,7 +95,7 @@ end
 function FiveDoF_Update(I)
    local YawCV = DesiredHeading and YawPID:Control(NormalizeBearing(DesiredHeading - Yaw)) or 0
    local PitchCV = PitchPID:Control(DesiredPitch - Pitch)
-   local RollCV = RollPID:Control(-Roll)
+   local RollCV = RollPID:Control(DesiredRoll - Roll)
 
    local ForwardCV,RightCV = 0,0
    if DesiredPosition then

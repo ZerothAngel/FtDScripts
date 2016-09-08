@@ -6,6 +6,7 @@ RollPID = PID.create(RollPIDConfig, -30, 30)
 
 DesiredAltitude = 0
 DesiredPitch = 0
+DesiredRoll = 0
 
 LastSpinnerCount = 0
 Spinners = {}
@@ -20,6 +21,10 @@ end
 
 function SetPitch(Angle)
    DesiredPitch = Angle
+end
+
+function SetRoll(Angle)
+   DesiredRoll = Angle
 end
 
 function ThreeDoFSpinner_ClassifySpinners(I)
@@ -52,7 +57,7 @@ end
 function ThreeDoFSpinner_Update(I)
    local AltitudeCV = AltitudePID:Control(DesiredAltitude - Altitude)
    local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - Pitch) or 0
-   local RollCV = ControlRoll and RollPID:Control(-Roll) or 0
+   local RollCV = ControlRoll and RollPID:Control(DesiredRoll - Roll) or 0
 
    ThreeDoFSpinner_ClassifySpinners(I)
 

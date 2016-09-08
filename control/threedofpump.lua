@@ -6,6 +6,7 @@ RollPID = PID.create(RollPIDConfig, -10, 10)
 
 DesiredAltitude = 0
 DesiredPitch = 0
+DesiredRoll = 0
 
 LastPumpCount = 0
 PumpInfos = {}
@@ -20,6 +21,10 @@ end
 
 function SetPitch(Angle)
    DesiredPitch = Angle
+end
+
+function SetRoll(Angle)
+   DesiredRoll = Angle
 end
 
 function ClassifyPumps(I)
@@ -43,7 +48,7 @@ end
 function ThreeDoFPump_Update(I)
    local AltitudeCV = AltitudePID:Control(DesiredAltitude - Altitude)
    local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - Pitch) or 0
-   local RollCV = ControlRoll and RollPID:Control(-Roll) or 0
+   local RollCV = ControlRoll and RollPID:Control(DesiredRoll - Roll) or 0
 
    ClassifyPumps(I)
 
