@@ -1,9 +1,9 @@
---! collector
+--! utility
 --@ getselfinfo firstrun periodic
---@ threedofspinner altitudecontrol yawthrottle collector-ai
--- Collector main
+--@ threedofspinner altitudecontrol yawthrottle utility-ai
+-- Utility main
 Quadcopter = Periodic.create(Quadcopter_UpdateRate, Altitude_Control, 1)
-CollectorAI = Periodic.create(AI_UpdateRate, CollectorAI_Update)
+UtilityAI = Periodic.create(AI_UpdateRate, UtilityAI_Update)
 
 Control_Reset = YawThrottle_Reset
 
@@ -16,7 +16,7 @@ function Update(I)
       Quadcopter:Tick(I)
 
       if ActivateWhen[I.AIMode] then
-         CollectorAI:Tick(I)
+         UtilityAI:Tick(I)
 
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
