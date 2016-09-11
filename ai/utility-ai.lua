@@ -38,6 +38,28 @@ end
 
 LastSeenTargets = {}
 CollectorDestinations = {}
+CollectorNeedsSort = false
+
+function SortDestinations()
+   local SelectedIndex,ClosestDistance = nil,math.huge
+   for index,Destination in pairs(CollectorDestinations) do
+      local Offset,_ = PlanarVector(CoM, Destination)
+      local Distance = Offset.sqrMagnitude
+      if Distance < ClosestDistance then
+         SelectedIndex = index
+         ClosestDistance = Distance
+      end
+   end
+
+   if SelectedIndex then
+      -- Remove from list
+      local Destination = table.remove(CollectorDestinations, SelectedIndex)
+      -- And insert at top
+      table.insert(CollectorDestinations, 1, Destination)
+   end
+
+   CollectorNeedsSort = false
+end
 
 function PickDestination(ReferencePosition)
    while #CollectorDestinations > 0 do
@@ -48,6 +70,7 @@ function PickDestination(ReferencePosition)
       else
          -- Too far, remove it and check next
          table.remove(CollectorDestinations, 1)
+         SortDestinations()
       end
    end
 
@@ -87,6 +110,7 @@ function UtilityAI_Update(I)
             if not TargetsById[Target.Id] then
                -- Target gone, make note of its last position
                table.insert(CollectorDestinations, Target.Position)
+               CollectorNeedsSort = true
             end
          end
          -- Current targets become last seen targets
@@ -97,8 +121,13 @@ function UtilityAI_Update(I)
          -- Remaining last seen targets also become destinations
          for _,Target in pairs(LastSeenTargets) do
             table.insert(CollectorDestinations, Target.Position)
+            CollectorNeedsSort = true
          end
          LastSeenTargets = {}
+
+         if CollectorNeedsSort then
+            SortDestinations()
+         end
       end
 
       local FlagshipPosition = I.Fleet.Flagship.CenterOfMass
@@ -117,6 +146,7 @@ function UtilityAI_Update(I)
          else
             -- Done with this one
             table.remove(CollectorDestinations, 1)
+            SortDestinations()
          end
       end
 
