@@ -56,6 +56,7 @@ VerticalConfig = {
    -- 1 - Relative to target's altitude
    -- 2 - Relative to target's sea depth
    -- 3 - Relative to target's ground
+   -- 4 - Relative to missile's altitude
 
    -- SPECIAL ATTACK PROFILE
 

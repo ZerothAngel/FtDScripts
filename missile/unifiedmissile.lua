@@ -14,6 +14,7 @@ function UnifiedMissile.create(Config)
    -- 1 - Relative to target's altitude
    -- 2 - Relative to target's sea depth
    -- 3 - Relative to target's ground
+   -- 4 - Relative to missile's altitude
 
    -- Closing parameters
    self.ClosingDistance = Config.ClosingDistance -- number
@@ -72,7 +73,7 @@ function UnifiedMissile:GetTerrainHeight(I, Position, Velocity, MaxDistance)
 end
 
 -- Modify an altitude according to RelativeTo
-function UnifiedMissile:ModifyAltitude(Altitude, RelativeTo)
+function UnifiedMissile:ModifyAltitude(Position, Altitude, RelativeTo)
    if RelativeTo == 1 then
       -- Relative to target's absolute altitude [-500, whatever)
       return self.TargetAltitude + Altitude
@@ -82,6 +83,9 @@ function UnifiedMissile:ModifyAltitude(Altitude, RelativeTo)
    elseif RelativeTo == 3 then
       -- Relative to target's ground [0, whatever)
       return self.TargetGround + Altitude
+   elseif RelativeTo == 4 then
+      -- Relative to missile's altitude
+      return Position.y + Altitude
    else
       -- Absolute (no modification)
       return Altitude
@@ -101,8 +105,8 @@ function UnifiedMissile:SpecialAttackAltitude(I, Position, Velocity, AboveSeaLev
       -- Always relative to terrain.
       return Height
    else
-      -- Relative to target, hugging terrain if necessary.
-      return math.max(self:ModifyAltitude(Altitude, RelativeTo), Height)
+      -- Relative to something, hugging terrain if necessary.
+      return math.max(self:ModifyAltitude(Position, Altitude, RelativeTo), Height)
    end
 end
 
