@@ -131,6 +131,8 @@ function FiveDoF_Update(I)
          local Output = YawCV * Info.YawSign + PitchCV * PitchSign + RollCV * RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign
          Output = math.max(0, math.min(10, Output))
          I:Component_SetFloatLogic(PROPULSION, Info.Index, Output / 10)
+      else
+         I:Component_SetFloatLogic(PROPULSION, Info.Index, 1)
       end
    end
 end

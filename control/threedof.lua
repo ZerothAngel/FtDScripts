@@ -101,5 +101,9 @@ function ThreeDoF_Update(I)
          Output = math.max(0, math.min(10, Output))
          I:Component_SetFloatLogic(PROPULSION, Info.Index, Output / 10)
       end
+   else
+      for _,Info in pairs(PropulsionInfos) do
+         I:Component_SetFloatLogic(PROPULSION, Info.Index, 1)
+      end
    end
 end
