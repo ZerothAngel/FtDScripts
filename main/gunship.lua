@@ -28,5 +28,7 @@ function Update(I)
       FiveDoF_Update(I)
 
       MissileMain:Tick(I)
+   else
+      Hover_Disable(I)
    end
 end

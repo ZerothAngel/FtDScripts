@@ -28,5 +28,9 @@ function Update(I)
       end
 
       SubControl_Update(I)
+   else
+      ParentID = nil
+      RepairTargetID = nil
+      YawThrottle_Disable(I)
    end
 end

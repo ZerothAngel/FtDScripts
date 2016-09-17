@@ -28,5 +28,8 @@ function Update(I)
       ThreeDoFSpinner_Update(I)
 
       MissileMain:Tick(I)
+   else
+      YawThrottle_Disable(I)
+      ThreeDoFSpinner_Disable(I)
    end
 end

@@ -23,5 +23,7 @@ function Update(I)
       end
 
       MissileMain:Tick(I)
+   else
+      YawThrottle_Disable(I)
    end
 end

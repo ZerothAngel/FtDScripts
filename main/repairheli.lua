@@ -29,5 +29,10 @@ function Update(I)
 
       Hover_Update(I)
       Stabilizer_Update(I)
+   else
+      ParentID = nil
+      RepairTargetID = nil
+      YawThrottle_Disable(I)
+      Hover_Disable(I)
    end
 end

@@ -27,5 +27,8 @@ function Update(I)
       end
 
       SubControl_Update(I)
+   else
+      CollectorDestinations = {}
+      YawThrottle_Disable(I)
    end
 end

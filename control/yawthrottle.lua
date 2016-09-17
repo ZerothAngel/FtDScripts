@@ -68,3 +68,10 @@ function YawThrottle_Update(I)
       CurrentThrottle = DesiredThrottle
    end
 end
+
+function YawThrottle_Disable(I)
+   I:RequestControl(Mode, MAINPROPULSION, 0)
+   PropulsionSpinners:Classify(I)
+   PropulsionSpinners:SetSpeed(I, 0)
+   CurrentThrottle = 0
+end

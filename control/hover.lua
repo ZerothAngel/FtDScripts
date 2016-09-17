@@ -19,3 +19,8 @@ function Hover_Update(I)
    LiftSpinners:Classify(I)
    LiftSpinners:SetSpeed(I, CV)
 end
+
+function Hover_Disable(I)
+   LiftSpinners:Classify(I)
+   LiftSpinners:SetSpeed(I, 0)
+end

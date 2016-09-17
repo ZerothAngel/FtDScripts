@@ -21,5 +21,8 @@ function Update(I)
       else
          CollectorDestinations = {}
       end
+   else
+      CollectorDestinations = {}
+      YawThrottle_Disable(I)
    end
 end

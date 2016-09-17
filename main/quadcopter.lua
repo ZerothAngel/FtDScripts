@@ -12,5 +12,7 @@ function Update(I)
       ThreeDoFSpinner:Tick(I)
 
       ThreeDoFSpinner_Update(I)
+   else
+      ThreeDoFSpinner_Disable(I)
    end
 end

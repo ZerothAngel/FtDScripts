@@ -27,5 +27,9 @@ function Update(I)
       end
 
       ThreeDoFSpinner_Update(I)
+   else
+      CollectorDestinations = {}
+      YawThrottle_Disable(I)
+      ThreeDoFSpinner_Disable(I)
    end
 end

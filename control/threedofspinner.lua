@@ -67,3 +67,10 @@ function ThreeDoFSpinner_Update(I)
       I:SetSpinnerContinuousSpeed(Info.Index, Output)
    end
 end
+
+function ThreeDoFSpinner_Disable(I)
+   ThreeDoFSpinner_ClassifySpinners(I)
+   for index,Info in pairs(Spinners) do
+      I:SetSpinnerContinuousSpeed(Info.Index, 0)
+   end
+end

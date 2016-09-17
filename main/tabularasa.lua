@@ -20,5 +20,7 @@ function Update(I)
 
          YawThrottle_Update(I)
       end
+   else
+      YawThrottle_Disable(I)
    end
 end

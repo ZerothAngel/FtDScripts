@@ -28,5 +28,7 @@ function Update(I)
       ThreeDoF_Update(I)
 
       MissileMain:Tick(I)
+   else
+      ThreeDoFSpinner_Disable(I)
    end
 end

@@ -13,5 +13,7 @@ function Update(I)
 
       Hover_Update(I)
       Stabilizer_Update(I)
+   else
+      Hover_Disable(I)
    end
 end
