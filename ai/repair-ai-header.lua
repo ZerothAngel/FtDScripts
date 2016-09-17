@@ -44,7 +44,7 @@ ParentBonus = 1.1
 
 -- Return-to-origin settings
 ReturnToOrigin = false
-ReturnDrive = 0.5
+ReturnDrive = 1
 -- Stops after getting within this distance of origin
 -- Should be quite generous, depending on your ship's turning
 -- radius.

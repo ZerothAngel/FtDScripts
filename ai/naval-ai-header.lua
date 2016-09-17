@@ -34,7 +34,7 @@ AirRaidEvasion = { 40, .25 }
 
 -- Return-to-origin settings
 ReturnToOrigin = true
-ReturnDrive = 0.5
+ReturnDrive = 1
 -- Stops after getting within this distance of origin
 -- Should be quite generous, depending on your ship's turning
 -- radius.
