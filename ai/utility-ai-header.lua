@@ -4,6 +4,11 @@
 IsCollector = true
 IsGatherer = true
 
+-- Multiplied by max material storage to determine when to head out.
+-- Should be <= 1. Goes collecting or gathering when on-board material
+-- is < (max * FreeStorageThreshold).
+FreeStorageThreshold = .9
+
 -- Enemy avoidance settings
 RunAwayDistance = 2500
 RunAwayDrive = 1

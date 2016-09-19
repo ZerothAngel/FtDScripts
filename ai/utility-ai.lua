@@ -131,11 +131,12 @@ function UtilityAI_Update(I)
       end
 
       local FlagshipPosition = I.Fleet.Flagship.CenterOfMass
+      local StorageMax = FreeStorageThreshold * I.Resources.NaturalMax
 
       -- Collector logic
       local Collecting = false
       local Destination = PickDestination(FlagshipPosition)
-      if Destination and I.Resources.NaturalTotal < I.Resources.NaturalMax then
+      if Destination and I.Resources.NaturalTotal < StorageMax then
          local Target,_ = PlanarVector(CoM, Destination)
          local Distance = Target.magnitude
          if Distance >= CollectMinDistance then
@@ -152,7 +153,7 @@ function UtilityAI_Update(I)
 
       -- Gatherer logic
       local Gathering = false
-      if IsGatherer and not Collecting and I.Resources.NaturalTotal < I.Resources.NaturalMax then
+      if IsGatherer and not Collecting and I.Resources.NaturalTotal < StorageMax then
          local ResourceZones = GetResourceZones(I, FlagshipPosition)
          for _,RZInfo in spairs(ResourceZones, function(t,a,b) return t[a].Distance < t[b].Distance end) do
             local Target,_ = PlanarVector(CoM, RZInfo.Position)
