@@ -10,7 +10,7 @@ IsGatherer = true
 FreeStorageThreshold = .9
 
 -- Enemy avoidance settings
-RunAwayDistance = 2500
+RunAwayDistance = 3000
 RunAwayDrive = 1
 RunAwayEvasion = { 30, .25 }
 
