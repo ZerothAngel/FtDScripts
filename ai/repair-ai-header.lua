@@ -23,8 +23,7 @@ ThrottlePIDConfig = {
 -- be within this distance and within this altitude range
 RepairTargetMaxDistance = 1000
 RepairTargetMaxParentDistance = 1000
-RepairTargetMinAltitude = -10
-RepairTargetMaxAltitude = 25
+RepairTargetMaxAltitudeDelta = 150
 -- And have health equal to or below this fraction
 RepairTargetMaxHealthFraction = 0.95
 -- And have health equal to or above this fraction

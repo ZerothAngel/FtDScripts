@@ -91,6 +91,9 @@ function SelectRepairTarget(I)
    local Offset,_ = PlanarVector(CoM, ParentCoM)
    Targets[Parent.Id] = CalculateRepairTargetWeight(I, Offset.magnitude, 0, Parent) * ParentBonus
 
+   local RepairTargetMinAltitude = Altitude - RepairTargetMaxAltitudeDelta
+   local RepairTargetMaxAltitude = Altitude + RepairTargetMaxAltitudeDelta
+
    -- Scan nearby friendlies
    for i = 0,I:GetFriendlyCount()-1 do
       local Friend = I:GetFriendlyInfo(i)
