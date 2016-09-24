@@ -56,6 +56,8 @@ MissileProfiles = {
          SpecialManeuverAltitude = 30,
          SpecialManeuverAltitudeRelativeTo = 3,
          TerminalDistance = 100,
+         DetonationRange = nil,
+         DetonationAngle = 30,
          LookAheadTime = 2,
          LookAheadResolution = 3,
       },
@@ -87,6 +89,8 @@ MissileProfiles = {
          SpecialManeuverAltitude = 30,
          SpecialManeuverAltitudeRelativeTo = 3,
          TerminalDistance = 150,
+         DetonationRange = nil,
+         DetonationAngle = 30,
          LookAheadTime = 2,
          LookAheadResolution = 3,
       },
@@ -118,6 +122,8 @@ JavelinConfig = {
    SpecialManeuverAltitude = 30,
    SpecialManeuverAltitudeRelativeTo = 3,
    TerminalDistance = 150,
+   DetonationRange = nil,
+   DetonationAngle = 30,
    LookAheadTime = 2,
    LookAheadResolution = 0, -- No need to look at terrain
 }
@@ -141,6 +147,8 @@ PopUnderConfig = {
    SpecialManeuverAltitude = -25,
    SpecialManeuverAltitudeRelativeTo = 2, -- i.e. 25 meters below target's depth
    TerminalDistance = 50,
+   DetonationRange = nil,
+   DetonationAngle = 30,
    LookAheadTime = 2,
    LookAheadResolution = 3,
 }

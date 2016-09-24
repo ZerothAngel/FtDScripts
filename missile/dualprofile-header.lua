@@ -115,6 +115,17 @@ VerticalConfig = {
    -- predicted aim point.
    TerminalDistance = 100,
 
+   -- Optional detonation range in meters -- to simulate a proximity fuse
+   -- Set to negative or nil to disable.
+   DetonationRange = nil,
+
+   -- If a detonation range is defined, and the angle between the missile
+   -- velocity and the target vector is greater than this, detonate.
+   -- This allows detonations on near misses, i.e. when the missile is
+   -- about to pass the aim point.
+   -- Set to 0 to base detonation solely on range.
+   DetonationAngle = 30,
+
    -- TERRAIN HUGGING
 
    -- How many seconds at current speed to look-ahead
@@ -146,6 +157,8 @@ HorizontalConfig = {
    SpecialManeuverAltitude = 30,
    SpecialManeuverAltitudeRelativeTo = 3,
    TerminalDistance = 150,
+   DetonationRange = nil,
+   DetonationAngle = 30,
    LookAheadTime = 2,
    LookAheadResolution = 3,
 }
@@ -170,6 +183,8 @@ JavelinConfig = {
    SpecialManeuverAltitude = 30,
    SpecialManeuverAltitudeRelativeTo = 3,
    TerminalDistance = 150,
+   DetonationRange = nil,
+   DetonationAngle = 30,
    LookAheadTime = 2,
    LookAheadResolution = 0, -- No need to look at terrain
 }
@@ -195,6 +210,8 @@ PopUnderConfig = {
    SpecialManeuverAltitude = -25,
    SpecialManeuverAltitudeRelativeTo = 2, -- i.e. 25 meters below target's depth
    TerminalDistance = 50,
+   DetonationRange = nil,
+   DetonationAngle = 30,
    LookAheadTime = 2,
    LookAheadResolution = 3,
 }

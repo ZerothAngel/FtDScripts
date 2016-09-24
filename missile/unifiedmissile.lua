@@ -34,6 +34,10 @@ function UnifiedMissile.create(Config)
    -- Terminal parameters
    self.TerminalDistance = Config.TerminalDistance -- number
 
+   -- Proximity fuse parameters
+   self.DetonationRange = Config.DetonationRange -- number
+   self.DetonationAngle = math.cos(math.rad(Config.DetonationAngle or 0)) -- number
+
    -- Terrain hugging parameters
    self.LookAheadTime = Config.LookAheadTime -- number
    self.LookAheadResolution = Config.LookAheadResolution -- number
@@ -163,6 +167,22 @@ end
 function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile)
    local MissilePosition = Missile.Position
    local MissileVelocity = Missile.Velocity
+
+   local DetonationRange = self.DetonationRange
+   if DetonationRange then
+      local TargetVector = TargetAimPoint - MissilePosition
+      local TargetRange = TargetVector.magnitude
+      -- Check if we should detonate
+      if TargetRange <= DetonationRange then
+         -- Calculate angle between missile velocity and target vector
+         local CosAngle = Vector3.Dot(TargetVector / TargetRange, MissileVelocity.normalized)
+         if CosAngle <= self.DetonationAngle then
+            I:DetonateLuaControlledMissile(TransceiverIndex, MissileIndex)
+            return TargetAimPoint -- Don't really care at this point
+         end
+      end
+   end
+
    local AimPoint = QuadraticIntercept(MissilePosition, MissileVelocity, TargetAimPoint, TargetVelocity)
 
    local MinimumAltitude = self.MinimumAltitude
