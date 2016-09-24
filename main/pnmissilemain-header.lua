@@ -11,5 +11,20 @@ Limits = {
    MaxAltitude = 9999,
 }
 
--- PN gain value
-ProNavGain = 5
+Config = {
+   -- PN gain value
+   Gain = 5,
+
+   -- Attempt one turn up to this many seconds from launch
+   -- Set to negative to disable
+   OneTurnTime = 3,
+   -- Maximum angle error, in degrees
+   OneTurnAngle = 15,
+
+   -- Detonate this many meters from aim point
+   -- Set to negative to disable
+   DetonationRange = 5,
+   -- Detonate if angle error is greater than this, in degrees
+   -- Set to 0 to depend solely on range
+   DetonationAngle = 30,
+}
