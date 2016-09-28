@@ -55,7 +55,7 @@ function PredictImpactQuadrant(I, Velocity, Projectile)
 
    -- Move it to local frame of reference centered on predicted CoM
    ImpactPoint = ImpactPoint - (CoM + Velocity * ImpactTime)
-   ImpactPoint = Quaternion.Euler(0, -Yaw, 0) * ImpactPoint
+   ImpactPoint = Quaternion.Inverse(Quaternion.LookRotation(I:GetConstructForwardVector(), I:GetConstructUpVector())) * ImpactPoint
 
    -- TODO Constrain by self dimensions
 
