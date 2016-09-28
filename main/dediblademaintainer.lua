@@ -15,16 +15,26 @@ function DediBladeMaintainer_Control(I)
 end
 
 function DediBladeMaintainer_Update(I)
+   -- Note: Standard propulsion can link up to the drive maintainer normally
    PropulsionSpinners:Classify(I)
    PropulsionSpinners:SetSpeed(I, DesiredThrottle * 30)
+end
+
+function DediBladeMaintainer_Disable(I)
+   PropulsionSpinners:Classify(I)
+   PropulsionSpinners:SetSpeed(I, 0)
 end
 
 DediBladeMaintainer = Periodic.create(UpdateRate, DediBladeMaintainer_Control)
 
 function Update(I)
-   if not I:IsDocked() and ActivateWhen[I.AIMode] then
-      DediBladeMaintainer:Tick(I)
+   if ActivateWhen[I.AIMode] then
+      if not I:IsDocked() then
+         DediBladeMaintainer:Tick(I)
 
-      DediBladeMaintainer_Update(I)
+         DediBladeMaintainer_Update(I)
+      else
+         DediBladeMaintainer_Disable(I)
+      end
    end
 end
