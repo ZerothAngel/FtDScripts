@@ -161,11 +161,7 @@ function UtilityAI_Update(I)
             if Distance >= GatherMinDistance then
                local Bearing = GetBearingToPoint(RZInfo.Position)
                AdjustHeading(Avoidance(I, Bearing))
-               if Distance >= RZInfo.Radius then
-                  Drive = GatherDrive
-               else
-                  Drive = GatherApproachDrive
-               end
+               Drive = math.max(0, math.min(1, GatherDriveGain * Distance))
             else
                Drive = 0
             end
@@ -179,10 +175,11 @@ function UtilityAI_Update(I)
       if not Collecting and not Gathering then
          if ReturnToOrigin then
             local Target,_ = PlanarVector(CoM, I.Waypoint)
-            if Target.magnitude >= OriginMaxDistance then
+            local Distance = Target.magnitude
+            if Distance >= OriginMaxDistance then
                local Bearing = GetBearingToPoint(I.Waypoint)
                AdjustHeading(Avoidance(I, Bearing))
-               Drive = ReturnDrive
+               Drive = math.max(0, math.min(1, ReturnDriveGain * Distance))
             else
                Drive = 0
             end

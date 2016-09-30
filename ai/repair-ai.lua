@@ -169,10 +169,11 @@ function RepairAI_Update(I)
          RepairTargetID = nil
 
          local Target,_ = PlanarVector(CoM, I.Waypoint)
-         if Target.magnitude >= OriginMaxDistance then
+         local Distance = Target.magnitude
+         if Distance >= OriginMaxDistance then
             local Bearing = GetBearingToPoint(I.Waypoint)
             AdjustHeading(Avoidance(I, Bearing))
-            Drive = ReturnDrive
+            Drive = math.max(0, math.min(1, ReturnDriveGain * Distance))
          end
       else
          -- Basically always active, as if in combat
