@@ -21,7 +21,7 @@ CollectDrive = 1
 
 -- Gatherer configuration
 GatherMaxDistance = 5000
-GatherMinDistance = 50
+GatherZoneEdge = .9
 GatherDriveGain = .002
 
 -- Return-to-origin settings

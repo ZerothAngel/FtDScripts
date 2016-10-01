@@ -157,8 +157,8 @@ function UtilityAI_Update(I)
          local ResourceZones = GetResourceZones(I, FlagshipPosition)
          for _,RZInfo in spairs(ResourceZones, function(t,a,b) return t[a].Distance < t[b].Distance end) do
             local Target,_ = PlanarVector(CoM, RZInfo.Position)
-            local Distance = Target.magnitude
-            if Distance >= GatherMinDistance then
+            local Distance = Target.magnitude - GatherZoneEdge * RZInfo.Radius
+            if Distance >= 0 then
                local Bearing = GetBearingToPoint(RZInfo.Position)
                AdjustHeading(Avoidance(I, Bearing))
                Drive = math.max(0, math.min(1, GatherDriveGain * Distance))
