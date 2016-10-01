@@ -1,5 +1,5 @@
 --@ planarvector getbearingtopoint evasion
---@ debug gettargetpositioninfo avoidance
+--@ debug gettargetpositioninfo avoidance waypointmove
 -- Naval AI module
 Attacking = true
 LastAttackTime = 0
@@ -57,25 +57,13 @@ end
 function NavalAI_Update(I)
    Control_Reset()
 
-   local Drive = nil
    if GetTargetPositionInfo(I) then
-      Drive = AdjustHeadingToTarget(I)
+      local Drive = AdjustHeadingToTarget(I)
+      SetThrottle(Drive)
    elseif ReturnToOrigin then
-      local Target,_ = PlanarVector(CoM, I.Waypoint)
-      local Distance = Target.magnitude
-      if Distance >= OriginMaxDistance then
-         local Bearing = GetBearingToPoint(I.Waypoint)
-         AdjustHeading(Avoidance(I, Bearing))
-         if Vector3.Dot(Target, I:GetConstructForwardVector()) > 0 or Distance >= OriginMaxDistance then
-            Drive = math.max(0, math.min(1, ReturnDriveGain * Distance))
-         end
-      end
-      if not Drive then Drive = 0 end
+      MoveToWaypoint(I, I.Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end)
    else
       -- Just continue along with avoidance active
       AdjustHeading(Avoidance(I, 0))
-   end
-   if Drive then
-      SetThrottle(Drive)
    end
 end

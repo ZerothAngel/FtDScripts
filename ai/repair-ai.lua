@@ -1,6 +1,6 @@
 --@ planarvector getbearingtopoint quadraticintercept
 --@ spairs pid firstrun
---@ debug gettargetpositioninfo avoidance
+--@ debug gettargetpositioninfo avoidance waypointmove
 -- Repair AI module
 ThrottlePID = PID.create(ThrottlePIDConfig, -1, 1)
 
@@ -149,46 +149,34 @@ function Imprint(I)
    end
 end
 
+function RepairMain(I)
+   local Drive = 0
+   if not ParentID then
+      Imprint(I)
+   end
+   if ParentID then
+      SelectRepairTarget(I)
+   end
+   if RepairTargetID then
+      Drive = AdjustHeadingToRepairTarget(I)
+   end
+   SetThrottle(Drive)
+end
+
 function RepairAI_Update(I)
    Control_Reset()
 
-   local Drive = 0
    if GetTargetPositionInfo(I) then
-      if not ParentID then
-         Imprint(I)
-      end
-      if ParentID then
-         SelectRepairTarget(I)
-      end
-      if RepairTargetID then
-         Drive = AdjustHeadingToRepairTarget(I)
-      end
+      RepairMain(I)
    else
       if ReturnToOrigin then
          ParentID = nil
          RepairTargetID = nil
 
-         local Target,_ = PlanarVector(CoM, I.Waypoint)
-         local Distance = Target.magnitude
-         if Distance >= OriginMaxDistance then
-            local Bearing = GetBearingToPoint(I.Waypoint)
-            AdjustHeading(Avoidance(I, Bearing))
-            if Vector3.Dot(Target, I:GetConstructForwardVector()) > 0 or Distance >= OriginMaxDistance then
-               Drive = math.max(0, math.min(1, ReturnDriveGain * Distance))
-            end
-         end
+         MoveToWaypoint(I, I.Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end)
       else
          -- Basically always active, as if in combat
-         if not ParentID then
-            Imprint(I)
-         end
-         if ParentID then
-            SelectRepairTarget(I)
-         end
-         if RepairTargetID then
-            Drive = AdjustHeadingToRepairTarget(I)
-         end
+         RepairMain(I)
       end
    end
-   SetThrottle(Drive)
 end
