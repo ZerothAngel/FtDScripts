@@ -5,7 +5,6 @@
 ActivateWhen = {
 --   on = true,
    combat = true,
---   patrol = true,
    fleetmove = true,
 }
 

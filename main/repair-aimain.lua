@@ -19,12 +19,10 @@ function Update(I)
 
          YawThrottle_Update(I)
       else
-         ParentID = nil
-         RepairTargetID = nil
+         RepairAI_Reset()
       end
    else
-      ParentID = nil
-      RepairTargetID = nil
+      RepairAI_Reset()
       YawThrottle_Disable(I)
    end
 end

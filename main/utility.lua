@@ -23,12 +23,12 @@ function Update(I)
 
          YawThrottle_Update(I)
       else
-         CollectorDestinations = {}
+         UtilityAI_Reset()
       end
 
       ThreeDoFSpinner_Update(I)
    else
-      CollectorDestinations = {}
+      UtilityAI_Reset()
       YawThrottle_Disable(I)
       ThreeDoFSpinner_Disable(I)
    end

@@ -5,6 +5,7 @@
 ActivateWhen = {
 --   on = true,
    combat = true,
+   fleetmove = true,
 }
 
 -- How often to run. At 1, it will run every update. At 10,

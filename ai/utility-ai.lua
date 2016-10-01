@@ -77,14 +77,14 @@ function PickDestination(ReferencePosition)
    return nil
 end
 
-function UtilityAI_Update(I)
-   Control_Reset()
+function UtilityAI_Reset(I)
+   CollectorDestinations = {}
+end
 
-   local Drive = nil
-
+function UtilityAI_Main(I)
    local Targets,TargetsById = GetTargets(I)
    if #Targets > 0 then
-      -- Sum up the inverse of all enemy vectors
+      -- Sum up the all enemy direction vectors
       local RunAway,Count = Vector3.zero,0
       for _,Target in pairs(Targets) do
          local Offset,_ = PlanarVector(CoM, Target.Position)
@@ -94,15 +94,16 @@ function UtilityAI_Update(I)
             Count = Count + 1
          end
       end
+
+      local Drive = 0
       if Count > 0 then
          -- And head in the opposite direction
          local Bearing = GetBearingToPoint(CoM - RunAway)
          Bearing = CalculateEvasion(RunAwayEvasion, Bearing)
          AdjustHeading(Avoidance(I, Bearing))
          Drive = RunAwayDrive
-      else
-         Drive = 0
       end
+      SetThrottle(Drive)
 
       if IsCollector then
          -- Check if targets are still around
@@ -116,6 +117,8 @@ function UtilityAI_Update(I)
          -- Current targets become last seen targets
          LastSeenTargets = Targets
       end
+
+      return true
    else
       if IsCollector then
          -- Remaining last seen targets also become destinations
@@ -131,58 +134,83 @@ function UtilityAI_Update(I)
       end
 
       local FlagshipPosition = I.Fleet.Flagship.CenterOfMass
-      local StorageMax = FreeStorageThreshold * I.Resources.NaturalMax
+      local HasRoom= I.Resources.NaturalTotal < (FreeStorageThreshold * I.Resources.NaturalMax)
 
       -- Collector logic
       local Collecting = false
-      local Destination = PickDestination(FlagshipPosition)
-      if Destination and I.Resources.NaturalTotal < StorageMax then
-         local Target,_ = PlanarVector(CoM, Destination)
-         local Distance = Target.magnitude
-         if Distance >= CollectMinDistance then
-            local Bearing = GetBearingToPoint(Destination)
-            AdjustHeading(Avoidance(I, Bearing))
-            Drive = CollectDrive
-            Collecting = true
-         else
-            -- Done with this one
-            table.remove(CollectorDestinations, 1)
-            SortDestinations()
+      if IsCollector then
+         local Destination = PickDestination(FlagshipPosition)
+         while Destination and HasRoom do
+            local Target,_ = PlanarVector(CoM, Destination)
+            local Distance = Target.magnitude
+            if Distance >= CollectMinDistance then
+               local Bearing = GetBearingToPoint(Destination)
+               AdjustHeading(Avoidance(I, Bearing))
+               SetThrottle(CollectDrive)
+               Collecting = true
+               -- One at a time
+               break
+            else
+               -- Done with this one
+               table.remove(CollectorDestinations, 1)
+               SortDestinations()
+               Destination = PickDestination(FlagshipPosition)
+            end
          end
       end
 
       -- Gatherer logic
       local Gathering = false
-      if IsGatherer and not Collecting and I.Resources.NaturalTotal < StorageMax then
+      if IsGatherer and not Collecting and HasRoom then
          local ResourceZones = GetResourceZones(I, FlagshipPosition)
          for _,RZInfo in spairs(ResourceZones, function(t,a,b) return t[a].Distance < t[b].Distance end) do
             local Target,_ = PlanarVector(CoM, RZInfo.Position)
             local Distance = Target.magnitude - GatherZoneEdge * RZInfo.Radius
+            local Drive = 0
             if Distance >= 0 then
                local Bearing = GetBearingToPoint(RZInfo.Position)
                AdjustHeading(Avoidance(I, Bearing))
                Drive = math.max(0, math.min(1, GatherDriveGain * Distance))
-            else
-               Drive = 0
             end
+            SetThrottle(Drive)
             Gathering = true
             -- Only care about the first one
             break
          end
       end
 
-      -- Neither collecting nor gathering
-      if not Collecting and not Gathering then
+      return Collecting or Gathering
+   end
+end
+
+function Control_MoveToWaypoint(I, Waypoint)
+   MoveToWaypoint(I, Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end)
+end
+
+function UtilityAI_Update(I)
+   Control_Reset()
+
+   local AIMode = I.AIMode
+   if AIMode ~= "fleetmove" then
+      if not UtilityAI_Main(I) then
          if ReturnToOrigin then
-            MoveToWaypoint(I, I.Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end)
-            Drive = nil
+            Control_MoveToWaypoint(I, I.Waypoint)
          else
             -- Just continue along with avoidance active
             AdjustHeading(Avoidance(I, 0))
          end
       end
-   end
-   if Drive then
-      SetThrottle(Drive)
+   else
+      UtilityAI_Reset()
+
+      if I.IsFlagship then
+         Control_MoveToWaypoint(I, I.Waypoint)
+      else
+         local Flagship = I.Fleet.Flagship
+         if Flagship.Valid then
+            local FlagshipRotation = Flagship.Rotation
+            Control_MoveToWaypoint(I, Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition)
+         end
+      end
    end
 end

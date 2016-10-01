@@ -19,10 +19,10 @@ function Update(I)
 
          YawThrottle_Update(I)
       else
-         CollectorDestinations = {}
+         UtilityAI_Reset()
       end
    else
-      CollectorDestinations = {}
+      UtilityAI_Reset()
       YawThrottle_Disable(I)
    end
 end

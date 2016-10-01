@@ -53,28 +53,30 @@ function GunshipAI_Update(I)
    Control_Reset()
 
    local AIMode = I.AIMode
-   if GetTargetPositionInfo(I) then
-      AdjustPositionToTarget(I)
-   else
-      if AIMode == "combat" and ReturnToOrigin then
-         ConditionalSetPosition(I.Waypoint)
+   if AIMode ~= "fleetmove" then
+      if GetTargetPositionInfo(I) then
+         AdjustPositionToTarget(I)
+      else
+         if ReturnToOrigin then
+            ConditionalSetPosition(I.Waypoint)
+         end
+         SetPitch(0)
       end
-      SetPitch(0)
-   end
-
-   if AIMode == "patrol" or (AIMode == "fleetmove" and I.IsFlagship) then
-      -- Note: I.Waypoint is the strategic waypoint. What is the actual
-      -- patrol/tactical waypoint?
-      ConditionalSetPosition(I.Waypoint)
-   elseif AIMode == "fleetmove" then
-      local Flagship = I.Fleet.Flagship
-      if Flagship.Valid then
-         local FlagshipRotation = Flagship.Rotation
-         -- NB We don't bother with OriginMaxDistance
-         -- This leads to tighter formations.
-         SetPosition(Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition)
-         if not TargetPositionInfo then
-            SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
+   else
+      if I.IsFlagship then
+         -- Note: I.Waypoint is the strategic waypoint. What is the actual
+         -- patrol/tactical waypoint?
+         ConditionalSetPosition(I.Waypoint)
+      else
+         local Flagship = I.Fleet.Flagship
+         if Flagship.Valid then
+            local FlagshipRotation = Flagship.Rotation
+            -- NB We don't bother with OriginMaxDistance
+            -- This leads to tighter formations.
+            SetPosition(Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition)
+            if not TargetPositionInfo then
+               SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
+            end
          end
       end
    end

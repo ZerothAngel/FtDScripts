@@ -23,15 +23,13 @@ function Update(I)
 
          YawThrottle_Update(I)
       else
-         ParentID = nil
-         RepairTargetID = nil
+         RepairAI_Reset()
       end
 
       Hover_Update(I)
       Stabilizer_Update(I)
    else
-      ParentID = nil
-      RepairTargetID = nil
+      RepairAI_Reset()
       YawThrottle_Disable(I)
       Hover_Disable(I)
    end

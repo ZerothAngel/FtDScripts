@@ -149,7 +149,12 @@ function Imprint(I)
    end
 end
 
-function RepairMain(I)
+function RepairAI_Reset()
+   ParentID = nil
+   RepairTargetID = nil
+end
+
+function RepairAI_Main(I)
    local Drive = 0
    if not ParentID then
       Imprint(I)
@@ -163,20 +168,37 @@ function RepairMain(I)
    SetThrottle(Drive)
 end
 
+function Control_MoveToWaypoint(I, Waypoint)
+   MoveToWaypoint(I, Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end)
+end
+
 function RepairAI_Update(I)
    Control_Reset()
 
-   if GetTargetPositionInfo(I) then
-      RepairMain(I)
-   else
-      if ReturnToOrigin then
-         ParentID = nil
-         RepairTargetID = nil
-
-         MoveToWaypoint(I, I.Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end)
+   local AIMode = I.AIMode
+   if AIMode ~= "fleetmove" then
+      if GetTargetPositionInfo(I) then
+         RepairAI_Main(I)
       else
-         -- Basically always active, as if in combat
-         RepairMain(I)
+         if ReturnToOrigin then
+            RepairAI_Reset()
+            Control_MoveToWaypoint(I, I.Waypoint)
+         else
+            -- Basically always active, as if in combat
+            RepairAI_Main(I)
+         end
+      end
+   else
+      RepairAI_Reset()
+
+      if I.IsFlagship then
+         Control_MoveToWaypoint(I, I.Waypoint)
+      else
+         local Flagship = I.Fleet.Flagship
+         if Flagship.Valid then
+            local FlagshipRotation = Flagship.Rotation
+            Control_MoveToWaypoint(I, Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition)
+         end
       end
    end
 end

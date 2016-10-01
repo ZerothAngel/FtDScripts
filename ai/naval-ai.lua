@@ -54,16 +54,33 @@ function AdjustHeadingToTarget(I)
    return Drive
 end
 
+function Control_MoveToWaypoint(I, Waypoint)
+   MoveToWaypoint(I, Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end)
+end
+
 function NavalAI_Update(I)
    Control_Reset()
 
-   if GetTargetPositionInfo(I) then
-      local Drive = AdjustHeadingToTarget(I)
-      SetThrottle(Drive)
-   elseif ReturnToOrigin then
-      MoveToWaypoint(I, I.Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end)
+   local AIMode = I.AIMode
+   if AIMode ~= "fleetmove" then
+      if GetTargetPositionInfo(I) then
+         local Drive = AdjustHeadingToTarget(I)
+         SetThrottle(Drive)
+      elseif ReturnToOrigin then
+         Control_MoveToWaypoint(I, I.Waypoint)
+      else
+         -- Just continue along with avoidance active
+         AdjustHeading(Avoidance(I, 0))
+      end
    else
-      -- Just continue along with avoidance active
-      AdjustHeading(Avoidance(I, 0))
+      if I.IsFlagship then
+         Control_MoveToWaypoint(I, I.Waypoint)
+      else
+         local Flagship = I.Fleet.Flagship
+         if Flagship.Valid then
+            local FlagshipRotation = Flagship.Rotation
+            Control_MoveToWaypoint(I, Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition)
+         end
+      end
    end
 end
