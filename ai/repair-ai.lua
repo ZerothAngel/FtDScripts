@@ -173,7 +173,9 @@ function RepairAI_Update(I)
          if Distance >= OriginMaxDistance then
             local Bearing = GetBearingToPoint(I.Waypoint)
             AdjustHeading(Avoidance(I, Bearing))
-            Drive = math.max(0, math.min(1, ReturnDriveGain * Distance))
+            if Vector3.Dot(Target, I:GetConstructForwardVector()) > 0 or Distance >= OriginMaxDistance then
+               Drive = math.max(0, math.min(1, ReturnDriveGain * Distance))
+            end
          end
       else
          -- Basically always active, as if in combat

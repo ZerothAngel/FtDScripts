@@ -179,10 +179,11 @@ function UtilityAI_Update(I)
             if Distance >= OriginMaxDistance then
                local Bearing = GetBearingToPoint(I.Waypoint)
                AdjustHeading(Avoidance(I, Bearing))
-               Drive = math.max(0, math.min(1, ReturnDriveGain * Distance))
-            else
-               Drive = 0
+               if Vector3.Dot(Target, I:GetConstructForwardVector()) > 0 or Distance >= OriginMaxDistance then
+                  Drive = math.max(0, math.min(1, ReturnDriveGain * Distance))
+               end
             end
+            if not Drive then Drive = 0 end
          else
             -- Just continue along with avoidance active
             AdjustHeading(Avoidance(I, 0))
