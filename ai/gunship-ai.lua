@@ -44,9 +44,15 @@ function FormationMove(I)
       local FlagshipRotation = Flagship.Rotation
       -- NB We don't bother with OriginMaxDistance
       -- This leads to tighter formations.
-      SetPosition(Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition)
+      local Waypoint = Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition
+      SetPosition(Waypoint)
       if not TargetPositionInfo then
-         SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
+         local Offset,_ = PlanarVector(CoM, Waypoint)
+         if Offset.magnitude >= OriginMaxDistance then
+            SetHeading(GetVectorAngle(Offset))
+         else
+            SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
+         end
       end
    else
       -- Head to fleet waypoint
