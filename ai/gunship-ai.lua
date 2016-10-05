@@ -38,14 +38,26 @@ function AdjustPositionToTarget(I)
    SetPitch((TargetPositionInfo.Position.y >= AirTargetAboveAltitude) and TargetPitch.Air or TargetPitch.Surface)
 end
 
-function ConditionalSetPosition(Pos)
-   local Offset,_ = PlanarVector(CoM, Pos)
-   if Offset.magnitude >= OriginMaxDistance then
-      -- Only change heading if not in combat
+function FormationMove(I)
+   local Flagship = I.Fleet.Flagship
+   if not I.IsFlagship and Flagship.Valid then
+      local FlagshipRotation = Flagship.Rotation
+      -- NB We don't bother with OriginMaxDistance
+      -- This leads to tighter formations.
+      SetPosition(Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition)
       if not TargetPositionInfo then
-         SetHeading(GetVectorAngle(Offset))
+         SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
       end
-      AdjustPosition(Offset)
+   else
+      -- Head to fleet waypoint
+      local Offset,_ = PlanarVector(CoM, I.Waypoint)
+      if Offset.magnitude >= OriginMaxDistance then
+         AdjustPosition(Offset)
+         -- Only change heading if not in combat
+         if not TargetPositionInfo then
+            SetHeading(GetVectorAngle(Offset))
+         end
+      end
    end
 end
 
@@ -58,26 +70,11 @@ function GunshipAI_Update(I)
          AdjustPositionToTarget(I)
       else
          if ReturnToOrigin then
-            ConditionalSetPosition(I.Waypoint)
+            FormationMove(I)
          end
          SetPitch(0)
       end
    else
-      if I.IsFlagship then
-         -- Note: I.Waypoint is the strategic waypoint. What is the actual
-         -- patrol/tactical waypoint?
-         ConditionalSetPosition(I.Waypoint)
-      else
-         local Flagship = I.Fleet.Flagship
-         if Flagship.Valid then
-            local FlagshipRotation = Flagship.Rotation
-            -- NB We don't bother with OriginMaxDistance
-            -- This leads to tighter formations.
-            SetPosition(Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition)
-            if not TargetPositionInfo then
-               SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
-            end
-         end
-      end
+      FormationMove(I)
    end
 end

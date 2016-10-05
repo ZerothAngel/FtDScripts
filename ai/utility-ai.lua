@@ -183,8 +183,17 @@ function UtilityAI_Main(I)
    end
 end
 
-function Control_MoveToWaypoint(I, Waypoint)
-   MoveToWaypoint(I, Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end)
+function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
+   MoveToWaypoint(I, Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end, WaypointVelocity)
+end
+
+function FormationMove(I)
+   local Flagship = I.Fleet.Flagship
+   if not I.IsFlagship and Flagship.Valid then
+      Control_MoveToWaypoint(I, Flagship.ReferencePosition + Flagship.Rotation * I.IdealFleetPosition, Flagship.Velocity)
+   else
+      Control_MoveToWaypoint(I, I.Waypoint) -- Waypoint assumed to be stationary
+   end
 end
 
 function UtilityAI_Update(I)
@@ -194,7 +203,7 @@ function UtilityAI_Update(I)
    if AIMode ~= "fleetmove" then
       if not UtilityAI_Main(I) then
          if ReturnToOrigin then
-            Control_MoveToWaypoint(I, I.Waypoint)
+            FormationMove(I)
          else
             -- Just continue along with avoidance active
             AdjustHeading(Avoidance(I, 0))
@@ -202,15 +211,6 @@ function UtilityAI_Update(I)
       end
    else
       UtilityAI_Reset()
-
-      if I.IsFlagship then
-         Control_MoveToWaypoint(I, I.Waypoint)
-      else
-         local Flagship = I.Fleet.Flagship
-         if Flagship.Valid then
-            local FlagshipRotation = Flagship.Rotation
-            Control_MoveToWaypoint(I, Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition)
-         end
-      end
+      FormationMove(I)
    end
 end

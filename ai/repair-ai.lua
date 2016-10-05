@@ -1,29 +1,12 @@
---@ planarvector getbearingtopoint quadraticintercept
---@ spairs pid firstrun
+--@ planarvector
+--@ spairs
 --@ debug gettargetpositioninfo avoidance waypointmove
 -- Repair AI module
-ThrottlePID = PID.create(ThrottlePIDConfig, -1, 1)
-
 ParentID = nil
 RepairTargetID = nil
 
--- Scale up desired speed depending on angle between velocities
-function MatchSpeed(Velocity, TargetVelocity, Faster)
-   local Speed = Velocity.magnitude
-   local TargetSpeed = TargetVelocity.magnitude
-   -- Already calculated magnitudes...
-   local VelocityDirection = Velocity / Speed
-   local TargetVelocityDirection = TargetVelocity / TargetSpeed
-
-   local CosAngle = Vector3.Dot(TargetVelocityDirection, VelocityDirection)
-   if CosAngle > 0 then
-      local DesiredSpeed = TargetSpeed
-      DesiredSpeed = DesiredSpeed + Mathf.Sign(Faster) * RelativeApproachSpeed
-      return math.max(MinimumSpeed, DesiredSpeed),Speed,CosAngle
-   else
-      -- Angle between velocities >= 90 degrees, go minimum speed
-      return MinimumSpeed,Speed,CosAngle
-   end
+function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
+   MoveToWaypoint(I, Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end, WaypointVelocity)
 end
 
 function AdjustHeadingToRepairTarget(I)
@@ -34,34 +17,8 @@ function AdjustHeadingToRepairTarget(I)
       if Debugging then Debug(I, __func__, "RepairTarget %s", RepairTarget.BlueprintName) end
 
       local RepairTargetCoM = RepairTarget.CenterOfMass + RepairTarget.ForwardVector * RepairTargetOffset.z + RepairTarget.RightVector * RepairTargetOffset.x
-      local Offset,TargetPosition = PlanarVector(CoM, RepairTargetCoM)
-      local Distance = Offset.magnitude
-      local Direction = Offset / Distance
 
-      local Velocity = I:GetVelocityVector()
-      Velocity.y = 0
-      local TargetVelocity = Vector3(RepairTarget.Velocity.x, 0, RepairTarget.Velocity.z)
-      local TargetPoint = QuadraticIntercept(CoM, Velocity, TargetPosition, TargetVelocity)
-
-      local Bearing = GetBearingToPoint(TargetPoint)
-      AdjustHeading(Avoidance(I, Bearing))
-
-      if Distance > ApproachMaxDistance then
-         -- Go full throttle and catch up
-         return ClosingDrive
-      else
-         -- Only go faster if target is ahead of us
-         local Faster = Vector3.Dot(I:GetConstructForwardVector(), Direction)
-         -- Attempt to match speed
-         local DesiredSpeed,Speed = MatchSpeed(Velocity, TargetVelocity, Faster)
-         local Error = DesiredSpeed - Speed
-         local CV = ThrottlePID:Control(Error)
-         local Drive = CurrentThrottle + CV
-         Drive = math.max(0, Drive)
-         Drive = math.min(1, Drive)
-         if Debugging then Debug(I, __func__, "Error = %f Drive = %f", Error, Drive) end
-         return Drive
-      end
+      Control_MoveToWaypoint(I, RepairTargetCoM, RepairTarget.Velocity)
    end
 end
 
@@ -155,7 +112,6 @@ function RepairAI_Reset()
 end
 
 function RepairAI_Main(I)
-   local Drive = 0
    if not ParentID then
       Imprint(I)
    end
@@ -163,13 +119,19 @@ function RepairAI_Main(I)
       SelectRepairTarget(I)
    end
    if RepairTargetID then
-      Drive = AdjustHeadingToRepairTarget(I)
+      AdjustHeadingToRepairTarget(I)
+   else
+      SetThrottle(0)
    end
-   SetThrottle(Drive)
 end
 
-function Control_MoveToWaypoint(I, Waypoint)
-   MoveToWaypoint(I, Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end)
+function FormationMove(I)
+   local Flagship = I.Fleet.Flagship
+   if not I.IsFlagship and Flagship.Valid then
+      Control_MoveToWaypoint(I, Flagship.ReferencePosition + Flagship.Rotation * I.IdealFleetPosition, Flagship.Velocity)
+   else
+      Control_MoveToWaypoint(I, I.Waypoint) -- Waypoint assumed to be stationary
+   end
 end
 
 function RepairAI_Update(I)
@@ -182,7 +144,7 @@ function RepairAI_Update(I)
       else
          if ReturnToOrigin then
             RepairAI_Reset()
-            Control_MoveToWaypoint(I, I.Waypoint)
+            FormationMove(I)
          else
             -- Basically always active, as if in combat
             RepairAI_Main(I)
@@ -190,15 +152,6 @@ function RepairAI_Update(I)
       end
    else
       RepairAI_Reset()
-
-      if I.IsFlagship then
-         Control_MoveToWaypoint(I, I.Waypoint)
-      else
-         local Flagship = I.Fleet.Flagship
-         if Flagship.Valid then
-            local FlagshipRotation = Flagship.Rotation
-            Control_MoveToWaypoint(I, Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition)
-         end
-      end
+      FormationMove(I)
    end
 end

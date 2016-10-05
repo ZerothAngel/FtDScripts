@@ -50,12 +50,20 @@ function AdjustHeadingToTarget(I)
    if Debugging then Debug(I, __func__, "State %s Drive %f Bearing %f", State, Drive, Bearing) end
 
    AdjustHeading(Avoidance(I, Bearing))
-
-   return Drive
+   SetThrottle(Drive)
 end
 
-function Control_MoveToWaypoint(I, Waypoint)
-   MoveToWaypoint(I, Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end)
+function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
+   MoveToWaypoint(I, Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end, WaypointVelocity)
+end
+
+function FormationMove(I)
+   local Flagship = I.Fleet.Flagship
+   if not I.IsFlagship and Flagship.Valid then
+      Control_MoveToWaypoint(I, Flagship.ReferencePosition + Flagship.Rotation * I.IdealFleetPosition, Flagship.Velocity)
+   else
+      Control_MoveToWaypoint(I, I.Waypoint) -- Waypoint assumed to be stationary
+   end
 end
 
 function NavalAI_Update(I)
@@ -64,23 +72,14 @@ function NavalAI_Update(I)
    local AIMode = I.AIMode
    if AIMode ~= "fleetmove" then
       if GetTargetPositionInfo(I) then
-         local Drive = AdjustHeadingToTarget(I)
-         SetThrottle(Drive)
+         AdjustHeadingToTarget(I)
       elseif ReturnToOrigin then
-         Control_MoveToWaypoint(I, I.Waypoint)
+         FormationMove(I)
       else
          -- Just continue along with avoidance active
          AdjustHeading(Avoidance(I, 0))
       end
    else
-      if I.IsFlagship then
-         Control_MoveToWaypoint(I, I.Waypoint)
-      else
-         local Flagship = I.Fleet.Flagship
-         if Flagship.Valid then
-            local FlagshipRotation = Flagship.Rotation
-            Control_MoveToWaypoint(I, Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition)
-         end
-      end
+      FormationMove(I)
    end
 end
