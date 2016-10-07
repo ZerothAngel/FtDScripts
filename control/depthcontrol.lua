@@ -15,6 +15,7 @@ function Depth_Control(I)
          else
             -- Absolute
             DesiredDepth,Absolute = -ManualDesiredDepth*500,true
+            DesiredDepth = math.max(DesiredDepth, MinManualDepth)
          end
       else
          -- Use configured depths

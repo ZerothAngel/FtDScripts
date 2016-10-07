@@ -30,6 +30,11 @@ ManualDepthWhen = {
 -- Set to nil to use the configured depth settings (below).
 ManualDepthDriveMaintainerFacing = nil
 
+-- Determines minimum depth when under manual control. Only used
+-- when ManualDepthDriveMaintainerFacing above is non-nil and drive
+-- maintainer has negative or zero throttle (absolute depth).
+MinManualDepth = 0
+
 -- Desired depths for combat and out-of-combat.
 -- First value is the desired depth or elevation and should always be
 -- positive.
