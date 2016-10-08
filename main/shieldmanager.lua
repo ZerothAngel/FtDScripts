@@ -1,7 +1,7 @@
 --! shieldmanager
 --@ api periodic
--- Re-do in terms of radians from behind
-ShieldOffAngle = math.cos(math.rad(180 - ShieldOffAngle))
+-- Re-do in terms of cosine
+ShieldActivationAngle = math.cos(math.rad(ShieldActivationAngle))
 
 LastShieldCount = 0
 ShieldActivationTimes = {}
@@ -35,20 +35,22 @@ function ShieldManager_Update(I)
       local BlockInfo = I:Component_GetBlockInfo(SHIELDPROJECTOR, i)
       local Forwards = BlockInfo.Forwards
       local Activate = false
-      -- TODO Better way to do this?
+      -- TODO Better way to do this instead of N x M?
       for _,Target in pairs(Targets) do
-         if Vector3.Dot(Forwards, Target) > ShieldOffAngle then
+         if Vector3.Dot(Forwards, Target) >= ShieldActivationAngle then
             Activate = true
             break
          end
       end
 
+      -- Determine last activation time
       local LastActivationTime = ShieldActivationTimes[i]
       if Activate or not LastActivationTime then
          ShieldActivationTimes[i] = Now
          LastActivationTime = Now
       end
 
+      -- Set shield mode accordingly
       I:Component_SetIntLogic(SHIELDPROJECTOR, i, ((LastActivationTime + ShieldOffDelay) < Now) and 0 or ShieldActivationMode)
    end
 end

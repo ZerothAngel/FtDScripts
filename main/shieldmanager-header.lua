@@ -14,13 +14,10 @@ ShieldActivationRange = 5000
 -- 3 = Laser?
 ShieldActivationMode = 2
 
--- Angle in degrees directly behind shield at which to deactivate that
--- shield. This basically defines a cone behind the shield and if enemies
--- can only be found in that cone, the shield will turn off.
--- Larger the angle, the more often the shield will turn off (and also
--- the more risk that something will get through).
--- 45 is conservative, 90 is probably the sane maximum.
-ShieldOffAngle = 45
+-- Angle in degrees from forward at which to activate.
+-- 135 is conservative, 180 is active all the time (pointless, just use ACB then),
+-- 90 is probably the sane minimum.
+ShieldActivationAngle = 135
 
 -- Delay in seconds before turning off a shield.
 ShieldOffDelay = 3
