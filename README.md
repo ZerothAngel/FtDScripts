@@ -20,6 +20,7 @@ I'll only list the interesting scripts (the ones not used for research or testin
   * [hover](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/hover.lua) &mdash; Dedicated heliblade spinner for lift, jets for 2-axis control (pitch, roll). Meant for use in combination with a 2D AI. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
   * [quadcopter](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/quadcopter.lua) &mdash; Dedicated heliblade spinners for lift and pitch/roll control. Meant for use in combination with a 2D AI. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
   * [subcontrol](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/subcontrol.lua) &mdash; Hydrofoil script with pitch, roll, depth control + manual depth option. ([Forum post #1](http://www.fromthedepthsgame.com/forum/showthread.php?tid=21908) [Forum post #2](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
+  * [thrustercraft](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/thrustercraft.lua) &mdash; Jets for lift and pitch/roll control. Meant for use in combination with a 2D AI.
 
 ### Missile Scripts ###
 
@@ -42,6 +43,8 @@ I'll only list the interesting scripts (the ones not used for research or testin
 ### Miscellaneous ###
 
   * [dediblademaintainer](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/dediblademaintainer.lua) &mdash; Allows linking a drive maintainer to forward/reverse-oriented dediblades for propulsion.
+  * [directionalintercept](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/directionalintercept.lua) &mdash; Fires a weapon slot (presumably a missile interceptor launcher) associated with one of the 8 directional octants whenever missiles are detected. Saves ammo.
+  * [shieldmanager](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/shieldmanager.lua) &mdash; Only activates shields facing enemies. Saves power.
   * [stabilizer](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/stabilizer.lua) &mdash; 2-axis control (pitch, roll).
 
 ## Building ##
