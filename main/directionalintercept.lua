@@ -26,7 +26,8 @@ function DirectionalIntercept_Update(I)
             local Offset = MissilePosition - CoM
             -- Convert to local
             local LocalOffset = ToLocal * Offset
-            -- Mark table accordingly
+            -- Mark table accordingly by saving last missile position for octant
+            -- for aiming purposes
             if LocalOffset.x < 0 then
                if LocalOffset.y < 0 then
                   if LocalOffset.z < 0 then
@@ -60,15 +61,19 @@ function DirectionalIntercept_Update(I)
       end
    end
 
-   local Controllers = GetWeaponControllers(I, MISSILECONTROL)
+   local Controllers = nil
    local WeaponsForSlot = {}
 
    for Octant,MissilePosition in pairs(ToFire) do
       local WeaponSlot = DirectionalWeaponSlot[Octant]
       if WeaponSlot then
          local Weapons = WeaponsForSlot[WeaponSlot]
+         -- Lazy init
          if not Weapons then
-            -- Lazy init
+            -- Lazy init all the things!
+            if not Controllers then
+               Controllers = GetWeaponControllers(I, MISSILECONTROL)
+            end
             Weapons = GetWeaponsForSlot(Controllers, WeaponSlot)
             WeaponsForSlot[WeaponSlot] = Weapons
          end
