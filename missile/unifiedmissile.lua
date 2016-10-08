@@ -183,7 +183,7 @@ function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition,
       end
    end
 
-   local AimPoint = QuadraticIntercept(MissilePosition, MissileVelocity, TargetAimPoint, TargetVelocity)
+   local AimPoint = QuadraticIntercept(MissilePosition, MissileVelocity, TargetAimPoint, TargetVelocity, 9999)
 
    local MinimumAltitude = self.MinimumAltitude
    if MissilePosition.y < MinimumAltitude then

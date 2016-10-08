@@ -1,6 +1,7 @@
 --@ quadraticsolver
 -- Quadratic intercept formula
-function QuadraticIntercept(Position, Velocity, Target, TargetVelocity)
+function QuadraticIntercept(Position, Velocity, Target, TargetVelocity, DefaultInterceptTime)
+   if not DefaultInterceptTime then DefaultInterceptTime = 1 end
    local Offset = Target - Position
    -- Apparently you can apply binomial expansion to vectors
    -- ...as long as it's 2nd degree only
@@ -8,7 +9,7 @@ function QuadraticIntercept(Position, Velocity, Target, TargetVelocity)
    local b = 2 * Vector3.Dot(Offset, TargetVelocity)
    local c = Vector3.Dot(Offset, Offset) -- Offset.magnitude squared
    local Solutions = QuadraticSolver(a, b, c)
-   local InterceptTime = 1
+   local InterceptTime = DefaultInterceptTime
    -- Pick smallest positive intercept time
    if #Solutions == 1 then
       local t = Solutions[1]
