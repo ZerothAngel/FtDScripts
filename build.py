@@ -17,7 +17,7 @@ SCRIPT_DIRECTORIES = [
 
 OUTPUT_PATTERN = os.path.join('out', '{}.lua')
 
-NL = '\n'
+NL = '\r\n' # Because Notepad is dumb
 
 
 def scan_modules():
