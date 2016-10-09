@@ -22,8 +22,7 @@ function DirectionalIntercept_Update(I)
       for windex=0,I:GetNumberOfWarnings(mindex)-1 do
          local Missile = I:GetMissileWarning(mindex, windex)
          if Missile.Valid and Missile.Range <= InterceptRange then
-            local MissilePosition = Missile.Position
-            local Offset = MissilePosition - CoM
+            local Offset = Missile.Position - CoM
             -- Convert to local
             local LocalOffset = ToLocal * Offset
             -- Mark table accordingly by saving last missile position for octant
@@ -31,29 +30,29 @@ function DirectionalIntercept_Update(I)
             if LocalOffset.x < 0 then
                if LocalOffset.y < 0 then
                   if LocalOffset.z < 0 then
-                     ToFire.LeftLowerRear = MissilePosition
+                     ToFire.LeftLowerRear = Offset
                   else
-                     ToFire.LeftLowerForward = MissilePosition
+                     ToFire.LeftLowerForward = Offset
                   end
                else
                   if LocalOffset.z < 0 then
-                     ToFire.LeftUpperRear = MissilePosition
+                     ToFire.LeftUpperRear = Offset
                   else
-                     ToFire.LeftUpperForward = MissilePosition
+                     ToFire.LeftUpperForward = Offset
                   end
                end
             else
                if LocalOffset.y < 0 then
                   if LocalOffset.z < 0 then
-                     ToFire.RightLowerRear = MissilePosition
+                     ToFire.RightLowerRear = Offset
                   else
-                     ToFire.RightLowerForward = MissilePosition
+                     ToFire.RightLowerForward = Offset
                   end
                else
                   if LocalOffset.z < 0 then
-                     ToFire.RightUpperRear = MissilePosition
+                     ToFire.RightUpperRear = Offset
                   else
-                     ToFire.RightUpperForward = MissilePosition
+                     ToFire.RightUpperForward = Offset
                   end
                end
             end
@@ -64,7 +63,7 @@ function DirectionalIntercept_Update(I)
    local Controllers = nil
    local WeaponsForSlot = {}
 
-   for Octant,MissilePosition in pairs(ToFire) do
+   for Octant,Offset in pairs(ToFire) do
       local WeaponSlot = DirectionalWeaponSlot[Octant]
       if WeaponSlot then
          local Weapons = WeaponsForSlot[WeaponSlot]
@@ -84,10 +83,10 @@ function DirectionalIntercept_Update(I)
             if Weapon.TurretIndex then
                -- Turret mounted interceptors untested and most likely won't
                -- work
-               I:AimWeaponInDirectionOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, MissilePosition.x, MissilePosition.y, MissilePosition.z, WeaponSlot)
+               I:AimWeaponInDirectionOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, Offset.x, Offset.y, Offset.z, WeaponSlot)
                I:FireWeaponOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, WeaponSlot)
             else
-               I:AimWeaponInDirection(Weapon.Index, MissilePosition.x, MissilePosition.y, MissilePosition.z, WeaponSlot)
+               I:AimWeaponInDirection(Weapon.Index, Offset.x, Offset.y, Offset.z, WeaponSlot)
                I:FireWeapon(Weapon.Index, WeaponSlot)
             end
          end
