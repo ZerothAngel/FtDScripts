@@ -43,7 +43,7 @@ I'll only list the interesting scripts (the ones not used for research or testin
 ### Miscellaneous ###
 
   * [dediblademaintainer](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/dediblademaintainer.lua) &mdash; Allows linking a drive maintainer to forward/reverse-oriented dediblades for propulsion.
-  * [directionalintercept](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/directionalintercept.lua) &mdash; Fires a weapon slot (presumably a missile interceptor launcher) associated with one of the 8 directional octants whenever missiles are detected. Saves ammo.
+  * [interceptmanager](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/interceptmanager.lua) &mdash; Fires a weapon slot (presumably a missile interceptor launcher) associated with one of the 4 directional quadrants whenever hostile missiles are detected. Distinguishes between incoming missiles & torpedoes. Saves ammo.
   * [shieldmanager](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/shieldmanager.lua) &mdash; Only activates shields facing enemies. Saves power.
   * [stabilizer](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/stabilizer.lua) &mdash; 2-axis control (pitch, roll).
 
