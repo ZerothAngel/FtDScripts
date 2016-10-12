@@ -80,7 +80,7 @@ def build_script(version, available_modules, dependencies, root, output,
             sys.exit("""No such module '{}'""".format(module))
         header_fn = os.path.join(available_modules[module],
                                  module + '-header.lua')
-        chunk = create_chunk(header_fn, strip=strip)
+        chunk = create_chunk(header_fn)
         if chunk:
             chunks.append(chunk)
 
@@ -90,7 +90,7 @@ def build_script(version, available_modules, dependencies, root, output,
     for module in footers:
         footer_fn = os.path.join(available_modules[module],
                                  module + '-footer.lua')
-        chunk = create_chunk(footer_fn, strip=strip)
+        chunk = create_chunk(footer_fn)
         if chunk:
             chunks.append(chunk)
 
