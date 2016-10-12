@@ -21,18 +21,10 @@ function PredictImpact(I, Altitude, Projectile)
    elseif #Solutions == 2 then
       local t1 = Solutions[1]
       local t2 = Solutions[2]
-      if t1 < t2 then
-         if t1 > 0 then
-            ImpactTime = t1
-         elseif t2 > 0 then
-            ImpactTime = t2
-         end
-      else
-         if t2 > 0 then
-            ImpactTime = t2
-         elseif t1 > 0 then
-            ImpactTime = t1
-         end
+      if t1 > 0 then
+         ImpactTime = t1
+      elseif t2 > 0 then
+         ImpactTime = t2
       end
    end
 

@@ -17,18 +17,10 @@ function QuadraticIntercept(Position, Velocity, Target, TargetVelocity, DefaultI
    elseif #Solutions == 2 then
       local t1 = Solutions[1]
       local t2 = Solutions[2]
-      if t1 < t2 then
-         if t1 > 0 then
-            InterceptTime = t1
-         elseif t2 > 0 then
-            InterceptTime = t2
-         end
-      else
-         if t2 > 0 then
-            InterceptTime = t2
-         elseif t1 > 0 then
-            InterceptTime = t1
-         end
+      if t1 > 0 then
+         InterceptTime = t1
+      elseif t2 > 0 then
+         InterceptTime = t2
       end
    end
 
