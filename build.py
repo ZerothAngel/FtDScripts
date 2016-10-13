@@ -164,6 +164,12 @@ if __name__ == '__main__':
     parser.add_argument('-v', action='store_true',
                         help='be verbose',
                         dest='verbose')
+    parser.add_argument('-a', action='store_true',
+                        help='use lf for eol',
+                        dest='unix_eol')
     args = parser.parse_args();
+
+    if args.unix_eol:
+        NL = '\n'
 
     main(strip=args.strip, verbose=args.verbose)
