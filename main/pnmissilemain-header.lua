@@ -13,7 +13,7 @@ Limits = {
 
 Config = {
    -- PN gain value
-   Gain = 5,
+   Gain = 500,
 
    -- Attempt one turn up to this many seconds from launch
    -- Set to negative to disable
