@@ -22,6 +22,8 @@ function UnifiedMissile.create(Config)
    self.ClosingElevation = Config.ClosingElevation -- number
    self.ClosingAltitude = Config.ClosingAltitude -- number or nil
    self.ClosingAltitudeRelativeTo = Config.ClosingAltitudeRelativeTo -- number
+   self.ClosingThrust = Config.ClosingThrust -- number or nil
+   self.ClosingThrustAngle = Config.ClosingThrustAngle and math.cos(math.rad(Config.ClosingThrustAngle)) or nil -- number or nil
    self.Evasion = Config.Evasion -- { number, number } or nil
 
    -- Special maneuver parameters
@@ -30,9 +32,13 @@ function UnifiedMissile.create(Config)
    self.SpecialManeuverElevation = Config.SpecialManeuverElevation -- number
    self.SpecialManeuverAltitude = Config.SpecialManeuverAltitude -- number or nil
    self.SpecialManeuverAltitudeRelativeTo = Config.SpecialManeuverAltitudeRelativeTo -- number
+   self.SpecialManeuverThrust = Config.SpecialManeuverThrust -- number or nil
+   self.SpecialManeuverThrustAngle = Config.SpecialManeuverThrustAngle and math.cos(math.rad(Config.SpecialManeuverThrustAngle)) or nil -- number or nil
 
    -- Terminal parameters
    self.TerminalDistance = Config.TerminalDistance -- number
+   self.TerminalThrust = Config.TerminalThrust -- number or nil
+   self.TerminalThrustAngle = Config.TerminalThrustAngle and math.cos(math.rad(Config.TerminalThrustAngle)) or nil -- number or nil
 
    -- Proximity fuse parameters
    self.DetonationRange = Config.DetonationRange -- number
@@ -43,6 +49,7 @@ function UnifiedMissile.create(Config)
    self.LookAheadResolution = Config.LookAheadResolution -- number
 
    -- Methods (because no setmetatable)
+   self.SetThrust = UnifiedMissile.SetThrust
    self.GetTerrainHeight = UnifiedMissile.GetTerrainHeight
    self.ModifyAltitude = UnifiedMissile.ModifyAltitude
    self.SpecialAttackAltitude = UnifiedMissile.SpecialAttackAltitude
@@ -51,6 +58,32 @@ function UnifiedMissile.create(Config)
    self.Guide = UnifiedMissile.Guide
 
    return self
+end
+
+-- Set thrust according to flavor
+function UnifiedMissile:SetThrust(I, Position, Velocity, AimPoint, MissileState, Thrust, ThrustAngle, TransceiverIndex, MissileIndex)
+   if not Thrust then return end
+   if ThrustAngle then
+      -- FIXME This is being calculated twice. See Detonation
+      local TargetVector = AimPoint - Position
+      local CosAngle = Vector3.Dot(TargetVector.normalized, Velocity.normalized)
+      if CosAngle < ThrustAngle then return end -- Not yet
+   end
+   local CurrentThrust = MissileState.CurrentThrust
+   if not CurrentThrust or Thrust ~= CurrentThrust then
+      -- Perform voodoo that is apparently deprecated and/or unstable
+      -- But since all the cool kids are doing it...
+      local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
+      -- How do we check if this is valid?
+      for _,Part in pairs(MissileInfo.Parts) do
+         if Part.Name == "missile variable speed thruster" then
+            Part:SendRegister(2, Thrust)
+            -- Really, we should break here, but just in case you
+            -- have more than one variable thruster...
+         end
+      end
+      MissileState.CurrentThrust = Thrust
+   end
 end
 
 -- Return highest terrain seen within look-ahead distance
@@ -115,7 +148,7 @@ function UnifiedMissile:SpecialAttackAltitude(I, Position, Velocity, AboveSeaLev
 end
 
 -- Modification of the aim point to give the missile its flavor
-function UnifiedMissile:SpecialAttack(I, Position, Velocity, AimPoint, Offset)
+function UnifiedMissile:SpecialAttack(I, Position, Velocity, AimPoint, Offset, MissileState, TransceiverIndex, MissileIndex)
    local NewTarget = Vector3(AimPoint.x, Position.y, AimPoint.z)
    local GroundOffset = NewTarget - Position
    local GroundDistance = GroundOffset.magnitude
@@ -123,6 +156,7 @@ function UnifiedMissile:SpecialAttack(I, Position, Velocity, AimPoint, Offset)
    local TerminalDistance = self.TerminalDistance
    local SpecialManeuverDistance = self.SpecialManeuverDistance
    if GroundDistance < TerminalDistance then
+      self:SetThrust(I, Position, Velocity, AimPoint, MissileState, self.TerminalThrust, self.TerminalThrustAngle, TransceiverIndex, MissileIndex)
       -- Always return real aim point when within terminal distance
       return AimPoint
    elseif SpecialManeuverDistance and GroundDistance < SpecialManeuverDistance then
@@ -134,6 +168,7 @@ function UnifiedMissile:SpecialAttack(I, Position, Velocity, AimPoint, Offset)
       local NewAimPoint = Position + GroundDirection * ToTerminal
       NewAimPoint.y = self:SpecialAttackAltitude(I, Position, Velocity, self.SpecialManeuverAboveSeaLevel, self.SpecialManeuverElevation, self.SpecialManeuverAltitude, self.SpecialManeuverAltitudeRelativeTo, ToTerminal)
 
+      self:SetThrust(I, Position, Velocity, AimPoint, MissileState, self.SpecialManeuverThrust, self.SpecialManeuverThrustAngle, TransceiverIndex, MissileIndex)
       return NewAimPoint
    else
       -- Closing
@@ -147,6 +182,8 @@ function UnifiedMissile:SpecialAttack(I, Position, Velocity, AimPoint, Offset)
          local Perp = Vector3.Cross(GroundDirection, Vector3.up)
          NewAimPoint = NewAimPoint + Perp * Evasion[1] * (2 * Mathf.PerlinNoise(Evasion[2] * Now, Offset) - 1)
       end
+
+      self:SetThrust(I, Position, Velocity, AimPoint, MissileState, self.ClosingThrust, self.ClosingThrustAngle, TransceiverIndex, MissileIndex)
 
       return NewAimPoint
    end
@@ -191,7 +228,7 @@ function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition,
       AimPoint = Vector3(MissilePosition.x, MinimumAltitude+1000, MissilePosition.z)
    elseif self.DoSpecialAttack then
       local Offset = TransceiverIndex * 37 + MissileIndex -- Used for Perlin noise lookup
-      AimPoint = self:SpecialAttack(I, MissilePosition, MissileVelocity, AimPoint, Offset)
+      AimPoint = self:SpecialAttack(I, MissilePosition, MissileVelocity, AimPoint, Offset, MissileState, TransceiverIndex, MissileIndex)
    end
 
    return AimPoint

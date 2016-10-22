@@ -69,6 +69,13 @@ Config = {
    -- is a number and not nil.
    ClosingAltitudeRelativeTo = 0,
 
+   -- Closing phase thrust setting for variable thrusters. nil to disable.
+   ClosingThrust = nil,
+
+   -- Maximum angle between target & missile velocity in degrees before
+   -- modifying thrust. nil to set thrust regardless of angle.
+   ClosingThrustAngle = nil,
+
    -- "Evasion" settings while closing
    -- This simply makes the missile move side-to-side in a pseudo-random
    -- manner.
@@ -95,10 +102,25 @@ Config = {
    -- SpecialManeuverAltitude is a number and not nil.
    SpecialManeuverAltitudeRelativeTo = 3,
 
+   -- Special maneuver phase thrust setting for variable thrusters.
+   -- nil to disable.
+   SpecialManeuverThrust = nil,
+
+   -- Maximum angle between target & missile velocity in degrees before
+   -- modifying thrust. nil to set thrust regardless of angle.
+   SpecialManeuverThrustAngle = nil,
+
    -- Ground distance from target for terminal phase. During this phase,
    -- it will intercept the target as normal, i.e. aim straight for the
    -- predicted aim point.
    TerminalDistance = 100,
+
+   -- Terminal phase thrust setting for variable thrusters. nil to disable.
+   TerminalThrust = nil,
+
+   -- Maximum angle between target & missile velocity in degrees before
+   -- modifying thrust. nil to set thrust regardless of angle.
+   TerminalThrustAngle = nil,
 
    -- Optional detonation range in meters -- to simulate a proximity fuse
    -- Set to negative or nil to disable.
@@ -135,13 +157,19 @@ JavelinConfig = {
    ClosingElevation = 3,
    ClosingAltitude = 100,
    ClosingAltitudeRelativeTo = 3, -- i.e. relative to target's ground
+   ClosingThrust = nil,
+   ClosingThrustAngle = nil,
    Evasion = { 20, .25 },
    SpecialManeuverDistance = nil, -- No special maneuver phase
    SpecialManeuverAboveSeaLevel = true,
    SpecialManeuverElevation = 3,
    SpecialManeuverAltitude = 30,
    SpecialManeuverAltitudeRelativeTo = 3,
+   SpecialManeuverThrust = nil,
+   SpecialManeuverThrustAngle = nil,
    TerminalDistance = 150,
+   TerminalThrust = nil,
+   TerminalThrustAngle = nil,
    DetonationRange = nil,
    DetonationAngle = 30,
    LookAheadTime = 2,
@@ -159,13 +187,19 @@ TorpedoConfig = {
    ClosingElevation = 10, -- i.e. Minimum altitude above seabed
    ClosingAltitude = -150,
    ClosingAltitudeRelativeTo = 2, -- i.e. relative to target's depth, which is never more than 0
+   ClosingThrust = nil,
+   ClosingThrustAngle = nil,
    Evasion = nil,
    SpecialManeuverDistance = nil, -- No special maneuver phase
    SpecialManeuverAboveSeaLevel = true,
    SpecialManeuverElevation = 3,
    SpecialManeuverAltitude = 30,
    SpecialManeuverAltitudeRelativeTo = 3,
+   SpecialManeuverThrust = nil,
+   SpecialManeuverThrustAngle = nil,
    TerminalDistance = 150,
+   TerminalThrust = nil,
+   TerminalThrustAngle = nil,
    DetonationRange = nil,
    DetonationAngle = 30,
    LookAheadTime = 2,
@@ -186,13 +220,19 @@ PopUnderConfig = {
    ClosingElevation = 3,
    ClosingAltitude = nil,
    ClosingAltitudeRelativeTo = 0,
+   ClosingThrust = nil,
+   ClosingThrustAngle = nil,
    Evasion = { 20, .25 },
    SpecialManeuverDistance = 110,
    SpecialManeuverAboveSeaLevel = false,
    SpecialManeuverElevation = 10,
    SpecialManeuverAltitude = -25,
    SpecialManeuverAltitudeRelativeTo = 2, -- i.e. 25 meters below target's depth
+   SpecialManeuverThrust = nil,
+   SpecialManeuverThrustAngle = nil,
    TerminalDistance = 50,
+   TerminalThrust = nil,
+   TerminalThrustAngle = nil,
    DetonationRange = nil,
    DetonationAngle = 30,
    LookAheadTime = 2,
