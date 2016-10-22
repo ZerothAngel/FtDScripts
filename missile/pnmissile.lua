@@ -22,7 +22,7 @@ function ProNavMissile:SetTarget(I, TargetPosition, TargetAimPoint, TargetVeloci
    -- Nothing to do
 end
 
-function ProNavMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile)
+function ProNavMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile, MissileState)
    local MissilePosition = Missile.Position
    local MissileVelocity = Missile.Velocity
    local TargetVector = TargetAimPoint - MissilePosition

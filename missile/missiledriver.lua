@@ -1,7 +1,7 @@
 -- MissileDriver module
 LastTransceiverCount = 0
 TransceiverGuidances = {}
-MissileTargets = {}
+MissileStates = {}
 LastTimeTargetSeen = nil
 
 function GatherTargets(I, GuidanceInfos)
@@ -62,7 +62,7 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
 
       -- Missiles that are currently active are saved here. Then the old
       -- table is overwritten.
-      local NewMissileTargets = {}
+      local NewMissileStates = {}
 
       -- We want to group missiles up by target so SetTarget methods are only
       -- called once per target. This is done here.
@@ -83,14 +83,17 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
             local Missile = I:GetLuaControlledMissileInfo(tindex, mindex)
             if Missile.Valid then
                local MissileId = Missile.Id
-               local MissileTargetId = MissileTargets[MissileId]
+               local MissileState = MissileStates[MissileId]
+               if not MissileState then MissileState = {} end
+               local MissileTargetId = MissileState.TargetId
                if not MissileTargetId then
                   -- Brand new missile, select highest priority that
                   -- this missile can target
                   for _,Target in pairs(TargetsByPriority) do
                      if Target.CanTarget[GuidanceIndex] and Target.InRange[GuidanceIndex] then
                         MissileTargetId = Target.Id
-                        NewMissileTargets[MissileId] = MissileTargetId
+                        MissileState.TargetId = MissileTargetId
+                        NewMissileStates[MissileId] = MissileState
                         break
                      end
                   end
@@ -113,7 +116,8 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
 
                            if Distance < ClosestDistance then
                               MissileTargetId = T.Id
-                              NewMissileTargets[MissileId] = MissileTargetId
+                              MissileState.TargetId = MissileTargetId
+                              NewMissileStates[MissileId] = MissileState
                               Target = T
 
                               ClosestDistance = Distance
@@ -122,7 +126,7 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
                      end
                   else
                      -- Save for next update
-                     NewMissileTargets[MissileId] = MissileTargetId
+                     NewMissileStates[MissileId] = MissileState
                   end
                end
 
@@ -139,7 +143,8 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
                      TransceiverIndex = tindex,
                      MissileIndex = mindex,
                      GuidanceIndex = GuidanceIndex,
-                     Missile = Missile
+                     Missile = Missile,
+                     MissileState = MissileState,
                   }
                   table.insert(QueueMissiles, QueueMissile)
                end
@@ -161,15 +166,15 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
          for _,QueueMissile in pairs(QueueMissiles) do
             local Guidance = GuidanceInfos[QueueMissile.GuidanceIndex]
             local tindex,mindex = QueueMissile.TransceiverIndex,QueueMissile.MissileIndex
-            local AimPoint = Guidance.Controller:Guide(I, tindex, mindex, TargetPosition, TargetAimPoint, TargetVelocity, QueueMissile.Missile)
+            local AimPoint = Guidance.Controller:Guide(I, tindex, mindex, TargetPosition, TargetAimPoint, TargetVelocity, QueueMissile.Missile, QueueMissile.MissileState)
 
             I:SetLuaControlledMissileAimPoint(tindex, mindex, AimPoint.x, AimPoint.y, AimPoint.z)
          end
       end
 
-      -- Overwrite old targets with newly-saved targets. Gets rid of
+      -- Overwrite old states with newly-saved states. Gets rid of
       -- dead missiles.
-      MissileTargets = NewMissileTargets
+      MissileStates = NewMissileStates
    elseif LastTimeTargetSeen and (LastTimeTargetSeen+DetonateAfter) < Now then
       LastTimeTargetSeen = nil
 

@@ -164,7 +164,7 @@ function UnifiedMissile:SetTarget(I, TargetPosition, TargetAimPoint, TargetVeloc
    self.DoSpecialAttack = (TargetAltitude - self.TargetGround) <= self.SpecialAttackElevation
 end
 
-function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile)
+function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile, MissileState)
    local MissilePosition = Missile.Position
    local MissileVelocity = Missile.Velocity
 
