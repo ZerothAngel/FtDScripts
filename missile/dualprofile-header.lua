@@ -51,6 +51,17 @@ VerticalConfig = {
    -- Set to -500 or lower for torpedoes.
    MinimumAltitude = 0,
 
+   -- Optional detonation range in meters -- to simulate a proximity fuse
+   -- Set to negative or nil to disable.
+   DetonationRange = nil,
+
+   -- If a detonation range is defined, and the angle between the missile
+   -- velocity and the target vector is greater than this, detonate.
+   -- This allows detonations on near misses, i.e. when the missile is
+   -- about to pass the aim point.
+   -- Set to 0 to base detonation solely on range.
+   DetonationAngle = 30,
+
    -- Note: "RelativeTo" parameters should be one of
    -- 0 - Absolute
    -- 1 - Relative to target's altitude
@@ -137,17 +148,6 @@ VerticalConfig = {
    -- modifying thrust. nil to set thrust regardless of angle.
    TerminalThrustAngle = nil,
 
-   -- Optional detonation range in meters -- to simulate a proximity fuse
-   -- Set to negative or nil to disable.
-   DetonationRange = nil,
-
-   -- If a detonation range is defined, and the angle between the missile
-   -- velocity and the target vector is greater than this, detonate.
-   -- This allows detonations on near misses, i.e. when the missile is
-   -- about to pass the aim point.
-   -- Set to 0 to base detonation solely on range.
-   DetonationAngle = 30,
-
    -- TERRAIN HUGGING
 
    -- How many seconds at current speed to look-ahead
@@ -167,6 +167,8 @@ VerticalConfig = {
 HorizontalConfig = {
    SpecialAttackElevation = 9999, -- Always use special attack profile
    MinimumAltitude = -500,
+   DetonationRange = nil,
+   DetonationAngle = 30,
    ClosingDistance = 50,
    ClosingAboveSeaLevel = false,
    ClosingElevation = 10, -- i.e. Minimum altitude above seabed
@@ -185,8 +187,6 @@ HorizontalConfig = {
    TerminalDistance = 150,
    TerminalThrust = nil,
    TerminalThrustAngle = nil,
-   DetonationRange = nil,
-   DetonationAngle = 30,
    LookAheadTime = 2,
    LookAheadResolution = 3,
 }
@@ -199,6 +199,8 @@ HorizontalConfig = {
 JavelinConfig = {
    SpecialAttackElevation = 10,
    MinimumAltitude = 0,
+   DetonationRange = nil,
+   DetonationAngle = 30,
    ClosingDistance = 50,
    ClosingAboveSeaLevel = true,
    ClosingElevation = 3,
@@ -217,8 +219,6 @@ JavelinConfig = {
    TerminalDistance = 150,
    TerminalThrust = nil,
    TerminalThrustAngle = nil,
-   DetonationRange = nil,
-   DetonationAngle = 30,
    LookAheadTime = 2,
    LookAheadResolution = 0, -- No need to look at terrain
 }
@@ -232,6 +232,8 @@ JavelinConfig = {
 PopUnderConfig = {
    SpecialAttackElevation = 10,
    MinimumAltitude = -50, -- Should be lower than SpecialManeuverAltitude
+   DetonationRange = nil,
+   DetonationAngle = 30,
    ClosingDistance = 50,
    ClosingAboveSeaLevel = true,
    ClosingElevation = 3,
@@ -250,8 +252,6 @@ PopUnderConfig = {
    TerminalDistance = 50,
    TerminalThrust = nil,
    TerminalThrustAngle = nil,
-   DetonationRange = nil,
-   DetonationAngle = 30,
    LookAheadTime = 2,
    LookAheadResolution = 3,
 }

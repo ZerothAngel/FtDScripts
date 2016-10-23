@@ -9,6 +9,10 @@ function UnifiedMissile.create(Config)
    self.SpecialAttackElevation = Config.SpecialAttackElevation -- number
    self.MinimumAltitude = Config.MinimumAltitude -- number
 
+   -- Proximity fuse parameters
+   self.DetonationRange = Config.DetonationRange -- number
+   self.DetonationAngle = math.cos(math.rad(Config.DetonationAngle or 0)) -- number
+
    -- Note: "RelativeTo" parameters should be one of
    -- 0 - Absolute
    -- 1 - Relative to target's altitude
@@ -40,10 +44,6 @@ function UnifiedMissile.create(Config)
    self.TerminalThrust = Config.TerminalThrust -- number or nil
    self.TerminalThrustAngle = Config.TerminalThrustAngle and math.cos(math.rad(Config.TerminalThrustAngle)) or nil -- number or nil
 
-   -- Proximity fuse parameters
-   self.DetonationRange = Config.DetonationRange -- number
-   self.DetonationAngle = math.cos(math.rad(Config.DetonationAngle or 0)) -- number
-
    -- Terrain hugging parameters
    self.LookAheadTime = Config.LookAheadTime -- number
    self.LookAheadResolution = Config.LookAheadResolution -- number
@@ -63,19 +63,20 @@ end
 -- Set thrust according to flavor
 function UnifiedMissile:SetThrust(I, Position, Velocity, AimPoint, MissileState, Thrust, ThrustAngle, TransceiverIndex, MissileIndex)
    if not Thrust then return end
-   if ThrustAngle then
-      -- FIXME This is being calculated twice. See Detonation
-      local TargetVector = AimPoint - Position
-      local CosAngle = Vector3.Dot(TargetVector.normalized, Velocity.normalized)
-      if CosAngle < ThrustAngle then return end -- Not yet
-   end
    local CurrentThrust = MissileState.CurrentThrust
    if not CurrentThrust or Thrust ~= CurrentThrust then
+      if ThrustAngle then
+         -- Note this is against predicted aim point, unlike the detonation check.
+         local TargetVector = AimPoint - Position
+         local CosAngle = Vector3.Dot(TargetVector.normalized, Velocity.normalized)
+         if CosAngle < ThrustAngle then return end -- Not yet
+      end
       -- Perform voodoo that is apparently deprecated and/or unstable
       -- But since all the cool kids are doing it...
       local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
       -- How do we check if this is valid?
       for _,Part in pairs(MissileInfo.Parts) do
+         -- Is this name constant or localized?
          if Part.Name == "missile variable speed thruster" then
             Part:SendRegister(2, Thrust)
             -- Really, we should break here, but just in case you
