@@ -8,6 +8,7 @@ function UnifiedMissile.create(Config)
    -- General parameters
    self.SpecialAttackElevation = Config.SpecialAttackElevation -- number
    self.MinimumAltitude = Config.MinimumAltitude -- number
+   self.DefaultThrust = Config.DefaultThrust -- number or nil
 
    -- Proximity fuse parameters
    self.DetonationRange = Config.DetonationRange -- number
@@ -230,6 +231,11 @@ function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition,
    elseif self.DoSpecialAttack then
       local Offset = TransceiverIndex * 37 + MissileIndex -- Used for Perlin noise lookup
       AimPoint = self:SpecialAttack(I, MissilePosition, MissileVelocity, AimPoint, Offset, MissileState, TransceiverIndex, MissileIndex)
+   end
+
+   if not self.DoSpecialAttack then
+      -- Reset thrust in case target elevation changed and we cancelled the special attack
+      self:SetThrust(I, MissilePosition, MissileVelocity, AimPoint, MissileState, self.DefaultThrust, nil, TransceiverIndex, MissileIndex)
    end
 
    return AimPoint

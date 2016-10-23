@@ -51,6 +51,9 @@ VerticalConfig = {
    -- Set to -500 or lower for torpedoes.
    MinimumAltitude = 0,
 
+   -- Thrust to use in AA mode, may be nil.
+   DefaultThrust = nil,
+
    -- Optional detonation range in meters -- to simulate a proximity fuse
    -- Set to negative or nil to disable.
    DetonationRange = nil,
@@ -167,6 +170,7 @@ VerticalConfig = {
 HorizontalConfig = {
    SpecialAttackElevation = 9999, -- Always use special attack profile
    MinimumAltitude = -500,
+   DefaultThrust = nil,
    DetonationRange = nil,
    DetonationAngle = 30,
    ClosingDistance = 50,
@@ -199,6 +203,7 @@ HorizontalConfig = {
 JavelinConfig = {
    SpecialAttackElevation = 10,
    MinimumAltitude = 0,
+   DefaultThrust = nil,
    DetonationRange = nil,
    DetonationAngle = 30,
    ClosingDistance = 50,
@@ -232,6 +237,7 @@ JavelinConfig = {
 PopUnderConfig = {
    SpecialAttackElevation = 10,
    MinimumAltitude = -50, -- Should be lower than SpecialManeuverAltitude
+   DefaultThrust = nil,
    DetonationRange = nil,
    DetonationAngle = 30,
    ClosingDistance = 50,
