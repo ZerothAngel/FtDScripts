@@ -224,6 +224,7 @@ function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition,
 
    local AimPoint = QuadraticIntercept(MissilePosition, MissileVelocity, TargetAimPoint, TargetVelocity, 9999)
 
+   local ResetThrust = true
    local MinimumAltitude = self.MinimumAltitude
    if MissilePosition.y < MinimumAltitude then
       -- Below minimum altitude, head straight up
@@ -231,9 +232,10 @@ function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition,
    elseif self.DoSpecialAttack then
       local Offset = TransceiverIndex * 37 + MissileIndex -- Used for Perlin noise lookup
       AimPoint = self:SpecialAttack(I, MissilePosition, MissileVelocity, AimPoint, Offset, MissileState, TransceiverIndex, MissileIndex)
+      ResetThrust = false
    end
 
-   if not self.DoSpecialAttack then
+   if ResetThrust then
       -- Reset thrust in case target elevation changed and we cancelled the special attack
       self:SetThrust(I, MissilePosition, MissileVelocity, AimPoint, MissileState, self.DefaultThrust, nil, TransceiverIndex, MissileIndex)
    end
