@@ -232,6 +232,9 @@ function UnifiedMissile:SetTarget(I, TargetPosition, TargetAimPoint, TargetVeloc
 end
 
 function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile, MissileState)
+   local MissilePosition = Missile.Position
+   local MissileVelocity = Missile.Velocity
+
    local Fuel = MissileState.Fuel
    if not Fuel then
       -- Initialize state
@@ -249,11 +252,10 @@ function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition,
    -- Integrate to figure out how much fuel was consumed since LastTime.
    -- Note that var thrust ramp up screws this up slightly.
    -- But it's better to overestimate the fuel than underestimate.
-   Fuel = Fuel - MissileState.CurrentThrust * TimeStep -- Assumes 1 fuel per thrust per second
+   if MissilePosition.y >= 0 then
+      Fuel = Fuel - MissileState.CurrentThrust * TimeStep -- Assumes 1 fuel per thrust per second
+   end
    MissileState.Fuel = math.max(Fuel, 0)
-
-   local MissilePosition = Missile.Position
-   local MissileVelocity = Missile.Velocity
 
    local DetonationRange = self.DetonationRange
    if DetonationRange then
