@@ -1,4 +1,4 @@
---@ quadraticintercept
+--@ quadraticintercept round
 -- UnifiedMissile implementation
 UnifiedMissile = {}
 
@@ -50,6 +50,7 @@ function UnifiedMissile.create(Config)
    self.LookAheadResolution = Config.LookAheadResolution -- number
 
    -- Methods (because no setmetatable)
+   self.InitState = UnifiedMissile.InitState
    self.SetThrust = UnifiedMissile.SetThrust
    self.GetTerrainHeight = UnifiedMissile.GetTerrainHeight
    self.ModifyAltitude = UnifiedMissile.ModifyAltitude
@@ -59,6 +60,24 @@ function UnifiedMissile.create(Config)
    self.Guide = UnifiedMissile.Guide
 
    return self
+end
+
+-- Initialize state, save info about missile
+function UnifiedMissile:InitState(I, TransceiverIndex, MissileIndex, MissileState)
+   local Fuel = 0
+   local ThrusterCount,Thrust = 0,0
+   local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
+   for _,Part in pairs(MissileInfo.Parts) do
+      if Part.Name == "missile fuel tank" then
+         Fuel = Fuel + 5000
+      elseif Part.Name == "missile variable speed thruster" then
+         ThrusterCount = ThrusterCount + 1
+         Thrust = Thrust + Part.Registers[2]
+      end
+   end
+   MissileState.Fuel = Fuel
+   MissileState.ThrusterCount = ThrusterCount
+   MissileState.CurrentThrust = Thrust
 end
 
 -- Set thrust according to flavor
@@ -74,14 +93,16 @@ function UnifiedMissile:SetThrust(I, Position, Velocity, AimPoint, MissileState,
       end
       -- Perform voodoo that is apparently deprecated and/or unstable
       -- But since all the cool kids are doing it...
-      local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
+
       -- How do we check if this is valid?
+      local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
+
+      local ThrusterCount = MissileState.ThrusterCount
       for _,Part in pairs(MissileInfo.Parts) do
          -- Is this name constant or localized?
          if Part.Name == "missile variable speed thruster" then
-            Part:SendRegister(2, Thrust)
-            -- Really, we should break here, but just in case you
-            -- have more than one variable thruster...
+            -- Each thruster carries its share
+            Part:SendRegister(2, Thrust / ThrusterCount)
          end
       end
       MissileState.CurrentThrust = Thrust
@@ -150,7 +171,7 @@ function UnifiedMissile:SpecialAttackAltitude(I, Position, Velocity, AboveSeaLev
 end
 
 -- Modification of the aim point to give the missile its flavor
-function UnifiedMissile:SpecialAttack(I, Position, Velocity, AimPoint, Offset, MissileState, TransceiverIndex, MissileIndex)
+function UnifiedMissile:SpecialAttack(I, Position, Velocity, AimPoint, Offset, MissileState, TransceiverIndex, MissileIndex, ImpactTime)
    local NewTarget = Vector3(AimPoint.x, Position.y, AimPoint.z)
    local GroundOffset = NewTarget - Position
    local GroundDistance = GroundOffset.magnitude
@@ -158,7 +179,14 @@ function UnifiedMissile:SpecialAttack(I, Position, Velocity, AimPoint, Offset, M
    local TerminalDistance = self.TerminalDistance
    local SpecialManeuverDistance = self.SpecialManeuverDistance
    if GroundDistance < TerminalDistance then
-      self:SetThrust(I, Position, Velocity, AimPoint, MissileState, self.TerminalThrust, self.TerminalThrustAngle, TransceiverIndex, MissileIndex)
+      local Thrust = self.TerminalThrust
+      if Thrust and Thrust < 0 then
+         -- Base terminal thrust on current fuel and predicted impact time
+         Thrust = Round(MissileState.Fuel / ImpactTime, 1)
+         -- Constrain (is this needed?)
+         Thrust = math.max(50, math.min(10000, Thrust))
+      end
+      self:SetThrust(I, Position, Velocity, AimPoint, MissileState, Thrust, self.TerminalThrustAngle, TransceiverIndex, MissileIndex)
       -- Always return real aim point when within terminal distance
       return AimPoint
    elseif SpecialManeuverDistance and GroundDistance < SpecialManeuverDistance then
@@ -204,6 +232,26 @@ function UnifiedMissile:SetTarget(I, TargetPosition, TargetAimPoint, TargetVeloc
 end
 
 function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile, MissileState)
+   local Fuel = MissileState.Fuel
+   if not Fuel then
+      -- Initialize state
+      self:InitState(I, TransceiverIndex, MissileIndex, MissileState)
+      Fuel = MissileState.Fuel
+   end
+
+   -- Determine time step
+   local LastTime = MissileState.LastTime
+   if not LastTime then LastTime = 0 end
+   local Now = Missile.TimeSinceLaunch
+   local TimeStep = Now - LastTime
+   MissileState.LastTime = Now
+
+   -- Integrate to figure out how much fuel was consumed since LastTime.
+   -- Note that var thrust ramp up screws this up slightly.
+   -- But it's better to overestimate the fuel than underestimate.
+   Fuel = Fuel - MissileState.CurrentThrust * TimeStep -- Assumes 1 fuel per thrust per second
+   MissileState.Fuel = math.max(Fuel, 0)
+
    local MissilePosition = Missile.Position
    local MissileVelocity = Missile.Velocity
 
@@ -222,7 +270,7 @@ function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition,
       end
    end
 
-   local AimPoint = QuadraticIntercept(MissilePosition, MissileVelocity, TargetAimPoint, TargetVelocity, 9999)
+   local AimPoint,ImpactTime = QuadraticIntercept(MissilePosition, MissileVelocity, TargetAimPoint, TargetVelocity, 9999)
 
    local ResetThrust = true
    local MinimumAltitude = self.MinimumAltitude
@@ -231,7 +279,7 @@ function UnifiedMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition,
       AimPoint = Vector3(MissilePosition.x, MinimumAltitude+1000, MissilePosition.z)
    elseif self.DoSpecialAttack then
       local Offset = TransceiverIndex * 37 + MissileIndex -- Used for Perlin noise lookup
-      AimPoint = self:SpecialAttack(I, MissilePosition, MissileVelocity, AimPoint, Offset, MissileState, TransceiverIndex, MissileIndex)
+      AimPoint = self:SpecialAttack(I, MissilePosition, MissileVelocity, AimPoint, Offset, MissileState, TransceiverIndex, MissileIndex, ImpactTime)
       ResetThrust = false
    end
 

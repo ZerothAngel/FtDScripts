@@ -24,5 +24,5 @@ function QuadraticIntercept(Position, Velocity, Target, TargetVelocity, DefaultI
       end
    end
 
-   return Target + TargetVelocity * InterceptTime
+   return Target + TargetVelocity * InterceptTime,InterceptTime
 end
