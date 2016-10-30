@@ -27,4 +27,9 @@ Config = {
    -- Detonate if angle error is greater than this, in degrees
    -- Set to 0 to depend solely on range
    DetonationAngle = 30,
+
+   DefaultThrust = nil,
+   TerminalRange = nil,
+   TerminalThrust = nil,
+   TerminalThrustAngle = nil,
 }
