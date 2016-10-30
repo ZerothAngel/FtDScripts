@@ -40,33 +40,52 @@ MissileProfiles = {
       },
       -- Sea-skimming pop-up missiles
       Config = {
-         -- For a more detailed explanation of what the following means,
-         -- see my unifiedmissile script.
-         SpecialAttackElevation = 10,
-         MinimumAltitude = 0,
-         DefaultThrust = nil,
+         MinAltitude = 0,
          DetonationRange = nil,
          DetonationAngle = 30,
-         ClosingDistance = 50,
-         ClosingAboveSeaLevel = true,
-         ClosingElevation = 3,
-         ClosingAltitude = nil,
-         ClosingAltitudeRelativeTo = 0,
-         ClosingThrust = nil,
-         ClosingThrustAngle = nil,
-         Evasion = { 20, .25 },
-         SpecialManeuverDistance = 250,
-         SpecialManeuverAboveSeaLevel = true,
-         SpecialManeuverElevation = 3,
-         SpecialManeuverAltitude = 30,
-         SpecialManeuverAltitudeRelativeTo = 3,
-         SpecialManeuverThrust = nil,
-         SpecialManeuverThrustAngle = nil,
-         TerminalDistance = 100,
-         TerminalThrust = nil,
-         TerminalThrustAngle = nil,
          LookAheadTime = 2,
          LookAheadResolution = 3,
+
+         AntiAir = {
+            DefaultThrust = nil,
+            TerminalRange = nil,
+            Thrust = nil,
+            ThrustAngle = nil,
+            OneTurnTime = 3,
+            OneTurnAngle = 15,
+            Gain = 5,
+         },
+
+         ProfileActivationElevation = 10,
+         Phases = {
+            {
+               Distance = 100,
+               Thrust = nil,
+               ThrustAngle = nil,
+            },
+            {
+               Distance = 250,
+               AboveSeaLevel = true,
+               MinElevation = 3,
+               ApproachAngle = nil,
+               Altitude = 30,
+               RelativeTo = 3,
+               Thrust = nil,
+               ThrustAngle = nil,
+               Evasion = nil,
+            },
+            {
+               Distance = 50,
+               AboveSeaLevel = true,
+               MinElevation = 3,
+               ApproachAngle = nil,
+               Altitude = nil,
+               RelativeTo = 0,
+               Thrust = nil,
+               ThrustAngle = nil,
+               Evasion = { 20, .25 },
+            },
+         },
       },
    },
 
@@ -82,101 +101,34 @@ MissileProfiles = {
       },
       -- Bottom-attack torpedoes
       Config = {
-         SpecialAttackElevation = 9999, -- Always use special attack profile
-         MinimumAltitude = -500,
-         DefaultThrust = nil,
+         MinAltitude = -500,
          DetonationRange = nil,
          DetonationAngle = 30,
-         ClosingDistance = 50,
-         ClosingAboveSeaLevel = false,
-         ClosingElevation = 10, -- i.e. Minimum altitude above seabed
-         ClosingAltitude = -150,
-         ClosingAltitudeRelativeTo = 2, -- i.e. relative to target's depth, which is never more than 0
-         ClosingThrust = nil,
-         ClosingThrustAngle = nil,
-         Evasion = nil,
-         SpecialManeuverDistance = nil, -- No special maneuver phase
-         SpecialManeuverAboveSeaLevel = true,
-         SpecialManeuverElevation = 3,
-         SpecialManeuverAltitude = 30,
-         SpecialManeuverAltitudeRelativeTo = 3,
-         SpecialManeuverThrust = nil,
-         SpecialManeuverThrustAngle = nil,
-         TerminalDistance = 150,
-         TerminalThrust = nil,
-         TerminalThrustAngle = nil,
          LookAheadTime = 2,
          LookAheadResolution = 3,
-      },
 
+         Phases = {
+            {
+               Distance = 150,
+               Thrust = nil,
+               ThrustAngle = nil,
+            },
+            {
+               Distance = 50,
+               AboveSeaLevel = false,
+               MinElevation = 10,
+               ApproachAngle = nil,
+               Altitude = -150,
+               RelativeTo = 2,
+               Thrust = nil,
+               ThrustAngle = nil,
+               Evasion = nil,
+            },
+         },
+      },
    },
 
    -- You can add more profiles here.
    -- I recommended you copy & paste the first one and then edit to taste.
    -- PAY ATTENTION TO THE COMMAS
-}
-
--- OTHER MISSILE CONFIG EXAMPLES
-
--- Just rename to "Config" and replace the appropriate section above.
-
--- Javelin-style top-attack profile
-JavelinConfig = {
-   SpecialAttackElevation = 10,
-   MinimumAltitude = 0,
-   DefaultThrust = nil,
-   DetonationRange = nil,
-   DetonationAngle = 30,
-   ClosingDistance = 50,
-   ClosingAboveSeaLevel = true,
-   ClosingElevation = 3,
-   ClosingAltitude = 100,
-   ClosingAltitudeRelativeTo = 3, -- i.e. relative to target's ground
-   ClosingThrust = nil,
-   ClosingThrustAngle = nil,
-   Evasion = { 20, .25 },
-   SpecialManeuverDistance = nil, -- No special maneuver phase
-   SpecialManeuverAboveSeaLevel = true,
-   SpecialManeuverElevation = 3,
-   SpecialManeuverAltitude = 30,
-   SpecialManeuverAltitudeRelativeTo = 3,
-   SpecialManeuverThrust = nil,
-   SpecialManeuverThrustAngle = nil,
-   TerminalDistance = 150,
-   TerminalThrust = nil,
-   TerminalThrustAngle = nil,
-   LookAheadTime = 2,
-   LookAheadResolution = 0, -- No need to look at terrain
-}
-
--- Sea-skimming pop-under missiles
--- Needs a lot of experimentation, but the following settings
--- work for me using 6-block missiles: Fin x3, Var thruster (300 thrust),
--- Torpedo prop, Fuel x2, Lua receiver, Warhead x4.
-PopUnderConfig = {
-   SpecialAttackElevation = 10,
-   MinimumAltitude = -50, -- Should be lower than SpecialManeuverAltitude
-   DefaultThrust = nil,
-   DetonationRange = nil,
-   DetonationAngle = 30,
-   ClosingDistance = 50,
-   ClosingAboveSeaLevel = true,
-   ClosingElevation = 3,
-   ClosingAltitude = nil,
-   ClosingAltitudeRelativeTo = 0,
-   ClosingThrust = nil,
-   ClosingThrustAngle = nil,
-   Evasion = { 20, .25 },
-   SpecialManeuverDistance = 110,
-   SpecialManeuverAboveSeaLevel = false,
-   SpecialManeuverElevation = 10,
-   SpecialManeuverAltitude = -25,
-   SpecialManeuverAltitudeRelativeTo = 2, -- i.e. 25 meters below target's depth
-   SpecialManeuverThrust = nil,
-   SpecialManeuverThrustAngle = nil,
-   TerminalDistance = 50,
-   TerminalThrust = nil,
-   TerminalThrustAngle = nil,
-   LookAheadTime = 2,
-   LookAheadResolution = 3,
 }

@@ -24,12 +24,39 @@ I'll only list the interesting scripts (the ones not used for research or testin
 
 ### Missile Scripts ###
 
-  * [dualprofile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/dualprofile.lua) &mdash; Dual-profile missile script, using a separate unifiedmissile instance for vertically- and horizontally-launched missiles. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=21639))
-  * [multiprofile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/multiprofile.lua) &mdash; Multiple profile missile script, up to one unifiedmissile instance for each weapon slot. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=21639))
+Note that the "unifiedmissile" module and all scripts based on it have been
+superceded by a newer, more general missile module (uncreatively named
+"generalmissile").
+
+I have no plans to release (or rather, make a public post) about the new
+generalmissile-based scripts. Its configuration complexity has reached the
+point where you have to probably be familiar enough with Lua programming
+(or use a Lua editor) to get it right. And if you could write your own Lua
+scripts, you would not be using one of mine.
+
+I'll keep the unifiedmissile variants around for posterity (save for combo
+scripts), however I will no longer work on them. The generalmissile scripts
+will be available here, but they should be considered not ready for public
+use and "unsupported."
+
+#### generalmissile-based ####
+
+  * [dualprofile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/dualmissile.lua) &mdash; Dual-profile missile script, using a separate generalmissile instance for vertically- and horizontally-launched missiles.
+  * [generalmissile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/generalmissile.lua) &mdash; Highly configurable missile script that supports dual-mode operation (AA or profile), an arbitrary number of profile phases, directional approach, and variable thrust control.
+  * [multiprofile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/multimissile.lua) &mdash; Multiple profile missile script, up to one generalmissile instance for each weapon slot.
+
+#### unifiedmissile-based & Other ####
+
   * [pnmissile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/pnmissile.lua) &mdash; Experimental script for pure proportional-navigation guidance.
+  * [udualprofile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/udualprofile.lua) &mdash; Dual-profile missile script, using a separate unifiedmissile instance for vertically- and horizontally-launched missiles. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=21639))
+  * [umultiprofile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/umultiprofile.lua) &mdash; Multiple profile missile script, up to one unifiedmissile instance for each weapon slot. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=21639))
   * [unifiedmissile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/unifiedmissile.lua) &mdash; Highly configurable advanced missile script that supports a variety of attack profiles. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=21639))
 
 ### Combo Scripts ###
+
+Note that all combo scripts that included dualprofile have been switched to
+the generalmissile version of dualprofile. See note above about the missile
+scripts.
 
   * [airship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airship.lua) &mdash; Combo script: naval-ai + quadcopter + dualprofile
   * [utility](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility.lua) &mdash; Combo script: utility-ai + quadcopter

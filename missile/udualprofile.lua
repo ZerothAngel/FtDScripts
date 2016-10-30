@@ -1,7 +1,7 @@
---@ missiledriver generalmissile periodic
+--@ missiledriver unifiedmissile periodic
 -- Dual profile module
-MyVertical = GeneralMissile.create(VerticalConfig)
-MyHorizontal = GeneralMissile.create(HorizontalConfig)
+MyVertical = UnifiedMissile.create(VerticalConfig)
+MyHorizontal = UnifiedMissile.create(HorizontalConfig)
 
 GuidanceInfos = {
    {
