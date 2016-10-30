@@ -17,6 +17,8 @@
 -- launcher(s) on weapon slot 1 and bottom-attack torpedoes for the missile
 -- launcher(s) on weapon slot 2.
 
+-- See https://github.com/ZerothAngel/FtDScripts/blob/master/missile/generalmissile.md for details about profile configuration.
+
 MissileProfiles = {
    -- First profile
    {

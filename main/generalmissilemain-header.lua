@@ -11,6 +11,7 @@ Limits = {
    MaxAltitude = 9999,
 }
 
+-- See https://github.com/ZerothAngel/FtDScripts/blob/master/missile/generalmissile.md
 Config = {
    MinAltitude = 0,
    DetonationRange = nil,

@@ -28,6 +28,8 @@ HorizontalLimits = {
 -- The following defaults set up sea-skimming pop-up missiles for
 -- vertical launch, bottom-attack torpedoes for horizontal launch.
 
+-- See https://github.com/ZerothAngel/FtDScripts/blob/master/missile/generalmissile.md for details about profile configuration.
+
 -- VERTICAL MISSILE PROFILE
 
 VerticalConfig = {
