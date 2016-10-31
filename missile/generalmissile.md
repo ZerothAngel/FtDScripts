@@ -343,3 +343,42 @@ detectors of the firing ship). Note that the PN gain has to be pretty high.
           Gain = 300,
        },
     }
+
+### Plain Torpedoes (Alternate) ###
+
+A problem with using AA mode for torpedoes is that the torpedoes
+will indiscriminately target parts of the ship above the water line and
+end up skimming the surface on approach.
+
+An alternative is to use a profile with a closing depth set to 5 meters
+(or whatever) below the target's depth.
+
+This is basically a copy of the bottom-attack torpedo profile but with
+less extreme closing depth.
+
+    Config = {
+       MinAltitude = -500,
+       DetonationRange = nil,
+       DetonationAngle = 30,
+       LookAheadTime = 2,
+       LookAheadResolution = 3,
+
+       Phases = {
+          {
+             Distance = 100,
+             Thrust = nil,
+             ThrustAngle = nil,
+          },
+          {
+             Distance = 50,
+             AboveSeaLevel = false,
+             MinElevation = 10,
+             ApproachAngle = nil,
+             Altitude = -5,
+             RelativeTo = 2,
+             Thrust = nil,
+             ThrustAngle = nil,
+             Evasion = nil,
+          },
+       },
+    }
