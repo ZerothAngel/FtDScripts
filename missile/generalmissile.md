@@ -127,3 +127,219 @@ If you omit the *AntiAir* section, then the profile defined by *Phases* will alw
 If you omit the *Phases* section, then the missiles will always be in anti-air mode and always use the *AntiAir* parameters.
 
 If neither are omitted, then you **must** define *ProfileActivationElevation* to differentiate between the two modes.
+
+## More Examples ##
+
+### Bottom-attack Torpedoes ###
+
+Approaches 150 meters below target.
+
+    Config = {
+       MinAltitude = -500,
+       DetonationRange = nil,
+       DetonationAngle = 30,
+       LookAheadTime = 2,
+       LookAheadResolution = 3,
+
+       Phases = {
+          {
+             Distance = 150,
+             Thrust = nil,
+             ThrustAngle = nil,
+          },
+          {
+             Distance = 50,
+             AboveSeaLevel = false,
+             MinElevation = 10,
+             ApproachAngle = nil,
+             Altitude = -150,
+             RelativeTo = 2,
+             Thrust = nil,
+             ThrustAngle = nil,
+             Evasion = nil,
+          },
+       },
+    }
+
+### Javelin-style Missiles ###
+
+This assumes vertical launch with ejectors or horizontal launch from high-flying (>100 meters)
+aircraft.
+
+If not the case, change the last phase (closing phase) *Altitude* to 100 and *RelativeTo* to 3
+to keep the appraoch altitude consistent.
+
+    Config = {
+       MinAltitude = 0,
+       DetonationRange = nil,
+       DetonationAngle = 30,
+       LookAheadTime = nil,
+       LookAheadResolution = 3,
+
+       AntiAir = {
+          DefaultThrust = nil,
+          TerminalRange = nil,
+          Thrust = nil,
+          ThrustAngle = nil,
+          OneTurnTime = 3,
+          OneTurnAngle = 15,
+          Gain = 5,
+       },
+
+       ProfileActivationElevation = 10,
+       Phases = {
+          {
+             Distance = 150,
+             Thrust = nil,
+             ThrustAngle = nil,
+          },
+          {
+             Distance = 50,
+             AboveSeaLevel = true,
+             MinElevation = 3,
+             ApproachAngle = nil,
+             Altitude = 0,
+             RelativeTo = 4,
+             Thrust = nil,
+             ThrustAngle = nil,
+             Evasion = { 20, .25 },
+          },
+       },
+    }
+
+### Duck-under Missiles ###
+
+Approaches by skimming the sea. Dives ~100 meters from target to take advantage of underwater
+explosive buff.
+
+Missile should be a full explosive missile with a single torpedo propeller or ballast tank
+(needs experimenting, but the propeller works well for my designs).
+
+    Config = {
+       MinAltitude = -50,
+       DetonationRange = nil,
+       DetonationAngle = 30,
+       LookAheadTime = 2,
+       LookAheadResolution = 3,
+
+       AntiAir = {
+          DefaultThrust = nil,
+          TerminalRange = nil,
+          Thrust = nil,
+          ThrustAngle = nil,
+          OneTurnTime = 3,
+          OneTurnAngle = 15,
+          Gain = 5,
+       },
+
+       ProfileActivationElevation = 10,
+       Phases = {
+          {
+             Distance = 50,
+             Thrust = nil,
+             ThrustAngle = nil,
+          },
+          {
+             Distance = 110,
+             AboveSeaLevel = false,
+             MinElevation = 10,
+             ApproachAngle = nil,
+             Altitude = -25,
+             RelativeTo = 2,
+             Thrust = nil,
+             ThrustAngle = nil,
+             Evasion = nil,
+          },
+          {
+             Distance = 50,
+             AboveSeaLevel = true,
+             MinElevation = 3,
+             ApproachAngle = nil,
+             Altitude = nil,
+             RelativeTo = 0,
+             Thrust = nil,
+             ThrustAngle = nil,
+             Evasion = { 20, .25 },
+          },
+       },
+    }
+
+### ASROC-style Torpedoes ###
+
+Meant for underwater targets only, but can switch to AA-mode if needed. Missile should more
+or less be a full torpedo (with ballast tanks and propellers) with a variable thruster.
+
+Assumes horizontal launch close to sea level. If this isn't the case, adjust the closing
+phase altitude appropriately (it is meant to approach <50 meters above the sea).
+
+    Config = {
+       MinAltitude = -500,
+       DetonationRange = 15,
+       DetonationAngle = 30,
+       LookAheadTime = 2,
+       LookAheadResolution = 3,
+
+       AntiAir = {
+          DefaultThrust = nil,
+          TerminalRange = nil,
+          Thrust = nil,
+          ThrustAngle = nil,
+          OneTurnTime = 3,
+          OneTurnAngle = 15,
+          Gain = 5,
+       },
+
+       ProfileActivationElevation = 10,
+       Phases = {
+          {
+             Distance = 300,
+             Thrust = nil,
+             ThrustAngle = nil,
+          },
+          {
+             Distance = 400,
+             AboveSeaLevel = true,
+             MinElevation = 3,
+             ApproachAngle = nil,
+             Altitude = 50,
+             RelativeTo = 3,
+             Thrust = nil,
+             ThrustAngle = nil,
+             Evasion = nil,
+          },
+          {
+             Distance = 50,
+             AboveSeaLevel = true,
+             MinElevation = 3,
+             ApproachAngle = nil,
+             Altitude = 0,
+             RelativeTo = 4,
+             Thrust = nil,
+             ThrustAngle = nil,
+             Evasion = { 20, .25 },
+          },
+       },
+    }
+
+### Plain Torpedoes ###
+
+Alternative to sonar guidance (and far more undetectable at the cost of relying on the
+detectors of the firing ship). Note that the PN gain has to be pretty high.
+
+    Config = {
+       MinAltitude = -500,
+       DetonationRange = nil,
+       DetonationAngle = 30,
+       LookAheadTime = nil,
+       LookAheadResolution = 3,
+
+       AntiAir = {
+          DefaultThrust = nil,
+          TerminalRange = nil,
+          Thrust = nil,
+          ThrustAngle = nil,
+          OneTurnTime = 3,
+          OneTurnAngle = 15,
+          Gain = 300,
+       },
+    }

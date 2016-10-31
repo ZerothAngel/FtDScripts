@@ -28,7 +28,7 @@ Note that the "unifiedmissile" module and all scripts based on it have been
 superceded by a newer, more general missile module (uncreatively named
 "generalmissile").
 
-I have no plans to release (or rather, make a public post) about the new
+I have no plans to release (or rather, make a public post about) the new
 generalmissile-based scripts. Its configuration complexity has reached the
 point where you have to probably be familiar enough with Lua programming
 (or use a Lua editor) to get it right. And if you could write your own Lua
