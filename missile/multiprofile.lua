@@ -1,4 +1,4 @@
---@ missiledriver unifiedmissile getweaponcontrollers
+--@ missiledriver generalmissile getweaponcontrollers
 -- Multi profile module
 
 GuidanceInfos = {}
@@ -9,8 +9,8 @@ GuidanceInfosIndices = {}
 for i = 1,#MissileProfiles do
    local MP = MissileProfiles[i]
    local GuidanceInfo = {
-      -- Create UnifiedMissile instance
-      Controller = UnifiedMissile.create(MP.Config),
+      -- Create GeneralMissile instance
+      Controller = GeneralMissile.create(MP.Config),
       -- Set limits
       MinAltitude = MP.Limits.MinAltitude,
       MaxAltitude = MP.Limits.MaxAltitude,
