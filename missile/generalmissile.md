@@ -1,5 +1,52 @@
 # generalmissile Configuration #
 
+## How It Works ##
+
+ * If configured for dual-mode operation, it will select the mode (anti-air or profile)
+   based on the elevation of the target (i.e. how high it is off the ground/sea level).
+
+ * The mode can switch in-flight, e.g. when an aircraft splashes down in the water, the
+   missile will switch to profile mode, if one is configured.
+
+ * In anti-air mode, it will pursue the target with no restrictions. Optionally, when
+   entering a configured "terminal range," it can modify the thrust settings of any
+   variable thrusters.
+
+   * Even though I call it anti-air mode, this mode may also be suitable for surface targets
+     and for guiding torpedoes. As mentioned, it will pursue targets with no restrictions.
+
+   * Because there's no restrictions, there's also no consideration for terrain at all.
+
+ * Profiles are divided into an arbitrary number of phases. There are always at least
+   two phases: closing phase and terminal phase.
+
+   * The current phase is selected by determining the ground distance from the target, i.e.
+     the distance without taking the altitude of either the target or missile into account.
+
+   * The closing phase is selected when no other phases match.
+
+   * In the terminal phase, the missile will pursue the target without any restrictions.
+     It may optionally modify thrust.
+
+   * In non-terminal phases, by default the missile will aim at a point that is between
+     its current position and the *border* of the next inner phase.
+
+     This point can be modified in two ways:
+
+     * It can be rotated about the target (using the target's velocity to determine which
+       way is "front").
+
+     * It can also be raised or lowered relative to some other object, e.g. the target's
+       current altitude, the ground underneath the target, or the target's depth under
+       the ocean.
+
+   * Non-terminal phases may also modify thrust and also apply pseudo-random horizontal
+     evasion (which is pretty useless against most anti-missile defenses, but is there
+     for rule-of-cool).
+
+   * If configured for terrain-hugging, the missile will never aim below a set elevation
+     above the terrain. This can be useful for torpedoes or targeting things on land.
+
 ## Example ##
 
 The following is for dual-mode sea-skimming pop-up anti-ship missiles.
