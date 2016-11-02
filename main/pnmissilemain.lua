@@ -1,7 +1,7 @@
 --! pnmissile
 --@ missiledriver pnmissile periodic
 -- PN missile main
-MyMissile = ProNavMissile.create(Config, UpdateRate)
+MyMissile = ProNavMissile.create(Config)
 
 GuidanceInfos = {
    {

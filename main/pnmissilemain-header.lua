@@ -13,23 +13,39 @@ Limits = {
 
 Config = {
    -- PN gain value
-   Gain = 500,
+   -- 5 is generally good, will have to increase significantly for
+   -- torpedoes (300-500)
+   Gain = 5,
+
+   -- If the missile is ever below this altitude, it will head straight up.
+   -- Set to -500 or lower for torpedoes.
+   MinimumAltitude = 0,
 
    -- Attempt one turn up to this many seconds from launch
-   -- Set to negative to disable
+   -- Set to nil to disable
    OneTurnTime = 3,
-   -- Maximum angle error, in degrees
+   -- Maximum one turn angle error, in degrees
+   -- Set to nil to depend solely on time
    OneTurnAngle = 15,
 
    -- Detonate this many meters from aim point
-   -- Set to negative to disable
-   DetonationRange = 5,
+   -- Set to nil to disable
+   DetonationRange = nil,
    -- Detonate if angle error is greater than this, in degrees
-   -- Set to 0 to depend solely on range
+   -- Set to nil to depend solely on range
    DetonationAngle = 30,
 
+   -- Default thrust when not within terminal range
    DefaultThrust = nil,
+
+   -- Range at which to set terminal thrust
    TerminalRange = nil,
+   -- Thrust when within terminal range.
+   -- Set to negative to base dynamically on (estimated) remaining fuel and
+   -- time to impact.
    TerminalThrust = nil,
+   -- Additional condition before modifying thrust.
+   -- If non-nil, angle between missile velocity and target vector must
+   -- be less than this.
    TerminalThrustAngle = nil,
 }
