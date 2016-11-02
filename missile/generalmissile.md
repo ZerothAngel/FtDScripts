@@ -264,7 +264,7 @@ to keep the approach altitude consistent.
 
 Alternate high-altitude version. If launched >500 meters (ground distance) from the target, it will climb to 300 meters. Works best when the terminal phase *Thrust* is set to -1 (along with a suitably small terminal phase *ThrustAngle*).
 
-If your normal engagement range is closer than 500 meters, change the *Altitude* of the middle phase. The idea behind the middle phase is to prevent the missile from climbing to 300 meters should it miss (or while pursuing an air target that crashed).
+If your normal engagement range is closer than 500 meters, change the *Distance* of the middle phase. The idea behind the middle phase is to prevent the missile from climbing to 300 meters should it miss (or while pursuing an air target that crashed).
 
     Config = {
        MinAltitude = 0,
