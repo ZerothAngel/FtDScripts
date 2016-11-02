@@ -177,6 +177,12 @@ If neither are omitted, then you **must** define *ProfileActivationElevation* to
 
 ## More Examples ##
 
+Note that none of these examples take advantage of *Thrust* and *ThrustAngle*. That's really up to you and the type of missile you build.
+
+However, in almost all non-torpedo cases that use variable thrusters, you will probably benefit from dynamic terminal thrust: set *Thrust* to -1 and *ThrustAngle* to something small, like 3 to 7 degrees.
+
+If you do set terminal thrust, it is also best to set *Thrust* of all non-terminal phases (or *DefaultThrust* for *AntiAir*). This ensures the missile resumes normal thrust should it happen to miss.
+
 ### Bottom-attack Torpedoes ###
 
 Approaches 150 meters below target.
@@ -214,7 +220,7 @@ This assumes vertical launch with ejectors or horizontal launch from high-flying
 aircraft.
 
 If not the case, change the last phase (closing phase) *Altitude* to 100 and *RelativeTo* to 3
-to keep the appraoch altitude consistent.
+to keep the approach altitude consistent.
 
     Config = {
        MinAltitude = 0,
@@ -247,6 +253,61 @@ to keep the appraoch altitude consistent.
              ApproachAngle = nil,
              Altitude = 0,
              RelativeTo = 4,
+             Thrust = nil,
+             ThrustAngle = nil,
+             Evasion = { 20, .25 },
+          },
+       },
+    }
+
+### Javelin-style Missiles (Alternate) ###
+
+Alternate high-altitude version. If launched >500 meters (ground distance) from the target, it will climb to 300 meters. Works best when the terminal phase *Thrust* is set to -1 (along with a suitably small terminal phase *ThrustAngle*).
+
+If your normal engagement range is closer than 500 meters, change the *Altitude* of the middle phase. The idea behind the middle phase is to prevent the missile from climbing to 300 meters should it miss (or while pursuing an air target that crashed).
+
+    Config = {
+       MinAltitude = 0,
+       DetonationRange = nil,
+       DetonationAngle = 30,
+       LookAheadTime = nil,
+       LookAheadResolution = 3,
+
+       AntiAir = {
+          DefaultThrust = nil,
+          TerminalRange = nil,
+          Thrust = nil,
+          ThrustAngle = nil,
+          OneTurnTime = 3,
+          OneTurnAngle = 15,
+          Gain = 5,
+       },
+
+       ProfileActivationElevation = 10,
+       Phases = {
+          {
+             Distance = 150,
+             Thrust = nil,
+             ThrustAngle = nil,
+          },
+          {
+             Distance = 500,
+             AboveSeaLevel = true,
+             MinElevation = 3,
+             ApproachAngle = nil,
+             Altitude = 0,
+             RelativeTo = 4,
+             Thrust = nil,
+             ThrustAngle = nil,
+             Evasion = { 20, .25 },
+          },
+          {
+             Distance = 50,
+             AboveSeaLevel = true,
+             MinElevation = 3,
+             ApproachAngle = nil,
+             Altitude = 300,
+             RelativeTo = 3,
              Thrust = nil,
              ThrustAngle = nil,
              Evasion = { 20, .25 },
