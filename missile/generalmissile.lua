@@ -315,7 +315,15 @@ function GeneralMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition,
 
    local AimPoint
 
+   local OneTurnStart = MissileState.OneTurnStart
    local MinAltitude = self.MinAltitude
+
+   if not OneTurnStart and MissilePosition.y >= MinAltitude then
+      -- Record the first time it is above minimum altitude
+      OneTurnStart = Now
+      MissileState.OneTurnStart = Now
+   end
+
    if MissilePosition.y < MinAltitude then
       -- Below minimum altitude, head straight up
       AimPoint = Vector3(MissilePosition.x, MinAltitude+1000, MissilePosition.z)
@@ -326,7 +334,7 @@ function GeneralMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition,
    else
       -- Since PN sucks at large angles, perform a "one turn" maneuver
       -- if newly-launched
-      if Now <= self.AntiAir.OneTurnTime and CosAngle <= self.AntiAir.OneTurnAngle then
+      if Now <= (self.AntiAir.OneTurnTime + OneTurnStart) and CosAngle <= self.AntiAir.OneTurnAngle then
          -- Just turn straight toward target
          AimPoint = TargetAimPoint
       else
