@@ -1,6 +1,10 @@
 --@ planarvector getbearingtopoint evasion
 --@ spairs avoidance waypointmove
 -- Utility AI module
+
+-- Square ahead of time
+MaxEnemyRange = MaxEnemyRange * MaxEnemyRange
+
 function GetTargets(I)
    local Targets = {}
    local TargetsById = {}
@@ -83,7 +87,31 @@ end
 
 function UtilityAI_Main(I)
    local Targets,TargetsById = GetTargets(I)
-   if #Targets > 0 then
+
+   if IsCollector then
+      -- Check if targets are still around
+      for _,Target in pairs(LastSeenTargets) do
+         if not TargetsById[Target.Id] then
+            -- Target gone, make note of its last position
+            table.insert(CollectorDestinations, Target.Position)
+            CollectorNeedsSort = true
+         end
+      end
+      -- Current targets become last seen targets
+      LastSeenTargets = Targets
+   end
+
+   -- Escape mode only when enemies in range
+   local EnemiesInRange = false
+   for _,Target in pairs(Targets) do
+      local RangeSquared = (Target.Position - CoM).sqrMagnitude
+      if RangeSquared <= MaxEnemyRange then
+         EnemiesInRange = true
+         break
+      end
+   end
+
+   if EnemiesInRange then
       -- Sum up the all enemy direction vectors
       local RunAway,Count = Vector3.zero,0
       for _,Target in pairs(Targets) do
@@ -105,32 +133,10 @@ function UtilityAI_Main(I)
       end
       SetThrottle(Drive)
 
-      if IsCollector then
-         -- Check if targets are still around
-         for _,Target in pairs(LastSeenTargets) do
-            if not TargetsById[Target.Id] then
-               -- Target gone, make note of its last position
-               table.insert(CollectorDestinations, Target.Position)
-               CollectorNeedsSort = true
-            end
-         end
-         -- Current targets become last seen targets
-         LastSeenTargets = Targets
-      end
-
       return true
    else
-      if IsCollector then
-         -- Remaining last seen targets also become destinations
-         for _,Target in pairs(LastSeenTargets) do
-            table.insert(CollectorDestinations, Target.Position)
-            CollectorNeedsSort = true
-         end
-         LastSeenTargets = {}
-
-         if CollectorNeedsSort then
-            SortDestinations()
-         end
+      if IsCollector and CollectorNeedsSort then
+         SortDestinations()
       end
 
       local FlagshipPosition = I.Fleet.Flagship.CenterOfMass
