@@ -69,6 +69,7 @@ scripts.
 
 ### Miscellaneous ###
 
+  * [cameratrack](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/cameratrack.lua) &mdash; Controls a single (2-axis) turret and points at the highest-priority enemy. Meant for cameras (so you can have a non-cheaty pseudo-3rd person view in adventure mode), does not compute firing solutions for weapons.
   * [dediblademaintainer](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/dediblademaintainer.lua) &mdash; Allows linking a drive maintainer to forward/reverse-oriented dediblades for propulsion.
   * [interceptmanager](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/interceptmanager.lua) &mdash; Fires a weapon slot (presumably a missile interceptor launcher) associated with one of the 4 directional quadrants whenever hostile missiles are detected. Distinguishes between incoming missiles & torpedoes. Saves ammo.
   * [shieldmanager](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/shieldmanager.lua) &mdash; Only activates shields facing enemies. Saves power.
