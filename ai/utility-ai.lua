@@ -12,7 +12,7 @@ function GetTargets(I)
       local TargetInfo = I:GetTargetInfo(0, i)
       if TargetInfo.Valid and TargetInfo.Protected then
          local Id = TargetInfo.Id
-         Target = {
+         local Target = {
             Id = Id,
             Position = TargetInfo.Position,
          }
@@ -81,7 +81,7 @@ function PickDestination(ReferencePosition)
    return nil
 end
 
-function UtilityAI_Reset(I)
+function UtilityAI_Reset(_)
    CollectorDestinations = {}
 end
 
@@ -169,7 +169,7 @@ function UtilityAI_Main(I)
       local Gathering = false
       if IsGatherer and not Collecting and HasRoom then
          local ResourceZones = GetResourceZones(I, FlagshipPosition)
-         for _,RZInfo in spairs(ResourceZones, function(t,a,b) return t[a].Distance < t[b].Distance end) do
+         for _,RZInfo in spairs(ResourceZones, function(t,a,b) return t[a].Distance < t[b].Distance end) do -- luacheck: ignore 512
             local Target,_ = PlanarVector(CoM, RZInfo.Position)
             local Distance = Target.magnitude - GatherZoneEdge * RZInfo.Radius
             local Drive = 0

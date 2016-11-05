@@ -25,7 +25,7 @@ function IsVertical(Info)
 end
 
 -- Returns index into GuidanceInfos
-function SelectGuidance(I, BlockInfo)
+function SelectGuidance(_, BlockInfo)
    -- Really simple. Vertical launcher = vertical profile,
    -- horizontal launcher = horizontal profile
    return IsVertical(BlockInfo) and 1 or 2

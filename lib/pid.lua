@@ -45,7 +45,7 @@ function PID:Control(Error)
    return CV
 end
 
-function PID:FirstControl(Error)
+function PID:FirstControl(_)
    -- Call the real one next time
    self.Control = PID.Control
    -- Just set LastTime and return 0 for now

@@ -10,7 +10,7 @@ function Evade(Evasion, Perp)
    end
 end
 
-function AdjustPositionToTarget(I)
+function AdjustPositionToTarget()
    local Distance = TargetPositionInfo.GroundDistance
 
    local ToTarget = PlanarVector(CoM, TargetPositionInfo.Position).normalized
@@ -73,7 +73,7 @@ function GunshipAI_Update(I)
    local AIMode = I.AIMode
    if AIMode ~= "fleetmove" then
       if GetTargetPositionInfo(I) then
-         AdjustPositionToTarget(I)
+         AdjustPositionToTarget()
       else
          if ReturnToOrigin then
             FormationMove(I)

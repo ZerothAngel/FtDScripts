@@ -92,7 +92,7 @@ function Avoidance(I, Bearing)
    -- Look for nearby friendlies
    local FCount,FAvoid = 0,Vector3.zero
    if FriendlyAvoidanceWeight > 0 then
-      local AvoidanceTime,MinDistance = 0,0
+      local AvoidanceTime,MinDistance
       if TargetPositionInfo then
          AvoidanceTime = FriendlyAvoidanceCombat[1]
          MinDistance = FriendlyAvoidanceCombat[2]

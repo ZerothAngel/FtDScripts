@@ -23,7 +23,7 @@ function ClassifyPropulsion(I)
    if PropulsionCount ~= LastPropulsionCount then
       -- Something got damaged or repaired, clear the cache
       PropulsionInfos = {}
-      LastPropuslionCount = PropulsionCount
+      LastPropulsionCount = PropulsionCount
 
       for i = 0,PropulsionCount-1 do
          local BlockInfo = I:Component_GetBlockInfo(PROPULSION, i)

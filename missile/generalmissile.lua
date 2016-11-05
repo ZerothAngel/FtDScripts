@@ -282,7 +282,7 @@ function GeneralMissile:ExecuteProfile(I, TransceiverIndex, MissileIndex, Positi
    return NewAimPoint
 end
 
-function GeneralMissile:SetTarget(I, TargetPosition, TargetAimPoint, TargetVelocity, TargetInfo)
+function GeneralMissile:SetTarget(I, TargetPosition, _, _)
    local TargetAltitude = TargetPosition.y
 
    self.TargetAltitude = TargetAltitude -- Raw altitude
@@ -294,7 +294,7 @@ function GeneralMissile:SetTarget(I, TargetPosition, TargetAimPoint, TargetVeloc
    self.DoExecuteProfile = (TargetAltitude - self.TargetGround) <= self.ProfileActivationElevation
 end
 
-function GeneralMissile:Guide(I, TransceiverIndex, MissileIndex, TargetPosition, TargetAimPoint, TargetVelocity, Missile, MissileState)
+function GeneralMissile:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, TargetVelocity, Missile, MissileState)
    local MissilePosition = Missile.Position
    local MissileVelocity = Missile.Velocity
    local MissileSpeed = MissileVelocity.magnitude

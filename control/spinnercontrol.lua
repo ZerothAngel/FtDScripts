@@ -17,7 +17,7 @@ function SpinnerControl.create(Axis, UseSpinners, UseDediBlades, AlwaysUp)
       self.Classify = SpinnerControl.Classify
    else
       -- Not using spinners at all, so just make Classify do nothing
-      self.Classify = function (self, I) end
+      self.Classify = function (_, _) end
    end
    self.SetSpeed = SpinnerControl.SetSpeed
 
@@ -56,7 +56,7 @@ end
 
 -- Sets spinner speed, Speed can be -30 to 30 (radians/second)
 function SpinnerControl:SetSpeed(I, Speed)
-   for i,Spinner in pairs(self.Spinners) do
+   for _,Spinner in pairs(self.Spinners) do
       I:SetSpinnerContinuousSpeed(Spinner.Index, Speed * Spinner.Sign)
    end
 end

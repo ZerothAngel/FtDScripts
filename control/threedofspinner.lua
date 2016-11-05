@@ -61,7 +61,7 @@ function ThreeDoFSpinner_Update(I)
 
    ThreeDoFSpinner_ClassifySpinners(I)
 
-   for index,Info in pairs(Spinners) do
+   for _,Info in pairs(Spinners) do
       local Output = AltitudeCV * Info.AltitudeSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign
       Output = math.max(-30, math.min(30, Output))
       I:SetSpinnerContinuousSpeed(Info.Index, Output)
@@ -70,7 +70,7 @@ end
 
 function ThreeDoFSpinner_Disable(I)
    ThreeDoFSpinner_ClassifySpinners(I)
-   for index,Info in pairs(Spinners) do
+   for _,Info in pairs(Spinners) do
       I:SetSpinnerContinuousSpeed(Info.Index, 0)
    end
 end

@@ -31,7 +31,7 @@ function ThreeDoFJet_Classify(I)
    local PropulsionCount = I:Component_GetCount(PROPULSION)
    if PropulsionCount ~= ThreeDoFJet_LastPropulsionCount then
       ThreeDoFJet_PropulsionInfos = {}
-      ThreeDoFJet_LastPropuslionCount = PropulsionCount
+      ThreeDoFJet_LastPropulsionCount = PropulsionCount
 
       for i = 0,PropulsionCount-1 do
          local BlockInfo = I:Component_GetBlockInfo(PROPULSION, i)

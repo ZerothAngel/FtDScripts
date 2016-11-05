@@ -1,7 +1,7 @@
 --@ firstrun
 PerlinOffset = 0
 
-function Evasion_FirstRun(I)
+function Evasion_FirstRun(_)
    PerlinOffset = 1000.0 * math.random()
 end
 AddFirstRun(Evasion_FirstRun)

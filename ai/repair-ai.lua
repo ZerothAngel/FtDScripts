@@ -22,7 +22,7 @@ function AdjustHeadingToRepairTarget(I)
    end
 end
 
-function CalculateRepairTargetWeight(I, Distance, ParentDistance, Friend)
+function CalculateRepairTargetWeight(Distance, ParentDistance, Friend)
    return Distance * DistanceWeight +
       ParentDistance * ParentDistanceWeight +
       (1.0 - Friend.HealthFraction) * DamageWeight
@@ -46,7 +46,7 @@ function SelectRepairTarget(I)
    -- Parent first, adjust weight accordingly
    local ParentCoM = Parent.CenterOfMass
    local Offset,_ = PlanarVector(CoM, ParentCoM)
-   Targets[Parent.Id] = CalculateRepairTargetWeight(I, Offset.magnitude, 0, Parent) * ParentBonus
+   Targets[Parent.Id] = CalculateRepairTargetWeight(Offset.magnitude, 0, Parent) * ParentBonus
 
    local RepairTargetMinAltitude = Altitude - RepairTargetMaxAltitudeDelta
    local RepairTargetMaxAltitude = Altitude + RepairTargetMaxAltitudeDelta
@@ -69,7 +69,7 @@ function SelectRepairTarget(I)
             FriendAlt <= RepairTargetMaxAltitude and
             FriendHealth <= RepairTargetMaxHealthFraction and
             FriendHealth >= RepairTargetMinHealthFraction then
-            Targets[Friend.Id] = CalculateRepairTargetWeight(I, Distance, ParentDistance, Friend)
+            Targets[Friend.Id] = CalculateRepairTargetWeight(Distance, ParentDistance, Friend)
          end
       end
    end
@@ -77,12 +77,12 @@ function SelectRepairTarget(I)
    if Debugging then
       local NumTargets = 0
       -- Huh. # operator only works on sequences
-      for k in pairs(Targets) do NumTargets = NumTargets+1 end
+      for _ in pairs(Targets) do NumTargets = NumTargets+1 end
       Debug(I, __func__, "#Targets %d", NumTargets)
    end
 
    -- Sort
-   for k,v in spairs(Targets, function(t,a,b) return t[b] < t[a] end) do
+   for k,_ in spairs(Targets, function(t,a,b) return t[b] < t[a] end) do -- luacheck: ignore 512
       RepairTargetID = k
       -- Only care about the first one
       break

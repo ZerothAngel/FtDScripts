@@ -16,7 +16,7 @@ function ManualController.create(Direction)
       -- No Direction, no manual control
       -- Set GetReading to dummy function
       -- (it's best if it isn't called at all...)
-      self.GetReading = function (self, I) return 0 end
+      self.GetReading = function (_, _) return 0 end
    end
 
    return self

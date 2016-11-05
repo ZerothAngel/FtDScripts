@@ -12,7 +12,7 @@ function Periodic.create(Period, Function, Start)
       self.Tick = Periodic.Tick
    else
       -- If Period is nil, Tick does nothing
-      self.Tick = function (self, I) end
+      self.Tick = function (_, _) end
    end
 
    return self

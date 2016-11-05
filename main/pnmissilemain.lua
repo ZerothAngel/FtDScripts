@@ -13,7 +13,7 @@ GuidanceInfos = {
    }
 }
 
-function SelectGuidance(I, BlockInfo)
+function SelectGuidance(_, _)
    return 1
 end
 

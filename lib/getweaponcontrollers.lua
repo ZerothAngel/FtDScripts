@@ -12,7 +12,6 @@ function AddWeaponInfo(Weapons, WeaponInfo, WeaponType, TurretIndex, WeaponIndex
       return
    else
       local WeaponSlot = WeaponInfo.WeaponSlot
-      local OnTurret = TurretIndex ~= nil
       local Weapon = {
          Position = WeaponInfo.GlobalPosition,
          Slot = WeaponSlot,

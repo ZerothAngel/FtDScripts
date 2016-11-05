@@ -53,7 +53,7 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
       LastTimeTargetSeen = Now
 
       local TransceiverCount = I:GetLuaTransceiverCount()
-      if TransceiverCount ~= LastTranceiverCount then
+      if TransceiverCount ~= LastTransceiverCount then
          -- Reset cached guidances if transceiver count changed
          -- (most likely due to damage or repair)
          TransceiverGuidances = {}
@@ -76,8 +76,6 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
             GuidanceIndex = SelectGuidance(I, BlockInfo)
             TransceiverGuidances[tindex] = GuidanceIndex
          end
-
-         local Guidance = GuidanceInfos[GuidanceIndex]
 
          for mindex = 0,I:GetLuaControlledMissileCount(tindex)-1 do
             local Missile = I:GetLuaControlledMissileInfo(tindex, mindex)
@@ -133,13 +131,13 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
                if Target then
                   -- Add queue entry to guide this missile to its target (once all
                   -- missiles have been checked)
-                  QueueMissiles = GuidanceQueue[Target.Id]
+                  local QueueMissiles = GuidanceQueue[Target.Id]
                   if not QueueMissiles then
                      -- First time we've queued up for this target this update
                      QueueMissiles = {}
                      GuidanceQueue[Target.Id] = QueueMissiles
                   end
-                  QueueMissile = {
+                  local QueueMissile = {
                      TransceiverIndex = tindex,
                      MissileIndex = mindex,
                      GuidanceIndex = GuidanceIndex,

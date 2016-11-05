@@ -66,7 +66,7 @@ function Dodge(I, Bearing)
    end
 
    local DodgeAngle = 0
-   for t,Quadrant in spairs(Dodges) do
+   for t,Quadrant in spairs(Dodges) do -- luacheck: ignore 512
       if Debugging then Debug(I, __func__, "Quadrant = %d, ImpactTime = %f", Quadrant, t) end
       DodgeAngle = DodgeDirections[Quadrant]
       break
