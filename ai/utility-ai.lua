@@ -1,9 +1,9 @@
 --@ planarvector getbearingtopoint evasion
---@ spairs avoidance waypointmove
+--@ spairs avoidance waypointmove maxenemyrange
 -- Utility AI module
 
 -- Square ahead of time
-MaxEnemyRange = MaxEnemyRange * MaxEnemyRange
+MaxEnemyRangeSqr = MaxEnemyRange * MaxEnemyRange
 
 function GetTargets(I)
    local Targets = {}
@@ -105,7 +105,7 @@ function UtilityAI_Main(I)
    local EnemiesInRange = false
    for _,Target in pairs(Targets) do
       local RangeSquared = (Target.Position - CoM).sqrMagnitude
-      if RangeSquared <= MaxEnemyRange then
+      if RangeSquared <= MaxEnemyRangeSqr then
          EnemiesInRange = true
          break
       end

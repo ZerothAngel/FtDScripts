@@ -1,3 +1,4 @@
+--@ maxenemyrange
 -- GetTargetPositionInfo module
 TargetPositionInfo = nil
 
