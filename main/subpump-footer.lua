@@ -1,0 +1,1 @@
+PumpType = AIRPUMP
