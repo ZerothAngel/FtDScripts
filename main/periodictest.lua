@@ -9,7 +9,7 @@ end
 
 PeriodicTest = Periodic.create(UpdateRate, PeriodicTest_Update)
 
-function Update(I)
+function Update(I) -- luacheck: ignore 131
    if ActivateWhen[I.AIMode] then
       GetSelfInfo(I)
 

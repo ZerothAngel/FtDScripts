@@ -15,7 +15,7 @@ end
 
 CameraTrack = Periodic.create(UpdateRate, CameraTrack_Update)
 
-function Update(I)
+function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
       CameraTrack:Tick(I)
    end

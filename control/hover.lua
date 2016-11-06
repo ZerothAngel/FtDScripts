@@ -10,7 +10,7 @@ function SetAltitude(Alt)
    DesiredAltitude = Alt
 end
 
-function AdjustAltitude(Delta)
+function AdjustAltitude(Delta) -- luacheck: ignore 131
    DesiredAltitude = Altitude + Delta
 end
 

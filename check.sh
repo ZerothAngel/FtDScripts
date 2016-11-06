@@ -1,5 +1,5 @@
 #!/bin/sh
-PATH=/bin:/usr/bin:/usr/local/bin; export PATH
+PATH=/bin:/usr/bin:/usr/local/bin:$HOME/.luacheck/bin; export PATH
 
 if ! test -d out; then
   exit 0
@@ -41,4 +41,9 @@ for f in out/*.lua; do
       echo "ok"
     fi
   fi
+done
+
+# Run the scripts I most oftenly use through luacheck
+for f in airship cameratrack dediblademaintainer gunshipquad interceptmanager repairquad repairsub shieldmanager submarine utility utilitysub warship; do
+  luacheck out/$f.lua
 done

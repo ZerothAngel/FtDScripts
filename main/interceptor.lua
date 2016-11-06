@@ -104,7 +104,7 @@ Interceptor = Periodic.create(UpdateRate, Interceptor_Update)
 
 Now = 0
 
-function Update(I)
+function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
       Now = I:GetTimeSinceSpawn()
       Interceptor:Tick(I)

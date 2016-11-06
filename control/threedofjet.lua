@@ -15,15 +15,15 @@ function SetAltitude(Alt)
    DesiredAltitude = Alt
 end
 
-function AdjustAltitude(Delta)
+function AdjustAltitude(Delta) -- luacheck: ignore 131
    DesiredAltitude = Altitude + Delta
 end
 
-function SetPitch(Angle)
+function SetPitch(Angle) -- luacheck: ignore 131
    DesiredPitch = Angle
 end
 
-function SetRoll(Angle)
+function SetRoll(Angle) -- luacheck: ignore 131
    DesiredRoll = Angle
 end
 

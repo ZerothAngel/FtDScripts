@@ -21,7 +21,7 @@ function FiveDoFTest_Update(I)
    FiveDoFTest:Schedule(StepDelay, FiveDoFTest_Update)
 end
 
-function Update(I)
+function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
       GetSelfInfo(I)
 

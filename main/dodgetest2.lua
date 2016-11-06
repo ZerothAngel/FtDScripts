@@ -88,7 +88,7 @@ end
 
 DodgeTest = Periodic.create(UpdateRate, DodgeTest_Update)
 
-function Update(I)
+function Update(I) -- luacheck: ignore 131
    if I.AIMode == "off" then
       GetSelfInfo(I)
 

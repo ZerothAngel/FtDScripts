@@ -1,5 +1,6 @@
 -- API CONSTANTS (don't change)
 
+-- luacheck: push ignore 131
 WATER = 0
 LAND = 1
 AIR = 2
@@ -26,3 +27,4 @@ HYDROFOIL = 8 -- float
 PROPULSION = 9 -- float
 SHIELDPROJECTOR = 10 -- float/int
 HELIUMPUMP = 11 -- float/bool
+-- luacheck: pop

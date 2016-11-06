@@ -9,11 +9,11 @@ PropulsionInfos = {}
 DesiredPitch = 0
 DesiredRoll = 0
 
-function SetPitch(Angle)
+function SetPitch(Angle) -- luacheck: ignore 131
    DesiredPitch = Angle
 end
 
-function SetRoll(Angle)
+function SetRoll(Angle) -- luacheck: ignore 131
    DesiredRoll = Angle
 end
 

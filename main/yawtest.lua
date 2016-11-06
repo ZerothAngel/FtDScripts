@@ -39,7 +39,7 @@ function YawTest_Heading(I)
    YawTest:Schedule(HeadingDelay, YawTest_Throttle)
 end
 
-function Update(I)
+function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() and ActivateWhen[I.AIMode] then
       GetSelfInfo(I)
 

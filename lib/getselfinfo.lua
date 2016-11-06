@@ -1,7 +1,7 @@
 --@ debug
 -- GetSelfInfo module
 Now = 0
-Position = nil
+Position = nil -- luacheck: ignore 131
 CoM = nil
 Altitude = 0
 Yaw = 0

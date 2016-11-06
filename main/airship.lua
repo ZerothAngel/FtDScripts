@@ -8,7 +8,7 @@ NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
 
 Control_Reset = YawThrottle_Reset
 
-function Update(I)
+function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
       GetSelfInfo(I)
 

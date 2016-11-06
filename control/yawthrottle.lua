@@ -30,7 +30,7 @@ end
 
 -- Adjusts throttle by some delta
 -- NB CurrentThrottle does not change until YawThrottle_Update is called.
-function AdjustThrottle(Delta)
+function AdjustThrottle(Delta) -- luacheck: ignore 131
    SetThrottle(CurrentThrottle + Delta)
 end
 

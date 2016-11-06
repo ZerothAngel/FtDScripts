@@ -1,6 +1,6 @@
 --! stabilizer
 --@ stabilizer getselfinfo
-function Update(I)
+function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
       GetSelfInfo(I)
 
