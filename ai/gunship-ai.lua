@@ -70,11 +70,12 @@ end
 function GunshipAI_Update(I)
    Control_Reset()
 
-   local AIMode = I.AIMode
-   if AIMode ~= "fleetmove" then
-      if GetTargetPositionInfo(I) then
-         AdjustPositionToTarget()
-      else
+   if GetTargetPositionInfo(I) then
+      AdjustPositionToTarget()
+   end
+
+   if I.AIMode ~= "fleetmove" then
+      if not TargetPositionInfo then
          if ReturnToOrigin then
             FormationMove(I)
          end
