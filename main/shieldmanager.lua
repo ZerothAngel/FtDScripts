@@ -51,7 +51,21 @@ function ShieldManager_Update(I)
       end
 
       -- Set shield mode accordingly
-      I:Component_SetIntLogic(SHIELDPROJECTOR, i, ((LastActivationTime + ShieldOffDelay) < Now) and 0 or ShieldActivationMode)
+      local ShieldOn = (LastActivationTime + ShieldOffDelay) >= Now
+      if ShieldActivationMode then
+         -- Set to configured mode or turn off
+         I:Component_SetIntLogic(SHIELDPROJECTOR, i, ShieldOn and ShieldActivationMode or 0)
+      else
+         -- Scale strength up or down
+         local Current = I:Component_GetFloatLogic(SHIELDPROJECTOR, i)
+         -- Only change if different
+         local Scale = 16 -- Power of 2 that's >10
+         if Current < 1 and ShieldOn then
+            I:Component_SetFloatLogic(SHIELDPROJECTOR, i, Current * Scale)
+         elseif Current >= 1 and not ShieldOn then
+            I:Component_SetFloatLogic(SHIELDPROJECTOR, i, Current / Scale)
+         end
+      end
    end
 end
 
