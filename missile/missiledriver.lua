@@ -1,6 +1,7 @@
 -- MissileDriver module
 LastTransceiverCount = 0
 TransceiverGuidances = {}
+LastTransceiverResetTime = 0
 MissileStates = {}
 LastTimeTargetSeen = nil
 
@@ -53,11 +54,12 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
       LastTimeTargetSeen = Now
 
       local TransceiverCount = I:GetLuaTransceiverCount()
-      if TransceiverCount ~= LastTransceiverCount then
+      if TransceiverCount ~= LastTransceiverCount or (LastTransceiverResetTime+TransceiverResetInterval) < Now then
          -- Reset cached guidances if transceiver count changed
-         -- (most likely due to damage or repair)
+         -- (most likely due to damage or repair or timer timed out)
          TransceiverGuidances = {}
          LastTransceiverCount = TransceiverCount
+         LastTransceiverResetTime = Now
       end
 
       -- Missiles that are currently active are saved here. Then the old
