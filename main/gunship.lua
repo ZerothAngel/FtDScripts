@@ -1,6 +1,7 @@
 --! gunship
 --@ getselfinfo firstrun periodic
---@ dualprofile hover altitudecontrol fivedof gunship-ai
+--@ shieldmanager dualprofile hover altitudecontrol fivedof gunship-ai
+ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
 Hover = Periodic.create(Hover_UpdateRate, Altitude_Control, 1)
 GunshipAI = Periodic.create(AI_UpdateRate, GunshipAI_Update)
@@ -31,4 +32,6 @@ function Update(I) -- luacheck: ignore 131
    else
       Hover_Disable(I)
    end
+
+   ShieldManager:Tick(I)
 end

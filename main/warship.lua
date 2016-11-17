@@ -1,7 +1,8 @@
 --! warship
 --@ getselfinfo firstrun periodic
---@ dualprofile yawthrottle naval-ai
+--@ shieldmanager dualprofile yawthrottle naval-ai
 -- Warship main
+ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 1)
 NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
 
@@ -26,4 +27,6 @@ function Update(I) -- luacheck: ignore 131
    else
       YawThrottle_Disable(I)
    end
+
+   ShieldManager:Tick(I)
 end

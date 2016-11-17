@@ -1,6 +1,7 @@
 --! gunshipquad
 --@ getselfinfo firstrun periodic
---@ dualprofile threedofspinner altitudecontrol threedof gunship-ai
+--@ shieldmanager dualprofile threedofspinner altitudecontrol threedof gunship-ai
+ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
 Quadcopter = Periodic.create(Quadcopter_UpdateRate, Altitude_Control, 1)
 GunshipAI = Periodic.create(AI_UpdateRate, GunshipAI_Update)
@@ -31,4 +32,6 @@ function Update(I) -- luacheck: ignore 131
    else
       ThreeDoFSpinner_Disable(I)
    end
+
+   ShieldManager:Tick(I)
 end

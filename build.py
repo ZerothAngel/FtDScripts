@@ -13,6 +13,7 @@ SCRIPT_DIRECTORIES = [
     'lib',
     'main',
     'missile',
+    'utility',
 ]
 
 OUTPUT_PATTERN = os.path.join('out', '{}.lua')

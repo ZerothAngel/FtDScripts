@@ -1,7 +1,8 @@
 --! airship
 --@ getselfinfo firstrun periodic
---@ dualprofile threedofspinner altitudecontrol yawthrottle naval-ai
+--@ shieldmanager dualprofile threedofspinner altitudecontrol yawthrottle naval-ai
 -- Airship main
+ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
 Quadcopter = Periodic.create(Quadcopter_UpdateRate, Altitude_Control, 1)
 NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
@@ -32,4 +33,6 @@ function Update(I) -- luacheck: ignore 131
       YawThrottle_Disable(I)
       ThreeDoFSpinner_Disable(I)
    end
+
+   ShieldManager:Tick(I)
 end
