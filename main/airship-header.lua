@@ -15,4 +15,4 @@ ActivateWhen = {
 AI_UpdateRate = 4
 Quadcopter_UpdateRate = 4
 Missile_UpdateRate = 4
-ShieldManager_UpdateRate = 4
+ShieldManager_UpdateRate = nil
