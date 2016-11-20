@@ -1,14 +1,28 @@
---@ api getselfinfo normalizebearing sign pid
--- 3DoF module (Yaw, Forward/Reverse, Right/Left)
+--@ getselfinfo normalizebearing sign pid
+-- 6DoF module (Altitude, Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
+AltitudePID = PID.create(AltitudePIDConfig, -10, 10)
 YawPID = PID.create(YawPIDConfig, -10, 10)
+PitchPID = PID.create(PitchPIDConfig, -10, 10)
+RollPID = PID.create(RollPIDConfig, -10, 10)
 ForwardPID = PID.create(ForwardPIDConfig, -10, 10)
 RightPID = PID.create(RightPIDConfig, -10, 10)
 
 LastPropulsionCount = 0
 PropulsionInfos = {}
 
+DesiredAltitude = 0
 DesiredHeading = nil
 DesiredPosition = nil
+DesiredPitch = 0
+DesiredRoll = 0
+
+function SetAltitude(Alt)
+   DesiredAltitude = Alt
+end
+
+function AdjustAltitude(Delta) -- luacheck: ignore 131
+   DesiredAltitude = Altitude + Delta
+end
 
 -- Sets heading to an absolute value, 0 is north, 90 is east
 function SetHeading(Heading)
@@ -38,7 +52,15 @@ function ResetPosition()
    DesiredPosition = nil
 end
 
-function ThreeDoF_Reset()
+function SetPitch(Angle) -- luacheck: ignore 131
+   DesiredPitch = Angle
+end
+
+function SetRoll(Angle) -- luacheck: ignore 131
+   DesiredRoll = Angle
+end
+
+function SixDoF_Reset()
    ResetHeading()
    ResetPosition()
 end
@@ -52,26 +74,41 @@ function ClassifyPropulsion(I)
 
       for i = 0,PropulsionCount-1 do
          local BlockInfo = I:Component_GetBlockInfo(PROPULSION, i)
+         local CoMOffset = BlockInfo.LocalPositionRelativeToCom
          local LocalForwards = BlockInfo.LocalForwards
-         if math.abs(LocalForwards.y) <= 0.001 then
+         local Info = {
+            Index = i,
+            UpSign = 0,
+            YawSign = 0,
+            PitchSign = 0,
+            RollSign = 0,
+            ForwardSign = 0,
+            RightSign = 0,
+         }
+         if math.abs(LocalForwards.y) > 0.001 then
+            -- Vertical
+            local UpSign = Sign(LocalForwards.y)
+            Info.UpSign = UpSign
+            Info.PitchSign = Sign(CoMOffset.z) * UpSign
+            Info.RollSign = Sign(CoMOffset.x) * UpSign
+         else
             -- Horizontal
-            local CoMOffset = BlockInfo.LocalPositionRelativeToCom
             local RightSign = Sign(LocalForwards.x)
             local ZSign = Sign(CoMOffset.z)
-            local Info = {
-               Index = i,
-               YawSign = RightSign * ZSign,
-               ForwardSign = Sign(LocalForwards.z),
-               RightSign = RightSign,
-            }
-            table.insert(PropulsionInfos, Info)
+            Info.YawSign = RightSign * ZSign
+            Info.ForwardSign = Sign(LocalForwards.z)
+            Info.RightSign = RightSign
          end
+         table.insert(PropulsionInfos, Info)
       end
    end
 end
 
-function ThreeDoF_Update(I)
+function SixDoF_Update(I)
+   local AltitudeCV = AltitudePID:Control(DesiredAltitude - Altitude)
    local YawCV = DesiredHeading and YawPID:Control(NormalizeBearing(DesiredHeading - Yaw)) or 0
+   local PitchCV = PitchPID:Control(DesiredPitch - Pitch)
+   local RollCV = RollPID:Control(DesiredRoll - Roll)
 
    local ForwardCV,RightCV = 0,0
    if DesiredPosition then
@@ -90,19 +127,24 @@ function ThreeDoF_Update(I)
    -- Otherwise no output will be produced on that side.
    if DesiredHeading or DesiredPosition then
       -- Blip all thrusters
-      for i = 0,3 do
+      for i = 0,5 do
          I:RequestThrustControl(i)
       end
+   else
+      -- Just blip top & bottom thrusters
+      I:RequestThrustControl(4)
+      I:RequestThrustControl(5)
+   end
 
-      -- And set drive fraction accordingly
-      for _,Info in pairs(PropulsionInfos) do
+   -- And set drive fraction accordingly
+   for _,Info in pairs(PropulsionInfos) do
+      local UpSign,PitchSign,RollSign = Info.UpSign,Info.PitchSign,Info.RollSign
+      if UpSign ~= 0 or RollSign ~= 0 or PitchSign ~= 0 or DesiredHeading or DesiredPosition then
          -- Sum up inputs and constrain
-         local Output = YawCV * Info.YawSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign
+         local Output = AltitudeCV * UpSign + YawCV * Info.YawSign + PitchCV * PitchSign + RollCV * RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign
          Output = math.max(0, math.min(10, Output))
          I:Component_SetFloatLogic(PROPULSION, Info.Index, Output / 10)
-      end
-   else
-      for _,Info in pairs(PropulsionInfos) do
+      else
          I:Component_SetFloatLogic(PROPULSION, Info.Index, 1)
       end
    end
