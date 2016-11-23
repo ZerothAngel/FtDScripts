@@ -3,6 +3,8 @@
 -- Depth Control module
 ManualDepthController = ManualController.create(ManualDepthDriveMaintainerFacing)
 
+DesiredControlAltitude = 0
+
 function Depth_Control(I)
    if ControlDepth then
       local DesiredDepth,Absolute
@@ -36,6 +38,6 @@ function Depth_Control(I)
          DesiredDepth = math.min(DesiredDepth, -MinDepth)
       end
 
-      SetAltitude(DesiredDepth)
+      DesiredControlAltitude = DesiredDepth
    end
 end

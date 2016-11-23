@@ -4,6 +4,8 @@
 ManualAltitudeController = ManualController.create(ManualAltitudeDriveMaintainerFacing)
 HalfMaxManualAltitude = MaxManualAltitude / 2
 
+DesiredControlAltitude = 0
+
 function Altitude_Control(I)
    local NewAltitude
    if ManualAltitudeDriveMaintainerFacing and ManualAltitudeWhen[I.AIMode] then
@@ -23,5 +25,5 @@ function Altitude_Control(I)
       NewAltitude = NewAltitude + Height
    end
 
-   SetAltitude(NewAltitude)
+   DesiredControlAltitude = NewAltitude
 end

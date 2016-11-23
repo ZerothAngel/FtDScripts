@@ -24,6 +24,7 @@ function Update(I) -- luacheck: ignore 131
          SixDoF_Reset()
       end
 
+      SetAltitude(DesiredControlAltitude)
       SixDoF_Update(I)
    end
 

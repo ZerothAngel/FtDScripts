@@ -11,6 +11,7 @@ function Update(I) -- luacheck: ignore 131
 
       Hover:Tick(I)
 
+      SetAltitude(DesiredControlAltitude)
       Hover_Update(I)
       Stabilizer_Update(I)
    else

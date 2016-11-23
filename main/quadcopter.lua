@@ -11,6 +11,7 @@ function Update(I) -- luacheck: ignore 131
 
       ThreeDoFSpinner:Tick(I)
 
+      SetAltitude(DesiredControlAltitude)
       ThreeDoFSpinner_Update(I)
    else
       ThreeDoFSpinner_Disable(I)

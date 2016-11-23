@@ -11,6 +11,7 @@ function Update(I) -- luacheck: ignore 131
 
       SubControl:Tick(I)
 
+      SetAltitude(DesiredControlAltitude)
       SubControl_Update(I)
    end
 end

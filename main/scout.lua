@@ -26,6 +26,7 @@ function Update(I) -- luacheck: ignore 131
          YawThrottle_Update(I)
       end
 
+      SetAltitude(DesiredControlAltitude)
       ThreeDoFSpinner_Update(I)
 
       CameraTrack:Tick(I)

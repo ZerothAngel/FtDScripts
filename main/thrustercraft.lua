@@ -11,6 +11,7 @@ function Update(I) -- luacheck: ignore 131
 
       ThreeDoFJet:Tick(I)
 
+      SetAltitude(DesiredControlAltitude)
       ThreeDoFJet_Update(I)
    end
 end

@@ -11,6 +11,7 @@ function Update(I) -- luacheck: ignore 131
 
       ThreeDoFPump:Tick(I)
 
+      SetAltitude(DesiredControlAltitude)
       ThreeDoFPump_Update(I)
    end
 end
