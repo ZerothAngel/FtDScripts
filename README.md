@@ -10,15 +10,17 @@ I'll only list the interesting scripts (the ones not used for research or testin
 
 These scripts wholly replace the "combat" and "fleetmove" behavior of the stock AI.
 
-  * [utility-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility-ai.lua) &mdash; Utility AI (2D only) with terrain/friendly avoidance. Meant for non-combatant ships in adventure mode. Has automatic wreck-collecting & resource gathering functions.
+  * [drop](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/drop.lua) &mdash; Experimental dropship/boarding AI which follows the closest enemy and keeps the ship directly above (or below) it. This is the full 6DoF thruster version that requires thrusters on all 6 sides. Note that I don't actually use this version since Lua control of thrusters is so tempermental. So it may go away.
+  * [dropquad](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/dropquad.lua) &mdash; Experimental dropship/boarding AI which follows the closest enemy and keeps the ship directly above (or below) it. This is the quadcopter version that uses dediblades for altitude/pitch/roll control and jets for yaw/longitudinal/lateral movement.
   * [gunship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunship.lua) &mdash; Gunship AI (standoff with pseudo-random dodging), dedicated heliblade spinner for lift, jets for 5-axis control (yaw, pitch, roll, longitudinal, lateral).
   * [gunshipquad](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunshipquad.lua) &mdash; Gunship AI (standoff with pseudo-random dodging), dedicated heliblade spinners for lift and pitch/roll control, jets for 3-axis control (yaw, longitudinal, lateral).
   * [naval-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/naval-ai.lua) &mdash; Naval AI with terrain/friendly avoidance and pseudo-random evasive maneuvers. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=20953))
   * [repair-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repair-ai.lua) &mdash; Advanced repair AI (2D only) with terrain/friendly avoidance. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=20998))
+  * [utility-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility-ai.lua) &mdash; Utility AI (2D only) with terrain/friendly avoidance. Meant for non-combatant ships in adventure mode. Has automatic wreck-collecting & resource gathering functions.
 
 ### Altitude/Depth Control (Only) ###
 
-These scripts only provide altitude or depth control. They are meant to be used alongside a 2-dimensional AI, like the Naval AI card (or my non-gunship AI scripts above). They also work fine with manual yaw & propulsion.
+These scripts only provide altitude or depth control. They are meant to be used alongside a 2-dimensional AI, like the Naval AI card (or my non-gunship AI scripts above). They also work fine with manual yaw & propulsion. All scripts will also allow manual (analog) control of the altitude/depth using a drive maintainer.
 
   * [aerostat](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/aerostat.lua) &mdash; Controls helium pumps for lift and pitch/roll stabilization. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
   * [hover](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/hover.lua) &mdash; Dedicated heliblade spinner for lift, jets for 2-axis control (pitch, roll). ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
@@ -70,12 +72,13 @@ scripts.
   * [repairheli](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repairheli.lua) &mdash; Combo script: repair-ai + hover
   * [repairquad](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repairquad.lua) &mdash; Combo script: repair-ai + quadcopter
   * [repairsub](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repairsub.lua) &mdash; Combo script: repair-ai + subcontrol
+  * [scout](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/scout.lua) &mdash; Combo script: naval-ai + quadcopter + shieldmanager + cameratrack
   * [submarine](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/submarine.lua) &mdash; Combo script: naval-ai + subcontrol + dualprofile + shieldmanager
   * [warship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/warship.lua) &mdash; Combo script: naval-ai + dualprofile + shieldmanager
 
 ### Miscellaneous ###
 
-  * [cameratrack](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/cameratrack.lua) &mdash; Controls a single (2-axis) turret and points at the highest-priority enemy. Meant only for cameras (so you can have a non-cheaty pseudo-3rd person view in adventure mode), does not compute firing solutions for weapons.
+  * [cameratrack](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/cameratrack.lua) &mdash; Controls a single (2-axis) turret and points at the highest-priority enemy. Meant only for cameras (so you can have a non-cheaty pseudo-3rd person view in adventure mode), does not compute firing solutions for weapons. Also useful for directing sensor turrets without the need for a missile controller+LWC.
   * [dediblademaintainer](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/dediblademaintainer.lua) &mdash; Allows linking a drive maintainer to forward/reverse-oriented dediblades for propulsion.
   * [interceptmanager](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/interceptmanager.lua) &mdash; Fires a weapon slot (presumably a missile interceptor launcher) associated with one of the 4 directional quadrants whenever hostile missiles are detected. Distinguishes between incoming missiles & torpedoes. Saves ammo.
   * [shieldmanager](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/shieldmanager.lua) &mdash; Only activates shields facing enemies. Saves power.
