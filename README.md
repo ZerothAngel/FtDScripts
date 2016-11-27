@@ -4,6 +4,10 @@ A collection of From the Depths Lua scripts and the libraries/modules used to bu
 
 ## Scripts ##
 
+**If you're just looking for scripts, don't download anything above.** The scripts above are just fragments and need to be properly assembled (see the *Building* section below).
+
+Complete scripts can be downloaded from the links below.
+
 I'll only list the interesting scripts (the ones not used for research or testing).
 
 ### AI Replacements ###
