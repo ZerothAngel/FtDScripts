@@ -77,6 +77,8 @@ When the profile is active, it will pop-up 250 meters from the target (as given 
        Phases = {
           {
              Distance = 100,
+             Altitude = nil,
+             RelativeTo = 1,
              Thrust = nil,
              ThrustAngle = nil,
           },
@@ -157,6 +159,8 @@ in this mode.
  * MinElevation &mdash; Added to terrain height to give the minimum altitude that the missile will go during this phase.
  * ApproachAngle &mdash; If non-nil, the missile will approach at a certain angle. "Forward" is based on the target's velocity. "0" will approach in front of the target, "180" from the rear, and "90" directly from the (closest) side. Because only the target's instantaneous velocity is used, this may yield unstable results.
  * Altitude &mdash; If non-nil, the altitude will be modified by adding this number with another. See *RelativeTo*
+
+   For the terminal phase, this allows modification of the final aim point, e.g. to constrain it above (or below) the water line.
  * RelativeTo &mdash; Determines what *Altitude* is relative to. May be a number from 0 to 4:
    * 0 &mdash; *Altitude* is an absolute altitude
    * 1 &mdash; *Altitude* is added to the target's absolute altitude
@@ -197,6 +201,8 @@ Approaches 150 meters below target.
        Phases = {
           {
              Distance = 150,
+             Altitude = nil,
+             RelativeTo = 1,
              Thrust = nil,
              ThrustAngle = nil,
           },
@@ -243,6 +249,8 @@ to keep the approach altitude consistent.
        Phases = {
           {
              Distance = 150,
+             Altitude = nil,
+             RelativeTo = 1,
              Thrust = nil,
              ThrustAngle = nil,
           },
@@ -287,6 +295,8 @@ If your normal engagement range is closer than 500 meters, change the *Distance*
        Phases = {
           {
              Distance = 150,
+             Altitude = nil,
+             RelativeTo = 1,
              Thrust = nil,
              ThrustAngle = nil,
           },
@@ -344,6 +354,8 @@ Missile should be a full explosive missile with a single torpedo propeller or ba
        Phases = {
           {
              Distance = 50,
+             Altitude = nil,
+             RelativeTo = 1,
              Thrust = nil,
              ThrustAngle = nil,
           },
@@ -401,6 +413,8 @@ phase altitude appropriately (it is meant to approach <50 meters above the sea).
        Phases = {
           {
              Distance = 300,
+             Altitude = nil,
+             RelativeTo = 1,
              Thrust = nil,
              ThrustAngle = nil,
           },
@@ -474,6 +488,8 @@ less extreme closing depth.
        Phases = {
           {
              Distance = 100,
+             Altitude = nil,
+             RelativeTo = 1,
              Thrust = nil,
              ThrustAngle = nil,
           },

@@ -33,6 +33,8 @@ Config = {
    Phases = {
       {
          Distance = 100,
+         Altitude = nil,
+         RelativeTo = 1,
          Thrust = nil,
          ThrustAngle = nil,
       },

@@ -167,22 +167,38 @@ function GeneralMissile:GetTerrainHeight(I, Position, Velocity, MaxDistance)
 end
 
 -- Modify an altitude according to RelativeTo
-function GeneralMissile:ModifyAltitude(Position, Altitude, RelativeTo)
-   if RelativeTo == 1 then
-      -- Relative to target's absolute altitude [-500, whatever)
-      return self.TargetAltitude + Altitude
-   elseif RelativeTo == 2 then
-      -- Relative to target's sea depth [-500, 0]
-      return self.TargetDepth + Altitude
-   elseif RelativeTo == 3 then
-      -- Relative to target's ground [0, whatever)
-      return self.TargetGround + Altitude
-   elseif RelativeTo == 4 then
-      -- Relative to missile's altitude
-      return Position.y + Altitude
+function GeneralMissile:ModifyAltitude(Position, AimPoint, Altitude, RelativeTo)
+   if not AimPoint then
+      -- Relative to (constrained) target altitude
+      if RelativeTo == 1 then
+         -- Relative to target's absolute altitude [-500, whatever)
+         return self.TargetAltitude + Altitude
+      elseif RelativeTo == 2 then
+         -- Relative to target's sea depth [-500, 0]
+         return self.TargetDepth + Altitude
+      elseif RelativeTo == 3 then
+         -- Relative to target's ground [0, whatever)
+         return self.TargetGround + Altitude
+      elseif RelativeTo == 4 then
+         -- Relative to missile's altitude
+         return Position.y + Altitude
+      else
+         -- Absolute (no modification)
+         return Altitude
+      end
    else
-      -- Absolute (no modification)
-      return Altitude
+      -- Relative to (constrained) aim point
+      if RelativeTo == 1 then
+         return AimPoint.y + Altitude
+      elseif RelativeTo == 2 then
+         return math.min(AimPoint.y, 0) + Altitude
+      elseif RelativeTo == 3 then
+         return math.max(AimPoint.y, 0) + Altitude
+      elseif RelativeTo == 4 then
+         return Position.y + Altitude
+      else
+         return Altitude
+      end
    end
 end
 
@@ -201,7 +217,7 @@ function GeneralMissile:GetPhaseAltitude(I, Position, Velocity, Phase, MaxDistan
       return Height
    else
       -- Relative to something, hugging terrain if necessary.
-      return math.max(self:ModifyAltitude(Position, Altitude, Phase.RelativeTo), Height)
+      return math.max(self:ModifyAltitude(Position, nil, Altitude, Phase.RelativeTo), Height)
    end
 end
 
@@ -219,8 +235,14 @@ function GeneralMissile:ExecuteProfile(I, TransceiverIndex, MissileIndex, Positi
    -- First check if within terminal distance
    local TerminalPhase = self.Phases[1]
    if GroundDistance < TerminalPhase.Distance then
+      -- Modify aim point, if configured to do so
+      local Altitude = TerminalPhase.Altitude
+      if Altitude then
+         AimPoint = Vector3(AimPoint.x, self:ModifyAltitude(Position, AimPoint, Altitude, TerminalPhase.RelativeTo), AimPoint.z)
+      end
+
       SetMissileThrust(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, MissileState, TerminalPhase.Thrust, TerminalPhase.ThrustAngle, ImpactTime)
-      -- Always return real (predicted) aim point
+
       return AimPoint
    end
 
