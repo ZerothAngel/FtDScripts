@@ -182,6 +182,12 @@ function GeneralMissile:ModifyAltitude(Position, AimPoint, Altitude, RelativeTo)
       elseif RelativeTo == 4 then
          -- Relative to missile's altitude
          return Position.y + Altitude
+      elseif RelativeTo == 5 then
+         -- "Altitude" is a lower bound
+         return math.max(self.TargetAltitude, Altitude)
+      elseif RelativeTo == 6 then
+         -- "Altitude" is an upper bound
+         return math.min(self.TargetAltitude, Altitude)
       else
          -- Absolute (no modification)
          return Altitude
@@ -196,6 +202,10 @@ function GeneralMissile:ModifyAltitude(Position, AimPoint, Altitude, RelativeTo)
          return math.max(AimPoint.y, 0) + Altitude
       elseif RelativeTo == 4 then
          return Position.y + Altitude
+      elseif RelativeTo == 5 then
+         return math.max(AimPoint.y, Altitude)
+      elseif RelativeTo == 6 then
+         return math.min(AimPoint.y, Altitude)
       else
          return Altitude
       end

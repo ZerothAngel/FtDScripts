@@ -167,6 +167,8 @@ in this mode.
    * 2 &mdash; *Altitude* is added to the target's sea depth, which will be negative and at most 0 (so not really a true depth).
    * 3 &mdash; *Altitude* is added to the target's ground, which will be at the very least 0 and take into account terrain directly underneath the target.
    * 4 &mdash; *Altitude* is added to the missile's current altitude. Using 0 for *Altitude* is probably best.
+   * 5 &mdash; *Altitude* is a lower bound, i.e. max(target altitude, *Altitude*)
+   * 6 &mdash; *Altitude* is an upper bound, i.e. min(target altitude, *Altitude*)
  * Thrust &mdash; Thrust to use when *ThrustAngle* condition met. If negative then thrust is computed dynamically based on estimated remaining fuel and predicted impact time (only makes sense for terminal phase otherwise you'll burn all your fuel early).
  * ThrustAngle &mdash; If non-nil, this is the maximum target vector angle before modifying thrust. If nil, then thrust is unconditionally modified upon switching to this phase. A non-nil value probably only makes sense for the terminal phase.
  * Evasion &mdash; nil or an array of two values. If non-nil, the first value is the maximum horizontal displacement in meters. The second value is the time scale, usually positive values <1 work well.
