@@ -29,7 +29,7 @@ MissileControllers = nil
 -- Returns index into GuidanceInfos
 function SelectGuidance(I, BlockInfo)
    if not MissileControllers then
-      MissileControllers = GetWeaponControllers(I, MISSILECONTROL)
+      MissileControllers = GetWeaponControllers(I, MISSILECONTROL, true)
    end
 
    -- Look for closest missile controller within BlockRange

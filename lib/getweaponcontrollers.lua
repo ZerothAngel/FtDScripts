@@ -24,16 +24,18 @@ function AddWeaponInfo(Weapons, WeaponInfo, WeaponType, TurretIndex, WeaponIndex
    end
 end
 
-function GetWeaponControllers(I, WeaponType)
+function GetWeaponControllers(I, WeaponType, Deep)
    local Weapons = {}
    for i = 0,I:GetWeaponCount()-1 do
       local Info = I:GetWeaponInfo(i)
       AddWeaponInfo(Weapons, Info, WeaponType, nil, i)
    end
-   for i = 0,I:GetTurretSpinnerCount()-1 do
-      for j = 0,I:GetWeaponCountOnTurretOrSpinner(i)-1 do
-         local Info = I:GetWeaponInfoOnTurretOrSpinner(i, j)
-         AddWeaponInfo(Weapons, Info, WeaponType, i, j)
+   if Deep then
+      for i = 0,I:GetTurretSpinnerCount()-1 do
+         for j = 0,I:GetWeaponCountOnTurretOrSpinner(i)-1 do
+            local Info = I:GetWeaponInfoOnTurretOrSpinner(i, j)
+            AddWeaponInfo(Weapons, Info, WeaponType, i, j)
+         end
       end
    end
    return Weapons
