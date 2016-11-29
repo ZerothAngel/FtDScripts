@@ -18,7 +18,7 @@ SCRIPT_DIRECTORIES = [
 
 OUTPUT_PATTERN = os.path.join('out', '{}.lua')
 
-NL = '\r\n' # Because Notepad is dumb
+NL = '\n'
 
 
 def scan_modules():
@@ -166,11 +166,11 @@ if __name__ == '__main__':
                         help='be verbose',
                         dest='verbose')
     parser.add_argument('-a', action='store_true',
-                        help='use lf for eol',
-                        dest='unix_eol')
+                        help='use crlf for eol',
+                        dest='dos_eol')
     args = parser.parse_args();
 
-    if args.unix_eol:
-        NL = '\n'
+    if args.dos_eol:
+        NL = '\r\n'
 
     main(strip=args.strip, verbose=args.verbose)
