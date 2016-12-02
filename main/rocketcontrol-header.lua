@@ -22,4 +22,7 @@ RocketWeaponSlot = 1
 
 -- Average speed of rockets. Note that ejectors and var thrust ramp up will
 -- likely throw things off.
+-- Missiles/torpedoes don't travel at a constant speed anyway, so this
+-- will need some tuning for a given engagement range.
+-- Decrease speed to increase lead, increase speed to decrease lead.
 RocketSpeed = 65
