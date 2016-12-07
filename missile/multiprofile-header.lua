@@ -113,7 +113,7 @@ MissileProfiles = {
 
          Phases = {
             {
-               Distance = 150,
+               Distance = 175,
                Altitude = nil,
                RelativeTo = 1,
                Thrust = nil,
