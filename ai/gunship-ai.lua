@@ -1,4 +1,4 @@
---@ getvectorangle planarvector evasion
+--@ getvectorangle planarvector evasion sign
 --@ gettargetpositioninfo
 -- Gunship AI module
 -- Modifies vector by some amount for evasive maneuvers
@@ -31,7 +31,7 @@ function AdjustPositionToTarget()
    end
 
    local Bearing = -TargetPositionInfo.Azimuth
-   Bearing = Bearing - Mathf.Sign(Bearing) * TargetAngle
+   Bearing = Bearing - Sign(Bearing, 1) * TargetAngle
    local Offset = ToTarget * (Distance - AttackDistance) + Evade(Evasion, Perp)
    AdjustHeading(Bearing)
    AdjustPosition(Offset)

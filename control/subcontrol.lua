@@ -1,4 +1,4 @@
---@ api pid
+--@ api pid sign
 -- Hydrofoil submarine control module
 RollPID = PID.create(RollPIDConfig, -1, 1)
 PitchPID = PID.create(PitchPIDConfig, -1, 1)
@@ -33,7 +33,7 @@ function GetHydrofoilSign(BlockInfo)
    local DotY = (BlockInfo.LocalRotation * Vector3.up).y
    if math.abs(DotZ) > 0.001 and math.abs(DotY) > 0.001 then
       -- Facing forwards or backwards on XZ plane, return appropriate sign
-      return Mathf.Sign(DotZ) * Mathf.Sign(DotY)
+      return Sign(DotZ) * Sign(DotY)
    else
       -- Some other orientation
       return 0
@@ -52,10 +52,12 @@ function ClassifyHydrofoils(I)
       -- Sign of offset is tracked using the table index (-1 or 1)
       local XMax = {}
       XMax[-1] = 0
+      XMax[0] = 0
       XMax[1] = 0
 
       local ZMax = {}
       ZMax[-1] = 0
+      ZMax[0] = 0
       ZMax[1] = 0
 
       -- And repopulate it
@@ -69,15 +71,14 @@ function ClassifyHydrofoils(I)
             local CoMOffset = BlockInfo.LocalPositionRelativeToCom
             local CoMOffsetX = CoMOffset.x
             local CoMOffsetZ = CoMOffset.z
-            local RollScale = Mathf.Sign(CoMOffsetX)
-            local PitchScale = Mathf.Sign(CoMOffsetZ)
+            local RollScale = Sign(CoMOffsetX)
+            local PitchScale = Sign(CoMOffsetZ)
             local Info = {
                Index = i,
                LocalSign = LocalSign,
                -- Default scale is 1, -1, or 0 depending on sign of offset
-               -- NB Mathf.Sign returns 1 for 0...
-               RollScale = CoMOffsetX ~= 0 and RollScale or 0,
-               PitchScale = CoMOffsetZ ~= 0 and PitchScale or 0,
+               RollScale = RollScale,
+               PitchScale = PitchScale,
                CoMOffsetX = CoMOffsetX,
                CoMOffsetZ = CoMOffsetZ,
             }
@@ -113,7 +114,7 @@ function SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
    ClassifyHydrofoils(I)
 
    -- In case vehicle is going in reverse...
-   local VehicleSign = Mathf.Sign(I:GetForwardsVelocityMagnitude())
+   local VehicleSign = Sign(I:GetForwardsVelocityMagnitude(), 1)
 
    for _,Info in pairs(HydrofoilInfos) do
       -- Sum up inputs and constrain

@@ -1,4 +1,4 @@
---@ planarvector getbearingtopoint evasion
+--@ planarvector getbearingtopoint evasion sign
 --@ debug gettargetpositioninfo avoidance waypointmove
 -- Naval AI module
 Attacking = true
@@ -43,7 +43,7 @@ function AdjustHeadingToTarget(I)
       Attacking = false
    end
 
-   Bearing = Bearing - Mathf.Sign(Bearing) * TargetAngle
+   Bearing = Bearing - Sign(Bearing, 1) * TargetAngle
    Bearing = Evade(Evasion, Bearing)
    if Bearing > 180 then Bearing = Bearing - 360 end
 

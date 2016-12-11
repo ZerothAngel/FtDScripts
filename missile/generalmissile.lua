@@ -1,4 +1,4 @@
---@ quadraticintercept pronav getvectorangle round deepcopy
+--@ quadraticintercept pronav getvectorangle round deepcopy sign
 -- GeneralMissile implementation
 GeneralMissile = {}
 
@@ -279,7 +279,7 @@ function GeneralMissile:ExecuteProfile(I, TransceiverIndex, MissileIndex, Positi
       -- Determines missile's relative bearing so we can pick a side if needed
       local MissileBearing = Mathf.DeltaAngle(TargetYaw, GetVectorAngle(Position - AimPoint))
       -- Aim point bearing in world coordinates
-      local AimPointBearing = (TargetYaw + Mathf.Sign(MissileBearing) * ApproachAngle) % 360
+      local AimPointBearing = (TargetYaw + Sign(MissileBearing, 1) * ApproachAngle) % 360
 
       -- Better way to calculate this?
       local ModifiedAimPoint = AimPoint + Quaternion.Euler(0, AimPointBearing, 0) * (Vector3.forward * PreviousPhase.Distance)

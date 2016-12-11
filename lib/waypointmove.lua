@@ -1,4 +1,4 @@
---@ pid planarvector quadraticintercept getbearingtopoint
+--@ pid planarvector quadraticintercept getbearingtopoint sign
 -- Waypoint move module
 MTW_ThrottlePID = PID.create(WaypointMoveConfig.ThrottlePIDConfig, -1, 1)
 
@@ -18,7 +18,7 @@ function MTW_MatchSpeed(Velocity, TargetVelocity, Faster)
       local DesiredSpeed = TargetSpeed
       -- Can take CosAngle into account and scale RelativeApproachSpeed appropriately,
       -- but K.I.S.S. for now.
-      DesiredSpeed = DesiredSpeed + Mathf.Sign(Faster) * WaypointMoveConfig.RelativeApproachSpeed
+      DesiredSpeed = DesiredSpeed + Sign(Faster) * WaypointMoveConfig.RelativeApproachSpeed
       return math.max(MinimumSpeed, DesiredSpeed),Speed
    else
       -- Angle between velocities >= 90 degrees, go minimum speed

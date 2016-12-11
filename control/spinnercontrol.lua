@@ -1,3 +1,4 @@
+--@ sign
 -- SpinnerControl implementation
 SpinnerControl = {}
 
@@ -46,7 +47,7 @@ function SpinnerControl:Classify(I)
          if math.abs(DotZ) > 0.001 then
             local Spinner = {
                Index = i,
-               Sign = AlwaysUp and 1 or Mathf.Sign(DotZ),
+               Sign = AlwaysUp and 1 or Sign(DotZ),
             }
             table.insert(self.Spinners, Spinner)
          end
