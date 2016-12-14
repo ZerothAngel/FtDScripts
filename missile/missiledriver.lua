@@ -50,6 +50,7 @@ end
 
 function MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
    local SlotsToFire = {}
+   local Fire = false
    for i = 1,#GuidanceInfos do
       local Guidance = GuidanceInfos[i]
       local WeaponSlot = Guidance.WeaponSlot
@@ -60,6 +61,7 @@ function MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
                -- Respect priority and don't bother with leading the target
                if not SlotsToFire[WeaponSlot] then
                   SlotsToFire[WeaponSlot] = Target.AimPoint
+                  Fire = true
                end
                break -- No need to check more targets
             end
@@ -68,7 +70,7 @@ function MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
    end
 
    -- Only bother if there are slots to fire
-   if #SlotsToFire > 0 then
+   if Fire then
       for i = 0,I:GetWeaponCount()-1 do
          local Info = I:GetWeaponInfo(i)
          local WeaponSlot = Info.WeaponSlot
