@@ -73,7 +73,7 @@ function MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
          local Info = I:GetWeaponInfo(i)
          local WeaponSlot = Info.WeaponSlot
          local AimPoint = SlotsToFire[WeaponSlot]
-         if AimPoint then
+         if AimPoint and not Info.PlayerCurrentlyControllingIt then
             local WeaponType = Info.WeaponType
             -- Top-level turrets and missile controllers only
             if WeaponType == 4 or WeaponType == 5 then
