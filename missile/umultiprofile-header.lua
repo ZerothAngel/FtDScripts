@@ -23,6 +23,12 @@ MissileProfiles = {
       -- What weapon slot to associate with. Should be 0-5, with 0 meaning
       -- the "all" slot.
       WeaponSlot = 1,
+      -- Set to true to have the script fire this weapon slot itself.
+      -- An LWC is not needed in that case. However, script-fired weapons
+      -- aren't governed by failsafes, so keep that in mind...
+      -- Missile controllers on turrets should be assigned the same weapon
+      -- slot as their turret block.
+      FireControl = false,
       -- Lua transceivers at most this far (in meters) from missile
       -- controllers assigned to the above weapon slot are considered
       -- part of this profile.
@@ -73,6 +79,7 @@ MissileProfiles = {
    -- Second profile
    {
       WeaponSlot = 2,
+      FireControl = false,
       BlockRange = 5,
       Limits = {
          MinRange = 0,

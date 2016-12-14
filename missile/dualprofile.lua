@@ -10,6 +10,7 @@ GuidanceInfos = {
       MaxAltitude = VerticalLimits.MaxAltitude,
       MinRange = VerticalLimits.MinRange * VerticalLimits.MinRange,
       MaxRange = VerticalLimits.MaxRange * VerticalLimits.MaxRange,
+      WeaponSlot = VerticalWeaponSlot,
    },
    {
       Controller = MyHorizontal,
@@ -17,6 +18,7 @@ GuidanceInfos = {
       MaxAltitude = HorizontalLimits.MaxAltitude,
       MinRange = HorizontalLimits.MinRange * HorizontalLimits.MinRange,
       MaxRange = HorizontalLimits.MaxRange * HorizontalLimits.MaxRange,
+      WeaponSlot = HorizontalWeaponSlot,
    }
 }
 

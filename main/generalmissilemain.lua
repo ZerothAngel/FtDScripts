@@ -10,6 +10,7 @@ GuidanceInfos = {
       MaxAltitude = Limits.MaxAltitude,
       MinRange = Limits.MinRange * Limits.MinRange,
       MaxRange = Limits.MaxRange * Limits.MaxRange,
+      WeaponSlot = MissileWeaponSlot,
    }
 }
 

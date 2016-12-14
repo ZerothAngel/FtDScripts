@@ -21,6 +21,14 @@ HorizontalLimits = {
    MaxAltitude = 15,
 }
 
+-- Optional weapon slot to fire. If non-nil then an LWC is not needed.
+-- However, script-fired weapons aren't governed by failsafes, so keep
+-- that in mind...
+-- Missile controllers on turrets should be assigned the same weapon slot
+-- as their turret block.
+VerticalWeaponSlot = nil
+HorizontalWeaponSlot = nil
+
 -- PROFILE CONFIGURATION
 
 -- One profile must be named "VerticalConfig" and another "HorizontalConfig"

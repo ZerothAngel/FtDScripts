@@ -48,10 +48,52 @@ function GatherTargets(I, GuidanceInfos)
    return TargetsByPriority, TargetsById
 end
 
+function MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
+   local SlotsToFire = {}
+   for i = 1,#GuidanceInfos do
+      local Guidance = GuidanceInfos[i]
+      local WeaponSlot = Guidance.WeaponSlot
+      if WeaponSlot then
+         for _,Target in pairs(TargetsByPriority) do
+            -- Range isn't all that accurate since it's range from Position, not turret/controller, but eh...
+            if Target.CanTarget[i] and Target.InRange[i] then
+               -- Respect priority and don't bother with leading the target
+               if not SlotsToFire[WeaponSlot] then
+                  SlotsToFire[WeaponSlot] = Target.AimPoint
+               end
+               break -- No need to check more targets
+            end
+         end
+      end
+   end
+
+   -- Only bother if there are slots to fire
+   if #SlotsToFire > 0 then
+      for i = 0,I:GetWeaponCount()-1 do
+         local Info = I:GetWeaponInfo(i)
+         local WeaponSlot = Info.WeaponSlot
+         local AimPoint = SlotsToFire[WeaponSlot]
+         if AimPoint then
+            local WeaponType = Info.WeaponType
+            -- Top-level turrets and missile controllers only
+            if WeaponType == 4 or WeaponType == 5 then
+               -- Relative to weapon position
+               local Offset = AimPoint - Info.GlobalPosition
+               if I:AimWeaponInDirection(i, Offset.x, Offset.y, Offset.z, WeaponSlot) > 0 then
+                  I:FireWeapon(i, WeaponSlot)
+               end
+            end
+         end
+      end
+   end
+end
+
 function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
    local TargetsByPriority, TargetsById = GatherTargets(I, GuidanceInfos)
    if #TargetsByPriority > 0 then
       LastTimeTargetSeen = Now
+
+      MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
 
       local TransceiverCount = I:GetLuaTransceiverCount()
       if TransceiverCount ~= LastTransceiverCount or (LastTransceiverResetTime+TransceiverResetInterval) < Now then
