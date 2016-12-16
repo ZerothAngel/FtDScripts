@@ -32,5 +32,18 @@ EscapeEvasion = { 20, .25 }
 AirRaidAboveAltitude = 50
 AirRaidEvasion = { 40, .25 }
 
+-- If true, the ship will perform attack runs and bounce between
+-- MinDistance and MaxDistance.
+-- "Closing" settings are used if target range > MaxDistance
+-- "Attack" settings are used until MinDistance is reached
+-- "Escape" settings are then used until MaxDistance is reached,
+-- then the next attack run is started.
+AttackRuns = false
+
+-- Forces an attack run after this many seconds. For times when
+-- the target is faster than your ship, so your ship won't be
+-- stuck constantly trying to escape.
+ForceAttackTime = 30
+
 -- Return-to-origin settings
 ReturnToOrigin = true

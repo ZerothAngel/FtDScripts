@@ -1,4 +1,2 @@
--- Secret configurables to turn it into a cheap 2D-only aviation AI
+-- Control mode. Set to WATER, LAND, or AIR.
 Mode = AIR
-AttackRuns = false
-ForceAttackTime = 15
