@@ -28,12 +28,13 @@ end
 MissileControllers = nil
 
 -- Returns index into GuidanceInfos
-function SelectGuidance(I, BlockInfo)
+function SelectGuidance(I, TransceiverIndex)
    if not MissileControllers then
       MissileControllers = GetWeaponControllers(I, MISSILECONTROL, true)
    end
 
    -- Look for closest missile controller within BlockRange
+   local BlockInfo = I:GetLuaTransceiverInfo(TransceiverIndex)
    local Closest,SelectedIndex = math.huge,1 -- Default to GuidanceInfos[1]
    for i = 1,#MissileControllers do
       local MC = MissileControllers[i]

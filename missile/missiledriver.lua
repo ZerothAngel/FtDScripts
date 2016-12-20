@@ -118,8 +118,7 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
          local GuidanceIndex = TransceiverGuidances[tindex]
          if not GuidanceIndex then
             -- Select guidance and cache it
-            local BlockInfo = I:GetLuaTransceiverInfo(tindex)
-            GuidanceIndex = SelectGuidance(I, BlockInfo)
+            GuidanceIndex = SelectGuidance(I, tindex)
             TransceiverGuidances[tindex] = GuidanceIndex
          end
 

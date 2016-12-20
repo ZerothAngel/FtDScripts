@@ -27,9 +27,10 @@ function IsVertical(Info)
 end
 
 -- Returns index into GuidanceInfos
-function SelectGuidance(_, BlockInfo)
+function SelectGuidance(I, TransceiverIndex)
    -- Really simple. Vertical launcher = vertical profile,
    -- horizontal launcher = horizontal profile
+   local BlockInfo = I:GetLuaTransceiverInfo(TransceiverIndex)
    return IsVertical(BlockInfo) and 1 or 2
 end
 
