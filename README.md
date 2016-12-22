@@ -23,3 +23,17 @@ Once the build script works out the total order of modules (via the dependency s
 1. Header files, in order
 2. Footer files, in reverse order
 3. Main body, in reverse order
+
+## Contributing ##
+
+ * Bug fixes, bug reports and small documentation updates always welcome
+ 
+ * I reserve the right to turn away anything else, because:
+ 
+    1. I want to keep this project limited to code and features that I actually use regularly. This ensures that it gets tested regularly as I play and that it gets supported in the future (as long as FtD holds my interest...)
+
+    2. I'm not interested in any major refactoring of the code to clean things up or to conform more to Lua conventions. I've got my own plans for restructuring.
+
+    3. Also not interested in maintaining a generalized library. But feel free to pick and choose modules to be included in one. See LICENSE.
+
+ * Having said all that, feel free to fork. See LICENSE.
