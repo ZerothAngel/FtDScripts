@@ -95,6 +95,8 @@ def build_script(version, available_modules, dependencies, root, output,
         if chunk:
             chunks.append(chunk)
 
+    chunks.append('-- !!! CODE BEGINS HERE, EDIT AT YOUR OWN RISK !!!' + NL)
+
     # Finally, the main body
     modules.reverse()
     for module in modules:
