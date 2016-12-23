@@ -1,4 +1,4 @@
---@ getselfinfo normalizebearing sign pid
+--@ commons normalizebearing sign pid
 -- 6DoF module (Altitude, Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
 AltitudePID = PID.create(AltitudePIDConfig, -10, 10)
 YawPID = PID.create(YawPIDConfig, -10, 10)
@@ -21,7 +21,7 @@ function SetAltitude(Alt)
 end
 
 function AdjustAltitude(Delta) -- luacheck: ignore 131
-   DesiredAltitude = Altitude + Delta
+   DesiredAltitude = C:Altitude() + Delta
 end
 
 -- Sets heading to an absolute value, 0 is north, 90 is east
@@ -105,16 +105,16 @@ function ClassifyPropulsion(I)
 end
 
 function SixDoF_Update(I)
-   local AltitudeCV = AltitudePID:Control(DesiredAltitude - Altitude)
-   local YawCV = DesiredHeading and YawPID:Control(NormalizeBearing(DesiredHeading - Yaw)) or 0
-   local PitchCV = PitchPID:Control(DesiredPitch - Pitch)
-   local RollCV = RollPID:Control(DesiredRoll - Roll)
+   local AltitudeCV = AltitudePID:Control(DesiredAltitude - C:Altitude())
+   local YawCV = DesiredHeading and YawPID:Control(NormalizeBearing(DesiredHeading - C:Yaw())) or 0
+   local PitchCV = PitchPID:Control(DesiredPitch - C:Pitch())
+   local RollCV = RollPID:Control(DesiredRoll - C:Roll())
 
    local ForwardCV,RightCV = 0,0
    if DesiredPosition then
-      local Offset = DesiredPosition - CoM
-      local ZProj = Vector3.Dot(Offset, I:GetConstructForwardVector())
-      local XProj = Vector3.Dot(Offset, I:GetConstructRightVector())
+      local Offset = DesiredPosition - C:CoM()
+      local ZProj = Vector3.Dot(Offset, C:ForwardVector())
+      local XProj = Vector3.Dot(Offset, C:RightVector())
       ForwardCV = ForwardPID:Control(ZProj)
       RightCV = RightPID:Control(XProj)
    end

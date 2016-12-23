@@ -1,5 +1,5 @@
 --! dodgetest
---@ yawthrottle debug getselfinfo normalizebearing quadraticsolver spairs periodic
+--@ yawthrottle debug commons normalizebearing quadraticsolver spairs periodic
 DodgeDirections = { -45, 45, -45, 45 }
 
 -- Returns impact point on XZ plane at given altitude
@@ -108,7 +108,7 @@ DodgeTest = Periodic.create(UpdateRate, DodgeTest_Update)
 
 function Update(I) -- luacheck: ignore 131
    if I.AIMode == "off" then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       DodgeTest:Tick(I)
 

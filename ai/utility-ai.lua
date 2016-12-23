@@ -47,7 +47,7 @@ CollectorNeedsSort = false
 function SortDestinations()
    local SelectedIndex,ClosestDistance = nil,math.huge
    for index,Destination in pairs(CollectorDestinations) do
-      local Offset,_ = PlanarVector(CoM, Destination)
+      local Offset,_ = PlanarVector(C:CoM(), Destination)
       local Distance = Offset.sqrMagnitude
       if Distance < ClosestDistance then
          SelectedIndex = index
@@ -104,7 +104,7 @@ function UtilityAI_Main(I)
    -- Escape mode only when enemies in range
    local EnemiesInRange = false
    for _,Target in pairs(Targets) do
-      local RangeSquared = (Target.Position - CoM).sqrMagnitude
+      local RangeSquared = (Target.Position - C:CoM()).sqrMagnitude
       if RangeSquared <= MaxEnemyRangeSqr then
          EnemiesInRange = true
          break
@@ -115,7 +115,7 @@ function UtilityAI_Main(I)
       -- Sum up the all enemy direction vectors
       local RunAway,Count = Vector3.zero,0
       for _,Target in pairs(Targets) do
-         local Offset,_ = PlanarVector(CoM, Target.Position)
+         local Offset,_ = PlanarVector(C:CoM(), Target.Position)
          local Distance = Offset.magnitude
          if Distance < RunAwayDistance then
             RunAway = RunAway + Offset / Distance
@@ -126,7 +126,7 @@ function UtilityAI_Main(I)
       local Drive = 0
       if Count > 0 then
          -- And head in the opposite direction
-         local Bearing = GetBearingToPoint(CoM - RunAway)
+         local Bearing = GetBearingToPoint(C:CoM() - RunAway)
          Bearing = CalculateEvasion(RunAwayEvasion, Bearing)
          AdjustHeading(Avoidance(I, Bearing))
          Drive = RunAwayDrive
@@ -147,7 +147,7 @@ function UtilityAI_Main(I)
       if IsCollector then
          local Destination = PickDestination(FlagshipPosition)
          while Destination and HasRoom do
-            local Target,_ = PlanarVector(CoM, Destination)
+            local Target,_ = PlanarVector(C:CoM(), Destination)
             local Distance = Target.magnitude
             if Distance >= CollectMinDistance then
                local Bearing = GetBearingToPoint(Destination)
@@ -170,7 +170,7 @@ function UtilityAI_Main(I)
       if IsGatherer and not Collecting and HasRoom then
          local ResourceZones = GetResourceZones(I, FlagshipPosition)
          for _,RZInfo in spairs(ResourceZones, function(t,a,b) return t[a].Distance < t[b].Distance end) do -- luacheck: ignore 512
-            local Target,_ = PlanarVector(CoM, RZInfo.Position)
+            local Target,_ = PlanarVector(C:CoM(), RZInfo.Position)
             local Distance = Target.magnitude - GatherZoneEdge * RZInfo.Radius
             local Drive = 0
             if Distance >= 0 then

@@ -1,4 +1,4 @@
---@ quadraticintercept pronav getvectorangle round deepcopy sign
+--@ commons quadraticintercept pronav getvectorangle round deepcopy sign
 -- GeneralMissile implementation
 GeneralMissile = {}
 
@@ -308,7 +308,7 @@ function GeneralMissile:ExecuteProfile(I, TransceiverIndex, MissileIndex, Positi
    if Evasion then
       local Perp = Vector3.Cross(GroundDirection, Vector3.up)
       -- Note this uses the global Now
-      NewAimPoint = NewAimPoint + Perp * Evasion[1] * (2 * Mathf.PerlinNoise(Evasion[2] * Now, TransceiverIndex * 37 + MissileIndex) - 1)
+      NewAimPoint = NewAimPoint + Perp * Evasion[1] * (2 * Mathf.PerlinNoise(Evasion[2] * C:Now(), TransceiverIndex * 37 + MissileIndex) - 1)
    end
 
    return NewAimPoint

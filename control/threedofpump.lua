@@ -1,4 +1,4 @@
---@ api sign pid
+--@ commons api sign pid
 -- 3DoF Pump module (Altitude, Pitch, Roll)
 AltitudePID = PID.create(AltitudePIDConfig, -10, 10)
 PitchPID = PID.create(PitchPIDConfig, -10, 10)
@@ -16,7 +16,7 @@ function SetAltitude(Alt)
 end
 
 function AdjustAltitude(Delta) -- luacheck: ignore 131
-   DesiredAltitude = Altitude + Delta
+   DesiredAltitude = C:Altitude() + Delta
 end
 
 function SetPitch(Angle) -- luacheck: ignore 131
@@ -46,9 +46,9 @@ function ClassifyPumps(I)
 end
       
 function ThreeDoFPump_Update(I)
-   local AltitudeCV = AltitudePID:Control(DesiredAltitude - Altitude)
-   local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - Pitch) or 0
-   local RollCV = ControlRoll and RollPID:Control(DesiredRoll - Roll) or 0
+   local AltitudeCV = AltitudePID:Control(DesiredAltitude - C:Altitude())
+   local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - C:Pitch()) or 0
+   local RollCV = ControlRoll and RollPID:Control(DesiredRoll - C:Roll()) or 0
 
    ClassifyPumps(I)
 

@@ -1,4 +1,4 @@
---@ evasion
+--@ commons evasion
 --@ gettargetpositioninfo avoidance waypointmove
 -- Target AI module
 TargetHeading = nil
@@ -29,10 +29,10 @@ function TargetAI_Update(I)
       GetTargetPositionInfo(I)
 
       if not TargetHeading then
-         TargetHeading = Yaw
+         TargetHeading = C:Yaw()
       end
 
-      local Bearing = NormalizeBearing(TargetHeading - Yaw)
+      local Bearing = NormalizeBearing(TargetHeading - C:Yaw())
       Bearing = CalculateEvasion(TargetEvasion, Bearing)
 
       AdjustHeading(Avoidance(I, Bearing))

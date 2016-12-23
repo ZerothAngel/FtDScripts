@@ -1,4 +1,4 @@
---@ getvectorangle planarvector evasion
+--@ commons getvectorangle planarvector evasion
 -- Drop AI module
 DropTargetID = nil
 
@@ -52,7 +52,7 @@ function DropAI_Main(I)
       -- Imprint on closest
       local ClosestDistance = math.huge -- Squared
       for _,Target in pairs(TargetsByPriority) do
-         local Offset = Target.Position - CoM
+         local Offset = Target.Position - C:CoM()
          local Distance = Offset.sqrMagnitude
          if Distance < ClosestDistance then
             DropTargetID = Target.Id
@@ -62,7 +62,7 @@ function DropAI_Main(I)
       end
    end
 
-   local Offset = PlanarVector(CoM, DropTarget.Position)
+   local Offset = PlanarVector(C:CoM(), DropTarget.Position)
    local Distance = Offset.magnitude
    if Distance > OriginMaxDistance then
       local Perp = Vector3.Cross(Offset / Distance, Vector3.up)
@@ -85,7 +85,7 @@ function FormationMove(I)
       -- This leads to tighter formations.
       local Waypoint = Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition
       SetPosition(Waypoint)
-      local Offset,_ = PlanarVector(CoM, Waypoint)
+      local Offset,_ = PlanarVector(C:CoM(), Waypoint)
       if Offset.magnitude >= OriginMaxDistance then
          SetHeading(GetVectorAngle(Offset))
       else
@@ -93,7 +93,7 @@ function FormationMove(I)
       end
    else
       -- Head to fleet waypoint
-      local Offset,_ = PlanarVector(CoM, I.Waypoint)
+      local Offset,_ = PlanarVector(C:CoM(), I.Waypoint)
       if Offset.magnitude >= OriginMaxDistance then
          AdjustPosition(Offset)
          SetHeading(GetVectorAngle(Offset))

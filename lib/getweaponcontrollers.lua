@@ -1,3 +1,4 @@
+--@ commons
 -- GetWeaponControllers module
 -- luacheck: push ignore 131
 CANNON = 0
@@ -9,32 +10,17 @@ MISSILECONTROL = 5
 FIRECONTROLCOMPUTER = 6
 -- luacheck: pop
 
-function AddWeaponInfo(Weapons, WeaponInfo, WeaponType, TurretIndex, WeaponIndex)
-   if WeaponType and WeaponInfo.WeaponType ~= WeaponType then
-      return
-   else
-      local WeaponSlot = WeaponInfo.WeaponSlot
-      local Weapon = {
-         Position = WeaponInfo.GlobalPosition,
-         Slot = WeaponSlot,
-         TurretIndex = TurretIndex,
-         Index = WeaponIndex,
-      }
-      table.insert(Weapons, Weapon)
-   end
-end
-
-function GetWeaponControllers(I, WeaponType, Deep)
+function GetWeaponControllers(_, WeaponType, Deep)
    local Weapons = {}
-   for i = 0,I:GetWeaponCount()-1 do
-      local Info = I:GetWeaponInfo(i)
-      AddWeaponInfo(Weapons, Info, WeaponType, nil, i)
+   for _,Weapon in pairs(C:HullWeaponControllers()) do
+      if not WeaponType or Weapon.Type == WeaponType then
+         table.insert(Weapons, Weapon)
+      end
    end
    if Deep then
-      for i = 0,I:GetTurretSpinnerCount()-1 do
-         for j = 0,I:GetWeaponCountOnTurretOrSpinner(i)-1 do
-            local Info = I:GetWeaponInfoOnTurretOrSpinner(i, j)
-            AddWeaponInfo(Weapons, Info, WeaponType, i, j)
+      for _,Weapon in pairs(C:TurretWeaponControllers()) do
+         if not WeaponType or Weapon.Type == WeaponType then
+            table.insert(Weapons, Weapon)
          end
       end
    end

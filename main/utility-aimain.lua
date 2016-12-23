@@ -1,5 +1,5 @@
 --! utility-ai
---@ getselfinfo firstrun periodic
+--@ commons firstrun periodic
 --@ yawthrottle utility-ai
 UtilityAI = Periodic.create(UpdateRate, UtilityAI_Update)
 
@@ -7,7 +7,7 @@ Control_Reset = YawThrottle_Reset
 
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 

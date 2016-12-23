@@ -1,5 +1,5 @@
 --! generalmissile
---@ missiledriver generalmissile periodic
+--@ commons periodic missiledriver generalmissile
 -- General missile main
 MyMissile = GeneralMissile.create(Config)
 
@@ -25,11 +25,9 @@ end
 
 MissileMain = Periodic.create(UpdateRate, MissileMain_Update)
 
-Now = 0
-
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
-      Now = I:GetTimeSinceSpawn()
+      C = Commons.create(I)
       MissileMain:Tick(I)
    end
 end

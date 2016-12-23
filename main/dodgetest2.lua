@@ -1,5 +1,5 @@
 --! dodgetest2
---@ yawthrottle debug getselfinfo normalizebearing raysphereintersect spairs periodic firstrun
+--@ yawthrottle debug commons normalizebearing raysphereintersect spairs periodic firstrun
 DodgeDirections = { -45, 45, -45, 45 }
 
 MyRadius = 0
@@ -90,7 +90,7 @@ DodgeTest = Periodic.create(UpdateRate, DodgeTest_Update)
 
 function Update(I) -- luacheck: ignore 131
    if I.AIMode == "off" then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 

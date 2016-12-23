@@ -1,3 +1,4 @@
+--@ commons
 -- PID implementation
 PID = {}
 
@@ -22,6 +23,7 @@ function PID.create(Config, Min, Max)
 end
 
 function PID:Control(Error)
+   local Now = C:Now()
    local dt = Now - self.LastTime
    local Integral = self.Integral + Error * dt
    local Derivative = (Error - self.LastError) / dt
@@ -49,6 +51,6 @@ function PID:FirstControl(_)
    -- Call the real one next time
    self.Control = PID.Control
    -- Just set LastTime and return 0 for now
-   self.LastTime = Now
+   self.LastTime = C:Now()
    return 0
 end

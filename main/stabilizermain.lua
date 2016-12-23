@@ -1,8 +1,8 @@
 --! stabilizer
---@ stabilizer getselfinfo
+--@ stabilizer commons
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       Stabilizer_Update(I)
    end

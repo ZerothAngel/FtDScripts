@@ -1,4 +1,4 @@
---@ sign pid
+--@ commons sign pid
 -- 3DoF Spinner module (Altitude, Pitch, Roll)
 AltitudePID = PID.create(AltitudePIDConfig, -30, 30)
 PitchPID = PID.create(PitchPIDConfig, -30, 30)
@@ -16,7 +16,7 @@ function SetAltitude(Alt)
 end
 
 function AdjustAltitude(Delta) -- luacheck: ignore 131
-   DesiredAltitude = Altitude + Delta
+   DesiredAltitude = C:Altitude() + Delta
 end
 
 function SetPitch(Angle) -- luacheck: ignore 131
@@ -55,9 +55,9 @@ function ThreeDoFSpinner_ClassifySpinners(I)
 end
 
 function ThreeDoFSpinner_Update(I)
-   local AltitudeCV = AltitudePID:Control(DesiredAltitude - Altitude)
-   local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - Pitch) or 0
-   local RollCV = ControlRoll and RollPID:Control(DesiredRoll - Roll) or 0
+   local AltitudeCV = AltitudePID:Control(DesiredAltitude - C:Altitude())
+   local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - C:Pitch()) or 0
+   local RollCV = ControlRoll and RollPID:Control(DesiredRoll - C:Roll()) or 0
 
    ThreeDoFSpinner_ClassifySpinners(I)
 

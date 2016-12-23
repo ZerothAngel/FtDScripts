@@ -1,4 +1,4 @@
---@ getvectorangle planarvector evasion sign
+--@ commons getvectorangle planarvector evasion sign
 --@ gettargetpositioninfo
 -- Gunship AI module
 -- Modifies vector by some amount for evasive maneuvers
@@ -13,7 +13,7 @@ end
 function AdjustPositionToTarget()
    local Distance = TargetPositionInfo.GroundDistance
 
-   local ToTarget = PlanarVector(CoM, TargetPositionInfo.Position).normalized
+   local ToTarget = PlanarVector(C:CoM(), TargetPositionInfo.Position).normalized
    local Perp = Vector3.Cross(ToTarget, Vector3.up)
    local TargetAngle,TargetPitch,Evasion
    if Distance > MaxDistance then
@@ -47,7 +47,7 @@ function FormationMove(I)
       local Waypoint = Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition
       SetPosition(Waypoint)
       if not TargetPositionInfo then
-         local Offset,_ = PlanarVector(CoM, Waypoint)
+         local Offset,_ = PlanarVector(C:CoM(), Waypoint)
          if Offset.magnitude >= OriginMaxDistance then
             SetHeading(GetVectorAngle(Offset))
          else
@@ -56,7 +56,7 @@ function FormationMove(I)
       end
    else
       -- Head to fleet waypoint
-      local Offset,_ = PlanarVector(CoM, I.Waypoint)
+      local Offset,_ = PlanarVector(C:CoM(), I.Waypoint)
       if Offset.magnitude >= OriginMaxDistance then
          AdjustPosition(Offset)
          -- Only change heading if not in combat

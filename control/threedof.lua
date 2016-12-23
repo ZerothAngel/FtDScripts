@@ -1,4 +1,4 @@
---@ api getselfinfo normalizebearing sign pid
+--@ commons api normalizebearing sign pid
 -- 3DoF module (Yaw, Forward/Reverse, Right/Left)
 YawPID = PID.create(YawPIDConfig, -10, 10)
 ForwardPID = PID.create(ForwardPIDConfig, -10, 10)
@@ -17,7 +17,7 @@ end
 
 -- Adjusts heading toward relative bearing
 function AdjustHeading(Bearing) -- luacheck: ignore 131
-   SetHeading(Yaw + Bearing)
+   SetHeading(C:Yaw() + Bearing)
 end
 
 -- Resets heading so yaw will no longer be modified
@@ -31,7 +31,7 @@ function SetPosition(Pos)
 end
 
 function AdjustPosition(Offset)
-   DesiredPosition = CoM + Offset
+   DesiredPosition = C:CoM() + Offset
 end
 
 function ResetPosition()
@@ -71,13 +71,13 @@ function ClassifyPropulsion(I)
 end
 
 function ThreeDoF_Update(I)
-   local YawCV = DesiredHeading and YawPID:Control(NormalizeBearing(DesiredHeading - Yaw)) or 0
+   local YawCV = DesiredHeading and YawPID:Control(NormalizeBearing(DesiredHeading - C:Yaw())) or 0
 
    local ForwardCV,RightCV = 0,0
    if DesiredPosition then
-      local Offset = DesiredPosition - CoM
-      local ZProj = Vector3.Dot(Offset, I:GetConstructForwardVector())
-      local XProj = Vector3.Dot(Offset, I:GetConstructRightVector())
+      local Offset = DesiredPosition - C:CoM()
+      local ZProj = Vector3.Dot(Offset, C:ForwardVector())
+      local XProj = Vector3.Dot(Offset, C:RightVector())
       ForwardCV = ForwardPID:Control(ZProj)
       RightCV = RightPID:Control(XProj)
    end

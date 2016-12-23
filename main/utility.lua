@@ -1,5 +1,5 @@
 --! utility
---@ getselfinfo firstrun periodic
+--@ commons firstrun periodic
 --@ threedofspinner altitudecontrol yawthrottle utility-ai
 -- Utility main
 Quadcopter = Periodic.create(Quadcopter_UpdateRate, Altitude_Control, 1)
@@ -9,7 +9,7 @@ Control_Reset = YawThrottle_Reset
 
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 

@@ -1,4 +1,4 @@
---@ api
+--@ commons api
 -- ShieldManager module
 -- Re-do in terms of cosine
 ShieldActivationAngle = math.cos(math.rad(ShieldActivationAngle))
@@ -28,6 +28,7 @@ function ShieldManager_Update(I)
 
    -- Gather enemies
    local MainframeIndex = 0 -- All mainframes see the same targets, just check one
+   local CoM = C:CoM()
    for i=0,I:GetNumberOfTargets(MainframeIndex)-1 do
       local TargetInfo = I:GetTargetInfo(MainframeIndex, i)
       if TargetInfo.Valid and TargetInfo.Protected then
@@ -46,6 +47,7 @@ function ShieldManager_Update(I)
       ShieldActivationTimes = {}
    end
 
+   local Now = C:Now()
    for i=0,ShieldCount-1 do
       local BlockInfo = I:Component_GetBlockInfo(SHIELDPROJECTOR, i)
       local Forwards = BlockInfo.Forwards

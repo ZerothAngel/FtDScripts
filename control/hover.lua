@@ -1,4 +1,4 @@
---@ pid spinnercontrol
+--@ commons pid spinnercontrol
 -- Hover module
 AltitudePID = PID.create(AltitudePIDConfig, CanReverseBlades and -30 or 0, 30)
 
@@ -15,7 +15,7 @@ function AdjustAltitude(Delta) -- luacheck: ignore 131
 end
 
 function Hover_Update(I)
-   local CV = AltitudePID:Control(DesiredAltitude - Altitude)
+   local CV = AltitudePID:Control(DesiredAltitude - C:Altitude())
    LiftSpinners:Classify(I)
    LiftSpinners:SetSpeed(I, CV)
 end

@@ -1,4 +1,4 @@
---@ planarvector getbearingtopoint evasion sign
+--@ commons planarvector getbearingtopoint evasion sign
 --@ debug gettargetpositioninfo avoidance waypointmove
 -- Naval AI module
 Attacking = true
@@ -30,14 +30,14 @@ function AdjustHeadingToTarget(I)
 
       Attacking = true
    elseif Distance > MinDistance then
-      if not AttackRuns or Attacking or (LastAttackTime + ForceAttackTime) <= Now then
+      if not AttackRuns or Attacking or (LastAttackTime + ForceAttackTime) <= C:Now() then
          State = "attack"
          TargetAngle = AttackAngle
          Drive = AttackDrive
          Evasion = AttackEvasion
 
          Attacking = true
-         LastAttackTime = Now
+         LastAttackTime = C:Now()
       end
    elseif Distance <= MinDistance then
       Attacking = false

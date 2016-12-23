@@ -1,5 +1,5 @@
 --! gunshipquad
---@ getselfinfo firstrun periodic
+--@ commons firstrun periodic
 --@ shieldmanager dualprofile threedofspinner altitudecontrol threedof gunship-ai
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
@@ -10,7 +10,7 @@ Control_Reset = ThreeDoF_Reset
 
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 

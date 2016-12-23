@@ -1,4 +1,4 @@
---@ getselfinfo firstrun debug
+--@ commons firstrun debug
 -- Terrain following module
 TerrainCheckPoints = {}
 CurrentMaxVerticalSpeed = 1
@@ -54,7 +54,7 @@ function GetTerrainHeight(I, Velocity, MinAltitude, MaxAltitude)
          if Debugging then Debug(I, __func__, "CurrentMaxVerticalSpeed = %.2f", CurrentMaxVerticalSpeed) end
       end
 
-      local RemainingAltitude = math.max(0, MaxAltitude - Altitude)
+      local RemainingAltitude = math.max(0, MaxAltitude - C:Altitude())
       LookAheadTime = math.max(1, TerrainCheckBufferFactor * RemainingAltitude / CurrentMaxVerticalSpeed)
       if Debugging then Debug(I, __func__, "LookAheadTime = %.2f", LookAheadTime) end
    end
@@ -64,12 +64,12 @@ function GetTerrainHeight(I, Velocity, MinAltitude, MaxAltitude)
    -- Calculate (mid-point) distances for this velocity once
    local Distances = {}
    for d = 0,MaxDistance-1,TerrainCheckResolution do
-      table.insert(Distances, CoM + Direction * d)
+      table.insert(Distances, C:CoM() + Direction * d)
    end
 
    -- Make sure end point is also checked
    -- (Generally it won't be evenly divisible by TerrainCheckResolution)
-   table.insert(Distances, CoM + Direction * MaxDistance)
+   table.insert(Distances, C:CoM() + Direction * MaxDistance)
 
    for _,Offset in pairs(TerrainCheckPoints) do
       local Side = Perp * Offset

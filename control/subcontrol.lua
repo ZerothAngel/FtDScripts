@@ -1,4 +1,4 @@
---@ api pid sign
+--@ commons api pid sign
 -- Hydrofoil submarine control module
 RollPID = PID.create(RollPIDConfig, -1, 1)
 PitchPID = PID.create(PitchPIDConfig, -1, 1)
@@ -16,7 +16,7 @@ function SetAltitude(Alt)
 end
 
 function AdjustAltitude(Delta) -- luacheck: ignore 131
-   DesiredAltitude = Altitude + Delta
+   DesiredAltitude = C:Altitude() + Delta
 end
 
 function SetPitch(Angle) -- luacheck: ignore 131
@@ -114,7 +114,7 @@ function SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
    ClassifyHydrofoils(I)
 
    -- In case vehicle is going in reverse...
-   local VehicleSign = Sign(I:GetForwardsVelocityMagnitude(), 1)
+   local VehicleSign = Sign(C:ForwardSpeed(), 1)
 
    for _,Info in pairs(HydrofoilInfos) do
       -- Sum up inputs and constrain
@@ -126,9 +126,9 @@ function SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
 end
 
 function SubControl_Update(I)
-   local RollCV = ControlRoll and RollPID:Control(DesiredRoll - Roll) or 0
-   local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - Pitch) or 0
-   local DepthCV = ControlDepth and DepthPID:Control(DesiredAltitude - Altitude) or 0
+   local RollCV = ControlRoll and RollPID:Control(DesiredRoll - C:Roll()) or 0
+   local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - C:Pitch()) or 0
+   local DepthCV = ControlDepth and DepthPID:Control(DesiredAltitude - C:Altitude()) or 0
 
    SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
 end

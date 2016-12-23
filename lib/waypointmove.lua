@@ -1,4 +1,4 @@
---@ pid planarvector quadraticintercept getbearingtopoint sign
+--@ commons pid planarvector quadraticintercept getbearingtopoint sign
 -- Waypoint move module
 MTW_ThrottlePID = PID.create(WaypointMoveConfig.ThrottlePIDConfig, -1, 1)
 
@@ -28,7 +28,7 @@ end
 
 -- Move to a waypoint (using yaw & throttle only)
 function MoveToWaypoint(I, Waypoint, AdjustHeading, WaypointVelocity)
-   local Offset,TargetPosition = PlanarVector(CoM, Waypoint)
+   local Offset,TargetPosition = PlanarVector(C:CoM(), Waypoint)
    local Distance = Offset.magnitude
 
    if not WaypointVelocity then
@@ -43,13 +43,12 @@ function MoveToWaypoint(I, Waypoint, AdjustHeading, WaypointVelocity)
    else
       local Direction = Offset / Distance
 
-      -- TODO Maybe use a globally-cached velocity?
-      local Velocity = I:GetVelocityVector()
+      local Velocity = C:Velocity()
       -- Constrain our velocity and waypoint velocity to XZ plane
-      Velocity.y = 0
+      Velocity = Vector3(Velocity.x, 0, Velocity.z)
       local TargetVelocity = Vector3(WaypointVelocity.x, 0, WaypointVelocity.z)
       -- Predict intercept
-      local TargetPoint = QuadraticIntercept(CoM, Velocity, TargetPosition, TargetVelocity)
+      local TargetPoint = QuadraticIntercept(C:CoM(), Velocity, TargetPosition, TargetVelocity)
 
       local Bearing = GetBearingToPoint(TargetPoint)
       AdjustHeading(Bearing)

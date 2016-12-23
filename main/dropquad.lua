@@ -1,5 +1,5 @@
 --! dropquad
---@ getselfinfo firstrun periodic
+--@ commons firstrun periodic
 --@ shieldmanager threedofspinner altitudecontrol threedof drop-ai
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 Quadcopter = Periodic.create(Quadcopter_UpdateRate, Altitude_Control, 1)
@@ -9,7 +9,7 @@ Control_Reset = ThreeDoF_Reset
 
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 

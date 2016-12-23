@@ -1,5 +1,5 @@
 --! avoidancetest
---@ yawthrottle getselfinfo avoidance firstrun periodic
+--@ yawthrottle commons avoidance firstrun periodic
 function AvoidanceTest_Update(I)
    YawThrottle_Reset()
 
@@ -11,7 +11,7 @@ AvoidanceTest = Periodic.create(UpdateRate, AvoidanceTest_Update)
 
 function Update(I) -- luacheck: ignore 131
    if ActivateWhen[I.AIMode] then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 

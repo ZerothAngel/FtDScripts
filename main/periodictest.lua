@@ -1,5 +1,5 @@
 --! periodictest
---@ getselfinfo periodic
+--@ commons periodic
 Tick = 0
 
 function PeriodicTest_Update(I)
@@ -11,7 +11,7 @@ PeriodicTest = Periodic.create(UpdateRate, PeriodicTest_Update)
 
 function Update(I) -- luacheck: ignore 131
    if ActivateWhen[I.AIMode] then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       PeriodicTest:Tick(I)
    end

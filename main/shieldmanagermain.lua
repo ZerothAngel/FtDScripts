@@ -1,13 +1,8 @@
 --! shieldmanager
---@ periodic shieldmanager
+--@ commons periodic shieldmanager
 ShieldManager = Periodic.create(UpdateRate, ShieldManager_Control)
 
-Now = 0
-CoM = nil
-
 function Update(I) -- luacheck: ignore 131
-   Now = I:GetTimeSinceSpawn()
-   CoM = I:GetConstructCenterOfMass()
-
+   C = Commons.create(I)
    ShieldManager:Tick(I)
 end

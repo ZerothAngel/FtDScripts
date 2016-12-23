@@ -1,5 +1,5 @@
 --! repairheli
---@ getselfinfo firstrun periodic
+--@ commons firstrun periodic
 --@ stabilizer hover altitudecontrol yawthrottle repair-ai
 -- Repair submarine main
 Hover = Periodic.create(Hover_UpdateRate, Altitude_Control)
@@ -9,7 +9,7 @@ Control_Reset = YawThrottle_Reset
 
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 

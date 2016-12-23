@@ -1,5 +1,5 @@
 --! naval-ai
---@ getselfinfo firstrun periodic
+--@ commons firstrun periodic
 --@ yawthrottle naval-ai
 NavalAI = Periodic.create(UpdateRate, NavalAI_Update)
 
@@ -7,7 +7,7 @@ Control_Reset = YawThrottle_Reset
 
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 

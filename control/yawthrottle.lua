@@ -1,4 +1,4 @@
---@ api getselfinfo normalizebearing pid spinnercontrol
+--@ commons api normalizebearing pid spinnercontrol
 -- Yaw & throttle module
 YawPID = PID.create(YawPIDConfig, -1.0, 1.0)
 
@@ -15,7 +15,7 @@ end
 
 -- Adjusts heading toward relative bearing
 function AdjustHeading(Bearing)
-   SetHeading(Yaw + Bearing)
+   SetHeading(C:Yaw() + Bearing)
 end
 
 -- Resets heading so yaw will no longer be modified
@@ -51,7 +51,7 @@ end
 -- Default AI should be suppressed beforehand, if needed.
 function YawThrottle_Update(I)
    if DesiredHeading then
-      local Error = NormalizeBearing(DesiredHeading - Yaw)
+      local Error = NormalizeBearing(DesiredHeading - C:Yaw())
 
       local CV = YawPID:Control(Error)
       if CV > 0.0 then

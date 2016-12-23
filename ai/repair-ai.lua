@@ -1,4 +1,4 @@
---@ planarvector
+--@ commons planarvector
 --@ spairs
 --@ debug gettargetpositioninfo avoidance waypointmove
 -- Repair AI module
@@ -45,11 +45,11 @@ function SelectRepairTarget(I)
    local Targets = {}
    -- Parent first, adjust weight accordingly
    local ParentCoM = Parent.CenterOfMass
-   local Offset,_ = PlanarVector(CoM, ParentCoM)
+   local Offset,_ = PlanarVector(C:CoM(), ParentCoM)
    Targets[Parent.Id] = CalculateRepairTargetWeight(Offset.magnitude, 0, Parent) * ParentBonus
 
-   local RepairTargetMinAltitude = Altitude - RepairTargetMaxAltitudeDelta
-   local RepairTargetMaxAltitude = Altitude + RepairTargetMaxAltitudeDelta
+   local RepairTargetMinAltitude = C:Altitude() - RepairTargetMaxAltitudeDelta
+   local RepairTargetMaxAltitude = C:Altitude() + RepairTargetMaxAltitudeDelta
 
    -- Scan nearby friendlies
    for i = 0,I:GetFriendlyCount()-1 do
@@ -59,7 +59,7 @@ function SelectRepairTarget(I)
          local FriendCoM = Friend.CenterOfMass
          local FriendAlt = FriendCoM.y
          local FriendHealth = Friend.HealthFraction
-         Offset,_ = PlanarVector(CoM, FriendCoM)
+         Offset,_ = PlanarVector(C:CoM(), FriendCoM)
          local Distance = Offset.magnitude
          Offset,_ = PlanarVector(ParentCoM, FriendCoM)
          local ParentDistance = Offset.magnitude
@@ -96,7 +96,7 @@ function Imprint(I)
    for i = 0,I:GetFriendlyCount()-1 do
       local Friend = I:GetFriendlyInfo(i)
       if Friend and Friend.Valid then
-         local Offset,_ = PlanarVector(CoM, Friend.CenterOfMass)
+         local Offset,_ = PlanarVector(C:CoM(), Friend.CenterOfMass)
          local Distance = Offset.magnitude
          if Distance < Closest then
             Closest = Distance

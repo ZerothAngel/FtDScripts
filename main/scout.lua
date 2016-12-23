@@ -1,5 +1,5 @@
 --! scout
---@ getselfinfo firstrun periodic
+--@ commons firstrun periodic
 --@ cameratrack shieldmanager threedofspinner altitudecontrol yawthrottle naval-ai
 -- Scout main
 CameraTrack = Periodic.create(CameraTrack_UpdateRate, CameraTrack_Update, 3)
@@ -11,7 +11,7 @@ Control_Reset = YawThrottle_Reset
 
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 

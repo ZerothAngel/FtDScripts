@@ -1,44 +1,9 @@
 --! interceptmanager
---@ periodic
+--@ commons periodic
 -- Interceptor manager
-function GetWeaponsForSlot(Controllers, WeaponSlot)
-   local Weapons = {}
-
-   for _,Controller in pairs(Controllers) do
-      if Controller.Slot == WeaponSlot then
-         table.insert(Weapons, Controller)
-      end
-   end
-
-   return Weapons
-end
-
-TURRET = 4
-MISSILECONTROL = 5
-
-function GetWeaponControllers(I)
-   local Weapons = {}
-
-   for i = 0,I:GetWeaponCount()-1 do
-      local Info = I:GetWeaponInfo(i)
-      local WeaponType = Info.WeaponType
-      -- Only care about turrets and missile controllers
-      if WeaponType == TURRET or WeaponType == MISSILECONTROL then
-         local Weapon = {
-            Index = i,
-            Slot = Info.WeaponSlot,
-         }
-         table.insert(Weapons, Weapon)
-      end
-   end
-
-   return Weapons
-end
-
 function InterceptManager_Update(I)
-   local CoM = I:GetConstructCenterOfMass()
-   local ToGlobal = Quaternion.LookRotation(I:GetConstructForwardVector(), I:GetConstructUpVector())
-   local ToLocal = Quaternion.Inverse(ToGlobal)
+   local CoM = C:CoM()
+   local ToLocal = C:ToLocal()
 
    local ToFire = {
       Missile = {},
@@ -73,31 +38,20 @@ function InterceptManager_Update(I)
       end
    end
 
-   local Controllers = nil
-   local WeaponsForSlot = {}
    local Fired = {}
 
    for Type,Quadrants in pairs(ToFire) do
       for Quadrant,Offset in pairs(Quadrants) do
          local WeaponSlot = InterceptWeaponSlot[Type][Quadrant]
          if WeaponSlot and not Fired[WeaponSlot] then
-            local Weapons = WeaponsForSlot[WeaponSlot]
-            -- Lazy init
-            if not Weapons then
-               -- Lazy init all the things!
-               if not Controllers then
-                  Controllers = GetWeaponControllers(I)
-               end
-               Weapons = GetWeaponsForSlot(Controllers, WeaponSlot)
-               WeaponsForSlot[WeaponSlot] = Weapons
-            end
-
             -- Fire weapons
-            for _,Weapon in pairs(Weapons) do
-               -- Aim and fire each weapon. Don't really care what we aim at,
-               -- but it's necessary.
-               if I:AimWeaponInDirection(Weapon.Index, Offset.x, Offset.y, Offset.z, WeaponSlot) > 0 then
-                  I:FireWeapon(Weapon.Index, WeaponSlot)
+            for _,Weapon in pairs(C:HullWeaponControllers()) do
+               if Weapon.Slot == WeaponSlot and (Weapon.Type == 4 or Weapon.Type == 5) then
+                  -- Aim and fire each weapon. Don't really care what we aim at,
+                  -- but it's necessary.
+                  if I:AimWeaponInDirection(Weapon.Index, Offset.x, Offset.y, Offset.z, WeaponSlot) > 0 then
+                     I:FireWeapon(Weapon.Index, WeaponSlot)
+                  end
                end
             end
 
@@ -112,6 +66,7 @@ InterceptManager = Periodic.create(UpdateRate, InterceptManager_Update)
 
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
+      C = Commons.create(I)
       InterceptManager:Tick(I)
    end
 end

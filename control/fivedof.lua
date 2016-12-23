@@ -1,4 +1,4 @@
---@ api getselfinfo normalizebearing sign pid
+--@ commons api normalizebearing sign pid
 -- 5DoF module (Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
 YawPID = PID.create(YawPIDConfig, -10, 10)
 PitchPID = PID.create(PitchPIDConfig, -10, 10)
@@ -21,7 +21,7 @@ end
 
 -- Adjusts heading toward relative bearing
 function AdjustHeading(Bearing)
-   SetHeading(Yaw + Bearing)
+   SetHeading(C:Yaw() + Bearing)
 end
 
 -- Resets heading so yaw will no longer be modified
@@ -35,7 +35,7 @@ function SetPosition(Pos)
 end
 
 function AdjustPosition(Offset)
-   DesiredPosition = CoM + Offset
+   DesiredPosition = C:CoM() + Offset
 end
 
 function ResetPosition()
@@ -93,15 +93,15 @@ function ClassifyPropulsion(I)
 end
 
 function FiveDoF_Update(I)
-   local YawCV = DesiredHeading and YawPID:Control(NormalizeBearing(DesiredHeading - Yaw)) or 0
-   local PitchCV = PitchPID:Control(DesiredPitch - Pitch)
-   local RollCV = RollPID:Control(DesiredRoll - Roll)
+   local YawCV = DesiredHeading and YawPID:Control(NormalizeBearing(DesiredHeading - C:Yaw())) or 0
+   local PitchCV = PitchPID:Control(DesiredPitch - C:Pitch())
+   local RollCV = RollPID:Control(DesiredRoll - C:Roll())
 
    local ForwardCV,RightCV = 0,0
    if DesiredPosition then
-      local Offset = DesiredPosition - CoM
-      local ZProj = Vector3.Dot(Offset, I:GetConstructForwardVector())
-      local XProj = Vector3.Dot(Offset, I:GetConstructRightVector())
+      local Offset = DesiredPosition - C:CoM()
+      local ZProj = Vector3.Dot(Offset, C:ForwardVector())
+      local XProj = Vector3.Dot(Offset, C:RightVector())
       ForwardCV = ForwardPID:Control(ZProj)
       RightCV = RightPID:Control(XProj)
    end

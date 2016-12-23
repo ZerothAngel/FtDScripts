@@ -1,3 +1,4 @@
+--@ commons
 -- MissileDriver module
 LastTransceiverCount = 0
 TransceiverGuidances = {}
@@ -9,7 +10,7 @@ function GatherTargets(I, GuidanceInfos)
    local TargetsByPriority = {}
    local TargetsById = {}
 
-   local Position = I:GetConstructPosition()
+   local Position = C:Position()
 
    for _,mindex in pairs(PreferredMainframes) do
       for tindex = 0,I:GetNumberOfTargets(mindex)-1 do
@@ -71,18 +72,17 @@ function MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
 
    -- Only bother if there are slots to fire
    if Fire then
-      for i = 0,I:GetWeaponCount()-1 do
-         local Info = I:GetWeaponInfo(i)
-         local WeaponSlot = Info.WeaponSlot
+      for _,Weapon in pairs(C:HullWeaponControllers()) do
+         local WeaponSlot = Weapon.Slot
          local AimPoint = SlotsToFire[WeaponSlot]
-         if AimPoint and not Info.PlayerCurrentlyControllingIt then
-            local WeaponType = Info.WeaponType
+         if AimPoint and not Weapon.PlayerControl then
+            local WeaponType = Weapon.Type
             -- Top-level turrets and missile controllers only
             if WeaponType == 4 or WeaponType == 5 then
                -- Relative to weapon position
-               local Offset = AimPoint - Info.GlobalPosition
-               if I:AimWeaponInDirection(i, Offset.x, Offset.y, Offset.z, WeaponSlot) > 0 then
-                  I:FireWeapon(i, WeaponSlot)
+               local Offset = AimPoint - Weapon.Position
+               if I:AimWeaponInDirection(Weapon.Index, Offset.x, Offset.y, Offset.z, WeaponSlot) > 0 then
+                  I:FireWeapon(Weapon.Index, WeaponSlot)
                end
             end
          end
@@ -91,6 +91,7 @@ function MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
 end
 
 function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
+   local Now = C:Now()
    local TargetsByPriority, TargetsById = GatherTargets(I, GuidanceInfos)
    if #TargetsByPriority > 0 then
       LastTimeTargetSeen = Now

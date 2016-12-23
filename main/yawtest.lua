@@ -1,5 +1,5 @@
 --! yawtest
---@ yawthrottle getselfinfo firstrun eventdriver
+--@ yawthrottle commons firstrun eventdriver
 MyHeading = -90
 LastTurn = nil
 
@@ -41,7 +41,7 @@ end
 
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() and ActivateWhen[I.AIMode] then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 

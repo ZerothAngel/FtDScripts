@@ -1,5 +1,5 @@
 --! utilitysub
---@ getselfinfo firstrun periodic
+--@ commons firstrun periodic
 --@ subcontrol depthcontrol yawthrottle utility-ai
 -- Utility submarine main
 SubControl = Periodic.create(SubControl_UpdateRate, Depth_Control, 1)
@@ -9,7 +9,7 @@ Control_Reset = YawThrottle_Reset
 
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 

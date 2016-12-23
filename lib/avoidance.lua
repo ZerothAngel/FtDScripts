@@ -1,4 +1,4 @@
---@ planarvector getvectorangle gettargetpositioninfo getbearingtopoint
+--@ commons planarvector getvectorangle gettargetpositioninfo getbearingtopoint
 --@ firstrun debug
 -- Avoidance module
 MidPoint = nil
@@ -65,7 +65,7 @@ function GetTerrainHits(I, Angle, LowerEdge, Speed)
             -- Also means the closer the obstacle, the greater the # of hits
             Hits = Hits + 1
          else
-            local TestPoint = CoM + Rotation * Vector3(Offset, 0, Distance)
+            local TestPoint = C:CoM() + Rotation * Vector3(Offset, 0, Distance)
             if I:GetTerrainAltitudeForPosition(TestPoint) >= LowerEdge then
                Hits = Hits + 1
                Blocked = true
@@ -81,12 +81,12 @@ function Avoidance(I, Bearing)
    local __func__ = "Avoidance"
 
    -- Required clearance above and below
-   local PositionY = Position.y + MidPoint.y -- Not necessarily Altitude
+   local PositionY = C:Position().y + MidPoint.y -- Not necessarily Altitude
    local UpperEdge = PositionY + VerticalClearance
    local LowerEdge = PositionY - VerticalClearance
 
-   local Velocity = I:GetVelocityVector()
-   Velocity.y = 0
+   local Velocity = C:Velocity()
+   Velocity = Vector3(Velocity.x, 0, Velocity.z)
    local Speed = Velocity.magnitude
 
    -- Look for nearby friendlies
@@ -106,7 +106,7 @@ function Avoidance(I, Bearing)
          if Friend.Valid and
             (Friend.AxisAlignedBoundingBoxMinimum.y <= UpperEdge and
              Friend.AxisAlignedBoundingBoxMaximum.y >= LowerEdge) then
-               local Offset,_ = PlanarVector(CoM, Friend.CenterOfMass)
+               local Offset,_ = PlanarVector(C:CoM(), Friend.CenterOfMass)
                local Distance = Offset.magnitude
                if Distance < FriendlyCheckDistance then
                   local Direction = Offset / Distance -- aka Offset.normalized
@@ -156,7 +156,7 @@ function Avoidance(I, Bearing)
          end
          PreviousTAvoid = TAvoid
          TCount = ForwardHits + LeftHits + RightHits
-         TAvoid = Quaternion.Euler(0, Yaw, 0) * TAvoid * TerrainAvoidanceWeight
+         TAvoid = Quaternion.Euler(0, C:Yaw(), 0) * TAvoid * TerrainAvoidanceWeight
       else
          PreviousTAvoid = Vector3.right
       end
@@ -168,9 +168,9 @@ function Avoidance(I, Bearing)
       return Bearing
    else
       -- Current target as given by Bearing
-      local NewTarget = Quaternion.Euler(0, Yaw+Bearing, 0) * Vector3.forward
+      local NewTarget = Quaternion.Euler(0, C:Yaw()+Bearing, 0) * Vector3.forward
       -- Add avoidance vectors
-      NewTarget = CoM + NewTarget + FAvoid + TAvoid
+      NewTarget = C:CoM() + NewTarget + FAvoid + TAvoid
       -- Determine new bearing
       return GetBearingToPoint(NewTarget)
    end

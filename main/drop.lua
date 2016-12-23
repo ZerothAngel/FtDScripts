@@ -1,5 +1,5 @@
 --! drop
---@ getselfinfo firstrun periodic
+--@ commons firstrun periodic
 --@ shieldmanager altitudecontrol sixdof drop-ai
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 Hover = Periodic.create(Hover_UpdateRate, Altitude_Control, 1)
@@ -9,7 +9,7 @@ Control_Reset = SixDoF_Reset
 
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 

@@ -1,11 +1,11 @@
 --! subpump
---@ getselfinfo firstrun periodic
+--@ commons firstrun periodic
 --@ threedofpump depthcontrol
 ThreeDoFPump = Periodic.create(UpdateRate, Depth_Control)
 
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 

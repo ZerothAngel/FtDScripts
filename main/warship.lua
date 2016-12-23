@@ -1,5 +1,5 @@
 --! warship
---@ getselfinfo firstrun periodic
+--@ commons firstrun periodic
 --@ shieldmanager dualprofile yawthrottle naval-ai
 -- Warship main
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
@@ -10,7 +10,7 @@ Control_Reset = YawThrottle_Reset
 
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 

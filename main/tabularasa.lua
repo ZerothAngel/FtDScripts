@@ -1,5 +1,5 @@
 --! tabularasa
---@ yawthrottle getselfinfo firstrun periodic
+--@ yawthrottle commons firstrun periodic
 function TabulaRasa_Update(I)
    YawThrottle_Reset()
 end
@@ -8,7 +8,7 @@ TabulaRasa = Periodic.create(UpdateRate, TabulaRasa_Update)
 
 function Update(I) -- luacheck: ignore 131
    if not I:IsDocked() then
-      GetSelfInfo(I)
+      C = Commons.create(I)
 
       if FirstRun then FirstRun(I) end
 
