@@ -14,9 +14,6 @@ ActivateWhen = {
 -- responsive it will be, but it will also take more processing time.
 UpdateRate = 1
 
--- Mainframe to use for target priorities
-RocketMainframe = 0
-
 -- Weapon slot of turrets to aim
 RocketWeaponSlot = 1
 

@@ -1,5 +1,4 @@
---@ manualcontroller evasion
---@ gettargetpositioninfo terraincheck
+--@ commons manualcontroller evasion terraincheck
 -- Altitude Control module
 ManualAltitudeController = ManualController.create(ManualAltitudeDriveMaintainerFacing)
 HalfMaxManualAltitude = MaxManualAltitude / 2
@@ -11,7 +10,7 @@ function Altitude_Control(I)
    if ManualAltitudeDriveMaintainerFacing and ManualAltitudeWhen[I.AIMode] then
       NewAltitude = HalfMaxManualAltitude + ManualAltitudeController:GetReading(I) * HalfMaxManualAltitude
    else
-      if GetTargetPositionInfo(I) then
+      if C:FirstTarget() then
          NewAltitude = CalculateEvasion(Evasion, DesiredAltitudeCombat)
       else
          NewAltitude = DesiredAltitudeIdle

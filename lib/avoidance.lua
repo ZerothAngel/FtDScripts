@@ -1,4 +1,4 @@
---@ commons planarvector getvectorangle gettargetpositioninfo getbearingtopoint
+--@ commons planarvector getvectorangle getbearingtopoint
 --@ firstrun debug
 -- Avoidance module
 MidPoint = nil
@@ -93,7 +93,7 @@ function Avoidance(I, Bearing)
    local FCount,FAvoid = 0,Vector3.zero
    if FriendlyAvoidanceWeight > 0 then
       local AvoidanceTime,MinDistance
-      if TargetPositionInfo then
+      if C:FirstTarget() then
          AvoidanceTime = FriendlyAvoidanceCombat[1]
          MinDistance = FriendlyAvoidanceCombat[2]
       else

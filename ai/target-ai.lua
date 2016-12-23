@@ -1,5 +1,4 @@
---@ commons evasion
---@ gettargetpositioninfo avoidance waypointmove
+--@ commons evasion avoidance waypointmove
 -- Target AI module
 TargetHeading = nil
 
@@ -25,9 +24,6 @@ function TargetAI_Update(I)
 
    local AIMode = I.AIMode
    if AIMode ~= "fleetmove" then
-      -- Avoidance needs this
-      GetTargetPositionInfo(I)
-
       if not TargetHeading then
          TargetHeading = C:Yaw()
       end

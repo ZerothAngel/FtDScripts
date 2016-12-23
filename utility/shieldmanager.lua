@@ -27,16 +27,9 @@ function ShieldManager_Update(I)
    local Targets = {}
 
    -- Gather enemies
-   local MainframeIndex = 0 -- All mainframes see the same targets, just check one
-   local CoM = C:CoM()
-   for i=0,I:GetNumberOfTargets(MainframeIndex)-1 do
-      local TargetInfo = I:GetTargetInfo(MainframeIndex, i)
-      if TargetInfo.Valid and TargetInfo.Protected then
-         local Offset = TargetInfo.Position - CoM
-         local Distance = Offset.magnitude
-         if Distance <= ShieldActivationRange then
-            table.insert(Targets, Offset / Distance)
-         end
+   for _,Target in pairs(C:Targets()) do
+      if Target.Range <= ShieldActivationRange then
+         table.insert(Targets, Target.Offset / Target.Range)
       end
    end
 

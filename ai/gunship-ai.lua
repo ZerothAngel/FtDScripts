@@ -1,5 +1,4 @@
---@ commons getvectorangle planarvector evasion sign
---@ gettargetpositioninfo
+--@ commons getvectorangle planarvector getbearingtopoint evasion sign
 -- Gunship AI module
 -- Modifies vector by some amount for evasive maneuvers
 function Evade(Evasion, Perp)
@@ -11,9 +10,11 @@ function Evade(Evasion, Perp)
 end
 
 function AdjustPositionToTarget()
-   local Distance = TargetPositionInfo.GroundDistance
+   local TargetPosition = C:FirstTarget().Position
+   local GroundVector = PlanarVector(C:CoM(), TargetPosition)
+   local Distance = GroundVector.magnitude
 
-   local ToTarget = PlanarVector(C:CoM(), TargetPositionInfo.Position).normalized
+   local ToTarget = GroundVector.normalized
    local Perp = Vector3.Cross(ToTarget, Vector3.up)
    local TargetAngle,TargetPitch,Evasion
    if Distance > MaxDistance then
@@ -30,12 +31,12 @@ function AdjustPositionToTarget()
       Evasion = AttackEvasion
    end
 
-   local Bearing = -TargetPositionInfo.Azimuth
+   local Bearing = GetBearingToPoint(TargetPosition)
    Bearing = Bearing - Sign(Bearing, 1) * TargetAngle
    local Offset = ToTarget * (Distance - AttackDistance) + Evade(Evasion, Perp)
    AdjustHeading(Bearing)
    AdjustPosition(Offset)
-   SetPitch((TargetPositionInfo.Position.y >= AirTargetAboveAltitude) and TargetPitch.Air or TargetPitch.Surface)
+   SetPitch((TargetPosition.y >= AirTargetAboveAltitude) and TargetPitch.Air or TargetPitch.Surface)
 end
 
 function FormationMove(I)
@@ -46,7 +47,7 @@ function FormationMove(I)
       -- This leads to tighter formations.
       local Waypoint = Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition
       SetPosition(Waypoint)
-      if not TargetPositionInfo then
+      if not C:FirstTarget() then
          local Offset,_ = PlanarVector(C:CoM(), Waypoint)
          if Offset.magnitude >= OriginMaxDistance then
             SetHeading(GetVectorAngle(Offset))
@@ -60,7 +61,7 @@ function FormationMove(I)
       if Offset.magnitude >= OriginMaxDistance then
          AdjustPosition(Offset)
          -- Only change heading if not in combat
-         if not TargetPositionInfo then
+         if not C:FirstTarget() then
             SetHeading(GetVectorAngle(Offset))
          end
       end
@@ -70,12 +71,12 @@ end
 function GunshipAI_Update(I)
    Control_Reset()
 
-   if GetTargetPositionInfo(I) then
+   if C:FirstTarget() then
       AdjustPositionToTarget()
    end
 
    if I.AIMode ~= "fleetmove" then
-      if not TargetPositionInfo then
+      if not C:FirstTarget() then
          if ReturnToOrigin then
             FormationMove(I)
          end

@@ -1,12 +1,12 @@
 --@ commons planarvector getbearingtopoint evasion sign
---@ debug gettargetpositioninfo avoidance waypointmove
+--@ debug avoidance waypointmove
 -- Naval AI module
 Attacking = true
 LastAttackTime = 0
 
 -- Modifies bearing by some amount for evasive maneuvers
 function Evade(Evasion, Bearing)
-   if AirRaidEvasion and TargetPositionInfo.Position.y >= AirRaidAboveAltitude then
+   if AirRaidEvasion and C:FirstTarget().Position.y >= AirRaidAboveAltitude then
       Evasion = AirRaidEvasion
    end
 
@@ -17,8 +17,9 @@ end
 function AdjustHeadingToTarget(I)
    local __func__ = "AdjustHeadingToTarget"
 
-   local Distance = TargetPositionInfo.GroundDistance
-   local Bearing = -TargetPositionInfo.Azimuth
+   local TargetPosition = C:FirstTarget().Position
+   local Distance = PlanarVector(C:CoM(), TargetPosition).magnitude
+   local Bearing = GetBearingToPoint(TargetPosition)
    if Debugging then Debug(I, __func__, "Distance %f Bearing %f", Distance, Bearing) end
 
    local State,TargetAngle,Drive,Evasion = "escape",EscapeAngle,EscapeDrive,EscapeEvasion
@@ -71,7 +72,7 @@ function NavalAI_Update(I)
 
    local AIMode = I.AIMode
    if AIMode ~= "fleetmove" then
-      if GetTargetPositionInfo(I) then
+      if C:FirstTarget() then
          AdjustHeadingToTarget(I)
       elseif ReturnToOrigin then
          FormationMove(I)

@@ -6,44 +6,25 @@ LastTransceiverResetTime = 0
 MissileStates = {}
 LastTimeTargetSeen = nil
 
-function GatherTargets(I, GuidanceInfos)
+function MissileDriver_GatherTargets(GuidanceInfos)
    local TargetsByPriority = {}
    local TargetsById = {}
 
-   local Position = C:Position()
-
-   for _,mindex in pairs(PreferredMainframes) do
-      for tindex = 0,I:GetNumberOfTargets(mindex)-1 do
-         local TargetInfo = I:GetTargetInfo(mindex, tindex)
-         -- Only if valid and isn't salvage
-         if TargetInfo.Valid and TargetInfo.Protected then
-            local TargetId = TargetInfo.Id
-            local TargetPosition = TargetInfo.Position
-            local Target = {
-               Id = TargetId,
-               Position = TargetPosition,
-               AimPoint = TargetInfo.AimPointPosition,
-               Velocity = TargetInfo.Velocity,
-            }
-            local CanTarget = {}
-            local InRange = {}
-            local Altitude = TargetPosition.y
-            local Range = (TargetPosition - Position).sqrMagnitude
-            for _,GuidanceInfo in pairs(GuidanceInfos) do
-               table.insert(CanTarget, Altitude >= GuidanceInfo.MinAltitude and Altitude <= GuidanceInfo.MaxAltitude)
-               table.insert(InRange, Range >= GuidanceInfo.MinRange and Range <= GuidanceInfo.MaxRange)
-            end
-            Target.CanTarget = CanTarget
-            Target.InRange = InRange
-            table.insert(TargetsByPriority, Target)
-            TargetsById[TargetId] = Target
-         end
+   -- Augment target info
+   local Targets = C:Targets()
+   for _,Target in pairs(Targets) do
+      local CanTarget = {}
+      local InRange = {}
+      local Altitude = Target.Position.y
+      local Range = Target.SqrRange
+      for _,GuidanceInfo in pairs(GuidanceInfos) do
+         table.insert(CanTarget, Altitude >= GuidanceInfo.MinAltitude and Altitude <= GuidanceInfo.MaxAltitude)
+         table.insert(InRange, Range >= GuidanceInfo.MinRange and Range <= GuidanceInfo.MaxRange)
       end
-
-      -- Currently, all AIs seemingly see all targets. Once we've successfully queried one,
-      -- there's no point in querying the others.
-      -- NB Can't distinguish between querying a dead mainframe and getting no targets...
-      if #TargetsByPriority > 0 then break end
+      Target.CanTarget = CanTarget
+      Target.InRange = InRange
+      table.insert(TargetsByPriority, Target)
+      TargetsById[Target.Id] = Target
    end
 
    return TargetsByPriority, TargetsById
@@ -92,7 +73,7 @@ end
 
 function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
    local Now = C:Now()
-   local TargetsByPriority, TargetsById = GatherTargets(I, GuidanceInfos)
+   local TargetsByPriority, TargetsById = MissileDriver_GatherTargets(GuidanceInfos)
    if #TargetsByPriority > 0 then
       LastTimeTargetSeen = Now
 

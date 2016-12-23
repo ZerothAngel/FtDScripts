@@ -1,6 +1,6 @@
 --@ commons planarvector
 --@ spairs
---@ debug gettargetpositioninfo avoidance waypointmove
+--@ debug avoidance waypointmove
 -- Repair AI module
 ParentID = nil
 RepairTargetID = nil
@@ -139,7 +139,7 @@ function RepairAI_Update(I)
 
    local AIMode = I.AIMode
    if AIMode ~= "fleetmove" then
-      if GetTargetPositionInfo(I) then
+      if C:FirstTarget() then
          RepairAI_Main(I)
       else
          if ReturnToOrigin then

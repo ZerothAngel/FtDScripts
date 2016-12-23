@@ -1,9 +1,8 @@
+-- Commons module
+
 -- The one global that holds the Commons instance.
 -- A new instance MUST be instantiated every update.
 C = nil
-
--- Commons implementation
-Commons = {}
 
 -- Presumably, calling a Lua binding is slow, especially methods
 -- that return tables. Only call API when we need something and cache
@@ -44,7 +43,10 @@ function Commons.create(I)
    self.TurretWeaponControllers = Commons.TurretWeaponControllers
    self.WeaponControllers = Commons.WeaponControllers
 
-   -- Target info is a possibility for the future...
+   -- Targets
+   self.GatherTargets = Commons.GatherTargets -- Private
+   self.FirstTarget = Commons.FirstTarget
+   self.Targets = Commons.Targets
 
    return self
 end
@@ -204,4 +206,87 @@ function Commons:WeaponControllers()
       self._WeaponControllers = Weapons
    end
    return self._WeaponControllers
+end
+
+function Commons.ConvertTarget(TargetInfo, Offset, Range)
+   local Target = {
+      Id = TargetInfo.Id,
+      Position = TargetInfo.Position,
+      Offset = Offset,
+      Range = Range,
+      SqrRange = Range * Range,
+      AimPoint = TargetInfo.AimPointPosition,
+      Velocity = TargetInfo.Velocity,
+   }
+   return Target
+end
+
+function Commons:GatherTargets(Targets, MinIndex, MaxIndex)
+   local CoM = self:CoM()
+   -- Query mainframes in the preferred order
+   for _,mindex in pairs(Commons.PreferredTargetMainframes) do
+      local TargetCount = self.I:GetNumberOfTargets(mindex)
+      if TargetCount > 0 then
+         if not MinIndex then MinIndex = 0 end
+         if not MaxIndex then MaxIndex = TargetCount end
+         for tindex = MinIndex,MaxIndex-1 do
+            local TargetInfo = self.I:GetTargetInfo(mindex, tindex)
+            if TargetInfo.Valid and TargetInfo.Protected then
+               local Offset = TargetInfo.Position - CoM
+               local Range = Offset.magnitude
+               if Range <= Commons.MaxEnemyRange then
+                  table.insert(Targets, Commons.ConvertTarget(TargetInfo, Offset, Range))
+               end
+            end
+         end
+         -- Whether or not we actually added new targets, we have a definitive
+         -- answer.
+         -- All AIs see the same targets, so stop after one has been
+         -- successfully queried.
+         -- Note can't distinguish between non-existant mainframe
+         -- and no targets.
+         break
+      end
+   end
+end
+
+function Commons:FirstTarget()
+   if not self._FirstTarget then
+      -- Did we already gather all targets?
+      if self._Targets then
+         -- Use first one
+         local Target = self._Targets[1]
+         self._FirstTarget = Target and { Target } or {}
+      else
+         -- Just fetch first target, if any
+         local Targets = {}
+         self:GatherTargets(Targets, 0, 1)
+         self._FirstTarget = Targets
+      end
+   end
+   -- Note self._FirstTarget is a table of at most size 1, which allows it
+   -- to be distinguished between uninitialized and no target.
+   return self._FirstTarget[1]
+end
+
+function Commons:Targets()
+   if not self._Targets then
+      local Targets = {}
+      -- Do we have a first target already?
+      if self._FirstTarget then
+         local Target = self._FirstTarget[1]
+         if not Target then
+            -- First target was already set, but there is no target.
+            -- Definitely no more beyond that.
+            self._Targets = {}
+            return self._Targets
+         end
+         -- Copy the first target
+         table.insert(Targets, Target)
+      end
+      -- Gather targets
+      self:GatherTargets(Targets, #Targets)
+      self._Targets = Targets
+   end
+   return self._Targets
 end

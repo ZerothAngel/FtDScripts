@@ -1,5 +1,4 @@
---@ manualcontroller
---@ gettargetpositioninfo terraincheck
+--@ commons manualcontroller terraincheck
 -- Depth Control module
 ManualDepthController = ManualController.create(ManualDepthDriveMaintainerFacing)
 
@@ -21,7 +20,7 @@ function Depth_Control(I)
          end
       else
          -- Use configured depths
-         if GetTargetPositionInfo(I) then
+         if C:FirstTarget() then
             DesiredDepth,Absolute = DesiredDepthCombat.Depth,DesiredDepthCombat.Absolute
          else
             DesiredDepth,Absolute = DesiredDepthIdle.Depth,DesiredDepthIdle.Absolute

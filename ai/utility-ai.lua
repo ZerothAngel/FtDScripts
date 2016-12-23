@@ -1,10 +1,11 @@
---@ planarvector getbearingtopoint evasion
---@ spairs avoidance waypointmove maxenemyrange
+--@ commons planarvector getbearingtopoint evasion
+--@ spairs avoidance waypointmove
 -- Utility AI module
 
 -- Square ahead of time
-MaxEnemyRangeSqr = MaxEnemyRange * MaxEnemyRange
+MaxEnemyRangeSqr = Commons.MaxEnemyRange * Commons.MaxEnemyRange
 
+-- Note: Needs to be unfiltered (by range)
 function GetTargets(I)
    local Targets = {}
    local TargetsById = {}
