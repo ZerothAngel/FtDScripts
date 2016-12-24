@@ -1,5 +1,5 @@
 --@ commons planarvector getbearingtopoint evasion sign
---@ debug avoidance waypointmove
+--@ avoidance waypointmove
 -- Naval AI module
 Attacking = true
 LastAttackTime = 0
@@ -15,16 +15,12 @@ end
 
 -- Adjusts heading according to configured behaviors
 function AdjustHeadingToTarget(I)
-   local __func__ = "AdjustHeadingToTarget"
-
    local TargetPosition = C:FirstTarget().Position
    local Distance = PlanarVector(C:CoM(), TargetPosition).magnitude
    local Bearing = GetBearingToPoint(TargetPosition)
-   if Debugging then Debug(I, __func__, "Distance %f Bearing %f", Distance, Bearing) end
 
-   local State,TargetAngle,Drive,Evasion = "escape",EscapeAngle,EscapeDrive,EscapeEvasion
+   local TargetAngle,Drive,Evasion = EscapeAngle,EscapeDrive,EscapeEvasion
    if Distance > MaxDistance then
-      State = "closing"
       TargetAngle = ClosingAngle
       Drive = ClosingDrive
       Evasion = ClosingEvasion
@@ -32,7 +28,6 @@ function AdjustHeadingToTarget(I)
       Attacking = true
    elseif Distance > MinDistance then
       if not AttackRuns or Attacking or (LastAttackTime + ForceAttackTime) <= C:Now() then
-         State = "attack"
          TargetAngle = AttackAngle
          Drive = AttackDrive
          Evasion = AttackEvasion
@@ -47,8 +42,6 @@ function AdjustHeadingToTarget(I)
    Bearing = Bearing - Sign(Bearing, 1) * TargetAngle
    Bearing = Evade(Evasion, Bearing)
    if Bearing > 180 then Bearing = Bearing - 360 end
-
-   if Debugging then Debug(I, __func__, "State %s Drive %f Bearing %f", State, Drive, Bearing) end
 
    AdjustHeading(Avoidance(I, Bearing))
    SetThrottle(Drive)

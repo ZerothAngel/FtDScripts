@@ -1,5 +1,4 @@
---@ commons planarvector getvectorangle getbearingtopoint
---@ firstrun debug
+--@ commons firstrun planarvector getvectorangle getbearingtopoint
 -- Avoidance module
 MidPoint = nil
 VerticalClearance = 0
@@ -39,13 +38,10 @@ end
 AddFirstRun(Avoidance_FirstRun)
 
 function GetTerrainHits(I, Angle, LowerEdge, Speed)
-   local __func__ = "GetTerrainHits"
-
    local Hits = 0
    local Rotation = Quaternion.Euler(0, Angle, 0) -- NB Angle is world
 
    local MaxDistance = Speed * LookAheadTime
-   if Debugging then Debug(I, __func__, "MaxDistance = %.2f", MaxDistance) end
 
    -- Calculate (mid-point) distances for this velocity once
    local Distances = {}
@@ -78,8 +74,6 @@ end
 
 -- Modifies bearing to avoid any friendlies & terrain
 function Avoidance(I, Bearing)
-   local __func__ = "Avoidance"
-
    -- Required clearance above and below
    local PositionY = C:Position().y + MidPoint.y -- Not necessarily Altitude
    local UpperEdge = PositionY + VerticalClearance
@@ -134,8 +128,6 @@ function Avoidance(I, Bearing)
       end
    end
 
-   if Debugging then Debug(I, __func__, "FCount %d FAvoid %s", FCount, tostring(FAvoid)) end
-
    local TCount,TAvoid = 0,Vector3.zero
    if TerrainAvoidanceWeight > 0 then
       local VelocityAngle = GetVectorAngle(Velocity)
@@ -145,7 +137,6 @@ function Avoidance(I, Bearing)
          -- Look for an exit
          local LeftHits = GetTerrainHits(I, VelocityAngle-LookAheadAngle, LowerEdge, Speed)
          local RightHits = GetTerrainHits(I, VelocityAngle+LookAheadAngle, LowerEdge, Speed)
-         if Debugging then Debug(I, __func__, "ForwardHits = %d, LeftHits = %d, RightHits = %d", ForwardHits, LeftHits, RightHits) end
          -- And steer left or right accordingly
          if LeftHits < RightHits then
             TAvoid = Vector3.left
@@ -161,8 +152,6 @@ function Avoidance(I, Bearing)
          PreviousTAvoid = Vector3.right
       end
    end
-
-   if Debugging then Debug(I, __func__, "TCount %d TAvoid %s", TCount, tostring(TAvoid)) end
 
    if (FCount + TCount) == 0 then
       return Bearing

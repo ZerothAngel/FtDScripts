@@ -1,4 +1,4 @@
---@ commons firstrun debug
+--@ commons firstrun
 -- Terrain following module
 TerrainCheckPoints = {}
 CurrentMaxVerticalSpeed = 1
@@ -34,8 +34,6 @@ AddFirstRun(TerrainCheck_FirstRun)
 -- Using pre-calculated check points, scan ahead a certain distance
 -- (using Velocity * look-ahead time) and return maximum height of terrain.
 function GetTerrainHeight(I, Velocity, MinAltitude, MaxAltitude)
-   local __func__ = "GetTerrainHeight"
-
    local Height = MinAltitude
    local Speed = Velocity.magnitude
    local Direction = Velocity / Speed
@@ -51,15 +49,12 @@ function GetTerrainHeight(I, Velocity, MinAltitude, MaxAltitude)
       -- Don't count falling!
       if not TerrainCheckMaxVerticalSpeed and Velocity.y > CurrentMaxVerticalSpeed then
          CurrentMaxVerticalSpeed = Velocity.y
-         if Debugging then Debug(I, __func__, "CurrentMaxVerticalSpeed = %.2f", CurrentMaxVerticalSpeed) end
       end
 
       local RemainingAltitude = math.max(0, MaxAltitude - C:Altitude())
       LookAheadTime = math.max(1, TerrainCheckBufferFactor * RemainingAltitude / CurrentMaxVerticalSpeed)
-      if Debugging then Debug(I, __func__, "LookAheadTime = %.2f", LookAheadTime) end
    end
    local MaxDistance = Speed * LookAheadTime
-   if Debugging then Debug(I, __func__, "MaxDistance = %.2f", MaxDistance) end
 
    -- Calculate (mid-point) distances for this velocity once
    local Distances = {}

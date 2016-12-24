@@ -1,6 +1,5 @@
---@ commons planarvector
---@ spairs
---@ debug avoidance waypointmove
+--@ commons planarvector spairs
+--@ avoidance waypointmove
 -- Repair AI module
 ParentID = nil
 RepairTargetID = nil
@@ -10,12 +9,8 @@ function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
 end
 
 function AdjustHeadingToRepairTarget(I)
-   local __func__ = "AdjustHeadingToRepairTarget"
-
    local RepairTarget = I:GetFriendlyInfoById(RepairTargetID)
    if RepairTarget and RepairTarget.Valid then
-      if Debugging then Debug(I, __func__, "RepairTarget %s", RepairTarget.BlueprintName) end
-
       local RepairTargetCoM = RepairTarget.CenterOfMass + RepairTarget.ForwardVector * RepairTargetOffset.z + RepairTarget.RightVector * RepairTargetOffset.x
 
       Control_MoveToWaypoint(I, RepairTargetCoM, RepairTarget.Velocity)
@@ -29,8 +24,6 @@ function CalculateRepairTargetWeight(Distance, ParentDistance, Friend)
 end
 
 function SelectRepairTarget(I)
-   local __func__ = "SelectRepairTarget"
-
    -- Get Parent info
    local Parent = I:GetFriendlyInfoById(ParentID)
    if Parent and not Parent.Valid then
@@ -72,13 +65,6 @@ function SelectRepairTarget(I)
             Targets[Friend.Id] = CalculateRepairTargetWeight(Distance, ParentDistance, Friend)
          end
       end
-   end
-
-   if Debugging then
-      local NumTargets = 0
-      -- Huh. # operator only works on sequences
-      for _ in pairs(Targets) do NumTargets = NumTargets+1 end
-      Debug(I, __func__, "#Targets %d", NumTargets)
    end
 
    -- Sort
