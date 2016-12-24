@@ -1,5 +1,5 @@
 --! rocketcontrol
---@ commons periodic quadraticintercept
+--@ commons periodic weapontypes quadraticintercept
 function RocketControl_Update(I)
    -- Get highest-priority non-salvage target
    local Target = C:FirstTarget()
@@ -8,7 +8,7 @@ function RocketControl_Update(I)
       local Velocity = Vector3.forward * RocketSpeed
       -- Aim & fire all turrets/missile controllers of the appropriate slot
       for _,Weapon in pairs(C:HullWeaponControllers()) do
-         if Weapon.Slot == RocketWeaponSlot and (Weapon.Type == 4 or Weapon.Type == 5) and not Weapon.PlayerControl then
+         if Weapon.Slot == RocketWeaponSlot and (Weapon.Type == TURRET or Weapon.Type == MISSILECONTROL) and not Weapon.PlayerControl then
             -- Calculate aim point
             local AimPoint = QuadraticIntercept(Weapon.Position, Velocity, Target.AimPoint, Target.Velocity, 9999)
             -- Relative to weapon position

@@ -1,4 +1,4 @@
---@ missiledriver generalmissile getweaponcontrollers
+--@ missiledriver generalmissile weapontypes
 -- Multi profile module
 
 GuidanceInfos = {}
@@ -30,7 +30,12 @@ MissileControllers = nil
 -- Returns index into GuidanceInfos
 function SelectGuidance(I, TransceiverIndex)
    if not MissileControllers then
-      MissileControllers = GetWeaponControllers(I, MISSILECONTROL, true)
+      MissileControllers = {}
+      for _,Weapon in pairs(C:WeaponControllers()) do
+         if Weapon.Type == MISSILECONTROL then
+            table.insert(MissileControllers, Weapon)
+         end
+      end
    end
 
    -- Look for closest missile controller within BlockRange

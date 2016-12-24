@@ -1,5 +1,5 @@
 --! interceptmanager
---@ commons periodic
+--@ commons periodic weapontypes
 -- Interceptor manager
 function InterceptManager_Update(I)
    local CoM = C:CoM()
@@ -46,7 +46,7 @@ function InterceptManager_Update(I)
          if WeaponSlot and not Fired[WeaponSlot] then
             -- Fire weapons
             for _,Weapon in pairs(C:HullWeaponControllers()) do
-               if Weapon.Slot == WeaponSlot and (Weapon.Type == 4 or Weapon.Type == 5) then
+               if Weapon.Slot == WeaponSlot and (Weapon.Type == TURRET or Weapon.Type == MISSILECONTROL) and not Weapon.PlayerControl then
                   -- Aim and fire each weapon. Don't really care what we aim at,
                   -- but it's necessary.
                   if I:AimWeaponInDirection(Weapon.Index, Offset.x, Offset.y, Offset.z, WeaponSlot) > 0 then

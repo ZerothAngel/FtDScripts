@@ -1,4 +1,4 @@
---@ commons
+--@ commons weapontypes
 -- MissileDriver module
 LastTransceiverCount = 0
 TransceiverGuidances = {}
@@ -59,7 +59,7 @@ function MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
          if AimPoint and not Weapon.PlayerControl then
             local WeaponType = Weapon.Type
             -- Top-level turrets and missile controllers only
-            if WeaponType == 4 or WeaponType == 5 then
+            if WeaponType == TURRET or WeaponType == MISSILECONTROL then
                -- Relative to weapon position
                local Offset = AimPoint - Weapon.Position
                if I:AimWeaponInDirection(Weapon.Index, Offset.x, Offset.y, Offset.z, WeaponSlot) > 0 then

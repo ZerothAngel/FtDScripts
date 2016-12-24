@@ -1,12 +1,9 @@
---@ commons getweaponcontrollers
+--@ commons weapontypes
 function CameraTrack_Update(I)
    local Target = C:FirstTarget()
    if Target then
-      -- Note: Can't do any caching because we need global position
-      local Turrets = GetWeaponControllers(I, TURRET)
-
-      for _,Weapon in pairs(Turrets) do
-         if Weapon.Slot == CameraWeaponSlot then
+      for _,Weapon in pairs(C:HullWeaponControllers()) do
+         if Weapon.Slot == CameraWeaponSlot and Weapon.Type == TURRET then
             local Offset = Target.Position - Weapon.Position
             I:AimWeaponInDirection(Weapon.Index, Offset.x, Offset.y, Offset.z, CameraWeaponSlot)
          end
