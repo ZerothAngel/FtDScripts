@@ -220,9 +220,10 @@ function Commons:WeaponControllers()
    return self._WeaponControllers
 end
 
-function Commons.ConvertTarget(TargetInfo, Offset, Range)
+function Commons.ConvertTarget(Index, TargetInfo, Offset, Range)
    local Target = {
       Id = TargetInfo.Id,
+      Index = Index,
       Position = TargetInfo.Position,
       Offset = Offset,
       Range = Range,
@@ -233,21 +234,23 @@ function Commons.ConvertTarget(TargetInfo, Offset, Range)
    return Target
 end
 
-function Commons:GatherTargets(Targets, MinIndex, MaxIndex)
+function Commons:GatherTargets(Targets, StartIndex, MaxTargets)
    local CoM = self:CoM()
    -- Query mainframes in the preferred order
    for _,mindex in pairs(Commons.PreferredTargetMainframes) do
       local TargetCount = self.I:GetNumberOfTargets(mindex)
       if TargetCount > 0 then
-         if not MinIndex then MinIndex = 0 end
-         if not MaxIndex then MaxIndex = TargetCount end
-         for tindex = MinIndex,MaxIndex-1 do
+         if not StartIndex then StartIndex = 0 end
+         if not MaxTargets then MaxTargets = math.huge end
+         for tindex = StartIndex,TargetCount-1 do
+            if #Targets >= MaxTargets then break end
             local TargetInfo = self.I:GetTargetInfo(mindex, tindex)
+            -- Will probably never not be valid, but eh, check anyway
             if TargetInfo.Valid and TargetInfo.Protected then
                local Offset = TargetInfo.Position - CoM
                local Range = Offset.magnitude
                if Range <= Commons.MaxEnemyRange then
-                  table.insert(Targets, Commons.ConvertTarget(TargetInfo, Offset, Range))
+                  table.insert(Targets, Commons.ConvertTarget(tindex, TargetInfo, Offset, Range))
                end
             end
          end
@@ -295,9 +298,12 @@ function Commons:Targets()
          end
          -- Copy the first target
          table.insert(Targets, Target)
+         -- And continue off after first target
+         self:GatherTargets(Targets, Target.Index+1)
+      else
+         -- Gather from start
+         self:GatherTargets(Targets, 0)
       end
-      -- Gather targets
-      self:GatherTargets(Targets, #Targets)
       self._Targets = Targets
    end
    return self._Targets
