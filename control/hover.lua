@@ -11,7 +11,7 @@ function SetAltitude(Alt)
 end
 
 function AdjustAltitude(Delta) -- luacheck: ignore 131
-   DesiredAltitude = Altitude + Delta
+   DesiredAltitude = C:Altitude() + Delta
 end
 
 function Hover_Update(I)

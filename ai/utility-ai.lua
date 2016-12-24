@@ -2,26 +2,22 @@
 --@ spairs avoidance waypointmove
 -- Utility AI module
 
--- Square ahead of time
-MaxEnemyRangeSqr = Commons.MaxEnemyRange * Commons.MaxEnemyRange
+-- Save original MaxEnemyRange
+EscapeRange = Commons.MaxEnemyRange
+
+-- And disable range check
+Commons.MaxEnemyRange = math.huge
 
 -- Note: Needs to be unfiltered (by range)
-function GetTargets(I)
+function GetTargets()
    local Targets = {}
    local TargetsById = {}
-   for i = 0,I:GetNumberOfTargets(0)-1 do
-      local TargetInfo = I:GetTargetInfo(0, i)
-      if TargetInfo.Valid and TargetInfo.Protected then
-         local Id = TargetInfo.Id
-         local Target = {
-            Id = Id,
-            Position = TargetInfo.Position,
-         }
-         table.insert(Targets, Target)
-         TargetsById[Id] = Target
-      end
+
+   for _,Target in pairs(C:Targets()) do
+      table.insert(Targets, Target)
+      TargetsById[Target.Id] = Target
    end
-   return Targets, TargetsById
+   return Targets,TargetsById
 end
 
 function GetResourceZones(I, ReferencePosition)
@@ -87,7 +83,7 @@ function UtilityAI_Reset(_)
 end
 
 function UtilityAI_Main(I)
-   local Targets,TargetsById = GetTargets(I)
+   local Targets,TargetsById = GetTargets()
 
    if IsCollector then
       -- Check if targets are still around
@@ -105,8 +101,7 @@ function UtilityAI_Main(I)
    -- Escape mode only when enemies in range
    local EnemiesInRange = false
    for _,Target in pairs(Targets) do
-      local RangeSquared = (Target.Position - C:CoM()).sqrMagnitude
-      if RangeSquared <= MaxEnemyRangeSqr then
+      if Target.Range <= EscapeRange then
          EnemiesInRange = true
          break
       end
@@ -116,10 +111,9 @@ function UtilityAI_Main(I)
       -- Sum up the all enemy direction vectors
       local RunAway,Count = Vector3.zero,0
       for _,Target in pairs(Targets) do
-         local Offset,_ = PlanarVector(C:CoM(), Target.Position)
-         local Distance = Offset.magnitude
+         local Distance = PlanarVector(C:CoM(), Target.Position).magnitude
          if Distance < RunAwayDistance then
-            RunAway = RunAway + Offset / Distance
+            RunAway = RunAway + Target.Offset / Target.Range
             Count = Count + 1
          end
       end

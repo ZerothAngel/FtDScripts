@@ -14,7 +14,7 @@ function SetHeading(Heading)
 end
 
 -- Adjusts heading toward relative bearing
-function AdjustHeading(Bearing)
+function AdjustHeading(Bearing) -- luacheck: ignore 131
    SetHeading(C:Yaw() + Bearing)
 end
 
@@ -41,7 +41,7 @@ end
 
 -- Resets heading/throttle so they will no longer be modified
 -- (unless explicitly set again)
-function YawThrottle_Reset()
+function YawThrottle_Reset() -- luacheck: ignore 131
    ResetHeading()
    ResetThrottle()
 end

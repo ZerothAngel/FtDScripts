@@ -1,5 +1,5 @@
 --! dodgetest2
---@ yawthrottle debug commons normalizebearing raysphereintersect spairs periodic firstrun
+--@ commons periodic yawthrottle normalizebearing raysphereintersect spairs firstrun
 DodgeDirections = { -45, 45, -45, 45 }
 
 MyRadius = 0
@@ -21,15 +21,15 @@ AddFirstRun(DodgeTest_FirstRun)
 
 -- Return predicted impact local quadrant. Quadrants are 1-4 clockwise
 -- starting with pos X/pos Z quadrant.
-function PredictImpactQuadrant(I, Velocity, Projectile)
-   local RelativePosition = Projectile.Position - CoM
+function PredictImpactQuadrant(Velocity, Projectile)
+   local RelativePosition = Projectile.Position - C:CoM()
    local RelativeVelocity = Projectile.Velocity - Velocity
    local ImpactPoint,ImpactTime = RaySphereIntersect(RelativePosition, RelativeVelocity, MyRadius)
    if not ImpactPoint then return nil end
 
    -- Move it to local frame of reference centered on predicted CoM
    -- (already relative to CoM, just rotate)
-   ImpactPoint = Quaternion.Inverse(Quaternion.LookRotation(I:GetConstructForwardVector(), I:GetConstructUpVector())) * ImpactPoint
+   ImpactPoint = C:ToLocal() * ImpactPoint
 
    -- TODO Constrain by self dimensions
 
@@ -49,16 +49,14 @@ function PredictImpactQuadrant(I, Velocity, Projectile)
 end
 
 function Dodge(I, Bearing)
-   local __func__ = "Dodge"
-
-   local Velocity = I:GetVelocityVector()
+   local Velocity = C:Velocity()
 
    local Dodges = {}
    local mindex = 0
    for pindex = 0,I:GetNumberOfWarnings(mindex)-1 do
       local Projectile = I:GetMissileWarning(mindex, pindex)
       if Projectile.Valid then
-         local Quadrant,ImpactTime = PredictImpactQuadrant(I, Velocity, Projectile)
+         local Quadrant,ImpactTime = PredictImpactQuadrant(Velocity, Projectile)
          if Quadrant then
             Dodges[ImpactTime] = Quadrant
          end
@@ -67,7 +65,7 @@ function Dodge(I, Bearing)
 
    local DodgeAngle = 0
    for t,Quadrant in spairs(Dodges) do -- luacheck: ignore 512
-      if Debugging then Debug(I, __func__, "Quadrant = %d, ImpactTime = %f", Quadrant, t) end
+      I:LogToHud(string.format("Quadrant = %d, ImpactTime = %f", Quadrant, t))
       DodgeAngle = DodgeDirections[Quadrant]
       break
    end
@@ -89,13 +87,15 @@ end
 DodgeTest = Periodic.create(UpdateRate, DodgeTest_Update)
 
 function Update(I) -- luacheck: ignore 131
-   if I.AIMode == "off" then
-      C = Commons.create(I)
+   C = Commons.create(I)
+   if FirstRun then FirstRun(I) end
+   if not C:IsDocked() then
+      if I.AIMode == "off" then
+         DodgeTest:Tick(I)
 
-      if FirstRun then FirstRun(I) end
-
-      DodgeTest:Tick(I)
-
-      YawThrottle_Update(I)
+         YawThrottle_Update(I)
+      end
+   else
+      YawThrottle_Disable(I)
    end
 end

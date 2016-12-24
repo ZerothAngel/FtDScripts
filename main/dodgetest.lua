@@ -1,16 +1,16 @@
 --! dodgetest
---@ yawthrottle debug commons normalizebearing quadraticsolver spairs periodic
+--@ commons periodic yawthrottle normalizebearing quadraticsolver spairs
 DodgeDirections = { -45, 45, -45, 45 }
 
 -- Returns impact point on XZ plane at given altitude
 -- Returns nil if no impact on the plane
-function PredictImpact(I, Altitude, Projectile)
+function PredictImpact(Altitude, Projectile)
    local ProjectilePosition = Projectile.Position
    local ProjectileAltitude = ProjectilePosition.y
    local ProjectileVelocity = Projectile.Velocity
-   local Gravity = I:GetGravityForAltitude(ProjectileAltitude).y
+   --local Gravity = I:GetGravityForAltitude(ProjectileAltitude).y
 
-   local a = 0 -- 0.5 * Gravity can't see non-missiles yet
+   local a = 0 -- 0.5 * Gravity -- can't see non-missiles yet
    local b = ProjectileVelocity.y
    local c = ProjectileAltitude - Altitude
    local Solutions = QuadraticSolver(a, b, c)
@@ -41,13 +41,13 @@ end
 
 -- Return predicted impact local quadrant. Quadrants are 1-4 clockwise
 -- starting with pos X/pos Z quadrant.
-function PredictImpactQuadrant(I, Velocity, Projectile)
-   local ImpactPoint,ImpactTime = PredictImpact(I, Altitude, Projectile)
+function PredictImpactQuadrant(Velocity, Projectile)
+   local ImpactPoint,ImpactTime = PredictImpact(C:Altitude(), Projectile)
    if not ImpactPoint then return nil end
 
    -- Move it to local frame of reference centered on predicted CoM
-   ImpactPoint = ImpactPoint - (CoM + Velocity * ImpactTime)
-   ImpactPoint = Quaternion.Inverse(Quaternion.LookRotation(I:GetConstructForwardVector(), I:GetConstructUpVector())) * ImpactPoint
+   ImpactPoint = ImpactPoint - (C:CoM() + Velocity * ImpactTime)
+   ImpactPoint = C:ToLocal() * ImpactPoint
 
    -- TODO Constrain by self dimensions
 
@@ -67,16 +67,14 @@ function PredictImpactQuadrant(I, Velocity, Projectile)
 end
 
 function Dodge(I, Bearing)
-   local __func__ = "Dodge"
-
-   local Velocity = I:GetVelocityVector()
+   local Velocity = C:Velocity()
 
    local Dodges = {}
    local mindex = 0
    for pindex = 0,I:GetNumberOfWarnings(mindex)-1 do
       local Projectile = I:GetMissileWarning(mindex, pindex)
       if Projectile.Valid then
-         local Quadrant,ImpactTime = PredictImpactQuadrant(I, Velocity, Projectile)
+         local Quadrant,ImpactTime = PredictImpactQuadrant(Velocity, Projectile)
          if Quadrant then
             Dodges[ImpactTime] = Quadrant
          end
@@ -85,7 +83,7 @@ function Dodge(I, Bearing)
 
    local DodgeAngle = 0
    for t,Quadrant in spairs(Dodges) do -- luacheck: ignore 512
-      if Debugging then Debug(I, __func__, "Quadrant = %d, ImpactTime = %f", Quadrant, t) end
+      I:LogToHud(string.format("Quadrant = %d, ImpactTime = %f", Quadrant, t))
       DodgeAngle = DodgeDirections[Quadrant]
       break
    end
@@ -107,11 +105,14 @@ end
 DodgeTest = Periodic.create(UpdateRate, DodgeTest_Update)
 
 function Update(I) -- luacheck: ignore 131
-   if I.AIMode == "off" then
-      C = Commons.create(I)
+   C = Commons.create(I)
+   if not C:IsDocked() then
+      if I.AIMode == "off" then
+         DodgeTest:Tick(I)
 
-      DodgeTest:Tick(I)
-
-      YawThrottle_Update(I)
+         YawThrottle_Update(I)
+      end
+   else
+      YawThrottle_Disable(I)
    end
 end

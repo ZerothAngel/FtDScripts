@@ -19,6 +19,9 @@ function Commons.create(I)
    -- Time
    self.Now = Commons.Now
 
+   -- Miscellaneous
+   self.IsDocked = Commons.IsDocked
+
    -- Position and attitude
    self.Position = Commons.Position
    self.CoM = Commons.CoM
@@ -48,6 +51,8 @@ function Commons.create(I)
    self.FirstTarget = Commons.FirstTarget
    self.Targets = Commons.Targets
 
+   -- Maybe friendlies too...?
+
    return self
 end
 
@@ -56,6 +61,13 @@ function Commons:Now()
       self._Now = self.I:GetTimeSinceSpawn()
    end
    return self._Now
+end
+
+function Commons:IsDocked()
+   if not self._IsDocked then
+      self._IsDocked = self.I:IsDocked()
+   end
+   return self._IsDocked
 end
 
 function Commons:Position()

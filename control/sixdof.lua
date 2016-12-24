@@ -31,7 +31,7 @@ end
 
 -- Adjusts heading toward relative bearing
 function AdjustHeading(Bearing) -- luacheck: ignore 131
-   SetHeading(Yaw + Bearing)
+   SetHeading(C:Yaw() + Bearing)
 end
 
 -- Resets heading so yaw will no longer be modified
@@ -45,7 +45,7 @@ function SetPosition(Pos)
 end
 
 function AdjustPosition(Offset)
-   DesiredPosition = CoM + Offset
+   DesiredPosition = C:CoM() + Offset
 end
 
 function ResetPosition()

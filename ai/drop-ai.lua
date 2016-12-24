@@ -2,24 +2,13 @@
 -- Drop AI module
 DropTargetID = nil
 
-function GatherTargets(I)
+function DropAI_GatherTargets()
    local TargetsByPriority = {}
    local TargetsById = {}
 
-   local mindex = 0
-   for tindex = 0,I:GetNumberOfTargets(mindex)-1 do
-      local TargetInfo = I:GetTargetInfo(mindex, tindex)
-      if TargetInfo.Valid then
-         local TargetId = TargetInfo.Id
-         local TargetPosition = TargetInfo.Position
-         local Target = {
-            Id = TargetId,
-            Position = TargetPosition,
-            Velocity = TargetInfo.Velocity,
-         }
-         table.insert(TargetsByPriority, Target)
-         TargetsById[TargetId] = Target
-      end
+   for _,Target in pairs(C:Targets()) do
+      table.insert(TargetsByPriority, Target)
+      TargetsById[Target.Id] = Target
    end
 
    return TargetsByPriority, TargetsById
@@ -38,8 +27,8 @@ function Evade(Evasion, Perp)
    end
 end
 
-function DropAI_Main(I)
-   local TargetsByPriority,TargetsById = GatherTargets(I)
+function DropAI_Main()
+   local TargetsByPriority,TargetsById = DropAI_GatherTargets()
 
    if #TargetsByPriority == 0 then return false end
 
@@ -106,7 +95,7 @@ function DropAI_Update(I)
 
    local AIMode = I.AIMode
    if AIMode ~= "fleetmove" then
-      if not DropAI_Main(I) then
+      if not DropAI_Main() then
          DropAI_Reset()
          if ReturnToOrigin then
             FormationMove(I)

@@ -47,8 +47,8 @@ end
 -- Should be called every update.
 function Stabilizer_Update(I)
    if ControlRoll or ControlPitch then
-      local RollCV = ControlRoll and RollPID:Control(DesiredRoll - Roll) or 0
-      local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - Pitch) or 0
+      local RollCV = ControlRoll and RollPID:Control(DesiredRoll - C:Roll()) or 0
+      local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - C:Pitch()) or 0
 
       ClassifyPropulsion(I)
 

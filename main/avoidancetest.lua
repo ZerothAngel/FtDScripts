@@ -10,16 +10,18 @@ end
 AvoidanceTest = Periodic.create(UpdateRate, AvoidanceTest_Update)
 
 function Update(I) -- luacheck: ignore 131
-   if ActivateWhen[I.AIMode] then
-      C = Commons.create(I)
+   C = Commons.create(I)
+   if FirstRun then FirstRun(I) end
+   if not C:IsDocked() then
+      if ActivateWhen[I.AIMode] then
+         AvoidanceTest:Tick(I)
 
-      if FirstRun then FirstRun(I) end
+         -- Suppress default AI
+         I:TellAiThatWeAreTakingControl()
 
-      AvoidanceTest:Tick(I)
-
-      -- Suppress default AI
-      I:TellAiThatWeAreTakingControl()
-
-      YawThrottle_Update(I)
+         YawThrottle_Update(I)
+      end
+   else
+      YawThrottle_Disable(I)
    end
 end

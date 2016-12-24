@@ -31,8 +31,7 @@ function Depth_Control(I)
          DesiredDepth = -DesiredDepth
       else
          -- Look ahead at terrain
-         local Velocity = I:GetVelocityVector()
-         DesiredDepth = DesiredDepth + GetTerrainHeight(I, Velocity, -(MaxDepth + DesiredDepth), -MinDepth)
+         DesiredDepth = DesiredDepth + GetTerrainHeight(I, C:Velocity(), -(MaxDepth + DesiredDepth), -MinDepth)
          -- No higher than MinDepth
          DesiredDepth = math.min(DesiredDepth, -MinDepth)
       end

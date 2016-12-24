@@ -3,7 +3,7 @@
 --@ fivedof
 FiveDoFTest = EventDriver.create()
 
-function FiveDoFTest_FirstRun(I)
+function FiveDoFTest_FirstRun(_)
    FiveDoFTest:Schedule(0, FiveDoFTest_Update)
 end
 AddFirstRun(FiveDoFTest_FirstRun)
@@ -22,11 +22,9 @@ function FiveDoFTest_Update(I)
 end
 
 function Update(I) -- luacheck: ignore 131
-   if not I:IsDocked() then
-      C = Commons.create(I)
-
-      if FirstRun then FirstRun(I) end
-
+   C = Commons.create(I)
+   if FirstRun then FirstRun(I) end
+   if not C:IsDocked() then
       if ActivateWhen[I.AIMode] then
          FiveDoFTest:Tick(I)
 

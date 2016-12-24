@@ -73,7 +73,7 @@ function ShieldManager_Disable(I)
 end
 
 function ShieldManager_Control(I)
-   if I:IsDocked() then
+   if C:IsDocked() then
       ShieldManager_Disable(I)
    else
       ShieldManager_Update(I)

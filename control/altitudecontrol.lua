@@ -19,8 +19,7 @@ function Altitude_Control(I)
 
    if not AbsoluteAltitude then
       -- Look ahead at the terrain, but don't fly lower than sea level
-      local Velocity = I:GetVelocityVector()
-      local Height = GetTerrainHeight(I, Velocity, 0, MaxAltitude)
+      local Height = GetTerrainHeight(I, C:Velocity(), 0, MaxAltitude)
       NewAltitude = NewAltitude + Height
    end
 

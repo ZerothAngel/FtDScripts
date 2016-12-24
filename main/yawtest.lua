@@ -7,7 +7,7 @@ ThrottleIndex = 0
 
 YawTest = EventDriver.create()
 
-function YawTest_FirstRun(I)
+function YawTest_FirstRun(_)
    YawTest:Schedule(0, YawTest_Throttle)
 end
 AddFirstRun(YawTest_FirstRun)
@@ -34,31 +34,33 @@ function YawTest_Heading(I)
    MyHeading = (MyHeading + 90) % 360
    I:LogToHud(string.format("New heading! %f degrees", MyHeading))
    SetHeading(MyHeading)
-   LastTurn = { Now, CoM }
+   LastTurn = { C:Now(), C:CoM() }
 
    YawTest:Schedule(HeadingDelay, YawTest_Throttle)
 end
 
 function Update(I) -- luacheck: ignore 131
-   if not I:IsDocked() and ActivateWhen[I.AIMode] then
-      C = Commons.create(I)
+   C = Commons.create(I)
+   if FirstRun then FirstRun(I) end
+   if not C:IsDocked() then
+      if ActivateWhen[I.AIMode] then
+         if LastTurn and math.abs(Mathf.DeltaAngle(C:Yaw(), MyHeading)) < 0.1 then
+            local DeltaTime = C:Now() - LastTurn[1]
+            local Distance = (C:CoM() - LastTurn[2]).magnitude
+            local Message = string.format("Time: %.2f s, Distance: %.2f m", DeltaTime, Distance)
+            I:Log(Message)
+            I:LogToHud(Message)
+            LastTurn = nil
+         end
 
-      if FirstRun then FirstRun(I) end
+         YawTest:Tick(I)
 
-      if LastTurn and math.abs(Mathf.DeltaAngle(Yaw, MyHeading)) < 0.1 then
-         local DeltaTime = Now - LastTurn[1]
-         local Distance = (CoM - LastTurn[2]).magnitude
-         local Message = string.format("Time: %.2f s, Distance: %.2f m", DeltaTime, Distance)
-         I:Log(Message)
-         I:LogToHud(Message)
-         LastTurn = nil
+         -- Suppress default AI
+         I:TellAiThatWeAreTakingControl()
+
+         YawThrottle_Update(I)
       end
-
-      YawTest:Tick(I)
-
-      -- Suppress default AI
-      I:TellAiThatWeAreTakingControl()
-
-      YawThrottle_Update(I)
+   else
+      YawThrottle_Disable(I)
    end
 end

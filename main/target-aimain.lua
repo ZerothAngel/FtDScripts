@@ -6,11 +6,9 @@ TargetAI = Periodic.create(UpdateRate, TargetAI_Update)
 Control_Reset = YawThrottle_Reset
 
 function Update(I) -- luacheck: ignore 131
-   if not I:IsDocked() then
-      C = Commons.create(I)
-
-      if FirstRun then FirstRun(I) end
-
+   C = Commons.create(I)
+   if FirstRun then FirstRun(I) end
+   if not C:IsDocked() then
       if ActivateWhen[I.AIMode] then
          TargetAI:Tick(I)
 
