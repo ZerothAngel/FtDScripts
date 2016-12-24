@@ -77,7 +77,9 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
    if #TargetsByPriority > 0 then
       LastTimeTargetSeen = Now
 
-      MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
+      if I.AIMode ~= "off" then
+         MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
+      end
 
       local TransceiverCount = I:GetLuaTransceiverCount()
       if TransceiverCount ~= LastTransceiverCount or (LastTransceiverResetTime+TransceiverResetInterval) < Now then
