@@ -1,4 +1,4 @@
---@ api
+--@ componenttypes
 -- ManualController implementation
 ManualController = {}
 

@@ -1,4 +1,4 @@
---@ commons api normalizebearing sign pid
+--@ commons componenttypes normalizebearing sign pid
 -- 3DoF module (Yaw, Forward/Reverse, Right/Left)
 YawPID = PID.create(YawPIDConfig, -10, 10)
 ForwardPID = PID.create(ForwardPIDConfig, -10, 10)

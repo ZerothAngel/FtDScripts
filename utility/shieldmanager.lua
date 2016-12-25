@@ -1,4 +1,4 @@
---@ commons api
+--@ commons componenttypes
 -- ShieldManager module
 -- Re-do in terms of cosine
 ShieldActivationAngle = math.cos(math.rad(ShieldActivationAngle))

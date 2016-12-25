@@ -1,4 +1,4 @@
---@ commons api sign pid
+--@ commons componenttypes sign pid
 -- 3DoF Pump module (Altitude, Pitch, Roll)
 AltitudePID = PID.create(AltitudePIDConfig, -10, 10)
 PitchPID = PID.create(PitchPIDConfig, -10, 10)

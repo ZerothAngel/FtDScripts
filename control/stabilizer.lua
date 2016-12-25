@@ -1,4 +1,4 @@
---@ api sign pid
+--@ componenttypes sign pid
 -- Stabilizer module
 RollPID = PID.create(RollPIDConfig, -10, 10)
 PitchPID = PID.create(PitchPIDConfig, -10, 10)

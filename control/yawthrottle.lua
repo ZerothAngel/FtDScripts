@@ -1,4 +1,4 @@
---@ commons api normalizebearing pid spinnercontrol
+--@ commons propulsionapi normalizebearing pid spinnercontrol
 -- Yaw & throttle module
 YawPID = PID.create(YawPIDConfig, -1.0, 1.0)
 

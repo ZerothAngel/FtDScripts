@@ -1,4 +1,4 @@
---@ commons api normalizebearing sign pid
+--@ commons componenttypes normalizebearing sign pid
 -- 5DoF module (Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
 YawPID = PID.create(YawPIDConfig, -10, 10)
 PitchPID = PID.create(PitchPIDConfig, -10, 10)
