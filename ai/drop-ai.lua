@@ -21,7 +21,7 @@ end
 -- Modifies vector by some amount for evasive maneuvers
 function Evade(Evasion, Perp)
    if Evasion then
-      return Perp * CalculateEvasion(Evasion, 0)
+      return Perp * CalculateEvasion(Evasion)
    else
       return Vector3.zero
    end

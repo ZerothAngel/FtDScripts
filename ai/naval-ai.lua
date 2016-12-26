@@ -10,7 +10,7 @@ function Evade(Evasion, Bearing)
       Evasion = AirRaidEvasion
    end
 
-   return CalculateEvasion(Evasion, Bearing)
+   return Bearing + CalculateEvasion(Evasion)
 end
 
 -- Adjusts heading according to configured behaviors

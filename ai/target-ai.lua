@@ -29,7 +29,7 @@ function TargetAI_Update(I)
       end
 
       local Bearing = NormalizeBearing(TargetHeading - C:Yaw())
-      Bearing = CalculateEvasion(TargetEvasion, Bearing)
+      Bearing = Bearing + CalculateEvasion(TargetEvasion)
 
       AdjustHeading(Avoidance(I, Bearing))
       SetThrottle(TargetDrive)

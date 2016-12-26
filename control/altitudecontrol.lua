@@ -11,7 +11,7 @@ function Altitude_Control(I)
       NewAltitude = HalfMaxManualAltitude + ManualAltitudeController:GetReading(I) * HalfMaxManualAltitude
    else
       if C:FirstTarget() then
-         NewAltitude = CalculateEvasion(Evasion, DesiredAltitudeCombat)
+         NewAltitude = DesiredAltitudeCombat + CalculateEvasion(Evasion)
       else
          NewAltitude = DesiredAltitudeIdle
       end

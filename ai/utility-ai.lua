@@ -122,7 +122,7 @@ function UtilityAI_Main(I)
       if Count > 0 then
          -- And head in the opposite direction
          local Bearing = GetBearingToPoint(C:CoM() - RunAway)
-         Bearing = CalculateEvasion(RunAwayEvasion, Bearing)
+         Bearing = Bearing + CalculateEvasion(RunAwayEvasion)
          AdjustHeading(Avoidance(I, Bearing))
          Drive = RunAwayDrive
       end
