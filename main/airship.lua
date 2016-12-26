@@ -24,7 +24,7 @@ function Update(I) -- luacheck: ignore 131
          YawThrottle_Update(I)
       end
 
-      SetAltitude(DesiredControlAltitude)
+      SetAltitude(DesiredControlAltitude+ControlAltitudeOffset)
       ThreeDoFSpinner_Update(I)
 
       MissileMain:Tick(I)

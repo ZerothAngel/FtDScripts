@@ -22,7 +22,7 @@ function Update(I) -- luacheck: ignore 131
          SixDoF_Reset()
       end
 
-      SetAltitude(DesiredControlAltitude)
+      SetAltitude(DesiredControlAltitude+ControlAltitudeOffset)
       SixDoF_Update(I)
    end
 

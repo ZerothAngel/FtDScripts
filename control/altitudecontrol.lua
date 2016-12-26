@@ -4,14 +4,18 @@ ManualAltitudeController = ManualController.create(ManualAltitudeDriveMaintainer
 HalfMaxManualAltitude = MaxManualAltitude / 2
 
 DesiredControlAltitude = 0
+ControlAltitudeOffset = 0
 
 function Altitude_Control(I)
+   ControlAltitudeOffset = 0
+
    local NewAltitude
    if ManualAltitudeDriveMaintainerFacing and ManualAltitudeWhen[I.AIMode] then
       NewAltitude = HalfMaxManualAltitude + ManualAltitudeController:GetReading(I) * HalfMaxManualAltitude
    else
       if C:FirstTarget() then
-         NewAltitude = DesiredAltitudeCombat + CalculateEvasion(Evasion)
+         NewAltitude = DesiredAltitudeCombat
+         ControlAltitudeOffset = CalculateEvasion(Evasion)
       else
          NewAltitude = DesiredAltitudeIdle
       end

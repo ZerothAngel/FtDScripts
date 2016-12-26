@@ -23,7 +23,7 @@ function Update(I) -- luacheck: ignore 131
          FiveDoF_Reset()
       end
 
-      SetAltitude(DesiredControlAltitude)
+      SetAltitude(DesiredControlAltitude+ControlAltitudeOffset)
       Hover_Update(I)
       FiveDoF_Update(I)
 

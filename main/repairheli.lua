@@ -24,7 +24,7 @@ function Update(I) -- luacheck: ignore 131
          RepairAI_Reset()
       end
 
-      SetAltitude(DesiredControlAltitude)
+      SetAltitude(DesiredControlAltitude+ControlAltitudeOffset)
       Hover_Update(I)
       Stabilizer_Update(I)
    else
