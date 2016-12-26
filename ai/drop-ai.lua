@@ -1,5 +1,6 @@
---@ commons getvectorangle planarvector evasion
+--@ commons getvectorangle planarvector dodge3d evasion
 -- Drop AI module
+DodgeAltitudeOffset = nil
 DropTargetID = nil
 
 -- Global that downstream modules can check
@@ -30,7 +31,7 @@ function Evade(Evasion, Perp)
    end
 end
 
-function DropAI_Main()
+function DropAI_Main(I)
    local TargetsByPriority,TargetsById = DropAI_GatherTargets()
 
    if #TargetsByPriority == 0 then return false end
@@ -56,14 +57,28 @@ function DropAI_Main()
 
    local Offset = PlanarVector(C:CoM(), DropTarget.Position)
    local Distance = Offset.magnitude
+   local DodgeX,DodgeY,DodgeZ,Dodging = Dodge(I)
    DropAI_Closing = Distance > OriginMaxDistance
    if DropAI_Closing then
-      local Perp = Vector3.Cross(Offset / Distance, Vector3.up)
-      Offset = Offset + Evade(ClosingEvasion, Perp)
+      if Dodging then
+         -- Continue moving toward target, so don't take DodgeZ into account
+         Offset = Offset + C:RightVector() * (DodgeX * VehicleRadius)
+         DodgeAltitudeOffset = DodgeY * VehicleRadius
+      else
+         local Perp = Vector3.Cross(Offset / Distance, Vector3.up)
+         Offset = Offset + Evade(ClosingEvasion, Perp)
+         DodgeAltitudeOffset = nil
+      end
       AdjustPosition(Offset)
       SetHeading(GetVectorAngle(Offset))
    else
-      SetPosition(DropTarget.Position)
+      if Dodging then
+         AdjustPosition(C:RightVector() * (DodgeX * VehicleRadius) + C:ForwardVector() * (DodgeZ * VehicleRadius))
+         -- Don't adjust altitude since we might be right over the target
+      else
+         SetPosition(DropTarget.Position)
+      end
+      DodgeAltitudeOffset = nil
       SetHeading(GetVectorAngle(DropTarget.Velocity))
    end
 
@@ -99,7 +114,7 @@ function DropAI_Update(I)
 
    local AIMode = I.AIMode
    if AIMode ~= "fleetmove" then
-      if not DropAI_Main() then
+      if not DropAI_Main(I) then
          DropAI_Reset()
          if ReturnToOrigin then
             FormationMove(I)

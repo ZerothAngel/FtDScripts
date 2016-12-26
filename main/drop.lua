@@ -20,9 +20,14 @@ function Update(I) -- luacheck: ignore 131
          I:TellAiThatWeAreTakingControl()
       else
          SixDoF_Reset()
+         DodgeAltitudeOffset = nil
       end
 
-      SetAltitude(DesiredControlAltitude+(DropAI_Closing and ControlAltitudeOffset or 0))
+      if DodgeAltitudeOffset then
+         AdjustAltitude(DodgeAltitudeOffset)
+      else
+         SetAltitude(DesiredControlAltitude+(DropAI_Closing and ControlAltitudeOffset or 0))
+      end
       SixDoF_Update(I)
    end
 

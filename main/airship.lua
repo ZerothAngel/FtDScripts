@@ -22,9 +22,15 @@ function Update(I) -- luacheck: ignore 131
          I:TellAiThatWeAreTakingControl()
 
          YawThrottle_Update(I)
+      else
+         DodgeAltitudeOffset = nil
       end
 
-      SetAltitude(DesiredControlAltitude+ControlAltitudeOffset)
+      if DodgeAltitudeOffset then
+         AdjustAltitude(DodgeAltitudeOffset)
+      else
+         SetAltitude(DesiredControlAltitude+ControlAltitudeOffset)
+      end
       ThreeDoFSpinner_Update(I)
 
       MissileMain:Tick(I)

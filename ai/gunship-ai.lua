@@ -1,5 +1,7 @@
---@ commons getvectorangle planarvector getbearingtopoint evasion sign
+--@ commons getvectorangle planarvector getbearingtopoint dodge3d evasion sign
 -- Gunship AI module
+DodgeAltitudeOffset = nil
+
 -- Modifies vector by some amount for evasive maneuvers
 function Evade(Evasion, Perp)
    if Evasion then
@@ -9,7 +11,7 @@ function Evade(Evasion, Perp)
    end
 end
 
-function AdjustPositionToTarget()
+function AdjustPositionToTarget(I)
    local TargetPosition = C:FirstTarget().Position
    local GroundVector = PlanarVector(C:CoM(), TargetPosition)
    local Distance = GroundVector.magnitude
@@ -33,7 +35,16 @@ function AdjustPositionToTarget()
 
    local Bearing = GetBearingToPoint(TargetPosition)
    Bearing = Bearing - Sign(Bearing, 1) * TargetAngle
-   local Offset = ToTarget * (Distance - AttackDistance) + Evade(Evasion, Perp)
+   local Offset
+   local DodgeX,DodgeY,DodgeZ,Dodging = Dodge(I)
+   if Dodging then
+      Offset = C:RightVector() * (DodgeX * VehicleRadius) + C:ForwardVector() * (DodgeZ * VehicleRadius)
+      DodgeAltitudeOffset = DodgeY * VehicleRadius
+   else
+      Offset = ToTarget * (Distance - AttackDistance) + Evade(Evasion, Perp)
+      DodgeAltitudeOffset = nil
+   end
+
    AdjustHeading(Bearing)
    AdjustPosition(Offset)
    SetPitch((TargetPosition.y >= AirTargetAboveAltitude) and TargetPitch.Air or TargetPitch.Surface)
@@ -72,7 +83,7 @@ function GunshipAI_Update(I)
    Control_Reset()
 
    if C:FirstTarget() then
-      AdjustPositionToTarget()
+      AdjustPositionToTarget(I)
    end
 
    if I.AIMode ~= "fleetmove" then

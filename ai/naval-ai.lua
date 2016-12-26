@@ -1,23 +1,24 @@
---@ commons planarvector getbearingtopoint evasion sign
---@ avoidance waypointmove
+--@ commons planarvector getbearingtopoint sign evasion normalizebearing
+--@ dodgeyaw avoidance waypointmove
 -- Naval AI module
 Attacking = true
 LastAttackTime = 0
 
+DodgeAltitudeOffset = nil -- luacheck: ignore 131
+
 -- Modifies bearing by some amount for evasive maneuvers
-function Evade(Evasion, Bearing)
+function Evade(Evasion)
    if AirRaidEvasion and C:FirstTarget().Position.y >= AirRaidAboveAltitude then
       Evasion = AirRaidEvasion
    end
 
-   return Bearing + CalculateEvasion(Evasion)
+   return CalculateEvasion(Evasion)
 end
 
 -- Adjusts heading according to configured behaviors
 function AdjustHeadingToTarget(I)
    local TargetPosition = C:FirstTarget().Position
    local Distance = PlanarVector(C:CoM(), TargetPosition).magnitude
-   local Bearing = GetBearingToPoint(TargetPosition)
 
    local TargetAngle,Drive,Evasion = EscapeAngle,EscapeDrive,EscapeEvasion
    if Distance > MaxDistance then
@@ -39,9 +40,18 @@ function AdjustHeadingToTarget(I)
       Attacking = false
    end
 
-   Bearing = Bearing - Sign(Bearing, 1) * TargetAngle
-   Bearing = Evade(Evasion, Bearing)
-   if Bearing > 180 then Bearing = Bearing - 360 end
+   local Bearing
+   local DodgeAngle,DodgeY,Dodging = Dodge(I)
+   if Dodging then
+      Bearing = DodgeAngle
+      DodgeAltitudeOffset = DodgeY * VehicleRadius
+   else
+      Bearing = GetBearingToPoint(TargetPosition)
+      Bearing = Bearing - Sign(Bearing, 1) * TargetAngle
+      Bearing = Bearing + Evade(Evasion, Bearing)
+      Bearing = NormalizeBearing(Bearing)
+      DodgeAltitudeOffset = nil
+   end
 
    AdjustHeading(Avoidance(I, Bearing))
    SetThrottle(Drive)
