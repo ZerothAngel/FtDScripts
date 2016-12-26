@@ -25,6 +25,6 @@ for f in out/*.lua; do
 done
 
 # Run the scripts I most oftenly use through luacheck
-for f in airship cameratrack dediblademaintainer gunshipquad interceptmanager repairquad repairsub scout shieldmanager submarine utility utilitysub warship; do
+for f in airship cameratrack dediblademaintainer dropquad gunshipquad interceptmanager repairquad repairsub scout shieldmanager submarine utility utilitysub warship; do
   luacheck out/$f.lua
 done
