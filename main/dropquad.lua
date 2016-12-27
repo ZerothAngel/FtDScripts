@@ -22,7 +22,7 @@ function Update(I) -- luacheck: ignore 131
          ThreeDoF_Reset()
       end
 
-      SetAltitude(DesiredControlAltitude+ControlAltitudeOffset)
+      SetAltitude(DesiredControlAltitude+(DropAI_Closing and ControlAltitudeOffset or 0))
       ThreeDoFSpinner_Update(I)
       ThreeDoF_Update(I)
    else

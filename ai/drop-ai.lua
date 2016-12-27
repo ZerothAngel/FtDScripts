@@ -2,6 +2,9 @@
 -- Drop AI module
 DropTargetID = nil
 
+-- Global that downstream modules can check
+DropAI_Closing = false
+
 function DropAI_GatherTargets()
    local TargetsByPriority = {}
    local TargetsById = {}
@@ -53,7 +56,8 @@ function DropAI_Main()
 
    local Offset = PlanarVector(C:CoM(), DropTarget.Position)
    local Distance = Offset.magnitude
-   if Distance > OriginMaxDistance then
+   DropAI_Closing = Distance > OriginMaxDistance
+   if DropAI_Closing then
       local Perp = Vector3.Cross(Offset / Distance, Vector3.up)
       Offset = Offset + Evade(ClosingEvasion, Perp)
       AdjustPosition(Offset)
