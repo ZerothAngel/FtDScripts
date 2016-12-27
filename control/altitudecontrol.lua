@@ -12,6 +12,9 @@ function Altitude_Control(I)
    local NewAltitude
    if ManualAltitudeDriveMaintainerFacing and ManualAltitudeWhen[I.AIMode] then
       NewAltitude = HalfMaxManualAltitude + ManualAltitudeController:GetReading(I) * HalfMaxManualAltitude
+      if ManualEvasion and C:FirstTarget() then
+         ControlAltitudeOffset = CalculateEvasion(Evasion)
+      end
    else
       if C:FirstTarget() then
          NewAltitude = DesiredAltitudeCombat

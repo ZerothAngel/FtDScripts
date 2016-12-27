@@ -44,3 +44,6 @@ MaxAltitude = 300
 -- Smaller is slower.
 -- Set to nil to disable, e.g. Evasion = nil
 Evasion = { 5, .25 }
+
+-- Whether or not to apply the above evasion settings when under manual control.
+ManualEvasion = true
