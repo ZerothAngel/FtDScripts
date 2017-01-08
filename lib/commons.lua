@@ -175,6 +175,7 @@ function Commons.AddWeapon(Weapons, WeaponInfo, TurretIndex, WeaponIndex)
       Type = WeaponInfo.WeaponType,
       Slot = WeaponInfo.WeaponSlot,
       Position = WeaponInfo.GlobalPosition,
+      Speed = WeaponInfo.Speed,
       PlayerControl = WeaponInfo.PlayerCurrentlyControllingIt,
    }
    table.insert(Weapons, Weapon)
