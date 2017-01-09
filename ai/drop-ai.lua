@@ -38,7 +38,7 @@ function DropAI_Main(I)
 
    local DropTarget = nil
    if DropTargetID then
-      DropTarget = TargetsById[DropTarget]
+      DropTarget = TargetsById[DropTargetID]
    end
 
    if not DropTarget then
