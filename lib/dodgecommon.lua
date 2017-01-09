@@ -27,8 +27,21 @@ AddFirstRun(Dodge_FirstRun)
 function CalculateDodge(Projectile)
    local RelativePosition = Projectile.Position - C:CoM()
    local RelativeVelocity = Projectile.Velocity - C:Velocity()
-   local ImpactPoint,ImpactTime = RaySphereIntersect(RelativePosition, RelativeVelocity, SqrVehicleRadius)
-   if not ImpactPoint then return nil end
+   local Range,Speed = RelativePosition.magnitude,RelativeVelocity.magnitude
+   local ImpactPoint,ImpactTime
+   -- Is it outside our sphere?
+   if Range > VehicleRadius then
+      -- Calculate impact point
+      ImpactPoint,ImpactTime = RaySphereIntersect(RelativePosition, RelativeVelocity, SqrVehicleRadius)
+      if not ImpactPoint then return nil end
+      -- Normalize with imminent impacts (below)
+      ImpactTime = ImpactTime + VehicleRadius / Speed
+   else
+      -- Just assume impact is imminent and use current position of
+      -- projectile as impact point
+      ImpactPoint = RelativePosition
+      ImpactTime = Range / Speed
+   end
 
    -- Move it to local frame of reference centered on predicted CoM
    -- (already relative to CoM, just rotate)
@@ -44,8 +57,8 @@ function Dodge(I)
       local DodgeDirection,Soonest,ProjectileId = nil,math.huge,nil
       for pindex = 0,I:GetNumberOfWarnings(MissileWarningMainframe)-1 do
          local Projectile = I:GetMissileWarning(MissileWarningMainframe, pindex)
-         -- Only if valid and outside our sphere
-         if Projectile.Valid and Projectile.Range > VehicleRadius then
+         -- Only if valid (when wouldn't it be?)
+         if Projectile.Valid then
             local Direction,ImpactTime = CalculateDodge(Projectile)
             if Direction and ImpactTime < Soonest then
                DodgeDirection = Direction
