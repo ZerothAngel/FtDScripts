@@ -5,6 +5,8 @@ MinDistance = 300
 MaxDistance = 500
 
 -- Attack behavior (MinDistance < target range < MaxDistance)
+-- All angles are relative to the target's bearing. So 0 heads
+-- straight toward the target and 180 is straight away from it.
 AttackAngle = 80
 -- Drive fraction from -1 to 1. This script will probably only
 -- work when moving forward, so always set >0
@@ -17,11 +19,13 @@ AttackDrive = 1
 AttackEvasion = { 10, .125 }
 
 -- Closing behavior (target range > MaxDistance)
+-- ClosingAngle should be <90 to actually close with the target.
 ClosingAngle = 40
 ClosingDrive = 1
 ClosingEvasion = { 30, .25 }
 
 -- Escape behavior (target range < MinDistance)
+-- EscapeAngle should be >90 to actually head away from the target.
 EscapeAngle = 120
 EscapeDrive = 1
 EscapeEvasion = { 20, .25 }
