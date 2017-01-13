@@ -8,7 +8,7 @@ ActivateWhen = {
 }
 
 VaryThrottle = true
-ThrottleSettings = { 1, .5 }
+ThrottleSettings = { .5, 1 }
 
 HeadingDelay = 2000
 ThrottleDelay = 400
