@@ -19,10 +19,13 @@ function Update(I) -- luacheck: ignore 131
          I:TellAiThatWeAreTakingControl()
 
          YawThrottle_Update(I)
+      else
+         NavalAI_Reset()
       end
 
       MissileMain:Tick(I)
    else
+      NavalAI_Reset()
       YawThrottle_Disable(I)
    end
 

@@ -1,8 +1,8 @@
 --@ commons planarvector getbearingtopoint sign evasion normalizebearing
 --@ dodgeyaw avoidance waypointmove
 -- Naval AI module
-Attacking = true
-LastAttackTime = 0
+Attacking = false
+LastAttackTime = nil
 
 DodgeAltitudeOffset = nil -- luacheck: ignore 131
 
@@ -21,23 +21,55 @@ function AdjustHeadingToTarget(I)
    local Distance = PlanarVector(C:CoM(), TargetPosition).magnitude
 
    local TargetAngle,Drive,Evasion = EscapeAngle,EscapeDrive,EscapeEvasion
-   if Distance > MaxDistance then
-      TargetAngle = ClosingAngle
-      Drive = ClosingDrive
-      Evasion = ClosingEvasion
+   if AttackRuns then
+      -- Attack run behavior
+      if not LastAttackTime then
+         -- Initialize LastAttackTime if needed
+         LastAttackTime = C:Now()
+      end
 
-      Attacking = true
-   elseif Distance > MinDistance then
-      if not AttackRuns or Attacking or (LastAttackTime + ForceAttackTime) <= C:Now() then
-         TargetAngle = AttackAngle
-         Drive = AttackDrive
-         Evasion = AttackEvasion
+      if Distance > MaxDistance then
+         -- Unconditionally closing
+         TargetAngle = ClosingAngle
+         Drive = ClosingDrive
+         Evasion = ClosingEvasion
 
+         -- Begin normal attack run
+         Attacking = true
+         LastAttackTime = C:Now()
+      else
+         if Attacking then
+            TargetAngle = AttackAngle
+            Drive = AttackDrive
+            Evasion = AttackEvasion
+         end
+         -- Otherwise escaping
+      end
+
+      -- Determine next state
+      if Attacking and Distance <= MinDistance and (LastAttackTime + MinAttackTime) < C:Now() then
+         -- End attack run on reaching MinDistance
+         -- ...as long as MinAttackTime expired
+         Attacking = false
+      elseif not Attacking and (LastAttackTime + ForceAttackTime) < C:Now() then
+         -- Forced attack run
          Attacking = true
          LastAttackTime = C:Now()
       end
-   elseif Distance <= MinDistance then
-      Attacking = false
+   else
+      -- Normal broadsiding behavior
+      if Distance > MaxDistance then
+         -- Closing
+         TargetAngle = ClosingAngle
+         Drive = ClosingDrive
+         Evasion = ClosingEvasion
+      elseif Distance > MinDistance then
+         -- Attacking
+         TargetAngle = AttackAngle
+         Drive = AttackDrive
+         Evasion = AttackEvasion
+      end
+      -- Otherwise escaping
    end
 
    local Bearing
@@ -55,6 +87,12 @@ function AdjustHeadingToTarget(I)
 
    AdjustHeading(Avoidance(I, Bearing))
    SetThrottle(Drive)
+end
+
+function NavalAI_Reset()
+   Attacking = false
+   LastAttackTime = nil
+   DodgeAltitudeOffset = nil
 end
 
 function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
@@ -78,12 +116,15 @@ function NavalAI_Update(I)
       if C:FirstTarget() then
          AdjustHeadingToTarget(I)
       elseif ReturnToOrigin then
+         NavalAI_Reset()
          FormationMove(I)
       else
+         NavalAI_Reset()
          -- Just continue along with avoidance active
          AdjustHeading(Avoidance(I, 0))
       end
    else
+      NavalAI_Reset()
       FormationMove(I)
    end
 end

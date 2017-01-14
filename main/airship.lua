@@ -23,7 +23,7 @@ function Update(I) -- luacheck: ignore 131
 
          YawThrottle_Update(I)
       else
-         DodgeAltitudeOffset = nil
+         NavalAI_Reset()
       end
 
       if DodgeAltitudeOffset then
@@ -35,6 +35,7 @@ function Update(I) -- luacheck: ignore 131
 
       MissileMain:Tick(I)
    else
+      NavalAI_Reset()
       YawThrottle_Disable(I)
       ThreeDoFSpinner_Disable(I)
    end

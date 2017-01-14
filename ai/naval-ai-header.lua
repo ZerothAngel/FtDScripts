@@ -49,5 +49,12 @@ AttackRuns = false
 -- stuck constantly trying to escape.
 ForceAttackTime = 30
 
+-- Normally the attack run is ended once MinDistance is reached.
+-- However this setting ensures that at least this many seconds were spent
+-- attacking (either normally or forced). Useful against faster targets...
+-- I guess. For best results, should take into account the time it takes to
+-- rotate to the proper angle.
+MinAttackTime = 10
+
 -- Return-to-origin settings
 ReturnToOrigin = true
