@@ -7,10 +7,11 @@ C = nil
 -- Presumably, calling a Lua binding is slow, especially methods
 -- that return tables. Only call API when we need something and cache
 -- the result for the lifetime of the instance.
-function Commons.create(I)
+function Commons.create(I, AttackSalvage)
    local self = {}
 
    self.I = I
+   self.AttackSalvage = AttackSalvage
 
    -- Can't implement "properties" because no metatable
    -- Since everything is read-only anyway, we'll just implement
@@ -237,6 +238,7 @@ end
 
 function Commons:GatherTargets(Targets, StartIndex, MaxTargets)
    local CoM = self:CoM()
+   local AttackSalvage = self.AttackSalvage
    -- Query mainframes in the preferred order
    for _,mindex in pairs(Commons.PreferredTargetMainframes) do
       local TargetCount = self.I:GetNumberOfTargets(mindex)
@@ -247,7 +249,7 @@ function Commons:GatherTargets(Targets, StartIndex, MaxTargets)
             if #Targets >= MaxTargets then break end
             local TargetInfo = self.I:GetTargetInfo(mindex, tindex)
             -- Will probably never not be valid, but eh, check anyway
-            if TargetInfo.Valid and TargetInfo.Protected then
+            if TargetInfo.Valid and (TargetInfo.Protected or AttackSalvage) then
                local Offset = TargetInfo.Position - CoM
                local Range = Offset.magnitude
                if Range <= Commons.MaxEnemyRange then

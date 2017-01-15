@@ -8,7 +8,7 @@ DropAI = Periodic.create(AI_UpdateRate, DropAI_Update)
 Control_Reset = SixDoF_Reset
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.create(I, true)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
       Hover:Tick(I)
