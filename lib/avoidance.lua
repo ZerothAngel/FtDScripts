@@ -88,11 +88,9 @@ function Avoidance(I, Bearing)
    if FriendlyAvoidanceWeight > 0 then
       local AvoidanceTime,MinDistance
       if C:FirstTarget() then
-         AvoidanceTime = FriendlyAvoidanceCombat[1]
-         MinDistance = FriendlyAvoidanceCombat[2]
+         AvoidanceTime,MinDistance = unpack(FriendlyAvoidanceCombat)
       else
-         AvoidanceTime = FriendlyAvoidanceIdle[1]
-         MinDistance = FriendlyAvoidanceIdle[2]
+         AvoidanceTime,MinDistance = unpack(FriendlyAvoidanceIdle)
       end
       for i = 0,I:GetFriendlyCount()-1 do
          local Friend = I:GetFriendlyInfo(i)
