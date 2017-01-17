@@ -55,7 +55,18 @@ function DropAI_Main(I)
       end
    end
 
-   local Offset = PlanarVector(C:CoM(), DropTarget.Position)
+   local DropTargetPosition = DropTarget.Position
+   local DropTargetVelocity = DropTarget.Velocity
+   local DropTargetSqrSpeed = DropTargetVelocity.sqrMagnitude
+   if DropTargetSqrSpeed <= 3 then
+      -- Velocity is really small, use our current orientation
+      DropTargetPosition = DropTargetPosition + C:ToGlobal() * DropTargetOffset
+   else
+      -- Rotate offset
+      DropTargetPosition = DropTargetPosition + Quaternion.LookRotation(DropTargetVelocity, Vector3.up) * DropTargetOffset
+   end
+
+   local Offset = PlanarVector(C:CoM(), DropTargetPosition)
    local Distance = Offset.magnitude
    local DodgeX,DodgeY,DodgeZ,Dodging = Dodge(I)
    DropAI_Closing = Distance > OriginMaxDistance
@@ -76,10 +87,12 @@ function DropAI_Main(I)
          AdjustPosition(C:RightVector() * (DodgeX * VehicleRadius) + C:ForwardVector() * (DodgeZ * VehicleRadius))
          -- Don't adjust altitude since we might be right over the target
       else
-         SetPosition(DropTarget.Position)
+         SetPosition(DropTargetPosition)
       end
       DodgeAltitudeOffset = nil
-      SetHeading(GetVectorAngle(DropTarget.Velocity))
+      if DropTargetSqrSpeed > 3 then
+         SetHeading(GetVectorAngle(DropTargetVelocity))
+      end
    end
 
    return true
