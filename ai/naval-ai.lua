@@ -79,7 +79,7 @@ function AdjustHeadingToTarget(I)
       DodgeAltitudeOffset = DodgeY * VehicleRadius
    else
       Bearing = GetBearingToPoint(TargetPosition)
-      Bearing = Bearing - Sign(Bearing, 1) * TargetAngle
+      Bearing = Bearing - (PreferredBroadside or Sign(Bearing, 1)) * TargetAngle
       Bearing = Bearing + Evade(Evasion, Bearing)
       Bearing = NormalizeBearing(Bearing)
       DodgeAltitudeOffset = nil

@@ -36,6 +36,12 @@ EscapeEvasion = { 20, .25 }
 AirRaidAboveAltitude = 50
 AirRaidEvasion = { 40, .25 }
 
+-- Preferred side to face toward enemy.
+-- 1 = Starboard (right)
+-- -1 = Port (left)
+-- nil = No preference (will pick closest side)
+PreferredBroadside = nil
+
 -- If true, the ship will perform attack runs and bounce between
 -- MinDistance and MaxDistance.
 -- "Closing" settings are used if target range > MaxDistance
