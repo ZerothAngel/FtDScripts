@@ -17,6 +17,11 @@ Limits = {
 -- as their turret block.
 MissileWeaponSlot = nil
 
+-- Target selection algorithm for newly-launched missiles.
+-- 1 = Focus on highest priority target
+-- 2 = Pseudo-random split against all targetable targets
+MissileTargetSelector = 1
+
 -- See https://github.com/ZerothAngel/FtDScripts/blob/master/missile/generalmissile.md
 Config = {
    MinAltitude = 0,

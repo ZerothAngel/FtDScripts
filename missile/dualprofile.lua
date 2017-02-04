@@ -11,6 +11,7 @@ GuidanceInfos = {
       MinRange = VerticalLimits.MinRange * VerticalLimits.MinRange,
       MaxRange = VerticalLimits.MaxRange * VerticalLimits.MaxRange,
       WeaponSlot = VerticalWeaponSlot,
+      TargetSelector = VerticalTargetSelector,
    },
    {
       Controller = MyHorizontal,
@@ -19,6 +20,7 @@ GuidanceInfos = {
       MinRange = HorizontalLimits.MinRange * HorizontalLimits.MinRange,
       MaxRange = HorizontalLimits.MaxRange * HorizontalLimits.MaxRange,
       WeaponSlot = HorizontalWeaponSlot,
+      TargetSelector = HorizontalTargetSelector,
    }
 }
 

@@ -19,7 +19,8 @@ for i = 1,#MissileProfiles do
       MaxRange = MP.Limits.MaxRange * MP.Limits.MaxRange,
       -- Extra info to make things easier
       BlockRange = MP.BlockRange * MP.BlockRange,
-      WeaponSlot = MP.FireControl and MP.WeaponSlot or nil
+      WeaponSlot = MP.FireControl and MP.WeaponSlot or nil,
+      TargetSelector = MP.TargetSelector,
    }
    table.insert(GuidanceInfos, GuidanceInfo)
    GuidanceInfosIndices[MP.WeaponSlot] = i

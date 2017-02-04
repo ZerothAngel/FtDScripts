@@ -17,6 +17,11 @@ Limits = {
 -- as their turret block.
 MissileWeaponSlot = nil
 
+-- Target selection algorithm for newly-launched missiles.
+-- 1 = Focus on highest priority target
+-- 2 = Pseudo-random split against all targetable targets
+MissileTargetSelector = 1
+
 -- NOTE: The following config is for sea-skimming "pop-up" missiles.
 -- There are more examples below it, including:
 --  Javelin-style top-attack

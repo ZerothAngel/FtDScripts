@@ -29,6 +29,12 @@ HorizontalLimits = {
 VerticalWeaponSlot = nil
 HorizontalWeaponSlot = nil
 
+-- Target selection algorithm for newly-launched missiles.
+-- 1 = Focus on highest priority target
+-- 2 = Pseudo-random split against all targetable targets
+VerticalTargetSelector = 1
+HorizontalTargetSelector = 1
+
 -- PROFILE CONFIGURATION
 
 -- One profile must be named "VerticalConfig" and another "HorizontalConfig"

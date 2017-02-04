@@ -11,6 +11,7 @@ GuidanceInfos = {
       MinRange = Limits.MinRange * Limits.MinRange,
       MaxRange = Limits.MaxRange * Limits.MaxRange,
       WeaponSlot = MissileWeaponSlot,
+      TargetSelector = MissileTargetSelector,
    }
 }
 

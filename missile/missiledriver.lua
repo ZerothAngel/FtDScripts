@@ -71,6 +71,25 @@ function MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
    end
 end
 
+-- Target selection functions. Return the selected target (from Targets
+-- table) or nil. Targets will be pre-filtered and ordered by priority.
+MissileDriver_TargetSelectors = {
+   -- Highest priority target
+   function (I, TransceiverIndex, MissileIndex, Targets) -- luacheck: ignore 212
+      return Targets[1]
+   end,
+
+   -- Split based on TransceiverIndex and MissileIndex
+   function (I, TransceiverIndex, MissileIndex, Targets) -- luacheck: ignore 212
+      if #Targets > 0 then
+         -- Multiply both indices by prime numbers, take modulo
+         return Targets[1 + (TransceiverIndex * 1009 + MissileIndex * 1013) % #Targets]
+      else
+         return nil
+      end
+   end
+}
+
 function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
    local Now = C:Now()
    local TargetsByPriority, TargetsById = MissileDriver_GatherTargets(GuidanceInfos)
@@ -109,6 +128,8 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
             TransceiverGuidances[tindex] = GuidanceIndex
          end
 
+         local TargetSelector = MissileDriver_TargetSelectors[GuidanceInfos[GuidanceIndex].TargetSelector]
+
          for mindex = 0,I:GetLuaControlledMissileCount(tindex)-1 do
             local Missile = I:GetLuaControlledMissileInfo(tindex, mindex)
             if Missile.Valid then
@@ -129,10 +150,10 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
                      FilteredTargetsByGuidance[GuidanceIndex] = FilteredTargets
                   end
 
-                  -- Brand new missile, select highest priority that
-                  -- this missile can target
-                  if #FilteredTargets > 0 then
-                     MissileTargetId = FilteredTargets[1].Id
+                  -- Select target for this missile
+                  local Target = TargetSelector(I, tindex, mindex, FilteredTargets)
+                  if Target then
+                     MissileTargetId = Target.Id
                      MissileState.TargetId = MissileTargetId
                      NewMissileStates[MissileId] = MissileState
                   end

@@ -31,6 +31,10 @@ MissileProfiles = {
       -- Missile controllers on turrets should be assigned the same weapon
       -- slot as their turret block.
       FireControl = false,
+      -- Target selection algorithm for newly-launched missiles.
+      -- 1 = Focus on highest priority target
+      -- 2 = Pseudo-random split against all targetable targets
+      TargetSelector = 1,
       -- Lua transceivers at most this far (in meters) from missile
       -- controllers assigned to the above weapon slot are considered
       -- part of this profile.
@@ -103,6 +107,7 @@ MissileProfiles = {
    {
       WeaponSlot = 2,
       FireControl = false,
+      TargetSelector = 1,
       BlockRange = 5,
       Limits = {
          MinRange = 0,
