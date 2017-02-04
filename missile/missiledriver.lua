@@ -98,6 +98,9 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
       -- called once per target. This is done here.
       local GuidanceQueue = {}
 
+      -- Filtered targets (in priority order) for each guidance type.
+      local FilteredTargetsByGuidance = {}
+
       for tindex = 0,TransceiverCount-1 do
          local GuidanceIndex = TransceiverGuidances[tindex]
          if not GuidanceIndex then
@@ -114,15 +117,24 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
                if not MissileState then MissileState = {} end
                local MissileTargetId = MissileState.TargetId
                if not MissileTargetId then
+                  local FilteredTargets = FilteredTargetsByGuidance[GuidanceIndex]
+                  if not FilteredTargets then
+                     -- Filter prioritized targets and save.
+                     FilteredTargets = {}
+                     for _,Target in pairs(TargetsByPriority) do
+                        if Target.CanTarget[GuidanceIndex] and Target.InRange[GuidanceIndex] then
+                           table.insert(FilteredTargets, Target)
+                        end
+                     end
+                     FilteredTargetsByGuidance[GuidanceIndex] = FilteredTargets
+                  end
+
                   -- Brand new missile, select highest priority that
                   -- this missile can target
-                  for _,Target in pairs(TargetsByPriority) do
-                     if Target.CanTarget[GuidanceIndex] and Target.InRange[GuidanceIndex] then
-                        MissileTargetId = Target.Id
-                        MissileState.TargetId = MissileTargetId
-                        NewMissileStates[MissileId] = MissileState
-                        break
-                     end
+                  if #FilteredTargets > 0 then
+                     MissileTargetId = FilteredTargets[1].Id
+                     MissileState.TargetId = MissileTargetId
+                     NewMissileStates[MissileId] = MissileState
                   end
                end
 
