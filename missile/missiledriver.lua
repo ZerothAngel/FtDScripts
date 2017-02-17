@@ -131,82 +131,84 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
          local TargetSelector = MissileDriver_TargetSelectors[GuidanceInfos[GuidanceIndex].TargetSelector]
 
          for mindex = 0,I:GetLuaControlledMissileCount(tindex)-1 do
-            local Missile = I:GetLuaControlledMissileInfo(tindex, mindex)
-            if Missile.Valid then
-               local MissileId = Missile.Id
-               local MissileState = MissileStates[MissileId]
-               if not MissileState then MissileState = {} end
-               local MissileTargetId = MissileState.TargetId
-               if not MissileTargetId then
-                  local FilteredTargets = FilteredTargetsByGuidance[GuidanceIndex]
-                  if not FilteredTargets then
-                     -- Filter prioritized targets and save.
-                     FilteredTargets = {}
-                     for _,Target in pairs(TargetsByPriority) do
-                        if Target.CanTarget[GuidanceIndex] and Target.InRange[GuidanceIndex] then
-                           table.insert(FilteredTargets, Target)
-                        end
-                     end
-                     FilteredTargetsByGuidance[GuidanceIndex] = FilteredTargets
-                  end
-
-                  -- Select target for this missile
-                  local Target = TargetSelector(I, tindex, mindex, FilteredTargets)
-                  if Target then
-                     MissileTargetId = Target.Id
-                     MissileState.TargetId = MissileTargetId
-                     NewMissileStates[MissileId] = MissileState
-                  end
-               end
-
-               local Target = nil
-
-               -- Now check if the target is still around
-               if MissileTargetId then
-                  Target = TargetsById[MissileTargetId]
-                  if not Target then
-                     -- Saved target is gone, select closest target that
-                     -- this missile can target
-                     local MissilePosition = Missile.Position
-                     local ClosestDistance = math.huge -- Actually squared
-                     for _,T in pairs(TargetsByPriority) do
-                        if T.CanTarget[GuidanceIndex] then
-                           local Offset = T.Position - MissilePosition
-                           local Distance = Offset.sqrMagnitude
-
-                           if Distance < ClosestDistance then
-                              MissileTargetId = T.Id
-                              MissileState.TargetId = MissileTargetId
-                              NewMissileStates[MissileId] = MissileState
-                              Target = T
-
-                              ClosestDistance = Distance
+            if not I:IsLuaControlledMissileAnInterceptor(tindex, mindex) then
+               local Missile = I:GetLuaControlledMissileInfo(tindex, mindex)
+               if Missile.Valid then
+                  local MissileId = Missile.Id
+                  local MissileState = MissileStates[MissileId]
+                  if not MissileState then MissileState = {} end
+                  local MissileTargetId = MissileState.TargetId
+                  if not MissileTargetId then
+                     local FilteredTargets = FilteredTargetsByGuidance[GuidanceIndex]
+                     if not FilteredTargets then
+                        -- Filter prioritized targets and save.
+                        FilteredTargets = {}
+                        for _,Target in pairs(TargetsByPriority) do
+                           if Target.CanTarget[GuidanceIndex] and Target.InRange[GuidanceIndex] then
+                              table.insert(FilteredTargets, Target)
                            end
                         end
+                        FilteredTargetsByGuidance[GuidanceIndex] = FilteredTargets
                      end
-                  else
-                     -- Save for next update
-                     NewMissileStates[MissileId] = MissileState
-                  end
-               end
 
-               if Target then
-                  -- Add queue entry to guide this missile to its target (once all
-                  -- missiles have been checked)
-                  local QueueMissiles = GuidanceQueue[Target.Id]
-                  if not QueueMissiles then
-                     -- First time we've queued up for this target this update
-                     QueueMissiles = {}
-                     GuidanceQueue[Target.Id] = QueueMissiles
+                     -- Select target for this missile
+                     local Target = TargetSelector(I, tindex, mindex, FilteredTargets)
+                     if Target then
+                        MissileTargetId = Target.Id
+                        MissileState.TargetId = MissileTargetId
+                        NewMissileStates[MissileId] = MissileState
+                     end
                   end
-                  local QueueMissile = {
-                     TransceiverIndex = tindex,
-                     MissileIndex = mindex,
-                     GuidanceIndex = GuidanceIndex,
-                     Missile = Missile,
-                     MissileState = MissileState,
-                  }
-                  table.insert(QueueMissiles, QueueMissile)
+
+                  local Target = nil
+
+                  -- Now check if the target is still around
+                  if MissileTargetId then
+                     Target = TargetsById[MissileTargetId]
+                     if not Target then
+                        -- Saved target is gone, select closest target that
+                        -- this missile can target
+                        local MissilePosition = Missile.Position
+                        local ClosestDistance = math.huge -- Actually squared
+                        for _,T in pairs(TargetsByPriority) do
+                           if T.CanTarget[GuidanceIndex] then
+                              local Offset = T.Position - MissilePosition
+                              local Distance = Offset.sqrMagnitude
+
+                              if Distance < ClosestDistance then
+                                 MissileTargetId = T.Id
+                                 MissileState.TargetId = MissileTargetId
+                                 NewMissileStates[MissileId] = MissileState
+                                 Target = T
+
+                                 ClosestDistance = Distance
+                              end
+                           end
+                        end
+                     else
+                        -- Save for next update
+                        NewMissileStates[MissileId] = MissileState
+                     end
+                  end
+
+                  if Target then
+                     -- Add queue entry to guide this missile to its target (once all
+                     -- missiles have been checked)
+                     local QueueMissiles = GuidanceQueue[Target.Id]
+                     if not QueueMissiles then
+                        -- First time we've queued up for this target this update
+                        QueueMissiles = {}
+                        GuidanceQueue[Target.Id] = QueueMissiles
+                     end
+                     local QueueMissile = {
+                        TransceiverIndex = tindex,
+                        MissileIndex = mindex,
+                        GuidanceIndex = GuidanceIndex,
+                        Missile = Missile,
+                        MissileState = MissileState,
+                     }
+                     table.insert(QueueMissiles, QueueMissile)
+                  end
                end
             end
          end
