@@ -87,6 +87,7 @@ scripts.
   * [repairquad](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repairquad.lua) &mdash; Combo script: repair-ai + quadcopter
   * [repairsub](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repairsub.lua) &mdash; Combo script: repair-ai + subcontrol
   * [scout](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/scout.lua) &mdash; Combo script: naval-ai + quadcopter + shieldmanager + cameratrack
+  * [jetscout](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/jetscout.lua) &mdash; Combo script: gunship-ai + sixdof + shieldmanager + cameratrack
   * [submarine](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/submarine.lua) &mdash; Combo script: naval-ai + subcontrol + dualprofile + shieldmanager
   * [warship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/warship.lua) &mdash; Combo script: naval-ai + dualprofile + shieldmanager
 
