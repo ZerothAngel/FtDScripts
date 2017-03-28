@@ -1,7 +1,7 @@
 --@ commons manualcontroller evasion terraincheck
 -- Altitude Control module
 ManualAltitudeController = ManualController.create(ManualAltitudeDriveMaintainerFacing)
-HalfMaxManualAltitude = MaxManualAltitude / 2
+HalfMaxManualAltitude = (MaxManualAltitude - MinManualAltitude) / 2
 
 DesiredControlAltitude = 0
 ControlAltitudeOffset = 0
@@ -11,7 +11,7 @@ function Altitude_Control(I)
 
    local NewAltitude
    if ManualAltitudeDriveMaintainerFacing and ManualAltitudeWhen[I.AIMode] then
-      NewAltitude = HalfMaxManualAltitude + ManualAltitudeController:GetReading(I) * HalfMaxManualAltitude
+      NewAltitude = MinManualAltitude + HalfMaxManualAltitude + ManualAltitudeController:GetReading(I) * HalfMaxManualAltitude
       if ManualEvasion and C:FirstTarget() then
          ControlAltitudeOffset = CalculateEvasion(Evasion)
       end
@@ -25,8 +25,8 @@ function Altitude_Control(I)
    end
 
    if not AbsoluteAltitude then
-      -- Look ahead at the terrain, but don't fly lower than sea level
-      local Height = GetTerrainHeight(I, C:Velocity(), 0, MaxAltitude)
+      -- Look ahead at terrain and offset by highest terrain seen
+      local Height = GetTerrainHeight(I, C:Velocity(), 0, MaxLookAheadAltitude)
       NewAltitude = NewAltitude + Height
    end
 

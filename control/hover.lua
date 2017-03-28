@@ -6,12 +6,13 @@ LiftSpinners = SpinnerControl.create(Vector3.up, false, true, DediBladesAlwaysUp
 
 DesiredAltitude = 0
 
-function SetAltitude(Alt)
-   DesiredAltitude = Alt
+function SetAltitude(Alt, MinAlt)
+   if not MinAlt then MinAlt = -math.huge end
+   DesiredAltitude = math.max(Alt, MinAlt)
 end
 
-function AdjustAltitude(Delta) -- luacheck: ignore 131
-   DesiredAltitude = C:Altitude() + Delta
+function AdjustAltitude(Delta, MinAlt) -- luacheck: ignore 131
+   SetAltitude(C:Altitude() + Delta, MinAlt)
 end
 
 function Hover_Update(I)

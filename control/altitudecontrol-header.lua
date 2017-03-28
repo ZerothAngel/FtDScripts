@@ -19,8 +19,9 @@ ManualAltitudeWhen = {
 ManualAltitudeDriveMaintainerFacing = nil
 
 -- Determines scaling for manual altitude control. -1.0 throttle on the
--- drive maintainer means 0 altitude, 1.0 throttle means MaxManualAltitude.
+-- drive maintainer means MinManualAltitude, 1.0 throttle means MaxManualAltitude.
 -- Only used when ManualAltitudeDriveMaintainerFacing above is non-nil.
+MinManualAltitude = 0
 MaxManualAltitude = 400
 
 -- If false, your desired altitudes are relative to
@@ -32,12 +33,19 @@ AbsoluteAltitude = false
 DesiredAltitudeCombat = 100
 DesiredAltitudeIdle = 100
 
+-- Never go below this altitude after summing up desired altitude,
+-- evasion, dodging, etc.
+-- Default is to never go below sea level, which is a safe but
+-- impractical default. You will probably want to set this higher.
+-- This is always an absolute altitude and is not relative to terrain.
+MinAltitude = 0
+
 -- Only used when AbsoluteAltitude is false AND TerrainCheckLookAheadTime
 -- (see below) is nil.
 -- This helps determine look ahead distance.
 -- Think of it as the tallest obstacle the terrain checker will try to
 -- fly over.
-MaxAltitude = 300
+MaxLookAheadAltitude = 300
 
 -- First number is altitude variation
 -- Second is time scale, which should generally be <1.

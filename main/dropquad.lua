@@ -24,9 +24,9 @@ function Update(I) -- luacheck: ignore 131
       end
 
       if DodgeAltitudeOffset then
-         AdjustAltitude(DodgeAltitudeOffset)
+         AdjustAltitude(DodgeAltitudeOffset, MinAltitude)
       else
-         SetAltitude(DesiredControlAltitude+(DropAI_Closing and ControlAltitudeOffset or 0))
+         SetAltitude(DesiredControlAltitude+(DropAI_Closing and ControlAltitudeOffset or 0), MinAltitude)
       end
       ThreeDoFSpinner_Update(I)
       ThreeDoF_Update(I)

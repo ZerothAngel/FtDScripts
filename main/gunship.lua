@@ -25,9 +25,9 @@ function Update(I) -- luacheck: ignore 131
       end
 
       if DodgeAltitudeOffset then
-         AdjustAltitude(DodgeAltitudeOffset)
+         AdjustAltitude(DodgeAltitudeOffset, MinAltitude)
       else
-         SetAltitude(DesiredControlAltitude+ControlAltitudeOffset)
+         SetAltitude(DesiredControlAltitude+ControlAltitudeOffset, MinAltitude)
       end
       Hover_Update(I)
       FiveDoF_Update(I)
