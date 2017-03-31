@@ -9,7 +9,7 @@ function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
 end
 
 function AdjustHeadingToRepairTarget(I)
-   local RepairTarget = I:GetFriendlyInfoById(RepairTargetID)
+   local RepairTarget = C:FriendlyById(RepairTargetID)
    if RepairTarget and RepairTarget.Valid then
       local RepairTargetCoM = RepairTarget.CenterOfMass + RepairTarget.ForwardVector * RepairTargetOffset.z + RepairTarget.RightVector * RepairTargetOffset.x
 
@@ -23,9 +23,12 @@ function CalculateRepairTargetWeight(Distance, ParentDistance, Friend)
       (1.0 - Friend.HealthFraction) * DamageWeight
 end
 
-function SelectRepairTarget(I)
+function SelectRepairTarget()
+   -- Call this here to pre-populate the friendly-by-ID cache
+   C:Friendlies()
+
    -- Get Parent info
-   local Parent = I:GetFriendlyInfoById(ParentID)
+   local Parent = C:FriendlyById(ParentID)
    if Parent and not Parent.Valid then
       -- Hmm, parent gone (taken out of play?)
       -- Skip for now, select new parent next update
@@ -45,9 +48,8 @@ function SelectRepairTarget(I)
    local RepairTargetMaxAltitude = C:Altitude() + RepairTargetMaxAltitudeDelta
 
    -- Scan nearby friendlies
-   for i = 0,I:GetFriendlyCount()-1 do
-      local Friend = I:GetFriendlyInfo(i)
-      if Friend and Friend.Valid and Friend.Id ~= ParentID then
+   for _,Friend in pairs(C:Friendlies()) do
+      if Friend.Id ~= ParentID then
          -- Meets range and altitude requirements?
          local FriendCoM = Friend.CenterOfMass
          local FriendAlt = FriendCoM.y
@@ -75,19 +77,16 @@ function SelectRepairTarget(I)
    end
 end
 
-function Imprint(I)
+function Imprint()
    ParentID = nil
    RepairTargetID = nil
    local Closest = math.huge
-   for i = 0,I:GetFriendlyCount()-1 do
-      local Friend = I:GetFriendlyInfo(i)
-      if Friend and Friend.Valid then
-         local Offset,_ = PlanarVector(C:CoM(), Friend.CenterOfMass)
-         local Distance = Offset.magnitude
-         if Distance < Closest then
-            Closest = Distance
-            ParentID = Friend.Id
-         end
+   for _,Friend in pairs(C:Friendlies()) do
+      local Offset,_ = PlanarVector(C:CoM(), Friend.CenterOfMass)
+      local Distance = Offset.magnitude
+      if Distance < Closest then
+         Closest = Distance
+         ParentID = Friend.Id
       end
    end
 end
@@ -99,10 +98,10 @@ end
 
 function RepairAI_Main(I)
    if not ParentID then
-      Imprint(I)
+      Imprint()
    end
    if ParentID then
-      SelectRepairTarget(I)
+      SelectRepairTarget()
    end
    if RepairTargetID then
       AdjustHeadingToRepairTarget(I)

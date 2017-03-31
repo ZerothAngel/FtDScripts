@@ -15,5 +15,3 @@
  * Consider setting up tertiary drive maintainer (and forcing it to full throttle via script) and using that to drive all jets. Loses ability to manually pilot, but much saner since thrust balancing no longer affects things.
 
  * Missile Driver: Make it easier to plug in an interceptor script or module.
-
- * Commons: Support caching GetFriendlyInfo

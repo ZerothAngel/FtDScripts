@@ -92,33 +92,31 @@ function Avoidance(I, Bearing)
       else
          AvoidanceTime,MinDistance = unpack(FriendlyAvoidanceIdle)
       end
-      for i = 0,I:GetFriendlyCount()-1 do
-         local Friend = I:GetFriendlyInfo(i)
+      for _,Friend in pairs(C:Friendlies()) do
          -- Only consider friendlies within our altitude range
-         if Friend.Valid and
-            (Friend.AxisAlignedBoundingBoxMinimum.y <= UpperEdge and
+         if (Friend.AxisAlignedBoundingBoxMinimum.y <= UpperEdge and
              Friend.AxisAlignedBoundingBoxMaximum.y >= LowerEdge) then
-               local Offset,_ = PlanarVector(C:CoM(), Friend.CenterOfMass)
-               local Distance = Offset.magnitude
-               if Distance < FriendlyCheckDistance then
-                  local Direction = Offset / Distance -- aka Offset.normalized
-                  local Collision = false
-                  if Distance < MinDistance then
+            local Offset,_ = PlanarVector(C:CoM(), Friend.CenterOfMass)
+            local Distance = Offset.magnitude
+            if Distance < FriendlyCheckDistance then
+               local Direction = Offset / Distance -- aka Offset.normalized
+               local Collision = false
+               if Distance < MinDistance then
+                  Collision = true
+               else
+                  -- Calculate relative speed along offset vector
+                  local RelativeVelocity = Velocity - Friend.Velocity
+                  local RelativeSpeed = Vector3.Dot(RelativeVelocity, Direction)
+                  if RelativeSpeed > 0.0 and Distance / RelativeSpeed < AvoidanceTime then
                      Collision = true
-                  else
-                     -- Calculate relative speed along offset vector
-                     local RelativeVelocity = Velocity - Friend.Velocity
-                     local RelativeSpeed = Vector3.Dot(RelativeVelocity, Direction)
-                     if RelativeSpeed > 0.0 and Distance / RelativeSpeed < AvoidanceTime then
-                        Collision = true
-                     end
-                  end
-                  if Collision then
-                     -- Collision imminent
-                     FCount = FCount + 1
-                     FAvoid = FAvoid - Direction
                   end
                end
+               if Collision then
+                  -- Collision imminent
+                  FCount = FCount + 1
+                  FAvoid = FAvoid - Direction
+               end
+            end
          end
       end
       if FCount > 0 then
