@@ -1,7 +1,7 @@
---! simplemine
---@ commons periodic missiledriver simplemine
+--! smartmine
+--@ commons periodic missiledriver smartmine
 -- Simple mine main
-MyMissile = SimpleMine.create(Config)
+MyMissile = SmartMine.create(Config)
 
 GuidanceInfos = {
    {

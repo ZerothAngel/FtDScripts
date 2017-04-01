@@ -1,19 +1,19 @@
 --@ commons deepcopy planarvector round quadraticsolver
-SimpleMine = {}
+SmartMine = {}
 
-function SimpleMine.create(Config)
+function SmartMine.create(Config)
    local self = deepcopy(Config)
 
    -- Pre-square
    self.DropDistance = self.DropDistance * self.DropDistance
 
-   self.BeginUpdate = SimpleMine.BeginUpdate
-   self.Guide = SimpleMine.Guide
+   self.BeginUpdate = SmartMine.BeginUpdate
+   self.Guide = SmartMine.Guide
 
    return self
 end
 
-function SimpleMine.SendUpdate(I, TransceiverIndex, MissileIndex, NewState)
+function SmartMine.SendUpdate(I, TransceiverIndex, MissileIndex, NewState)
    local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
    local BallastDepth,MagnetRange = NewState.BallastDepth,NewState.MagnetRange
    local Thrust = NewState.Thrust
@@ -29,13 +29,13 @@ function SimpleMine.SendUpdate(I, TransceiverIndex, MissileIndex, NewState)
    end
 end
 
-function SimpleMine:BeginUpdate(_, Targets)
+function SmartMine:BeginUpdate(_, Targets)
    -- Should be filtered already, i.e. only targetable
    self.Targets = Targets
    self.FriendInfos = {}
 end
 
-function SimpleMine:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, TargetVelocity, Missile, MissileState)
+function SmartMine:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, TargetVelocity, Missile, MissileState)
    local MissilePosition = Missile.Position
 
    -- Initialize state, if needed
@@ -58,8 +58,8 @@ function SimpleMine:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, 
 
    local NewState = {}
 
-   if MissileState.InWater or MissilePosition.y <= 0 then
-      MissileState.InWater = true
+   if MissileState.NoThrust or MissilePosition.y <= 0 then
+      MissileState.NoThrust = true
 
       if MissileState.BallastDepth then
          -- Set depth according to closest enemy
@@ -95,11 +95,11 @@ function SimpleMine:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, 
          local NewMagnetRange = self.MagnetRange
 
          -- Scan for nearby friendlies
-         for _,Friend in pairs(C:Friendlies()) do
+         for findex,Friend in pairs(C:Friendlies()) do
             -- Only those below MaxFriendlyAltitude
             if Friend.CenterOfMass.y < MaxFriendlyAltitude then
                -- Already have midpoint and radius this update?
-               local FriendInfo = self.FriendInfos[Friend.Id]
+               local FriendInfo = self.FriendInfos[findex]
                if not FriendInfo then
                   -- Calculate approximate midpoint and radius using AABB
                   -- Very rough (no rotation since AABB), but conservative
@@ -109,7 +109,7 @@ function SimpleMine:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, 
                      MidPoint = Friend.AxisAlignedBoundingBoxMinimum + HalfSize,
                      Radius = math.max(HalfSize.x, math.max(HalfSize.y, HalfSize.z)),
                   }
-                  self.FriendInfos[Friend.Id] = FriendInfo
+                  self.FriendInfos[findex] = FriendInfo
                end
 
                local Offset = FriendInfo.MidPoint - MissilePosition
@@ -129,7 +129,7 @@ function SimpleMine:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, 
       end
 
       -- Cut thrust unconditionally
-      if MissileState.Thrust ~= 0 then
+      if MissileState.Thrust and MissileState.Thrust ~= 0 then
          NewState.Thrust = 0
       end
    else
@@ -163,12 +163,12 @@ function SimpleMine:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, 
          -- And determine distance from target
          local Offset,_ = PlanarVector(TargetAimPoint + TargetVelocity * FallTime, ImpactPoint)
          -- If impact point < DropDistance, start next phase
-         MissileState.InWater = Offset.sqrMagnitude <= self.DropDistance
+         MissileState.NoThrust = Offset.sqrMagnitude <= self.DropDistance
       end
    end
 
    -- Make changes, update state
-   SimpleMine.SendUpdate(I, TransceiverIndex, MissileIndex, NewState)
+   SmartMine.SendUpdate(I, TransceiverIndex, MissileIndex, NewState)
 
    if NewState.BallastDepth then
       MissileState.BallastDepth = NewState.BallastDepth
