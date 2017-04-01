@@ -11,6 +11,17 @@ function Evade(Evasion, Perp)
    end
 end
 
+function Gunship_GetWeaponSpeed(WeaponSlot)
+   -- Only consider hull mounted cannons or missile controllers
+   for _,Weapon in pairs(C:HullWeaponControllers()) do
+      if Weapon.Slot == WeaponSlot and (Weapon.Type == CANNON or Weapon.Type == MISSILECONTROL) then
+         -- Just use the first one found
+         return Weapon.Speed
+      end
+   end
+   return nil
+end
+
 function AdjustPositionToTarget(I)
    local TargetPosition = C:FirstTarget().Position
    local GroundVector = PlanarVector(C:CoM(), TargetPosition)
@@ -18,21 +29,34 @@ function AdjustPositionToTarget(I)
 
    local ToTarget = GroundVector.normalized
    local Perp = Vector3.Cross(ToTarget, Vector3.up)
-   local TargetAngle,TargetPitch,Evasion
+   local TargetAngle,TargetPitch,Evasion,LeadWeaponSlot
    if Distance > MaxDistance then
       TargetAngle = ClosingAngle
       TargetPitch = ClosingPitch
       Evasion = ClosingEvasion
+      LeadWeaponSlot = ClosingLeadWeaponSlot
    elseif Distance < MinDistance then
       TargetAngle = EscapeAngle
       TargetPitch = EscapePitch
       Evasion = EscapeEvasion
+      LeadWeaponSlot = EscapeLeadWeaponSlot
    else
       TargetAngle = AttackAngle
       TargetPitch = AttackPitch
       Evasion = AttackEvasion
+      LeadWeaponSlot = AttackLeadWeaponSlot
    end
 
+   if LeadWeaponSlot then
+      local WeaponSpeed = Gunship_GetWeaponSpeed(LeadWeaponSlot)
+      if WeaponSpeed then
+         local TimeToTarget = Distance / WeaponSpeed
+         -- Adjust TargetPosition
+         TargetPosition = TargetPosition + C:FirstTarget().Velocity * TimeToTarget
+         -- And set angle offset to 0
+         TargetAngle = 0
+      end
+   end
    local Bearing = GetBearingToPoint(TargetPosition)
    Bearing = Bearing - Sign(Bearing, 1) * TargetAngle
    local Offset

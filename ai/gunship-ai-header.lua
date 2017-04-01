@@ -12,6 +12,7 @@ AttackPitch = {
    Air = 5,
 }
 AttackEvasion = { 100, .5 }
+AttackLeadWeaponSlot = nil
 
 ClosingAngle = 0
 ClosingPitch = {
@@ -19,6 +20,7 @@ ClosingPitch = {
    Air = 0,
 }
 ClosingEvasion = { 30, .25 }
+ClosingLeadWeaponSlot = nil
 
 EscapeAngle = 180
 EscapePitch = {
@@ -26,6 +28,7 @@ EscapePitch = {
    Air = 0,
 }
 EscapeEvasion = { 30, .25 }
+EscapeLeadWeaponSlot = nil
 
 ReturnToOrigin = true
 OriginMaxDistance = 100
