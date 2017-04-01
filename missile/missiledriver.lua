@@ -119,6 +119,20 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
 
       -- Filtered targets (in priority order) for each guidance type.
       local FilteredTargetsByGuidance = {}
+      local FilterTargets = function (GuidanceIndex)
+         local FilteredTargets = FilteredTargetsByGuidance[GuidanceIndex]
+         if not FilteredTargets then
+            -- Filter prioritized targets and save.
+            FilteredTargets = {}
+            for _,Target in pairs(TargetsByPriority) do
+               if Target.CanTarget[GuidanceIndex] and Target.InRange[GuidanceIndex] then
+                  table.insert(FilteredTargets, Target)
+               end
+            end
+            FilteredTargetsByGuidance[GuidanceIndex] = FilteredTargets
+         end
+         return FilteredTargets
+      end
 
       for tindex = 0,TransceiverCount-1 do
          local GuidanceIndex = TransceiverGuidances[tindex]
@@ -140,20 +154,8 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
                      if not MissileState then MissileState = {} end
                      local MissileTargetId = MissileState.TargetId
                      if not MissileTargetId then
-                        local FilteredTargets = FilteredTargetsByGuidance[GuidanceIndex]
-                        if not FilteredTargets then
-                           -- Filter prioritized targets and save.
-                           FilteredTargets = {}
-                           for _,Target in pairs(TargetsByPriority) do
-                              if Target.CanTarget[GuidanceIndex] and Target.InRange[GuidanceIndex] then
-                                 table.insert(FilteredTargets, Target)
-                              end
-                           end
-                           FilteredTargetsByGuidance[GuidanceIndex] = FilteredTargets
-                        end
-
                         -- Select target for this missile
-                        local Target = TargetSelector(I, tindex, mindex, FilteredTargets)
+                        local Target = TargetSelector(I, tindex, mindex, FilterTargets(GuidanceIndex))
                         if Target then
                            MissileTargetId = Target.Id
                            MissileState.TargetId = MissileTargetId
@@ -216,23 +218,42 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
          end
       end
 
+      local BeginUpdateCalled = {}
+
       -- Process guidance queue
       for TargetId,QueueMissiles in pairs(GuidanceQueue) do
          local Target = TargetsById[TargetId]
          local TargetPosition,TargetAimPoint,TargetVelocity = Target.Position,Target.AimPoint,Target.Velocity
 
-         -- First call each controller's SetTarget method
-         for _,GuidanceInfo in pairs(GuidanceInfos) do
-            GuidanceInfo.Controller:SetTarget(I, TargetPosition, TargetAimPoint, TargetVelocity)
-         end
+         local SetTargetCalled = {}
 
          -- Now Guide each missile for this target
          for _,QueueMissile in pairs(QueueMissiles) do
-            local Guidance = GuidanceInfos[QueueMissile.GuidanceIndex]
+            local GuidanceIndex = QueueMissile.GuidanceIndex
+            local Guidance = GuidanceInfos[GuidanceIndex]
+            local Controller = Guidance.Controller
+            -- Ensure prerequisite methods have been called
+            if not BeginUpdateCalled[GuidanceIndex] then
+               local BeginUpdate = Controller.BeginUpdate
+               if BeginUpdate then
+                  BeginUpdate(Controller, I, FilterTargets(GuidanceIndex))
+               end
+               BeginUpdateCalled[GuidanceIndex] = true
+            end
+            if not SetTargetCalled[GuidanceIndex] then
+               local SetTarget = Controller.SetTarget
+               if SetTarget then
+                  SetTarget(Controller, I, TargetPosition, TargetAimPoint, TargetVelocity)
+               end
+               SetTargetCalled[GuidanceIndex] = true
+            end
+            -- Then call Guide method
             local tindex,mindex = QueueMissile.TransceiverIndex,QueueMissile.MissileIndex
-            local AimPoint = Guidance.Controller:Guide(I, tindex, mindex, TargetPosition, TargetAimPoint, TargetVelocity, QueueMissile.Missile, QueueMissile.MissileState)
-
-            I:SetLuaControlledMissileAimPoint(tindex, mindex, AimPoint.x, AimPoint.y, AimPoint.z)
+            local AimPoint = Controller:Guide(I, tindex, mindex, TargetPosition, TargetAimPoint, TargetVelocity, QueueMissile.Missile, QueueMissile.MissileState)
+            -- And set aim point
+            if AimPoint then
+               I:SetLuaControlledMissileAimPoint(tindex, mindex, AimPoint.x, AimPoint.y, AimPoint.z)
+            end
          end
       end
 
