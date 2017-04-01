@@ -1,10 +1,10 @@
--- CONFIGURATION
+-- MOBILE MINES
 
 -- Generally these should match the settings on your Local Weapon Controller.
 -- It will prevent locking onto high-priority targets that are farther
 -- than your missiles' max range or re-locking onto targets your missiles
 -- can't hit (e.g. torpedoes re-locking onto air targets).
-Limits = {
+MobileMineLimits = {
    MinRange = 0,
    MaxRange = 9999,
    MinAltitude = -500,
@@ -15,14 +15,14 @@ Limits = {
 -- that in mind...
 -- Missile controllers on turrets should be assigned the same weapon slot
 -- as their turret block.
-MissileWeaponSlot = nil
+MobileMineWeaponSlot = nil
 
 -- Target selection algorithm for newly-launched missiles.
 -- 1 = Focus on highest priority target
 -- 2 = Pseudo-random split against all targetable targets
-MissileTargetSelector = 1
+MobileMineTargetSelector = 1
 
-Config = {
+MobileMineConfig = {
    -- Distance from target to impact water.
    -- Any short range thrusters will be disabled to ideally impact at this
    -- distance. However, air drag among other things will likely throw this
