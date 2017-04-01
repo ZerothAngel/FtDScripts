@@ -161,9 +161,11 @@ function SmartMine:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, T
          -- Calculate estimated impact point
          local ImpactPoint = MissilePosition + MissileVelocity * FallTime
          -- And determine distance from target
-         local Offset,_ = PlanarVector(TargetAimPoint + TargetVelocity * FallTime, ImpactPoint)
-         -- If impact point < DropDistance, start next phase
-         MissileState.NoThrust = Offset.sqrMagnitude <= self.DropDistance
+         local Offset,NewTarget = PlanarVector(ImpactPoint, TargetAimPoint + TargetVelocity * FallTime)
+         -- If impact point < DropDistance, or it's moving behind the
+         -- target, start next phase
+         MissileState.NoThrust = Offset.sqrMagnitude <= self.DropDistance or
+            Vector3.Dot(NewTarget - ImpactPoint, NewTarget - MissilePosition) < 0
       end
    end
 
