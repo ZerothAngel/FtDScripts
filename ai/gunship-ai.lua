@@ -1,4 +1,5 @@
 --@ commons getvectorangle planarvector getbearingtopoint dodge3d evasion sign
+--@ quadraticintercept
 -- Gunship AI module
 DodgeAltitudeOffset = nil
 
@@ -50,9 +51,16 @@ function AdjustPositionToTarget(I)
    if LeadWeaponSlot then
       local WeaponSpeed = Gunship_GetWeaponSpeed(LeadWeaponSlot)
       if WeaponSpeed then
-         local TimeToTarget = Distance / WeaponSpeed
-         -- Adjust TargetPosition
-         TargetPosition = TargetPosition + C:FirstTarget().Velocity * TimeToTarget
+         -- Flatten target position/velocity and put on same plane as CoM
+         local Alt = C:CoM().y
+         local PredictionPosition = Vector3(TargetPosition.x, Alt, TargetPosition.z)
+         local TargetVelocity = C:FirstTarget().Velocity
+         local PredictionVelocity = Vector3(TargetVelocity.x, Alt, TargetVelocity.z)
+         local PredictionPoint = QuadraticIntercept(C:CoM(), WeaponSpeed*WeaponSpeed, PredictionPosition, PredictionVelocity, 9999)
+
+         -- Restore original target altitude
+         TargetPosition = Vector3(PredictionPoint.x, TargetPosition.y, PredictionPoint.z)
+
          -- And set angle offset to 0
          TargetAngle = 0
       end
