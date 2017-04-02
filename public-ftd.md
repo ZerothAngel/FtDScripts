@@ -50,6 +50,10 @@ These use the new configuration scheme detailed [in this doc](https://github.com
   * [generalmissile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/generalmissile.lua) &mdash; Highly configurable missile script that supports dual-mode operation (AA or profile), an arbitrary number of profile phases, directional approach, and variable thrust control.
   * [multiprofile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/multiprofile.lua) &mdash; Multiple profile missile script, up to one generalmissile instance for each weapon slot.
 
+#### Miscellaneous ####
+
+  * [smartmine](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/smartmine.lua) &mdash; aka mobilemine. Rocket-propelled magnetic mines that automatically match depth and engage safeties when friendlies are nearby.
+
 #### Legacy ####
 
 These all use generalmissile under the hood, but continue to be configured as they were before. I will most likely not add any new configuration options, but they should continue to work for the foreseeable future.
@@ -88,6 +92,7 @@ scripts.
   * [repairsub](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repairsub.lua) &mdash; Combo script: repair-ai + subcontrol
   * [scout](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/scout.lua) &mdash; Combo script: naval-ai + quadcopter + shieldmanager + cameratrack
   * [jetscout](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/jetscout.lua) &mdash; Combo script: gunship-ai + sixdof + shieldmanager + cameratrack
+  * [minelayerquad](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/minelayerquad.lua) &mdash; Combo script: gunship-ai + quadcopter + mobilemine + shieldmanager
   * [submarine](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/submarine.lua) &mdash; Combo script: naval-ai + subcontrol + dualprofile + shieldmanager
   * [warship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/warship.lua) &mdash; Combo script: naval-ai + dualprofile + shieldmanager
 
