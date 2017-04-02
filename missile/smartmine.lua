@@ -82,7 +82,7 @@ function SmartMine:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, T
          NewDepth = NewDepth + self.DepthOffset
          -- Constrain and negate (because ballast depth
          -- is supposed to be positive)
-         NewDepth = -math.min(0, math.max(-500, NewDepth))
+         NewDepth = -math.min(-self.MinDepth, math.max(-500, NewDepth))
 
          -- Only change if different
          if NewDepth ~= MissileState.BallastDepth then

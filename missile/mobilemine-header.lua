@@ -29,6 +29,8 @@ MobileMineConfig = {
    -- off. Keep in mind that the missile will still have forward momentum
    -- once under water.
    DropDistance = 150,
+   -- Minimum depth
+   MinDepth = 5,
    -- Depth offset vs. aim point on nearest enemy
    DepthOffset = 0,
    -- Range for magnet when there are no friendlies around
