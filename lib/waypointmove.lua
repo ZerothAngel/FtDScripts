@@ -48,7 +48,7 @@ function MoveToWaypoint(I, Waypoint, AdjustHeading, WaypointVelocity)
       Velocity = Vector3(Velocity.x, 0, Velocity.z)
       local TargetVelocity = Vector3(WaypointVelocity.x, 0, WaypointVelocity.z)
       -- Predict intercept
-      local TargetPoint = QuadraticIntercept(C:CoM(), Velocity, TargetPosition, TargetVelocity)
+      local TargetPoint = QuadraticIntercept(C:CoM(), Vector3.Dot(Velocity, Velocity), TargetPosition, TargetVelocity)
 
       local Bearing = GetBearingToPoint(TargetPoint)
       AdjustHeading(Bearing)

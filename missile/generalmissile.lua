@@ -235,7 +235,7 @@ end
 function GeneralMissile:ExecuteProfile(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, TargetVelocity, MissileState)
    -- Use quadratic prediction to determine aim point and predicted impact time
    local ImpactTime
-   AimPoint,ImpactTime = QuadraticIntercept(Position, Velocity, AimPoint, TargetVelocity, 9999)
+   AimPoint,ImpactTime = QuadraticIntercept(Position, Vector3.Dot(Velocity, Velocity), AimPoint, TargetVelocity, 9999)
 
    -- For sanity, range comparisons are done against ground distance
    local NewTarget = Vector3(AimPoint.x, Position.y, AimPoint.z)

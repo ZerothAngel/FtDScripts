@@ -1,11 +1,11 @@
 --@ quadraticsolver
 -- Quadratic intercept formula
-function QuadraticIntercept(Position, Velocity, Target, TargetVelocity, DefaultInterceptTime)
+function QuadraticIntercept(Position, SpeedSquared, Target, TargetVelocity, DefaultInterceptTime)
    if not DefaultInterceptTime then DefaultInterceptTime = 1 end
    local Offset = Target - Position
    -- Apparently you can apply binomial expansion to vectors
    -- ...as long as it's 2nd degree only
-   local a = Vector3.Dot(TargetVelocity, TargetVelocity) - Vector3.Dot(Velocity, Velocity)  -- aka difference of squares of velocity magnitudes
+   local a = Vector3.Dot(TargetVelocity, TargetVelocity) - SpeedSquared  -- aka difference of squares of speeds
    local b = 2 * Vector3.Dot(Offset, TargetVelocity)
    local c = Vector3.Dot(Offset, Offset) -- Offset.magnitude squared
    local Solutions = QuadraticSolver(a, b, c)
