@@ -53,6 +53,7 @@ function SmartMine:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, T
          end
       end
 
+      MissileState.LaunchPosition = MissilePosition
       MissileState.Initialized = true
    end
 
@@ -165,7 +166,7 @@ function SmartMine:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, T
          -- If impact point < DropDistance, or it's moving behind the
          -- target, start next phase
          MissileState.NoThrust = Offset.sqrMagnitude <= self.DropDistance or
-            Vector3.Dot(NewTarget - ImpactPoint, NewTarget - MissilePosition) < 0
+            Vector3.Dot(NewTarget - ImpactPoint, NewTarget - MissileState.LaunchPosition) < 0
       end
    end
 
