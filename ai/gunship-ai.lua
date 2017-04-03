@@ -51,16 +51,8 @@ function AdjustPositionToTarget(I)
    if LeadWeaponSlot then
       local WeaponSpeed = Gunship_GetWeaponSpeed(LeadWeaponSlot)
       if WeaponSpeed then
-         -- Flatten target position/velocity and put on same plane as CoM
-         local Alt = C:CoM().y
-         local PredictionPosition = Vector3(TargetPosition.x, Alt, TargetPosition.z)
-         local TargetVelocity = C:FirstTarget().Velocity
-         local PredictionVelocity = Vector3(TargetVelocity.x, Alt, TargetVelocity.z)
-         local PredictionPoint = QuadraticIntercept(C:CoM(), WeaponSpeed*WeaponSpeed, PredictionPosition, PredictionVelocity, 9999)
-
-         -- Restore original target altitude
-         TargetPosition = Vector3(PredictionPoint.x, TargetPosition.y, PredictionPoint.z)
-
+         -- Predict intercept point
+         TargetPosition = QuadraticIntercept(C:CoM(), WeaponSpeed*WeaponSpeed, TargetPosition, C:FirstTarget().Velocity, 9999)
          -- And set angle offset to 0
          TargetAngle = 0
       end
