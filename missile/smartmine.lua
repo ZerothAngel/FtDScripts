@@ -116,8 +116,8 @@ function SmartMine:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, T
                local Offset = FriendInfo.MidPoint - MissilePosition
                local Distance = FriendInfo.Radius + Offset.magnitude
                if Distance <= MinFriendlyRange then
-                  -- Deactivate magnet, no need to check more
-                  NewMagnetRange = 0
+                  -- Set magnet to minimum, no need to check more
+                  NewMagnetRange = 5
                   break
                end
             end
