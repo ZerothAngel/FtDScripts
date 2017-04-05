@@ -1,5 +1,5 @@
 Title: Public FtD Scripts
-Date: 2016-11-28 00:00
+Date: 2017-04-05 00:00
 Category: From the Depths
 Tags: fromthedepths
 
@@ -11,11 +11,17 @@ A collection of From the Depths Lua scripts I've written since I started playing
 
 I'll only list the interesting scripts (the ones not used for research or testing).
 
+Also see my [notes]({filename}ftd-notes.md) about assumptions and possible gotchas.
+
 ### AI Replacements ###
 
 These scripts wholly replace the "combat" and "fleetmove" behavior of the stock AI. (Still, using the stock Naval AI Card with these scripts is recommended, even for aircraft, as it provides a sane "patrol" behavior.)
 
-  * [drop](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/drop.lua) &mdash; Experimental dropship/boarding AI which follows the closest enemy and keeps the ship directly above (or below) it. This is the full 6DoF thruster version that requires thrusters on all 6 sides. Note that I don't actually use this version since Lua control of thrusters is so tempermental. So it may go away.
+All the combat-oriented scripts (everything but repair-ai and utility-ai) have the ability to dodge missiles that have been detected.
+
+When possible, try using a combo script that includes the desired AI module. It will have better integration (e.g. missile dodging also modifies altitude) and it will be more efficient in terms of CPU usage.
+
+  * [drop](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/drop.lua) &mdash; Experimental dropship/boarding AI which follows the closest enemy and keeps the ship directly above (or below) it. This is the full 6DoF thruster version that requires thrusters on all 6 sides.
   * [dropquad](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/dropquad.lua) &mdash; Experimental dropship/boarding AI which follows the closest enemy and keeps the ship directly above (or below) it. This is the quadcopter version that uses dediblades for altitude/pitch/roll control and jets for yaw/longitudinal/lateral movement.
   * [gunship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunship.lua) &mdash; Gunship AI (standoff behavior with pseudo-random dodging), dedicated heliblade spinner for lift, jets for 5-axis control (yaw, pitch, roll, longitudinal, lateral).
   * [gunshipquad](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunshipquad.lua) &mdash; Gunship AI (standoff behavior with pseudo-random dodging), dedicated heliblade spinners for lift and pitch/roll control, jets for 3-axis control (yaw, longitudinal, lateral).
@@ -27,11 +33,13 @@ These scripts wholly replace the "combat" and "fleetmove" behavior of the stock 
 
 These scripts only provide altitude or depth control. They are meant to be used alongside a 2-dimensional AI, like the Naval AI card (or many of my AI scripts above). They also work fine with manual yaw & propulsion. All scripts will also allow manual (analog) control of the altitude/depth using a drive maintainer.
 
-  * [aerostat](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/aerostat.lua) &mdash; Controls helium pumps for lift and pitch/roll stabilization. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
+Again, if you're going to use these with my AI scripts, using a combo script (below) provides better integration and is more efficient.
+
+  * [aerostat](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/aerostat.lua) &mdash; Controls helium pumps for lift and pitch/roll stabilization. I don't use this myself, so YMMV. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
   * [hover](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/hover.lua) &mdash; Dedicated heliblade spinner for lift, jets for 2-axis control (pitch, roll). ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
   * [quadcopter](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/quadcopter.lua) &mdash; Dedicated heliblade spinners for lift and pitch/roll control. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
   * [subcontrol](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/subcontrol.lua) &mdash; Hydrofoil script with pitch, roll, depth control + manual depth option. ([Forum post #1](http://www.fromthedepthsgame.com/forum/showthread.php?tid=21908) [Forum post #2](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
-  * [subpump](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/subpump.lua) &mdash; Controls air pumps for lift and pitch/roll stabilization. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
+  * [subpump](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/subpump.lua) &mdash; Controls air pumps for lift and pitch/roll stabilization. I don't use this myself as I prefer hydrofoil-based subs, but it's here for completeness. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
   * [thrustercraft](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/thrustercraft.lua) &mdash; Jets for lift and pitch/roll control.
 
 ### Missile Scripts ###
@@ -52,7 +60,7 @@ These use the new configuration scheme detailed [in this doc](https://github.com
 
 #### Miscellaneous ####
 
-  * [smartmine](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/smartmine.lua) &mdash; aka mobilemine. Rocket-propelled magnetic mines that automatically match depth and engage safeties when friendlies are nearby.
+  * [smartmine](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/smartmine.lua) &mdash; aka mobilemine. Rocket-propelled magnetic mines that automatically match depth and minimizes magnetic range when friendlies are nearby.
 
 #### Legacy ####
 
@@ -101,4 +109,3 @@ scripts.
   * [dediblademaintainer](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/dediblademaintainer.lua) &mdash; Allows linking a drive maintainer to forward/reverse-oriented dediblades for propulsion.
   * [interceptmanager](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/interceptmanager.lua) &mdash; Fires a weapon slot (presumably a missile interceptor launcher) associated with one of the 4 directional quadrants whenever hostile missiles are detected. Distinguishes between incoming missiles & torpedoes. Saves ammo.
   * [shieldmanager](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/shieldmanager.lua) &mdash; Only activates shields facing enemies. Saves power.
-  * [stabilizer](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/stabilizer.lua) &mdash; 2-axis control (pitch, roll).
