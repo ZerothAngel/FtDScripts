@@ -29,6 +29,8 @@ function Update(I) -- luacheck: ignore 131
          SetAltitude(DesiredControlAltitude+(DropAI_Closing and ControlAltitudeOffset or 0), MinAltitude)
       end
       SixDoF_Update(I)
+   else
+      SixDoF_Disable(I)
    end
 
    ShieldManager:Tick(I)

@@ -39,6 +39,7 @@ function Update(I) -- luacheck: ignore 131
       NavalAI_Reset()
       YawThrottle_Disable(I)
       Hover_Disable(I)
+      Stabilizer_Disable(I)
    end
 
    ShieldManager:Tick(I)

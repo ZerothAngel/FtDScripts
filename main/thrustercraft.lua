@@ -11,5 +11,7 @@ function Update(I) -- luacheck: ignore 131
 
       SetAltitude(DesiredControlAltitude+ControlAltitudeOffset, MinAltitude)
       ThreeDoFJet_Update(I)
+   else
+      ThreeDoFJet_Disable(I)
    end
 end

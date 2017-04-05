@@ -35,6 +35,7 @@ function Update(I) -- luacheck: ignore 131
       MissileMain:Tick(I)
    else
       ThreeDoFSpinner_Disable(I)
+      ThreeDoF_Disable(I)
    end
 
    ShieldManager:Tick(I)

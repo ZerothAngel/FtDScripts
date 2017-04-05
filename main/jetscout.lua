@@ -32,6 +32,8 @@ function Update(I) -- luacheck: ignore 131
       SixDoF_Update(I)
 
       CameraTrack:Tick(I)
+   else
+      SixDoF_Disable(I)
    end
 
    ShieldManager:Tick(I)

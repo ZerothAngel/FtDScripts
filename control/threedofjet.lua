@@ -1,4 +1,4 @@
---@ commons sign pid
+--@ commons sign pid thrusthack
 -- 3DoF Jet module (Altitude, Pitch, Roll)
 AltitudePID = PID.create(AltitudePIDConfig, -10, 10)
 PitchPID = PID.create(PitchPIDConfig, -10, 10)
@@ -10,6 +10,8 @@ DesiredRoll = 0
 
 ThreeDoFJet_LastPropulsionCount = 0
 ThreeDoFJet_PropulsionInfos = {}
+
+ThrustHackControl = ThrustHack.create(ThrustHackDriveMaintainerFacing)
 
 function SetAltitude(Alt, MinAlt)
    if not MinAlt then MinAlt = -math.huge end
@@ -60,8 +62,12 @@ function ThreeDoFJet_Update(I)
    ThreeDoFJet_Classify(I)
 
    -- Blip upward and downward thrusters
-   I:RequestThrustControl(4)
-   I:RequestThrustControl(5)
+   if not ThrustHackDriveMaintainerFacing then
+      I:RequestThrustControl(4)
+      I:RequestThrustControl(5)
+   else
+      ThrustHackControl:SetThrottle(I, 1)
+   end
 
    -- And set drive fraction accordingly
    for _,Info in pairs(ThreeDoFJet_PropulsionInfos) do
@@ -70,4 +76,9 @@ function ThreeDoFJet_Update(I)
       Output = math.max(0, math.min(10, Output))
       I:Component_SetFloatLogic(PROPULSION, Info.Index, Output / 10)
    end
+end
+
+function ThreeDoFJet_Disable(I)
+   -- Disable drive maintainer, if any
+   ThrustHackControl:SetThrottle(I, 0)
 end

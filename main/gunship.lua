@@ -35,6 +35,7 @@ function Update(I) -- luacheck: ignore 131
       MissileMain:Tick(I)
    else
       Hover_Disable(I)
+      FiveDoF_Disable(I)
    end
 
    ShieldManager:Tick(I)

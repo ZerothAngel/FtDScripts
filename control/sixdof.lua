@@ -1,4 +1,4 @@
---@ commons normalizebearing sign pid
+--@ commons normalizebearing sign pid thrusthack
 -- 6DoF module (Altitude, Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
 AltitudePID = PID.create(AltitudePIDConfig, -10, 10)
 YawPID = PID.create(YawPIDConfig, -10, 10)
@@ -15,6 +15,9 @@ DesiredHeading = nil
 DesiredPosition = nil
 DesiredPitch = 0
 DesiredRoll = 0
+
+APRThrustHackControl = ThrustHack.create(APRThrustHackDriveMaintainerFacing)
+YLLThrustHackControl = ThrustHack.create(YLLThrustHackDriveMaintainerFacing)
 
 function SetAltitude(Alt, MinAlt)
    if not MinAlt then MinAlt = -math.huge end
@@ -85,6 +88,7 @@ function ClassifyPropulsion(I)
             RollSign = 0,
             ForwardSign = 0,
             RightSign = 0,
+            IsVertical = false,
          }
          if math.abs(LocalForwards.y) > 0.001 then
             -- Vertical
@@ -92,6 +96,7 @@ function ClassifyPropulsion(I)
             Info.UpSign = UpSign
             Info.PitchSign = Sign(CoMOffset.z) * UpSign
             Info.RollSign = Sign(CoMOffset.x) * UpSign
+            Info.IsVertical = true
          else
             -- Horizontal
             local RightSign = Sign(LocalForwards.x)
@@ -122,25 +127,30 @@ function SixDoF_Update(I)
 
    ClassifyPropulsion(I)
 
-   -- RequestThrustControl and its thrust balancing is a bit weird.
-   -- Thrusters on the same facing placed offset of the CoM must have at
-   -- least another thruster on the opposite side of the CoM.
-   -- Otherwise no output will be produced on that side.
    if DesiredHeading or DesiredPosition then
-      -- Blip all thrusters
-      for i = 0,5 do
-         I:RequestThrustControl(i)
+      -- Blip horizontal thrusters
+      if not YLLThrustHackDriveMaintainerFacing then
+         for i = 0,3 do
+            I:RequestThrustControl(i)
+         end
+      else
+         YLLThrustHackControl:SetThrottle(I, 1)
       end
    else
-      -- Just blip top & bottom thrusters
+      YLLThrustHackControl:SetThrottle(I, 0)
+   end
+   -- Blip top & bottom thrusters
+   if not APRThrustHackDriveMaintainerFacing then
       I:RequestThrustControl(4)
       I:RequestThrustControl(5)
+   else
+      APRThrustHackControl:SetThrottle(I, 1)
    end
 
    -- And set drive fraction accordingly
    for _,Info in pairs(PropulsionInfos) do
       local UpSign,PitchSign,RollSign = Info.UpSign,Info.PitchSign,Info.RollSign
-      if UpSign ~= 0 or RollSign ~= 0 or PitchSign ~= 0 or DesiredHeading or DesiredPosition then
+      if Info.IsVertical or DesiredHeading or DesiredPosition then
          -- Sum up inputs and constrain
          local Output = AltitudeCV * UpSign + YawCV * Info.YawSign + PitchCV * PitchSign + RollCV * RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign
          Output = math.max(0, math.min(10, Output))
@@ -149,4 +159,10 @@ function SixDoF_Update(I)
          I:Component_SetFloatLogic(PROPULSION, Info.Index, 1)
       end
    end
+end
+
+function SixDoF_Disable(I)
+   -- Disable drive maintainers, if any
+   YLLThrustHackControl:SetThrottle(I, 0)
+   APRThrustHackControl:SetThrottle(I, 0)
 end

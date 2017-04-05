@@ -35,5 +35,7 @@ function Update(I) -- luacheck: ignore 131
       end
 
       FiveDoF_Update(I)
+   else
+      FiveDoF_Disable(I)
    end
 end

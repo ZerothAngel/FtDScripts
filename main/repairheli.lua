@@ -31,5 +31,6 @@ function Update(I) -- luacheck: ignore 131
       RepairAI_Reset()
       YawThrottle_Disable(I)
       Hover_Disable(I)
+      Stabilizer_Disable(I)
    end
 end

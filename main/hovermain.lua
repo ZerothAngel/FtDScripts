@@ -14,5 +14,6 @@ function Update(I) -- luacheck: ignore 131
       Stabilizer_Update(I)
    else
       Hover_Disable(I)
+      Stabilizer_Disable(I)
    end
 end
