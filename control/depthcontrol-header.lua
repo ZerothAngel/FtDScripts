@@ -56,3 +56,8 @@ DesiredDepthIdle = {
 -- Should be 0 or positive.
 MinDepth = 50
 MaxDepth = 500
+
+-- If set, vertical dodging will be enabled.
+-- The vehicle will absolutely never attempt to go below this depth
+-- after summing up desired depth, dodging, etc.
+HardMaxDepth = nil -- luacheck: ignore 131
