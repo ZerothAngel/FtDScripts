@@ -1,7 +1,8 @@
 --! thrustercraft
 --@ commons firstrun periodic
---@ threedofjet altitudecontrol
-ThreeDoFJet = Periodic.create(UpdateRate, Altitude_Control)
+--@ balloonmanager threedofjet altitudecontrol
+BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 1)
+ThreeDoFJet = Periodic.create(Hover_UpdateRate, Altitude_Control)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
@@ -14,4 +15,6 @@ function Update(I) -- luacheck: ignore 131
    else
       ThreeDoFJet_Disable(I)
    end
+
+   BalloonManager:Tick(I)
 end

@@ -1,6 +1,7 @@
 --! jetscout
 --@ commons firstrun periodic
---@ cameratrack shieldmanager altitudecontrol sixdof gunship-ai
+--@ cameratrack shieldmanager balloonmanager altitudecontrol sixdof gunship-ai
+BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 4)
 CameraTrack = Periodic.create(CameraTrack_UpdateRate, CameraTrack_Update, 3)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 Hover = Periodic.create(Hover_UpdateRate, Altitude_Control, 1)
@@ -37,4 +38,5 @@ function Update(I) -- luacheck: ignore 131
    end
 
    ShieldManager:Tick(I)
+   BalloonManager:Tick(I)
 end

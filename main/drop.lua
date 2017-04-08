@@ -1,6 +1,7 @@
 --! drop
 --@ commons firstrun periodic
---@ shieldmanager altitudecontrol sixdof drop-ai
+--@ shieldmanager balloonmanager altitudecontrol sixdof drop-ai
+BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 3)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 Hover = Periodic.create(Hover_UpdateRate, Altitude_Control, 1)
 DropAI = Periodic.create(AI_UpdateRate, DropAI_Update)
@@ -34,4 +35,5 @@ function Update(I) -- luacheck: ignore 131
    end
 
    ShieldManager:Tick(I)
+   BalloonManager:Tick(I)
 end
