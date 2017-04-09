@@ -9,7 +9,7 @@ function Update(I) -- luacheck: ignore 131
    if not C:IsDocked() then
       ThreeDoFSpinner:Tick(I)
 
-      SetAltitude(DesiredControlAltitude+ControlAltitudeOffset, MinAltitude)
+      Altitude_Apply(I)
       ThreeDoFSpinner_Update(I)
    else
       ThreeDoFSpinner_Disable(I)

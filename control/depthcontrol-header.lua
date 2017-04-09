@@ -30,11 +30,6 @@ ManualDepthWhen = {
 -- Set to nil to use the configured depth settings (below).
 ManualDepthDriveMaintainerFacing = nil
 
--- Determines minimum depth when under manual control. Only used
--- when ManualDepthDriveMaintainerFacing above is non-nil and drive
--- maintainer has negative or zero throttle (absolute depth).
-MinManualDepth = 0
-
 -- Desired depths for combat and out-of-combat.
 -- First value is the desired depth or elevation and should always be
 -- positive.
@@ -51,13 +46,28 @@ DesiredDepthIdle = {
    Absolute = true
 }
 
--- Minimum & maximum depth
+-- Minimum & maximum depth when following terrain.
 -- Only valid when desired depth is relative.
 -- Should be 0 or positive.
-MinDepth = 50
-MaxDepth = 500
+-- This differs from the hard limits below in that it lets you specify
+-- narrower constraints to give more leeway when dodging/evading.
+TerrainMinDepth = 50
+TerrainMaxDepth = 500
 
--- If set, vertical dodging will be enabled.
--- The vehicle will absolutely never attempt to go below this depth
--- after summing up desired depth, dodging, etc.
-HardMaxDepth = nil -- luacheck: ignore 131
+-- Enable vertical dodging of torpedoes (when combined AI supports it)
+DepthDodging = false
+
+-- Hard constraints on depth after summing up desired depth, dodging,
+-- evasion, etc. These are absolute depth values.
+HardMinDepth = 0
+HardMaxDepth = 500
+
+-- First number is depth variation
+-- Second is time scale, which should generally be <1.
+-- Smaller is slower.
+-- Set to nil to disable, e.g. DepthEvasion = nil
+DepthEvasion = nil
+
+-- Whether or not to apply the above evasion settings when under manual
+-- control.
+ManualEvasion = true

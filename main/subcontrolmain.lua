@@ -9,7 +9,7 @@ function Update(I) -- luacheck: ignore 131
    if not C:IsDocked() then
       SubControl:Tick(I)
 
-      SetAltitude(DesiredControlAltitude)
+      Depth_Apply(I)
       SubControl_Update(I)
    end
 end

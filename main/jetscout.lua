@@ -25,11 +25,7 @@ function Update(I) -- luacheck: ignore 131
          DodgeAltitudeOffset = nil
       end
 
-      if DodgeAltitudeOffset then
-         AdjustAltitude(DodgeAltitudeOffset, MinAltitude)
-      else
-         SetAltitude(DesiredControlAltitude+ControlAltitudeOffset, MinAltitude)
-      end
+      Altitude_Apply(I, DodgeAltitudeOffset)
       SixDoF_Update(I)
 
       CameraTrack:Tick(I)

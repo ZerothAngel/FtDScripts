@@ -26,11 +26,7 @@ function Update(I) -- luacheck: ignore 131
          NavalAI_Reset()
       end
 
-      if HardMaxDepth and DodgeAltitudeOffset then
-         AdjustAltitude(DodgeAltitudeOffset, -HardMaxDepth)
-      else
-         SetAltitude(DesiredControlAltitude)
-      end
+      Depth_Apply(I, DodgeAltitudeOffset)
       SubControl_Update(I)
 
       MissileMain:Tick(I)

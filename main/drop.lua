@@ -24,11 +24,7 @@ function Update(I) -- luacheck: ignore 131
          DodgeAltitudeOffset = nil
       end
 
-      if DodgeAltitudeOffset then
-         AdjustAltitude(DodgeAltitudeOffset, MinAltitude)
-      else
-         SetAltitude(DesiredControlAltitude+(DropAI_Closing and ControlAltitudeOffset or 0), MinAltitude)
-      end
+      Altitude_Apply(I, DodgeAltitudeOffset, not DropAI_Closing)
       SixDoF_Update(I)
    else
       SixDoF_Disable(I)

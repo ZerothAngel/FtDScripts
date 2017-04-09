@@ -24,7 +24,7 @@ function Update(I) -- luacheck: ignore 131
          RepairAI_Reset()
       end
 
-      SetAltitude(DesiredControlAltitude)
+      Depth_Apply(I)
       SubControl_Update(I)
    else
       RepairAI_Reset()

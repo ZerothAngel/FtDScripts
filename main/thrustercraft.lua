@@ -10,7 +10,7 @@ function Update(I) -- luacheck: ignore 131
    if not C:IsDocked() then
       ThreeDoFJet:Tick(I)
 
-      SetAltitude(DesiredControlAltitude+ControlAltitudeOffset, MinAltitude)
+      Altitude_Apply(I)
       ThreeDoFJet_Update(I)
    else
       ThreeDoFJet_Disable(I)

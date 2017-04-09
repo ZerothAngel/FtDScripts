@@ -11,13 +11,12 @@ DesiredRoll = 0
 LastSpinnerCount = 0
 Spinners = {}
 
-function SetAltitude(Alt, MinAlt)
-   if not MinAlt then MinAlt = -math.huge end
-   DesiredAltitude = math.max(Alt, MinAlt)
+function SetAltitude(Alt)
+   DesiredAltitude = Alt
 end
 
-function AdjustAltitude(Delta, MinAlt) -- luacheck: ignore 131
-   SetAltitude(C:Altitude() + Delta, MinAlt)
+function AdjustAltitude(Delta) -- luacheck: ignore 131
+   SetAltitude(C:Altitude() + Delta)
 end
 
 function SetPitch(Angle) -- luacheck: ignore 131

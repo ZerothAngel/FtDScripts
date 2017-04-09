@@ -9,7 +9,7 @@ function Update(I) -- luacheck: ignore 131
    if not C:IsDocked() then
       Hover:Tick(I)
 
-      SetAltitude(DesiredControlAltitude+ControlAltitudeOffset, MinAltitude)
+      Altitude_Apply(I)
       Hover_Update(I)
       Stabilizer_Update(I)
    else

@@ -9,7 +9,7 @@ function Update(I) -- luacheck: ignore 131
    if not C:IsDocked() then
       ThreeDoFPump:Tick(I)
 
-      SetAltitude(DesiredControlAltitude)
+      Depth_Apply(I)
       ThreeDoFPump_Update(I)
    end
 end

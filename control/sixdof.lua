@@ -19,13 +19,12 @@ DesiredRoll = 0
 APRThrustHackControl = ThrustHack.create(APRThrustHackDriveMaintainerFacing)
 YLLThrustHackControl = ThrustHack.create(YLLThrustHackDriveMaintainerFacing)
 
-function SetAltitude(Alt, MinAlt)
-   if not MinAlt then MinAlt = -math.huge end
-   DesiredAltitude = math.max(Alt, MinAlt)
+function SetAltitude(Alt)
+   DesiredAltitude = Alt
 end
 
-function AdjustAltitude(Delta, MinAlt) -- luacheck: ignore 131
-   SetAltitude(C:Altitude() + Delta, MinAlt)
+function AdjustAltitude(Delta) -- luacheck: ignore 131
+   SetAltitude(C:Altitude() + Delta)
 end
 
 -- Sets heading to an absolute value, 0 is north, 90 is east

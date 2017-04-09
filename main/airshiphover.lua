@@ -26,11 +26,7 @@ function Update(I) -- luacheck: ignore 131
          NavalAI_Reset()
       end
 
-      if DodgeAltitudeOffset then
-         AdjustAltitude(DodgeAltitudeOffset, MinAltitude)
-      else
-         SetAltitude(DesiredControlAltitude+ControlAltitudeOffset, MinAltitude)
-      end
+      Altitude_Apply(I, DodgeAltitudeOffset)
       Hover_Update(I)
       Stabilizer_Update(I)
 
