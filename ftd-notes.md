@@ -31,7 +31,7 @@ This isn't ideal and causes problems especially if you don't build symmetrically
 
 This is why I tend to favor quadcopters and dediblade-based airships.
 
-I do have ideas for a workaround, but it would mean giving up most prospects of manual control.
+I do have a workaround in place now which requires a drive maintainer for each set of related axes (altitude/pitch/roll is one, yaw/longitudinal/lateral is another). See the `ThrustHackDriveMaintainerFacing` setting and my [related forum post](http://fromthedepthsgame.com/forum/showthread.php?tid=23335&pid=322187#pid322187).
 
 ## Missiles ##
 
