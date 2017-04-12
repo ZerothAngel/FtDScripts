@@ -46,8 +46,9 @@ function Update(I) -- luacheck: ignore 131
       if ActivateWhen[I.AIMode] then
          if LastTurn and math.abs(Mathf.DeltaAngle(C:Yaw(), MyHeading)) < 0.1 then
             local DeltaTime = C:Now() - LastTurn[1]
-            local Distance = (C:CoM() - LastTurn[2]).magnitude
-            local Message = string.format("Time: %.2f s, Distance: %.2f m", DeltaTime, Distance)
+            local SqrDistance = (C:CoM() - LastTurn[2]).sqrMagnitude
+            local Radius = math.sqrt(SqrDistance / 2)
+            local Message = string.format("Time: %.2f s, Radius: %.2f m", DeltaTime, Radius)
             I:Log(Message)
             I:LogToHud(Message)
             LastTurn = nil
