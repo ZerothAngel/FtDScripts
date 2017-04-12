@@ -189,9 +189,11 @@ However, in almost all non-torpedo cases that use variable thrusters, you will p
 
 If you do set terminal thrust, it is also best to set *Thrust* of all non-terminal phases (or *DefaultThrust* for *AntiAir*). This ensures the missile resumes normal thrust should it happen to miss.
 
+Also be sure to read up on the wiki [on calculating turning radius](http://fromthedepths.gamepedia.com/Missile_aerodynamics#Turn_speed) from the displayed turning rate. Since many profiles involve a 90-degree turn in the terminal phase, knowing the radius will help tune altitude (or depth) and the terminal phase ground distance.
+
 ### Bottom-attack Torpedoes ###
 
-Approaches 150 meters below target.
+Approaches 150 meters below target. In general, (closing depth)^2 + (terminal phase ground distance)^2 should be greater than (torpedo turn radius)^2.
 
     Config = {
        MinAltitude = -500,
@@ -229,6 +231,8 @@ aircraft.
 
 If not the case, change the last phase (closing phase) *Altitude* to 100 and *RelativeTo* to 3
 to keep the approach altitude consistent.
+
+Like bottom-attack torpedoes above, (closing altitude)^2 + (terminal phase ground distance)^2 should be at least (missile turn radius)^2.
 
     Config = {
        MinAltitude = 0,
@@ -489,7 +493,7 @@ less extreme closing depth.
 
        Phases = {
           {
-             Distance = 100,
+             Distance = 150,
              Altitude = nil,
              RelativeTo = 1,
              Thrust = nil,
@@ -500,7 +504,7 @@ less extreme closing depth.
              AboveSeaLevel = false,
              MinElevation = 10,
              ApproachAngle = nil,
-             Altitude = -5,
+             Altitude = -10,
              RelativeTo = 2,
              Thrust = nil,
              ThrustAngle = nil,
