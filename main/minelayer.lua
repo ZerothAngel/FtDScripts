@@ -1,18 +1,18 @@
---! minelayerquad
+--! minelayer
 --@ commons firstrun periodic
---@ shieldmanager mobilemine threedofspinner altitudecontrol threedof gunship-ai
+--@ shieldmanager mobilemine sixdof altitudecontrol gunship-ai
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
-Quadcopter = Periodic.create(Quadcopter_UpdateRate, Altitude_Control, 1)
+AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 GunshipAI = Periodic.create(AI_UpdateRate, GunshipAI_Update)
 
-Control_Reset = ThreeDoF_Reset
+Control_Reset = SixDoF_Reset
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
-      Quadcopter:Tick(I)
+      AltitudeControl:Tick(I)
 
       if ActivateWhen[I.AIMode] then
          GunshipAI:Tick(I)
@@ -20,18 +20,16 @@ function Update(I) -- luacheck: ignore 131
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
       else
-         ThreeDoF_Reset()
+         SixDoF_Reset()
          DodgeAltitudeOffset = nil
       end
 
       Altitude_Apply(I, DodgeAltitudeOffset)
-      ThreeDoFSpinner_Update(I)
-      ThreeDoF_Update(I)
+      SixDoF_Update(I)
 
       MissileMain:Tick(I)
    else
-      ThreeDoFSpinner_Disable(I)
-      ThreeDoF_Disable(I)
+      SixDoF_Disable(I)
    end
 
    ShieldManager:Tick(I)

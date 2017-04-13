@@ -1,8 +1,8 @@
 --! utility
 --@ commons firstrun periodic
---@ threedofspinner altitudecontrol yawthrottle utility-ai
+--@ aprthreedof altitudecontrol yawthrottle utility-ai
 -- Utility main
-Quadcopter = Periodic.create(Quadcopter_UpdateRate, Altitude_Control, 1)
+AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 UtilityAI = Periodic.create(AI_UpdateRate, UtilityAI_Update)
 
 Control_Reset = YawThrottle_Reset
@@ -11,7 +11,7 @@ function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
-      Quadcopter:Tick(I)
+      AltitudeControl:Tick(I)
 
       if ActivateWhen[I.AIMode] then
          UtilityAI:Tick(I)
@@ -25,10 +25,10 @@ function Update(I) -- luacheck: ignore 131
       end
 
       Altitude_Apply(I)
-      ThreeDoFSpinner_Update(I)
+      APRThreeDoF_Update(I)
    else
       UtilityAI_Reset()
       YawThrottle_Disable(I)
-      ThreeDoFSpinner_Disable(I)
+      APRThreeDoF_Disable(I)
    end
 end

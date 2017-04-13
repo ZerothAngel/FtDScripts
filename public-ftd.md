@@ -19,10 +19,10 @@ These scripts wholly replace the "combat" and "fleetmove" behavior of the stock 
 
 All the combat-oriented scripts (everything but repair-ai and utility-ai) have the ability to dodge missiles that have been detected.
 
-When possible, try using a combo script that includes the desired AI module (see below). It will have better integration (e.g. missile dodging also modifies altitude) and it will be more efficient in terms of CPU usage.
+When using with an altitude control script, try using a combo script that includes the desired AI module (see below). It will have better integration (e.g. missile dodging also modifies altitude) and it will be more efficient in terms of CPU usage.
 
-  * drop-ai &mdash; Dropship/boarding AI which follows the closest enemy and keeps the ship directly above (or below) it. This comes in two flavors, both technically combo scripts: [a 6DoF thruster version](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/drop.lua) and [a 6DoF hybrid quadcopter/thruster variant](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/dropquad.lua). There's currently no standalone version.
-  * gunship-ai &mdash; A standoff AI that attempts to keep at a set distance from the target while continuously facing it. Moves laterally and longitudinally (both forward and backward) to do so. Comes in two flavors, both technically combo scripts: [a hover variant](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunship.lua) which uses always-up dediblades for lift and thrusters for control of the other 5-axes (yaw/pitch/roll/long/lat); a [a quadcopter variant](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunshipquad.lua) which uses 3 or more dediblades for lift/pitch/roll and thrusters for yaw/long/lat control. No standalone version currently available.
+  * drop-ai &mdash; Dropship/boarding AI which follows the closest enemy and keeps the ship directly above (or below) it. This comes as a combo script, [a 6DoF jet/spinner version](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/drop.lua). There's currently no standalone version.
+  * gunship-ai &mdash; A standoff AI that attempts to keep at a set distance from the target while continuously facing it. Moves laterally and longitudinally (both forward and backward) to do so. Coms as a combo scripts, [a 6DoF jet/spinner version](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunship.lua). No standalone version currently available.
   * [naval-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/naval-ai.lua) &mdash; Naval AI (2D only) with terrain/friendly avoidance and pseudo-random evasive maneuvers. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=20953))
   * [repair-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repair-ai.lua) &mdash; Advanced repair AI (2D only) with terrain/friendly avoidance. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=20998))
   * [utility-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility-ai.lua) &mdash; Utility AI (2D only) with terrain/friendly avoidance. Meant for non-combatant ships in adventure mode. Has automatic wreck-collecting & resource gathering functions.
@@ -34,11 +34,9 @@ These scripts only provide altitude or depth control. They are meant to be used 
 Again, if you're going to use these with my AI scripts, using a combo script (below) provides better integration and is more efficient.
 
   * [aerostat](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/aerostat.lua) &mdash; Controls helium pumps for lift and pitch/roll stabilization. I don't use this myself, so YMMV. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
-  * [hover](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/hover.lua) &mdash; Dedicated heliblade spinner for lift, jets for 2-axis control (pitch, roll). ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
-  * [quadcopter](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/quadcopter.lua) &mdash; Dedicated heliblade spinners for lift and pitch/roll control. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
   * [subcontrol](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/subcontrol.lua) &mdash; Hydrofoil script with pitch, roll, depth control + manual depth option. ([Forum post #1](http://www.fromthedepthsgame.com/forum/showthread.php?tid=21908) [Forum post #2](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
   * [subpump](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/subpump.lua) &mdash; Controls air pumps for lift and pitch/roll stabilization. I don't use this myself as I prefer hydrofoil-based subs, but it's here for completeness. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
-  * [thrustercraft](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/thrustercraft.lua) &mdash; Jets for lift and pitch/roll control.
+  * [hover](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/hover.lua) &mdash; Upward- or downward-facing jets and/or spinners for lift and pitch/roll control.
 
 ### Missile Scripts ###
 
@@ -87,20 +85,16 @@ Note that all combo scripts that included dualprofile have been switched to
 the generalmissile version of dualprofile. See note above about the missile
 scripts.
 
-  * [airship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airship.lua) &mdash; Combo script: naval-ai + quadcopter + dualprofile + shieldmanager
-  * [airshiphover](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airshiphover.lua) &mdash; Combo script: naval-ai + hover + dualprofile + shieldmanager
+  * [airship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airship.lua) &mdash; Combo script: naval-ai + hover + dualprofile + shieldmanager
   * [drop](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/drop.lua) &mdash; Combo script: drop-ai + sixdof + shieldmanager
-  * [dropquad](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/dropquad.lua) &mdash; Combo script: drop-ai + quadcopter + shieldmanager
-  * [gunship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunship.lua) &mdash; Combo script: gunship-ai + hover + dualprofile + shieldmanager
-  * [gunshipquad](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunshipquad.lua) &mdash; Combo script: gunship-ai + quadcopter + dualprofile + shieldmanager
-  * [utility](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility.lua) &mdash; Combo script: utility-ai + quadcopter
+  * [gunship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunship.lua) &mdash; Combo script: gunship-ai + sixdof + dualprofile + shieldmanager
+  * [utility](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility.lua) &mdash; Combo script: utility-ai + hover
   * [utilitysub](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utilitysub.lua) &mdash; Combo script: utility-ai + subcontrol
-  * [repairheli](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repairheli.lua) &mdash; Combo script: repair-ai + hover
-  * [repairquad](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repairquad.lua) &mdash; Combo script: repair-ai + quadcopter
+  * [repair](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repair.lua) &mdash; Combo script: repair-ai + hover
   * [repairsub](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repairsub.lua) &mdash; Combo script: repair-ai + subcontrol
-  * [scout](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/scout.lua) &mdash; Combo script: naval-ai + quadcopter + shieldmanager + cameratrack
-  * [jetscout](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/jetscout.lua) &mdash; Combo script: gunship-ai + sixdof + shieldmanager + cameratrack
-  * [minelayerquad](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/minelayerquad.lua) &mdash; Combo script: gunship-ai + quadcopter + mobilemine + shieldmanager
+  * [scout](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/scout.lua) &mdash; Combo script: naval-ai + hover + shieldmanager + cameratrack
+  * [scout6dof](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/scout6dof.lua) &mdash; Combo script: gunship-ai + sixdof + shieldmanager + cameratrack
+  * [minelayer](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/minelayer.lua) &mdash; Combo script: gunship-ai + sixdof + mobilemine + shieldmanager
   * [submarine](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/submarine.lua) &mdash; Combo script: naval-ai + subcontrol + dualprofile + shieldmanager
   * [warship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/warship.lua) &mdash; Combo script: naval-ai + dualprofile + shieldmanager
 

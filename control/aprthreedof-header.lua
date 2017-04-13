@@ -1,17 +1,34 @@
--- ROLL/PITCH STABILIZATION
+-- APR 3DOF CONFIGURATION
 
 -- Switches to enable/disable control of each axis.
-ControlRoll = true
+ControlAltitude = true
 ControlPitch = true
+ControlRoll = true
 
--- PID values for stabilization using propulsion elements.
--- Start with { 1, 0, 0 } and tune from there.
-RollPIDConfig = {
+-- Control fractions dedicated to jets & spinners for each axis
+JetFractions = {
+   Altitude = 1,
+   Pitch = 1,
+   Roll = 1,
+}
+SpinnerFractions = {
+   Altitude = 1,
+   Pitch = 1,
+   Roll = 1,
+}
+
+-- PID values
+AltitudePIDConfig = {
+   Kp = 5,
+   Ti = 5,
+   Td = .3,
+}
+PitchPIDConfig = {
    Kp = .5,
    Ti = 5,
    Td = .1,
 }
-PitchPIDConfig = {
+RollPIDConfig = {
    Kp = .5,
    Ti = 5,
    Td = .1,
@@ -23,4 +40,4 @@ PitchPIDConfig = {
 -- Requires a drive maintainer facing in the given direction.
 -- Drive maintainer should be set up on its own drive (e.g. tertiary).
 -- All related jets should be bound to that drive.
-ThrustHackDriveMaintainerFacing = nil
+APRThrustHackDriveMaintainerFacing = nil

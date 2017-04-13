@@ -4,5 +4,5 @@
 -- it will run every 10th update. The lower it is, the more
 -- responsive it will be, but it will also take more processing time.
 -- Set to nil to disable a module.
-Hover_UpdateRate = 4
+AltitudeControl_UpdateRate = 4
 BalloonManager_UpdateRate = nil

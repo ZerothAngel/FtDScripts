@@ -1,5 +1,24 @@
 -- 6DOF CONFIGURATION
 
+-- Control fractions dedicated to jets & spinners for each axis
+JetFractions = {
+   Altitude = 1,
+   Yaw = 1,
+   Pitch = 1,
+   Roll = 1,
+   Forward = 1,
+   Right = 1,
+}
+SpinnerFractions = {
+   Altitude = 1,
+   Yaw = 1,
+   Pitch = 1,
+   Roll = 1,
+   Forward = 1,
+   Right = 1,
+}
+
+-- PID values
 AltitudePIDConfig = {
    Kp = 5,
    Ti = 5,

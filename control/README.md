@@ -9,26 +9,21 @@ control complementary DoFs can be combined.
   * depthcontrol &mdash; Automatic/manual altitude control for anything below sea level.
   * spinnercontrol &mdash; Generic module for controlling spinners oriented along a given axis.
   
-## 1 Degree of Freedom ##
-
-  * hover &mdash; Controls upward/downward-oriented dediblades for lift.
-
 ## 2 Degrees of Freedom ##
 
-  * stabilizer &mdash; Upward/downward-oriented jets for roll & pitch control.
-  * yawthrottle &mdash; Uses standard ship controls (e.g. as from a vehicle controller) for yaw and throttle (forward/reverse). Can also use forward/reverse-oriented spinners for propulsion.
+  * pitchrollstab &mdash; Pitch & roll stabilization by using standard ship pitch & roll controls.
+  * yawthrottle &mdash; Uses standard ship controls (e.g. as from a vehicle controller) for yaw and throttle (forward/reverse). Can also use forward/reverse-oriented spinners for propulsion and side-facing spinners for yaw.
 
 ## 3 Degrees of Freedom ##
 
+  * aprthreedof &mdash; Altitude/pitch/roll control using jets and/or spinners.
+  * yllthreedof &mdash; Yaw/longitudinal/lateral control using jets and/or spinners.
   * subcontrol &mdash; Depth and pitch/roll control using hydrofoils.
-  * threedof &mdash; Planar movement using jets: yaw, longitudinal, lateral.
-  * threedofjet &mdash; Upward/downward-oriented jets for altitude/pitch/roll.
   * threedofpump &mdash; Pump control for altitude/pitch/roll.
-  * threedofspinner &mdash; Upward/downward-oriented spinners for altitude/pitch/roll.
 
-## 5 Degrees of Freedom ##
+## 6 Degrees of Freedom ##
 
-  * fivedof &mdash; Controls jets in all orientations for yaw/pitch/roll + longitudinal + lateral.
+  * sixdof &mdash; Altitude/yaw/pitch/roll/longitudinal/lateral control using jets and/or spinners.
 
 ## Interface ##
 
