@@ -149,7 +149,13 @@ function SixDoF_ClassifySpinners(I)
 end
 
 function SixDoF_Update(I)
-   local AltitudeCV = AltitudePID:Control(DesiredAltitude - C:Altitude())
+   local AltitudeDelta = DesiredAltitude - C:Altitude()
+   if not DediBladesAlwaysUp then
+      -- Scale by vehicle up vector's Y component
+      AltitudeDelta = AltitudeDelta * C:UpVector().y
+   end
+   -- Otherwise, the assumption is that it always points straight up ("always up")
+   local AltitudeCV = AltitudePID:Control(AltitudeDelta)
    local YawCV = DesiredHeading and YawPID:Control(NormalizeBearing(DesiredHeading - C:Yaw())) or 0
    local PitchCV = PitchPID:Control(DesiredPitch - C:Pitch())
    local RollCV = RollPID:Control(DesiredRoll - C:Roll())

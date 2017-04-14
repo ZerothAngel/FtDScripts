@@ -94,7 +94,13 @@ function APRThreeDoF_ClassifySpinners(I)
 end
 
 function APRThreeDoF_Update(I)
-   local AltitudeCV = ControlAltitude and AltitudePID:Control(DesiredAltitude - C:Altitude()) or 0
+   local AltitudeDelta = DesiredAltitude - C:Altitude()
+   if not DediBladesAlwaysUp then
+      -- Scale by vehicle up vector's Y component
+      AltitudeDelta = AltitudeDelta * C:UpVector().y
+   end
+   -- Otherwise, the assumption is that it always points straight up ("always up")
+   local AltitudeCV = ControlAltitude and AltitudePID:Control(AltitudeDelta) or 0
    local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - C:Pitch()) or 0
    local RollCV = ControlRoll and RollPID:Control(DesiredRoll - C:Roll()) or 0
 
