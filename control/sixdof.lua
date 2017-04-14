@@ -133,6 +133,18 @@ function SixDoF_ClassifySpinners(I)
             SixDoF_Classify(i, BlockInfo, true, SpinnerFractions, SixDoF_SpinnerInfos)
          end
       end
+
+      if DediBladesAlwaysUp then
+         -- Flip signs on any spinners with negative UpSign
+         for _,Info in pairs(SixDoF_SpinnerInfos) do
+            local UpSign = Info.UpSign
+            if UpSign < 0 then
+               Info.UpSign = -UpSign
+               Info.PitchSign = -Info.PitchSign
+               Info.RollSign = -Info.RollSign
+            end
+         end
+      end
    end
 end
 

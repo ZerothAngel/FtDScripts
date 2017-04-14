@@ -34,6 +34,14 @@ RollPIDConfig = {
    Td = .1,
 }
 
+-- Spinner configuration
+
+-- The dediblade "always up" feature requires special handling.
+-- If you set the following to true, then ALL upward- and downward-
+-- facing dediblades should have "always up" set to 1.
+-- Use of "always up" is generally not recommended.
+DediBladesAlwaysUp = false
+
 -- THRUST HACK CONFIGURATION
 
 -- Use thrust hack instead of standard Lua control of thrusters.

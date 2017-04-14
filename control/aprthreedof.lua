@@ -78,6 +78,18 @@ function APRThreeDoF_ClassifySpinners(I)
             APRThreeDoF_Classify(i, BlockInfo, true, SpinnerFractions, APRThreeDoF_SpinnerInfos)
          end
       end
+
+      if DediBladesAlwaysUp then
+         -- Flip signs on any spinners with negative UpSign
+         for _,Info in pairs(APRThreeDoF_SpinnerInfos) do
+            local UpSign = Info.UpSign
+            if UpSign < 0 then
+               Info.UpSign = -UpSign
+               Info.PitchSign = -Info.PitchSign
+               Info.RollSign = -Info.RollSign
+            end
+         end
+      end
    end
 end
 
