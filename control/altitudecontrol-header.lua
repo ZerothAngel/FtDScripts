@@ -34,6 +34,12 @@ AbsoluteAltitude = false
 DesiredAltitudeCombat = 100
 DesiredAltitudeIdle = 100
 
+-- If non-nil, then for targets above this altitude, the desired
+-- altitude will be set to the target's altitude plus MatchTargetOffset,
+-- instead of DesiredAltitudeCombat above.
+MatchTargetAboveAltitude = nil
+MatchTargetOffset = 0
+
 -- Minimum & maximum altitude when following terrain.
 -- Only valid when AbsoluteAltitude is false.
 -- This differs from the hard limits below in that it lets you specify
@@ -42,7 +48,12 @@ TerrainMinAltitude = 0
 TerrainMaxAltitude = 300
 
 -- Enable vertical dodging of missiles (when combined AI supports it)
-AltitudeDodging = true
+-- 0 - No dodging
+-- 1 - Dodge as recommended by AI
+-- 2 - Dodge in direction of most leeway
+-- 3 - Always dodge upwards
+-- 4 - Always dodge downwards
+AltitudeDodgeMode = 1
 
 -- Never go below this altitude after summing up desired altitude,
 -- evasion, dodging, etc.

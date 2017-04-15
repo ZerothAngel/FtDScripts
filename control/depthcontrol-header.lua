@@ -55,7 +55,12 @@ TerrainMinDepth = 50
 TerrainMaxDepth = 500
 
 -- Enable vertical dodging of torpedoes (when combined AI supports it)
-DepthDodging = false
+-- 0 - No dodging
+-- 1 - Dodge as recommended by AI
+-- 2 - Dodge in direction of most leeway
+-- 3 - Always dodge upwards
+-- 4 - Always dodge downwards
+DepthDodgeMode = 0
 
 -- Hard constraints on depth after summing up desired depth, dodging,
 -- evasion, etc. These are absolute depth values.
