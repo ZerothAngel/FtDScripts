@@ -12,4 +12,5 @@ ActivateWhen = {
 -- it will run every 10th update. The lower it is, the more
 -- responsive it will be, but it will also take more processing time.
 AI_UpdateRate = 4
-SubControl_UpdateRate = 4
+DepthControl_UpdateRate = 4
+ShieldManager_UpdateRate = nil

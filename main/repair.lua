@@ -1,8 +1,10 @@
 --! repair
 --@ commons firstrun periodic
---@ aprthreedof altitudecontrol yawthrottle repair-ai
+--@ shieldmanager balloonmanager aprthreedof altitudecontrol yawthrottle repair-ai
 -- Quadcopter repair AI
-AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control)
+BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 3)
+ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
+AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 RepairAI = Periodic.create(AI_UpdateRate, RepairAI_Update)
 
 Control_Reset = YawThrottle_Reset
@@ -31,4 +33,7 @@ function Update(I) -- luacheck: ignore 131
       YawThrottle_Disable(I)
       APRThreeDoF_Disable(I)
    end
+
+   ShieldManager:Tick(I)
+   BalloonManager:Tick(I)
 end

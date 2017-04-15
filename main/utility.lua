@@ -1,7 +1,9 @@
 --! utility
 --@ commons firstrun periodic
---@ aprthreedof altitudecontrol yawthrottle utility-ai
+--@ shieldmanager balloonmanager aprthreedof altitudecontrol yawthrottle utility-ai
 -- Utility main
+BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 3)
+ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 UtilityAI = Periodic.create(AI_UpdateRate, UtilityAI_Update)
 
@@ -31,4 +33,7 @@ function Update(I) -- luacheck: ignore 131
       YawThrottle_Disable(I)
       APRThreeDoF_Disable(I)
    end
+
+   ShieldManager:Tick(I)
+   BalloonManager:Tick(I)
 end

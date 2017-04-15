@@ -1,8 +1,9 @@
 --! scout
 --@ commons firstrun periodic
---@ cameratrack shieldmanager aprthreedof altitudecontrol yawthrottle naval-ai
+--@ cameratrack shieldmanager balloonmanager aprthreedof altitudecontrol yawthrottle naval-ai
 -- Scout main
-CameraTrack = Periodic.create(CameraTrack_UpdateRate, CameraTrack_Update, 3)
+CameraTrack = Periodic.create(CameraTrack_UpdateRate, CameraTrack_Update, 4)
+BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 3)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
@@ -37,4 +38,5 @@ function Update(I) -- luacheck: ignore 131
    end
 
    ShieldManager:Tick(I)
+   BalloonManager:Tick(I)
 end

@@ -88,10 +88,10 @@ scripts.
   * [airship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airship.lua) &mdash; Combo script: naval-ai + hover + dualprofile + shieldmanager
   * [drop](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/drop.lua) &mdash; Combo script: drop-ai + sixdof + shieldmanager
   * [gunship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunship.lua) &mdash; Combo script: gunship-ai + sixdof + dualprofile + shieldmanager
-  * [utility](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility.lua) &mdash; Combo script: utility-ai + hover
-  * [utilitysub](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utilitysub.lua) &mdash; Combo script: utility-ai + subcontrol
-  * [repair](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repair.lua) &mdash; Combo script: repair-ai + hover
-  * [repairsub](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repairsub.lua) &mdash; Combo script: repair-ai + subcontrol
+  * [utility](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility.lua) &mdash; Combo script: utility-ai + hover + shieldmanager
+  * [utilitysub](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utilitysub.lua) &mdash; Combo script: utility-ai + subcontrol + shieldmanager
+  * [repair](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repair.lua) &mdash; Combo script: repair-ai + hover + shieldmanager
+  * [repairsub](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repairsub.lua) &mdash; Combo script: repair-ai + subcontrol + shieldmanager
   * [scout](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/scout.lua) &mdash; Combo script: naval-ai + hover + shieldmanager + cameratrack
   * [scout6dof](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/scout6dof.lua) &mdash; Combo script: gunship-ai + sixdof + shieldmanager + cameratrack
   * [minelayer](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/minelayer.lua) &mdash; Combo script: gunship-ai + sixdof + mobilemine + shieldmanager

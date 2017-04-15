@@ -1,8 +1,9 @@
 --! repairsub
 --@ commons firstrun periodic
---@ subcontrol depthcontrol yawthrottle repair-ai
+--@ shieldmanager subcontrol depthcontrol yawthrottle repair-ai
 -- Repair submarine main
-SubControl = Periodic.create(SubControl_UpdateRate, Depth_Control, 1)
+ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
+DepthControl = Periodic.create(DepthControl_UpdateRate, Depth_Control, 1)
 RepairAI = Periodic.create(AI_UpdateRate, RepairAI_Update)
 
 Control_Reset = YawThrottle_Reset
@@ -11,7 +12,7 @@ function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
-      SubControl:Tick(I)
+      DepthControl:Tick(I)
 
       if ActivateWhen[I.AIMode] then
          RepairAI:Tick(I)
@@ -30,4 +31,6 @@ function Update(I) -- luacheck: ignore 131
       RepairAI_Reset()
       YawThrottle_Disable(I)
    end
+
+   ShieldManager:Tick(I)
 end

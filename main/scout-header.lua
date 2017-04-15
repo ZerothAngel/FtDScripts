@@ -16,3 +16,4 @@ AI_UpdateRate = 4
 AltitudeControl_UpdateRate = 4
 CameraTrack_UpdateRate = 1
 ShieldManager_UpdateRate = nil
+BalloonManager_UpdateRate = nil

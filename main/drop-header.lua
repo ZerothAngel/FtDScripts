@@ -13,6 +13,6 @@ ActivateWhen = {
 -- responsive it will be, but it will also take more processing time.
 -- Set to nil to disable a module.
 AI_UpdateRate = 4
-Hover_UpdateRate = 4
+AltitudeControl_UpdateRate = 4
 ShieldManager_UpdateRate = nil
 BalloonManager_UpdateRate = nil

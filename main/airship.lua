@@ -1,7 +1,8 @@
 --! airship
 --@ commons firstrun periodic
---@ shieldmanager dualprofile aprthreedof altitudecontrol yawthrottle naval-ai
+--@ shieldmanager balloonmanager dualprofile aprthreedof altitudecontrol yawthrottle naval-ai
 -- Airship main
+BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 4)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
@@ -37,4 +38,5 @@ function Update(I) -- luacheck: ignore 131
    end
 
    ShieldManager:Tick(I)
+   BalloonManager:Tick(I)
 end
