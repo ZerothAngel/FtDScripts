@@ -15,16 +15,19 @@ check_commons() {
   return 0
 }
 
+TEMP=$(mktemp /tmp/check.XXXXXX)
+trap "rm -f $TEMP" EXIT
+
 for f in out/*.lua; do
   if lua52 -l dummy "$f"; then
     echo -n "$f: "
     if check_commons "$f"; then
-      echo "ok"
+      if luacheck "$f" >$TEMP; then
+        echo "ok"
+      else
+        echo "luacheck"
+        cat $TEMP
+      fi
     fi
   fi
-done
-
-# Run the scripts I most oftenly use through luacheck
-for f in airship cameratrack dediblademaintainer drop gunship interceptmanager repair repairsub scout shieldmanager submarine utility utilitysub warship; do
-  luacheck out/$f.lua
 done
