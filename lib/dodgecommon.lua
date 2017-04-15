@@ -27,6 +27,10 @@ AddFirstRun(Dodge_FirstRun)
 function CalculateDodge(Projectile)
    local RelativePosition = Projectile.Position - C:CoM()
    local RelativeVelocity = Projectile.Velocity - C:Velocity()
+
+   -- Quickly filter out anything not moving toward us
+   if Vector3.Dot(RelativePosition, RelativeVelocity) >= 0 then return nil end
+
    local Range,Speed = RelativePosition.magnitude,RelativeVelocity.magnitude
    local ImpactPoint,ImpactTime
    -- Is it outside our sphere?
@@ -60,7 +64,7 @@ function Dodge(I)
          -- Only if valid (when wouldn't it be?)
          if Projectile.Valid then
             local Direction,ImpactTime = CalculateDodge(Projectile)
-            if Direction and ImpactTime < Soonest then
+            if Direction and ImpactTime <= DodgeTimeHorizon and ImpactTime < Soonest then
                DodgeDirection = Direction
                Soonest = ImpactTime
                ProjectileId = Projectile.Id

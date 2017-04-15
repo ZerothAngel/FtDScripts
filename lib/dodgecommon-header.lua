@@ -14,3 +14,7 @@ VehicleRadiusPadding = 2
 -- Mainframe to use for missile warnings.
 -- Set to nil to disable dodging.
 MissileWarningMainframe = 0
+
+-- Only consider missiles that are predicted to impact within this
+-- number of seconds.
+DodgeTimeHorizon = 10
