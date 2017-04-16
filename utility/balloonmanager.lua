@@ -1,30 +1,29 @@
 --@ commons
 -- Balloon manager module
-BalloonManager_LastAltitude = nil
+BalloonManager_Active = false
 
 function BalloonManager_Update(I)
    local Altitude = C:Altitude()
-   local DeployBelow,SeverAbove = BalloonManagerConfig.DeployBelow,BalloonManagerConfig.SeverAbove
-   if (not BalloonManager_LastAltitude or
-          (Altitude < DeployBelow and BalloonManager_LastAltitude >= DeployBelow) or
-       (Altitude > SeverAbove and BalloonManager_LastAltitude <= SeverAbove)) then
-      -- These two methods don't seem to be documented anywhere,
-      -- but they're there and they work.
-      if Altitude < DeployBelow then
-         I:DeployAllBalloons()
-      elseif Altitude > SeverAbove then
-         I:SeverAllBalloons()
-      end
+   -- Always deploy when below deployment altitude
+   if Altitude < BalloonManagerConfig.DeployBelow then
+      I:DeployAllBalloons()
    end
-   BalloonManager_LastAltitude = Altitude
+   -- And only sever on transition from <= sever altitude to above
+   local SeverAbove = BalloonManagerConfig.SeverAbove
+   if Altitude <= SeverAbove then
+      BalloonManager_Active = true
+   elseif BalloonManager_Active and Altitude > SeverAbove then
+      I:SeverAllBalloons()
+      BalloonManager_Active = false
+   end
 end
 
 function BalloonManager_Disable(I)
-   if BalloonManager_LastAltitude then
+   if BalloonManager_Active then
       -- Sever once more, just in case
       I:SeverAllBalloons()
       -- And reset state
-      BalloonManager_LastAltitude = nil
+      BalloonManager_Active = false
    end
 end
 
