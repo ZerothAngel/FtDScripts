@@ -17,6 +17,8 @@ Airplane_SpinnerInfos = {}
 
 Airplane_UsesSpinners = (SpinnerFractions.Yaw > 0 or SpinnerFractions.Pitch > 0 or SpinnerFractions.Roll > 0 or SpinnerFractions.Throttle > 0)
 
+Airplane_Active = false
+
 function SetAltitude(Alt)
    DesiredAltitude = Alt
 end
@@ -193,6 +195,8 @@ function Airplane_Update(I)
          I:SetSpinnerContinuousSpeed(Info.Index, 30 * Output)
       end
    end
+
+   Airplane_Active = true
 end
 
 function Airplane_Disable(I)
@@ -204,5 +208,14 @@ function Airplane_Disable(I)
       for _,Info in pairs(Airplane_SpinnerInfos) do
          I:SetSpinnerContinuousSpeed(Info.Index, 0)
       end
+   end
+end
+
+function Airplane_Release(I)
+   -- Same thing as Airplane_Disable, but only done
+   -- once (until Airplane_Update is called again)
+   if Airplane_Active then
+      Airplane_Disable(I)
+      Airplane_Active = false
    end
 end

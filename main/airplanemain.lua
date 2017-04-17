@@ -14,19 +14,23 @@ function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
-      AltitudeControl:Tick(I)
-
       if ActivateWhen[I.AIMode] then
+         -- Note that the airplane module is wholly dependent on
+         -- the AI, so AltitudeControl and Airplane_Update
+         -- have been moved here.
+         AltitudeControl:Tick(I)
+
          NavalAI:Tick(I)
 
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
+
+         Altitude_Apply(I, DodgeAltitudeOffset)
+         Airplane_Update(I)
       else
          NavalAI_Reset()
+         Airplane_Release(I)
       end
-
-      Altitude_Apply(I, DodgeAltitudeOffset)
-      Airplane_Update(I)
 
       MissileMain:Tick(I)
    else
