@@ -21,10 +21,11 @@ All the combat-oriented scripts (everything but repair-ai and utility-ai) have t
 
 When using with an altitude control script, try using a combo script that includes the desired AI module (see below). It will have better integration (e.g. missile dodging also modifies altitude) and it will be more efficient in terms of CPU usage.
 
+  * [airplane](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airplane.lua) &mdash; This is actually just naval-ai below packaged in a combo script meant for anything that flies like an airplane, i.e. responds to yaw/pitch/roll/propulsion controls. Supports banked turns and like naval-ai, supports broadside and attack run behaviors. Similar to the stock Aerial AI, but potentially much smoother since it has a number of built-in PIDs. See [the brief guide](https://github.com/ZerothAngel/FtDScripts/blob/master/control/airplane.md).
   * drop-ai &mdash; Dropship/boarding AI which follows the closest enemy and keeps the ship directly above (or below) it. This comes as a combo script, [a 6DoF jet/spinner version](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/drop.lua). There's currently no standalone version.
   * gunship-ai &mdash; A standoff AI that attempts to keep at a set distance from the target while continuously facing it. Moves laterally and longitudinally (both forward and backward) to do so. Coms as a combo scripts, [a 6DoF jet/spinner version](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunship.lua). No standalone version currently available.
-  * [naval-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/naval-ai.lua) &mdash; Naval AI (2D only) with terrain/friendly avoidance and pseudo-random evasive maneuvers. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=20953))
-  * [repair-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repair-ai.lua) &mdash; Advanced repair AI (2D only) with terrain/friendly avoidance. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=20998))
+  * [naval-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/naval-ai.lua) &mdash; Naval AI (2D only) with terrain/friendly avoidance and pseudo-random evasive maneuvers. Supports both broadside and attack run behaviors. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=20953))
+  * [repair-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repair-ai.lua) &mdash; Advanced repair AI (2D only) with terrain/friendly avoidance. Fixates on the closest friendly and follows it throughout battle. However, it will head out to repair other nearby friendlies as well. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=20998))
   * [utility-ai](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility-ai.lua) &mdash; Utility AI (2D only) with terrain/friendly avoidance. Meant for non-combatant ships in adventure mode. Has automatic wreck-collecting & resource gathering functions.
 
 ### Altitude/Depth Control (Only) ###
@@ -85,6 +86,7 @@ Note that all combo scripts that included dualprofile have been switched to
 the generalmissile version of dualprofile. See note above about the missile
 scripts.
 
+  * [airplane](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airplane.lua) &mdash; Combo script: naval-ai + airplane + dualprofile + shieldmanager
   * [airship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airship.lua) &mdash; Combo script: naval-ai + hover + dualprofile + shieldmanager
   * [drop](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/drop.lua) &mdash; Combo script: drop-ai + sixdof + shieldmanager
   * [gunship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunship.lua) &mdash; Combo script: gunship-ai + sixdof + dualprofile + shieldmanager
