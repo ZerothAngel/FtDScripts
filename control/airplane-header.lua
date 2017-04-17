@@ -1,5 +1,18 @@
 -- AIRPLANE CONFIGURATION
 
+-- Control fractions dedicated to spinners for each axis
+-- Set to a positive value (usually 1) to use (dediblade)
+-- spinners for the given axis.
+SpinnerFractions = {
+   -- Side-facing spinners
+   Yaw = 0,
+   -- Upward- and downward-facing spinners
+   Pitch = 0,
+   Roll = 0,
+   -- Forward- and reverse-facing spinners
+   Throttle = 0,
+}
+
 -- PID values
 AltitudePIDConfig = {
    Kp = .1,
