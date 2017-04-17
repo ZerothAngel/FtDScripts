@@ -14,7 +14,7 @@ Since my airplane combo script is basically just my naval-ai with special contro
 
 Decide: Do you want broadsiding behavior or attack runs, like the stock aerial AI?
 
-Either way, set `MinDistance` and `MaxDistance`. Also, for both, you might want to set `AirRaidEvasion` to `nil`.
+Either way, set `MinDistance` and `MaxDistance`. Also, for both behaviors, you might want to set `AirRaidEvasion` to `nil`.
 
 If broadsiding, try out the defaults and then adjust the angles/evasion settings.
 
@@ -27,10 +27,12 @@ For attack runs:
 
 ## Waypoint Behavior ##
 
+This governs how the plane behaves when heading toward the 'M' map waypoint or when following the fleet flagship when in "fleetmove" mode.
+
 Inside `WaypointMoveConfig`:
 
  1. Set both `MaxDistance` and `ApproachDistance` to larger distances, something like 500-1000 depending on the speed of your plane. This ensures it drops down to minimum speed sooner.
- 2. Set `MinimumSpeed` to some number. This is in meters per second. It's how fast the plane will loiter.
+ 2. Set `MinimumSpeed` to some number. This is in meters per second. It's the speed of the plane while it loiters out-of-combat or in fleet formation.
  3. Set `StopOnStationaryWaypoint` to `false`.
 
 ## Altitudes ##
@@ -39,7 +41,7 @@ Basic setup for the "ALTITUDE CONTROL" section:
 
  1. Set `DesiredAltitudeCombat`. This is the default combat altitude.
  2. Set `DesiredAltitudeIdle`. This is the out-of-combat loitering altitude.
- 3. If you want it to match the target's altitude, set `MatchTargetAboveAltitude` and `MatchTargetOffset`. If you use this feature, you'll generally want to set `MatchTargetAboveAltitude` to something like 100 or 200. You don't want it attempting to match surface targets. :P
+ 3. If you want it to match the target's altitude, set `MatchTargetAboveAltitude` and `MatchTargetOffset`. If you use this feature, you'll generally want to set `MatchTargetAboveAltitude` to something like 100 or 200. You don't want it attempting to match the altitude of surface or submarine targets. :P
  4. **Very important**. Set `HardMinAltitude` to the absolute minimum altitude.
 
 ## Airplane Configuration ##
@@ -48,7 +50,7 @@ Under the "AIRPLANE CONFIGURATION" section:
 
  1. Tune the PIDs. The defaults are OK, they work fine on the few test craft I used. Look elsewhere for tips on how to tune a PID.
  2. Look over the pitch settings (`MaxPitchAngle`) and modify them if you want. The default allows a maximum pitch down of 10 degrees and a maximum pitch up of 45 degrees at all altitudes. You can customize this for higher altitudes (e.g. allow more freedom the higher you are) by duplicating the line and modifying the three values.
- 3. Decide if you want to bank to turn and if so, how many degrees difference before banking. By default, it will bank up to 50 degrees for heading changes more than 10 degrees as long as it is at least 200 meters high. See `AngleBeforeRoll`, `MaxRollAngle` and other settings.
+ 3. Decide if you want to bank to turn and if so, how many degrees difference before banking. By default, it will bank up to 50 degrees for heading changes more than 10 degrees as long as its altitude is at least 200 meters. See `AngleBeforeRoll`, `MaxRollAngle` and other settings.
 
 ## Balloon Manager ##
 

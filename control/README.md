@@ -21,6 +21,10 @@ control complementary DoFs can be combined.
   * subcontrol &mdash; Depth and pitch/roll control using hydrofoils.
   * threedofpump &mdash; Pump control for altitude/pitch/roll.
 
+## 4 Degrees of Freedom ##
+
+  * airplane &mdash; Uses standard ship controls for yaw/pitch/roll/throttle for airplane flight. Technically 3DoF as only altitude, heading, and throttle can be directly modified. Altitude & heading parameters are converted to the necessary yaw/pitch/roll control outputs to achieve them.
+
 ## 6 Degrees of Freedom ##
 
   * sixdof &mdash; Altitude/yaw/pitch/roll/longitudinal/lateral control using jets and/or spinners.
@@ -39,3 +43,10 @@ Reset* &mdash; Hint to release control along this/these degree(s) of freedom
   * SetPitch/SetRoll &mdash; Pitch & roll
   * SetThrottle/AdjustThrottle/ResetThrottle &mdash; Forward/reverse throttle (Longitudinal axis)
   * Control_Reset &mdash; Typically releases control along X & Z plane. Main module's responsibility to actually map this function.
+
+## Combinations ##
+
+  * sixdof and airplane cannot be combined with other DoF modules.
+  * yawthrottle can be used with any 2DoF or 3DoF modules, with the exception of yllthreedof.
+  * yllthreedof works with pitchrollstab, subcontrol, and threedofpump.
+  * For yllthreedof + aprthreedof, use sixdof module instead.
