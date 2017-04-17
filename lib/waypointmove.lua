@@ -37,8 +37,15 @@ function MoveToWaypoint(I, Waypoint, AdjustHeading, WaypointVelocity)
          local Bearing = GetBearingToPoint(Waypoint)
          AdjustHeading(Bearing)
          SetThrottle(WaypointMoveConfig.ClosingDrive)
-      else
+      elseif WaypointMoveConfig.StopOnStationaryWaypoint then
          SetThrottle(0)
+      else
+         -- Set minimum speed and constantly adjust bearing
+         local Bearing = GetBearingToPoint(Waypoint)
+         AdjustHeading(Bearing)
+         local CV = MTW_ThrottlePID:Control(WaypointMoveConfig.MinimumSpeed - C:ForwardSpeed())
+         local Drive = math.max(0, math.min(1, CurrentThrottle + CV))
+         SetThrottle(Drive)
       end
    else
       local Direction = Offset / Distance
