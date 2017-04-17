@@ -1,4 +1,4 @@
---@ commons evasion avoidance waypointmove
+--@ commons evasion avoidance waypointmove normalizebearing
 -- Target AI module
 TargetHeading = nil
 

@@ -1,4 +1,4 @@
---@ commons sign pid thrusthack
+--@ commons componenttypes sign pid thrusthack
 -- APR 3DoF module (Altitude, Pitch, Roll)
 AltitudePID = PID.create(AltitudePIDConfig, -30, 30)
 PitchPID = PID.create(PitchPIDConfig, -30, 30)

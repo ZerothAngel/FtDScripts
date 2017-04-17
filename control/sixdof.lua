@@ -1,4 +1,4 @@
---@ commons normalizebearing sign pid thrusthack
+--@ commons componenttypes normalizebearing sign pid thrusthack
 -- 6DoF module (Altitude, Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
 AltitudePID = PID.create(AltitudePIDConfig, -30, 30)
 YawPID = PID.create(YawPIDConfig, -30, 30)

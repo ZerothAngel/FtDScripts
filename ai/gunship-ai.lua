@@ -1,4 +1,4 @@
---@ commons getvectorangle planarvector getbearingtopoint dodge3d evasion sign
+--@ commons getvectorangle planarvector getbearingtopoint dodge3d evasion sign weapontypes
 --@ quadraticintercept
 -- Gunship AI module
 DodgeAltitudeOffset = nil

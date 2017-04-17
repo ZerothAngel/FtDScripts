@@ -1,4 +1,4 @@
---@ commons propulsionapi pid normalizebearing sign
+--@ commons propulsionapi pid normalizebearing getvectorangle sign
 -- Airplane module (Yaw, Pitch, Throttle)
 AltitudePID = PID.create(AltitudePIDConfig, -10, 10)
 YawPID = PID.create(YawPIDConfig, -1, 1)

@@ -1,4 +1,4 @@
---@ commons normalizebearing sign pid thrusthack
+--@ commons componenttypes normalizebearing sign pid thrusthack
 -- YLL 3DoF module (Yaw, Longitudinal, Lateral)
 YawPID = PID.create(YawPIDConfig, -30, 30)
 ForwardPID = PID.create(ForwardPIDConfig, -30, 30)
