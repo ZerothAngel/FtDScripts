@@ -17,6 +17,19 @@ SpinnerFractions = {
    Forward = 1,
    Right = 1,
 }
+-- Control fractions dedicated to vehicle controls for each axis
+-- Note that this clashes with JetFractions. Where a clash is
+-- indicated, the corresponding axes in JetFractions should be zeroed.
+ControlFractions = {
+   -- Clashes with JetFractions.Yaw AND Right
+   Yaw = 0,
+   -- Clashes with JetFractions.Altitude, Pitch, AND Roll
+   Pitch = 0,
+   -- Clashes with JetFractions.Altitude, Pitch, AND Roll
+   Roll = 0,
+   -- Clashes with JetFractions.Forward
+   Forward = 0,
+}
 
 -- PID values
 AltitudePIDConfig = {

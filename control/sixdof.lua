@@ -1,4 +1,4 @@
---@ commons componenttypes normalizebearing sign pid thrusthack
+--@ commons componenttypes propulsionapi normalizebearing sign pid thrusthack
 -- 6DoF module (Altitude, Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
 AltitudePID = PID.create(AltitudePIDConfig, -30, 30)
 YawPID = PID.create(YawPIDConfig, -30, 30)
@@ -23,6 +23,7 @@ SixDoF_SpinnerInfos = {}
 
 SixDoF_UsesJets = (JetFractions.Altitude > 0 or JetFractions.Yaw > 0 or JetFractions.Pitch > 0 or JetFractions.Roll > 0 or JetFractions.Forward > 0 or JetFractions.Right > 0)
 SixDoF_UsesSpinners = (SpinnerFractions.Altitude > 0 or SpinnerFractions.Yaw > 0 or SpinnerFractions.Pitch > 0 or SpinnerFractions.Roll > 0 or SpinnerFractions.Forward > 0 or SpinnerFractions.Right > 0)
+SixDoF_UsesControls = (ControlFractions.Yaw > 0 or ControlFractions.Pitch > 0 or ControlFractions.Roll > 0 or ControlFractions.Forward > 0)
 
 APRThrustHackControl = ThrustHack.create(APRThrustHackDriveMaintainerFacing)
 YLLThrustHackControl = ThrustHack.create(YLLThrustHackDriveMaintainerFacing)
@@ -166,6 +167,24 @@ function SixDoF_ClassifySpinners(I)
    end
 end
 
+function SixDoF_RequestControl(I, Fraction, PosControl, NegControl, CV)
+   if Fraction > 0 then
+      -- Scale down and constrain
+      CV = math.max(-1, math.min(1, Fraction * CV / 30))
+      if PosControl ~= NegControl then
+         -- Generally yaw, pitch, roll
+         if CV > 0 then
+            I:RequestControl(Mode, PosControl, CV)
+         elseif CV < 0 then
+            I:RequestControl(Mode, NegControl, -CV)
+         end
+      else
+         -- Generally propulsion
+         I:RequestControl(Mode, PosControl, CV)
+      end
+   end
+end
+
 function SixDoF_Update(I)
    local AltitudeDelta = DesiredAltitude - C:Altitude()
    if not DediBladesAlwaysUp then
@@ -246,6 +265,15 @@ function SixDoF_Update(I)
          end
       end
    end
+
+   if SixDoF_UsesControls then
+      SixDoF_RequestControl(I, ControlFractions.Pitch, NOSEUP, NOSEDOWN, PitchCV)
+      SixDoF_RequestControl(I, ControlFractions.Roll, ROLLLEFT, ROLLRIGHT, RollCV)
+      if PlanarMovement then
+         SixDoF_RequestControl(I, ControlFractions.Yaw, YAWRIGHT, YAWLEFT, YawCV)
+         SixDoF_RequestControl(I, ControlFractions.Forward, MAINPROPULSION, MAINPROPULSION, ForwardCV)
+      end
+   end
 end
 
 function SixDoF_Disable(I)
@@ -259,5 +287,9 @@ function SixDoF_Disable(I)
       for _,Info in pairs(SixDoF_SpinnerInfos) do
          I:SetSpinnerContinuousSpeed(Info.Index, 0)
       end
+   end
+   if SixDoF_UsesControls then
+      -- Only MAINPROPULSION is stateful
+      SixDoF_RequestControl(I, ControlFractions.Forward, MAINPROPULSION, MAINPROPULSION, 0)
    end
 end
