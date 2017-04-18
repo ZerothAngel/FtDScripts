@@ -49,7 +49,7 @@ Basic setup for the "ALTITUDE CONTROL" section:
 Under the "AIRPLANE CONFIGURATION" section:
 
  1. Tune the PIDs. The defaults are OK, they work fine on the few test craft I used. Look elsewhere for tips on how to tune a PID.
- 2. Look over the pitch settings (`MaxPitchAngle`) and modify them if you want. The default allows a maximum pitch down of 10 degrees and a maximum pitch up of 45 degrees at all altitudes. You can customize this for higher altitudes (e.g. allow more freedom the higher you are) by duplicating the line and modifying the three values.
+ 2. Modify `MaxPitch` if you want. But generally, if your `AltitudePID` is tuned well, you won't have to limit `MaxPitch` much.
  3. Decide if you want to bank to turn and if so, how many degrees difference before banking. By default, it will bank up to 50 degrees for heading changes more than 10 degrees as long as its altitude is at least 200 meters. See `AngleBeforeRoll`, `MaxRollAngle` and other settings.
 
 ## Balloon Manager ##

@@ -37,12 +37,11 @@ RollPIDConfig = {
 
 -- Pitch settings
 
--- You can have a different set of pitch angles (minimum and maximum)
--- for different altitude tiers.
-MaxPitchAngles = {
-   -- { Altitude this applies to, MinPitch, MaxPitch }
-   {   0, -10, 45 },
-}
+-- Maximum pitch magnitude up & down. Can be up to, but NOT including 90.
+-- Note that this is just the maximum pitch assuming the plane is flying
+-- level. While rolling, the pitch limit is naturally increased because of
+-- the math, which works out well for banked turns.
+MaxPitch = 45
 
 -- Roll settings
 
@@ -54,7 +53,7 @@ AngleBeforeRoll = 10
 -- condition was met).
 MinAltitudeForRoll = 200
 
--- Maximum roll angle to perform during banked turn. 0-90 degrees.
+-- Maximum roll angle to perform during banked turn. 0-180 degrees.
 MaxRollAngle = 50
 
 -- To have the roll angle scale based on the magnitude of the bearing

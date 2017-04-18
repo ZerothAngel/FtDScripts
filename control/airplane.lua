@@ -7,7 +7,6 @@ RollPID = PID.create(RollPIDConfig, -1, 1)
 
 DesiredAltitude = 0
 DesiredHeading = nil
-DesiredPitch = 0
 DesiredRoll = 0
 DesiredThrottle = nil
 CurrentThrottle = 0
@@ -16,6 +15,8 @@ Airplane_LastSpinnerCount = 0
 Airplane_SpinnerInfos = {}
 
 Airplane_UsesSpinners = (SpinnerFractions.Yaw > 0 or SpinnerFractions.Pitch > 0 or SpinnerFractions.Roll > 0 or SpinnerFractions.Throttle > 0)
+
+MaxPitch = math.tan(math.rad(MaxPitch))
 
 Airplane_Active = false
 
@@ -124,22 +125,8 @@ function Airplane_Update(I)
       DesiredRoll = 0
    end
 
-   local AltitudeDelta = DesiredAltitude - Altitude
-
-   -- Figure out pitch limits for this altitude
-   local MinPitch,MaxPitch
-   Altitude = math.max(0, Altitude)
-   for _,MaxPitchInfo in pairs(MaxPitchAngles) do
-      if Altitude >= MaxPitchInfo[1] then
-         MinPitch = MaxPitchInfo[2]
-         MaxPitch = MaxPitchInfo[3]
-      else
-         break
-      end
-   end
-
    -- Offset by altitude and re-normalize
-   TargetVector.y = AltitudePID:Control(AltitudeDelta) / 10
+   TargetVector.y = MaxPitch * AltitudePID:Control(DesiredAltitude - Altitude) / 10
    TargetVector = TargetVector.normalized
 
    -- Convert to local coordinates
@@ -150,13 +137,9 @@ function Airplane_Update(I)
    local Yaw = math.deg(math.atan2(TargetVector.x, z))
    local Pitch = math.deg(math.atan2(TargetVector.y, z))
 
-   -- Constrain pitch
-   DesiredPitch = C:Pitch() + Pitch
-   DesiredPitch = math.max(MinPitch, math.min(MaxPitch, DesiredPitch))
-
    -- Run through PIDs
    local YawCV = YawPID:Control(Yaw)
-   local PitchCV = PitchPID:Control(DesiredPitch - C:Pitch())
+   local PitchCV = PitchPID:Control(Pitch)
    local RollCV = RollPID:Control(DesiredRoll - C:Roll())
 
    -- And apply to controls
