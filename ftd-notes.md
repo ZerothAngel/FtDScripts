@@ -27,7 +27,7 @@ So when using my script (or any Lua script, really), it's best to use a single m
 
 The Lua binding for thruster control, `I:RequestThrustControl`, runs all thrust requests through some sort of propulsion balancing. So if one facing only has jets on one side of the CoM, they will not fire (because it would induce a rotation).
 
-This isn't ideal and causes problems especially if you don't build symmetrically.
+This isn't ideal and causes problems especially if you don't build symmetrically or if thrusters get damaged.
 
 This is why I tend to favor quadcopters and dediblade-based airships.
 

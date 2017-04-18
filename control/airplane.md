@@ -41,8 +41,9 @@ Basic setup for the "ALTITUDE CONTROL" section:
 
  1. Set `DesiredAltitudeCombat`. This is the default combat altitude.
  2. Set `DesiredAltitudeIdle`. This is the out-of-combat loitering altitude.
- 3. If you want it to match the target's altitude, set `MatchTargetAboveAltitude` and `MatchTargetOffset`. If you use this feature, you'll generally want to set `MatchTargetAboveAltitude` to something like 100 or 200. You don't want it attempting to match the altitude of surface or submarine targets. :P
- 4. **Very important**. Set `HardMinAltitude` to the absolute minimum altitude.
+ 3. I generally set `AbsoluteAltitude` to true so it doesn't follow terrain. (The naval AI will still attempt to avoid terrain.) This is up to you.
+ 4. If you want it to match the target's altitude, set `MatchTargetAboveAltitude` and `MatchTargetOffset`. If you use this feature, you'll generally want to set `MatchTargetAboveAltitude` to something like 100 or 200. You don't want it attempting to match the altitude of submarine targets. :P
+ 5. **Very important**. Set `HardMinAltitude` to the absolute minimum altitude.
 
 ## Airplane Configuration ##
 
