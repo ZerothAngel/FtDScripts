@@ -10,6 +10,8 @@ RightPID = PID.create(RightPIDConfig, -30, 30)
 DesiredAltitude = 0
 DesiredHeading = nil
 DesiredPosition = nil
+DesiredThrottle = nil
+CurrentThrottle = 0
 DesiredPitch = 0
 DesiredRoll = 0
 
@@ -61,6 +63,21 @@ function ResetPosition()
    DesiredPosition = nil
 end
 
+-- Sets throttle. Throttle should be [-1, 1]
+function SetThrottle(Throttle)
+   DesiredThrottle = math.max(-1, math.min(1, Throttle))
+end
+
+-- Adjusts throttle by some delta
+function AdjustThrottle(Delta) -- luacheck: ignore 131
+   SetThrottle(CurrentThrottle + Delta)
+end
+
+-- Resets throttle so drives will no longer be modified
+function ResetThrottle()
+   DesiredThrottle = nil
+end
+
 function SetPitch(Angle) -- luacheck: ignore 131
    DesiredPitch = Angle
 end
@@ -72,6 +89,7 @@ end
 function SixDoF_Reset()
    ResetHeading()
    ResetPosition()
+   ResetThrottle()
 end
 
 function SixDoF_Classify(Index, BlockInfo, IsSpinner, Fractions, Infos)
@@ -167,12 +185,17 @@ function SixDoF_Update(I)
       local XProj = Vector3.Dot(Offset, C:RightVector())
       ForwardCV = ForwardPID:Control(ZProj)
       RightCV = RightPID:Control(XProj)
+   elseif DesiredThrottle then
+      ForwardCV = 30 * DesiredThrottle -- PID is scaled, so scale up
+      CurrentThrottle = DesiredThrottle
    end
+
+   local PlanarMovement = DesiredHeading or DesiredPosition or DesiredThrottle
 
    if SixDoF_UsesJets then
       SixDoF_ClassifyJets(I)
 
-      if DesiredHeading or DesiredPosition then
+      if PlanarMovement then
          -- Blip horizontal thrusters
          if not YLLThrustHackDriveMaintainerFacing then
             for i = 0,3 do
@@ -195,7 +218,7 @@ function SixDoF_Update(I)
 
       -- Set drive fraction accordingly
       for _,Info in pairs(SixDoF_PropulsionInfos) do
-         if Info.IsVertical or DesiredHeading or DesiredPosition then
+         if Info.IsVertical or PlanarMovement then
             -- Sum up inputs and constrain
             local Output = AltitudeCV * Info.UpSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign
             Output = math.max(0, math.min(30, Output))
@@ -212,7 +235,7 @@ function SixDoF_Update(I)
 
       -- Set spinner speed
       for _,Info in pairs(SixDoF_SpinnerInfos) do
-         if Info.IsVertical or DesiredHeading or DesiredPosition then
+         if Info.IsVertical or PlanarMovement then
             -- Sum up inputs and constrain
             local Output = AltitudeCV * Info.UpSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign
             Output = math.max(-30, math.min(30, Output))
@@ -226,6 +249,7 @@ function SixDoF_Update(I)
 end
 
 function SixDoF_Disable(I)
+   CurrentThrottle = 0
    -- Disable drive maintainers, if any
    APRThrustHackControl:SetThrottle(I, 0)
    YLLThrustHackControl:SetThrottle(I, 0)

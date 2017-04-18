@@ -6,6 +6,4 @@
 
  * Maybe make utility-ai/repair-ai work with a full 6DoF controller (or controller combo), i.e. uses SetPosition if available.
 
- * Throttle support for sixdof and yllthreedof modules. Would allow it to be used in place of yawthrottle in many places.
-
  * Maybe refactor airplane controller so it can work on top of a another control module (or combo of modules) that provides yaw/pitch/roll/throttle.

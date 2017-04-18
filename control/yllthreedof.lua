@@ -6,6 +6,8 @@ RightPID = PID.create(RightPIDConfig, -30, 30)
 
 DesiredHeading = nil
 DesiredPosition = nil
+DesiredThrottle = nil
+CurrentThrottle = 0
 
 -- Keep them separated for now
 YLLThreeDoF_LastPropulsionCount = 0
@@ -46,9 +48,25 @@ function ResetPosition()
    DesiredPosition = nil
 end
 
+-- Sets throttle. Throttle should be [-1, 1]
+function SetThrottle(Throttle)
+   DesiredThrottle = math.max(-1, math.min(1, Throttle))
+end
+
+-- Adjusts throttle by some delta
+function AdjustThrottle(Delta) -- luacheck: ignore 131
+   SetThrottle(CurrentThrottle + Delta)
+end
+
+-- Resets throttle so drives will no longer be modified
+function ResetThrottle()
+   DesiredThrottle = nil
+end
+
 function YLLThreeDoF_Reset()
    ResetHeading()
    ResetPosition()
+   ResetThrottle()
 end
 
 function YLLThreeDoF_Classify(Index, BlockInfo, IsSpinner, Fractions, Infos)
@@ -109,12 +127,17 @@ function YLLThreeDoF_Update(I)
       local XProj = Vector3.Dot(Offset, C:RightVector())
       ForwardCV = ForwardPID:Control(ZProj)
       RightCV = RightPID:Control(XProj)
+   elseif DesiredThrottle then
+      ForwardCV = 30 * DesiredThrottle -- PID is scaled, so scale up
+      CurrentThrottle = DesiredThrottle
    end
+
+   local PlanarMovement = DesiredHeading or DesiredPosition or DesiredThrottle
 
    if YLLThreeDoF_UsesJets then
       YLLThreeDoF_ClassifyJets(I)
 
-      if DesiredHeading or DesiredPosition then
+      if PlanarMovement then
          -- Blip horizontal thrusters
          if not YLLThrustHackDriveMaintainerFacing then
             for i = 0,3 do
@@ -145,7 +168,7 @@ function YLLThreeDoF_Update(I)
    if YLLThreeDoF_UsesSpinners then
       YLLThreeDoF_ClassifySpinners(I)
 
-      if DesiredHeading or DesiredPosition then
+      if PlanarMovement then
          -- Set spinner speed
          for _,Info in pairs(YLLThreeDoF_SpinnerInfos) do
             -- Sum up inputs and constrain
@@ -163,6 +186,7 @@ function YLLThreeDoF_Update(I)
 end
 
 function YLLThreeDoF_Disable(I)
+   CurrentThrottle = 0
    -- Disable drive maintainers, if any
    YLLThrustHackControl:SetThrottle(I, 0)
    if YLLThreeDoF_UsesSpinners then
