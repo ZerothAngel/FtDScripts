@@ -1,7 +1,7 @@
 --! tabularasa
---@ yawthrottle commons firstrun periodic
+--@ commons firstrun periodic sixdof
 function TabulaRasa_Update(I)
-   YawThrottle_Reset()
+   SixDoF_Reset()
 end
 
 TabulaRasa = Periodic.create(UpdateRate, TabulaRasa_Update)
@@ -16,9 +16,9 @@ function Update(I) -- luacheck: ignore 131
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
 
-         YawThrottle_Update(I)
+         SixDoF_Update(I)
       end
    else
-      YawThrottle_Disable(I)
+      SixDoF_Disable(I)
    end
 end

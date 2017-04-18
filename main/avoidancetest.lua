@@ -1,7 +1,7 @@
 --! avoidancetest
---@ yawthrottle commons avoidance firstrun periodic
+--@ sixdof commons avoidance firstrun periodic
 function AvoidanceTest_Update(I)
-   YawThrottle_Reset()
+   SixDoF_Reset()
 
    -- Just go as straight as possible
    AdjustHeading(Avoidance(I, 0))
@@ -19,9 +19,9 @@ function Update(I) -- luacheck: ignore 131
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
 
-         YawThrottle_Update(I)
+         SixDoF_Update(I)
       end
    else
-      YawThrottle_Disable(I)
+      SixDoF_Disable(I)
    end
 end

@@ -28,7 +28,7 @@ SixDoF_UsesControls = (ControlFractions.Yaw > 0 or ControlFractions.Pitch > 0 or
 APRThrustHackControl = ThrustHack.create(APRThrustHackDriveMaintainerFacing)
 YLLThrustHackControl = ThrustHack.create(YLLThrustHackDriveMaintainerFacing)
 
-function SetAltitude(Alt)
+function SetAltitude(Alt) -- luacheck: ignore 131
    DesiredAltitude = Alt
 end
 
@@ -37,7 +37,7 @@ function AdjustAltitude(Delta) -- luacheck: ignore 131
 end
 
 -- Sets heading to an absolute value, 0 is north, 90 is east
-function SetHeading(Heading)
+function SetHeading(Heading) -- luacheck: ignore 131
    DesiredHeading = Heading % 360
 end
 
@@ -51,12 +51,12 @@ function ResetHeading()
    DesiredHeading = nil
 end
 
-function SetPosition(Pos)
+function SetPosition(Pos) -- luacheck: ignore 131
    -- Make copy to be safe
    DesiredPosition = Vector3(Pos.x, Pos.y, Pos.z)
 end
 
-function AdjustPosition(Offset)
+function AdjustPosition(Offset) -- luacheck: ignore 131
    DesiredPosition = C:CoM() + Offset
 end
 
@@ -65,7 +65,7 @@ function ResetPosition()
 end
 
 -- Sets throttle. Throttle should be [-1, 1]
-function SetThrottle(Throttle)
+function SetThrottle(Throttle) -- luacheck: ignore 131
    DesiredThrottle = math.max(-1, math.min(1, Throttle))
 end
 
@@ -87,7 +87,7 @@ function SetRoll(Angle) -- luacheck: ignore 131
    DesiredRoll = Angle
 end
 
-function SixDoF_Reset()
+function SixDoF_Reset() -- luacheck: ignore 131
    ResetHeading()
    ResetPosition()
    ResetThrottle()

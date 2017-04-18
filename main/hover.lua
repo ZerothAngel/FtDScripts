@@ -1,6 +1,6 @@
 --! hover
 --@ commons firstrun periodic
---@ balloonmanager aprthreedof altitudecontrol
+--@ balloonmanager sixdof altitudecontrol
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 1)
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control)
 
@@ -11,9 +11,9 @@ function Update(I) -- luacheck: ignore 131
       AltitudeControl:Tick(I)
 
       Altitude_Apply(I)
-      APRThreeDoF_Update(I)
+      SixDoF_Update(I)
    else
-      APRThreeDoF_Disable(I)
+      SixDoF_Disable(I)
    end
 
    BalloonManager:Tick(I)

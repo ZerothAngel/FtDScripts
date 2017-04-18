@@ -1,5 +1,5 @@
 --! yawtest
---@ yawthrottle commons firstrun eventdriver
+--@ commons firstrun eventdriver sixdof
 MyHeading = -90
 LastTurn = nil
 
@@ -59,9 +59,9 @@ function Update(I) -- luacheck: ignore 131
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
 
-         YawThrottle_Update(I)
+         SixDoF_Update(I)
       end
    else
-      YawThrottle_Disable(I)
+      SixDoF_Disable(I)
    end
 end

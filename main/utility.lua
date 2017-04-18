@@ -1,13 +1,13 @@
 --! utility
 --@ commons firstrun periodic
---@ shieldmanager balloonmanager aprthreedof altitudecontrol yawthrottle utility-ai
+--@ shieldmanager balloonmanager sixdof altitudecontrol utility-ai
 -- Utility main
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 3)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 UtilityAI = Periodic.create(AI_UpdateRate, UtilityAI_Update)
 
-Control_Reset = YawThrottle_Reset
+Control_Reset = SixDoF_Reset
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
@@ -21,17 +21,16 @@ function Update(I) -- luacheck: ignore 131
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
 
-         YawThrottle_Update(I)
+         SixDoF_Update(I)
       else
          UtilityAI_Reset()
       end
 
       Altitude_Apply(I)
-      APRThreeDoF_Update(I)
+      SixDoF_Update(I)
    else
       UtilityAI_Reset()
-      YawThrottle_Disable(I)
-      APRThreeDoF_Disable(I)
+      SixDoF_Disable(I)
    end
 
    ShieldManager:Tick(I)

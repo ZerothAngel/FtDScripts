@@ -1,9 +1,9 @@
 --! naval-ai
 --@ commons firstrun periodic
---@ yawthrottle naval-ai
+--@ sixdof naval-ai
 NavalAI = Periodic.create(UpdateRate, NavalAI_Update)
 
-Control_Reset = YawThrottle_Reset
+Control_Reset = SixDoF_Reset
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
@@ -15,12 +15,12 @@ function Update(I) -- luacheck: ignore 131
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
 
-         YawThrottle_Update(I)
+         SixDoF_Update(I)
       else
          NavalAI_Reset()
       end
    else
       NavalAI_Reset()
-      YawThrottle_Disable(I)
+      SixDoF_Disable(I)
    end
 end
