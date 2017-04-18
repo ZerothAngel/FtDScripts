@@ -21,9 +21,18 @@ SixDoF_PropulsionInfos = {}
 SixDoF_LastSpinnerCount = 0
 SixDoF_SpinnerInfos = {}
 
-SixDoF_UsesJets = (JetFractions.Altitude > 0 or JetFractions.Yaw > 0 or JetFractions.Pitch > 0 or JetFractions.Roll > 0 or JetFractions.Forward > 0 or JetFractions.Right > 0)
+-- Figure out what's being used
+SixDoF_UsesHorizontalJets = (JetFractions.Yaw > 0 or JetFractions.Forward > 0 or JetFractions.Right > 0)
+SixDoF_UsesVerticalJets = (JetFractions.Altitude > 0 or JetFractions.Pitch > 0 or JetFractions.Roll > 0)
+SixDoF_UsesJets = SixDoF_UsesHorizontalJets or SixDoF_UsesVerticalJets
 SixDoF_UsesSpinners = (SpinnerFractions.Altitude > 0 or SpinnerFractions.Yaw > 0 or SpinnerFractions.Pitch > 0 or SpinnerFractions.Roll > 0 or SpinnerFractions.Forward > 0 or SpinnerFractions.Right > 0)
 SixDoF_UsesControls = (ControlFractions.Yaw > 0 or ControlFractions.Pitch > 0 or ControlFractions.Roll > 0 or ControlFractions.Forward > 0)
+
+-- Through configuration, these axes can be skipped entirely
+SixDoF_ControlAltitude = (JetFractions.Altitude > 0 or SpinnerFractions.Altitude > 0)
+SixDoF_ControlPitch = (JetFractions.Pitch > 0 or SpinnerFractions.Pitch > 0 or ControlFractions.Pitch > 0)
+SixDoF_ControlRoll = (JetFractions.Roll > 0 or SpinnerFractions.Roll > 0 or ControlFractions.Roll > 0)
+-- The others (yaw/forward/right) depend on an AI
 
 APRThrustHackControl = ThrustHack.create(APRThrustHackDriveMaintainerFacing)
 YLLThrustHackControl = ThrustHack.create(YLLThrustHackDriveMaintainerFacing)
@@ -186,16 +195,20 @@ function SixDoF_RequestControl(I, Fraction, PosControl, NegControl, CV)
 end
 
 function SixDoF_Update(I)
-   local AltitudeDelta = DesiredAltitude - C:Altitude()
-   if not DediBladesAlwaysUp then
-      -- Scale by vehicle up vector's Y component
-      AltitudeDelta = AltitudeDelta * C:UpVector().y
+   local AltitudeCV = 0
+   if SixDoF_ControlAltitude then
+      local AltitudeDelta = DesiredAltitude - C:Altitude()
+      if not DediBladesAlwaysUp then
+         -- Scale by vehicle up vector's Y component
+         AltitudeDelta = AltitudeDelta * C:UpVector().y
+      end
+      -- Otherwise, the assumption is that it always points straight up
+      -- ("always up")
+      AltitudeCV = AltitudePID:Control(AltitudeDelta)
    end
-   -- Otherwise, the assumption is that it always points straight up ("always up")
-   local AltitudeCV = AltitudePID:Control(AltitudeDelta)
    local YawCV = DesiredHeading and YawPID:Control(NormalizeBearing(DesiredHeading - C:Yaw())) or 0
-   local PitchCV = PitchPID:Control(DesiredPitch - C:Pitch())
-   local RollCV = RollPID:Control(DesiredRoll - C:Roll())
+   local PitchCV = SixDoF_ControlPitch and PitchPID:Control(DesiredPitch - C:Pitch()) or 0
+   local RollCV = SixDoF_ControlRoll and RollPID:Control(DesiredRoll - C:Roll()) or 0
 
    local ForwardCV,RightCV = 0,0
    if DesiredPosition then
@@ -214,7 +227,7 @@ function SixDoF_Update(I)
    if SixDoF_UsesJets then
       SixDoF_ClassifyJets(I)
 
-      if PlanarMovement then
+      if SixDoF_UsesHorizontalJets and PlanarMovement then
          -- Blip horizontal thrusters
          if not YLLThrustHackDriveMaintainerFacing then
             for i = 0,3 do
@@ -227,12 +240,14 @@ function SixDoF_Update(I)
          -- Relinquish control
          YLLThrustHackControl:SetThrottle(I, 0)
       end
-      -- Blip top & bottom thrusters
-      if not APRThrustHackDriveMaintainerFacing then
-         I:RequestThrustControl(4)
-         I:RequestThrustControl(5)
-      else
-         APRThrustHackControl:SetThrottle(I, 1)
+      if SixDoF_UsesVerticalJets then
+         -- Blip top & bottom thrusters
+         if not APRThrustHackDriveMaintainerFacing then
+            I:RequestThrustControl(4)
+            I:RequestThrustControl(5)
+         else
+            APRThrustHackControl:SetThrottle(I, 1)
+         end
       end
 
       -- Set drive fraction accordingly
