@@ -19,14 +19,13 @@ function Update(I) -- luacheck: ignore 131
 
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
-
-         SixDoF_Update(I)
       else
          UtilityAI_Reset()
       end
 
       Depth_Apply(I)
       SubControl_Update(I)
+      SixDoF_Update(I)
    else
       UtilityAI_Reset()
       SixDoF_Disable(I)
