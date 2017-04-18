@@ -1,6 +1,6 @@
 --! utility-ai
 --@ commons firstrun periodic
---@ sixdof utility-ai
+--@ sixdof ytdefaults utility-ai
 UtilityAI = Periodic.create(UpdateRate, UtilityAI_Update)
 
 Control_Reset = SixDoF_Reset

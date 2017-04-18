@@ -1,6 +1,6 @@
 --! drop
 --@ commons firstrun periodic
---@ shieldmanager balloonmanager sixdof altitudecontrol drop-ai
+--@ shieldmanager balloonmanager sixdof altitudecontrol gunshipdefaults drop-ai
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 3)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)

@@ -1,6 +1,6 @@
 --! utility
 --@ commons firstrun periodic
---@ shieldmanager balloonmanager sixdof altitudecontrol utility-ai
+--@ shieldmanager balloonmanager sixdof altitudecontrol airshipdefaults utility-ai
 -- Utility main
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 3)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)

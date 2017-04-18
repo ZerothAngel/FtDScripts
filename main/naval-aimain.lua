@@ -1,6 +1,6 @@
 --! naval-ai
 --@ commons firstrun periodic
---@ sixdof naval-ai
+--@ sixdof ytdefaults naval-ai
 NavalAI = Periodic.create(UpdateRate, NavalAI_Update)
 
 Control_Reset = SixDoF_Reset

@@ -1,6 +1,6 @@
 --! scout
 --@ commons firstrun periodic
---@ cameratrack shieldmanager balloonmanager sixdof altitudecontrol naval-ai
+--@ cameratrack shieldmanager balloonmanager sixdof altitudecontrol airshipdefaults naval-ai
 -- Scout main
 CameraTrack = Periodic.create(CameraTrack_UpdateRate, CameraTrack_Update, 4)
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 3)

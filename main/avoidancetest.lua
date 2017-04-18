@@ -1,5 +1,5 @@
 --! avoidancetest
---@ sixdof commons avoidance firstrun periodic
+--@ commons avoidance firstrun periodic sixdof ytdefaults
 function AvoidanceTest_Update(I)
    SixDoF_Reset()
 

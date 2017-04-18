@@ -1,6 +1,6 @@
 --! target-ai
 --@ commons firstrun periodic
---@ sixdof target-ai
+--@ sixdof ytdefaults target-ai
 TargetAI = Periodic.create(UpdateRate, TargetAI_Update)
 
 Control_Reset = SixDoF_Reset

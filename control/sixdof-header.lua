@@ -1,36 +1,5 @@
 -- 6DOF CONFIGURATION
 
--- Control fractions dedicated to jets & spinners for each axis
-JetFractions = {
-   Altitude = 1,
-   Yaw = 1,
-   Pitch = 1,
-   Roll = 1,
-   Forward = 1,
-   Right = 1,
-}
-SpinnerFractions = {
-   Altitude = 1,
-   Yaw = 1,
-   Pitch = 1,
-   Roll = 1,
-   Forward = 1,
-   Right = 1,
-}
--- Control fractions dedicated to vehicle controls for each axis
--- Note that this clashes with JetFractions. Where a clash is
--- indicated, the corresponding axes in JetFractions should be zeroed.
-ControlFractions = {
-   -- Clashes with JetFractions.Yaw AND Right
-   Yaw = 0,
-   -- Clashes with JetFractions.Altitude, Pitch, AND Roll
-   Pitch = 0,
-   -- Clashes with JetFractions.Altitude, Pitch, AND Roll
-   Roll = 0,
-   -- Clashes with JetFractions.Forward
-   Forward = 0,
-}
-
 -- PID values
 AltitudePIDConfig = {
    Kp = 5,

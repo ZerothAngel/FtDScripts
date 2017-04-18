@@ -1,6 +1,6 @@
 --! utilitysub
 --@ commons firstrun periodic
---@ shieldmanager subcontrol sixdof depthcontrol utility-ai
+--@ shieldmanager subcontrol sixdof depthcontrol ytdefaults utility-ai
 -- Utility submarine main
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 DepthControl = Periodic.create(DepthControl_UpdateRate, Depth_Control, 1)

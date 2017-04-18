@@ -1,6 +1,6 @@
 --! hover
 --@ commons firstrun periodic
---@ balloonmanager sixdof altitudecontrol
+--@ balloonmanager sixdof hoverdefaults altitudecontrol
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 1)
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control)
 

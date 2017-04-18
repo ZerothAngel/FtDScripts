@@ -1,6 +1,6 @@
 --! scout6dof
 --@ commons firstrun periodic
---@ cameratrack shieldmanager balloonmanager altitudecontrol sixdof gunship-ai
+--@ cameratrack shieldmanager balloonmanager altitudecontrol sixdof gunshipdefaults gunship-ai
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 4)
 CameraTrack = Periodic.create(CameraTrack_UpdateRate, CameraTrack_Update, 3)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)

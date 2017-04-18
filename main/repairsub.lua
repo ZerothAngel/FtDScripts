@@ -1,6 +1,6 @@
 --! repairsub
 --@ commons firstrun periodic
---@ shieldmanager subcontrol sixdof depthcontrol repair-ai
+--@ shieldmanager subcontrol sixdof depthcontrol ytdefaults repair-ai
 -- Repair submarine main
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 DepthControl = Periodic.create(DepthControl_UpdateRate, Depth_Control, 1)
