@@ -45,7 +45,7 @@ MaxPitch = 45
 
 -- Roll settings
 
--- Bearing difference necessary for banked turn. Set to nil to disable.
+-- Relative bearing necessary for banked turn. Set to nil to disable.
 AngleBeforeRoll = 10
 
 -- Minimum altitude necessary for banked turn. Set to negative number
@@ -54,13 +54,15 @@ AngleBeforeRoll = 10
 MinAltitudeForRoll = 200
 
 -- Maximum roll angle to perform during banked turn. 0-180 degrees.
+-- Higher performance aircraft should probably aim for something slightly
+-- more than 90 (100? 105?) so they don't climb excessivly while banking.
 MaxRollAngle = 50
 
--- To have the roll angle scale based on the magnitude of the bearing
--- difference, set the number here.
--- Calculated as: (roll angle) = (bearing difference - AngleBeforeRoll) *
+-- To have the roll angle scale based on the magnitude of the relative
+-- bearing, set the number here.
+-- Calculated as: (roll angle) = ((relative bearing) - AngleBeforeRoll) *
 --   RollAngleGain
 -- If (roll angle) is greater than MaxRollAngle, MaxRollAngle will be
 -- used instead.
--- To always use MaxAngleRoll, set RollAngleGain to nil.
-RollAngleGain = 2
+-- To always use MaxRollAngle, set RollAngleGain to nil.
+RollAngleGain = nil

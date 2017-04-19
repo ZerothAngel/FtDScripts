@@ -16,7 +16,9 @@ Airplane_SpinnerInfos = {}
 
 Airplane_UsesSpinners = (SpinnerFractions.Yaw > 0 or SpinnerFractions.Pitch > 0 or SpinnerFractions.Roll > 0 or SpinnerFractions.Throttle > 0)
 
-MaxPitch = math.tan(math.rad(MaxPitch))
+-- Calculate tan ahead of time
+-- Also pre-divide by the AltitudePID scaling factor
+MaxPitch = math.tan(math.rad(MaxPitch)) / 10
 
 Airplane_Active = false
 
@@ -114,10 +116,10 @@ function Airplane_Update(I)
    if DesiredHeading then
       TargetVector = Quaternion.Euler(0, DesiredHeading, 0) * TargetVector
       local Bearing = NormalizeBearing(DesiredHeading - GetVectorAngle(C:ForwardVector()))
-      if AngleBeforeRoll and math.abs(Bearing) > AngleBeforeRoll and Altitude >= MinAltitudeForRoll then
-         local DeltaBearing = math.abs(Bearing) - AngleBeforeRoll
-         local RollAngle = RollAngleGain and math.min(MaxRollAngle, DeltaBearing * RollAngleGain) or MaxRollAngle
-         DesiredRoll = Sign(Bearing) * -RollAngle
+      local AbsBearing = math.abs(Bearing)
+      if AngleBeforeRoll and AbsBearing > AngleBeforeRoll and Altitude >= MinAltitudeForRoll then
+         local RollAngle = RollAngleGain and math.min(MaxRollAngle, (AbsBearing - AngleBeforeRoll) * RollAngleGain) or MaxRollAngle
+         DesiredRoll = -Sign(Bearing) * RollAngle
       else
          DesiredRoll = 0
       end
@@ -126,7 +128,7 @@ function Airplane_Update(I)
    end
 
    -- Offset by altitude and re-normalize
-   TargetVector.y = MaxPitch * AltitudePID:Control(DesiredAltitude - Altitude) / 10
+   TargetVector.y = MaxPitch * AltitudePID:Control(DesiredAltitude - Altitude)
    TargetVector = TargetVector.normalized
 
    -- Convert to local coordinates
