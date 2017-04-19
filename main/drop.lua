@@ -20,8 +20,8 @@ function Update(I) -- luacheck: ignore 131
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
       else
+         DropAI_Reset()
          SixDoF_Reset()
-         DodgeAltitudeOffset = nil
       end
 
       Altitude_Apply(I, DodgeAltitudeOffset, not DropAI_Closing)

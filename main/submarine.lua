@@ -22,6 +22,7 @@ function Update(I) -- luacheck: ignore 131
          I:TellAiThatWeAreTakingControl()
       else
          NavalAI_Reset()
+         SixDoF_Reset()
       end
 
       Depth_Apply(I, DodgeAltitudeOffset)

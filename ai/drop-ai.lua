@@ -20,6 +20,7 @@ end
 
 function DropAI_Reset()
    DropTargetID = nil
+   DodgeAltitudeOffset = nil
 end
 
 -- Modifies vector by some amount for evasive maneuvers

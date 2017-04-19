@@ -21,6 +21,7 @@ function Update(I) -- luacheck: ignore 131
          I:TellAiThatWeAreTakingControl()
       else
          UtilityAI_Reset()
+         SixDoF_Reset()
       end
 
       Depth_Apply(I)

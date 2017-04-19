@@ -103,6 +103,10 @@ function FormationMove(I)
    end
 end
 
+function GunshipAI_Reset()
+   DodgeAltitudeOffset = nil
+end
+
 function GunshipAI_Update(I)
    Control_Reset()
 
