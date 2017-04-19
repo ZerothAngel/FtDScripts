@@ -39,11 +39,11 @@ def create_chunk(fn, strip=False, strip_comments=False, strip_empty=False):
                         line = line.strip()
                         if line or not strip_empty:
                             if not strip_comments or not line.startswith('--'):
-                                if not line.startswith('--!') and not line.startswith('--@'):
+                                if not line.startswith('--!') and not line.startswith('--@') and not line.startswith('--#'):
                                     out.write(line + NL)
                     else:
                         stripped = line.strip()
-                        if not stripped.startswith('--!') and not stripped.startswith('--@'):
+                        if not stripped.startswith('--!') and not stripped.startswith('--@') and not stripped.startswith('--#'):
                             out.write(line.rstrip() + NL)
                 return out.getvalue()
 
@@ -73,7 +73,7 @@ def build_script(version, available_modules, dependencies, root, output,
     chunks = [generate_version_header(version, modules)]
 
     if strip:
-        chunks.append('-- NB Leading whitespace stripped to save bytes!' + NL)
+        chunks.append('-- !!! Leading whitespace stripped to save bytes !!!' + NL)
 
     # Headers
     for module in modules:
