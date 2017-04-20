@@ -1,6 +1,6 @@
 --! repair-ai
 --@ commons firstrun periodic
---@ sixdof ytdefaults repair-ai
+--@ sixdof ytdefaults repair-ai repair-aicommon
 RepairAI = Periodic.create(UpdateRate, RepairAI_Update)
 
 Control_Reset = SixDoF_Reset

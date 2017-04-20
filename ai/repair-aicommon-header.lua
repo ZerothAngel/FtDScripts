@@ -1,3 +1,5 @@
+-- REPAIR AI
+
 -- Offset from repair target's center of mass.
 -- Note the Y value is ignored.
 RepairTargetOffset = Vector3(0, 0, 25)

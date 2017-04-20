@@ -1,6 +1,6 @@
 --! repair
 --@ commons firstrun periodic
---@ shieldmanager balloonmanager sixdof altitudecontrol airshipdefaults repair-ai
+--@ shieldmanager balloonmanager sixdof altitudecontrol airshipdefaults repair-ai repair-aicommon
 -- Quadcopter repair AI
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 3)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
