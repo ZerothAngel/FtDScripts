@@ -65,6 +65,8 @@ function Airplane_Reset()
    ResetThrottle()
 end
 
+Airplane_Eps = .001
+
 function Airplane_Classify(Index, BlockInfo, Fractions, Infos)
    local CoMOffset = BlockInfo.LocalPositionRelativeToCom
    -- Always spinners here
@@ -76,17 +78,17 @@ function Airplane_Classify(Index, BlockInfo, Fractions, Infos)
       RollSign = 0,
       ForwardSign = 0,
    }
-   if math.abs(LocalForwards.y) > 0.001 then
+   local UpSign = Sign(LocalForwards.y, 0, Airplane_Eps)
+   if UpSign ~= 0 then
       -- Vertical
-      local UpSign = Sign(LocalForwards.y)
       Info.PitchSign = Sign(CoMOffset.z) * UpSign * Fractions.Pitch
       Info.RollSign = Sign(CoMOffset.x) * UpSign * Fractions.Roll
    else
       -- Horizontal
-      local RightSign = Sign(LocalForwards.x)
-      local ZSign = Sign(CoMOffset.z)
-      Info.YawSign = RightSign * ZSign * Fractions.Yaw
-      Info.ForwardSign = Sign(LocalForwards.z) * Fractions.Throttle
+      local ForwardSign = Sign(LocalForwards.z, 0, Airplane_Eps)
+      local RightSign = Sign(LocalForwards.x, 0, Airplane_Eps)
+      Info.YawSign = RightSign * Sign(CoMOffset.z) * Fractions.Yaw
+      Info.ForwardSign = ForwardSign * Fractions.Throttle
    end
    if Info.PitchSign ~= 0 or Info.RollSign ~= 0 or Info.YawSign ~= 0 or Info.ForwardSign ~= 0 then
       table.insert(Infos, Info)

@@ -44,10 +44,11 @@ function SpinnerControl:Classify(I)
          local Info = I:GetSpinnerInfo(i)
          local DotZ = Vector3.Dot(Info.LocalRotation * Vector3.up,
                                   Axis)
-         if math.abs(DotZ) > 0.001 then
+         local UpSign = Sign(DotZ, 0, .001)
+         if UpSign ~= 0 then
             local Spinner = {
                Index = i,
-               Sign = AlwaysUp and 1 or Sign(DotZ),
+               Sign = AlwaysUp and 1 or UpSign,
             }
             table.insert(self.Spinners, Spinner)
          end

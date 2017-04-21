@@ -27,13 +27,17 @@ function SetRoll(Angle) -- luacheck: ignore 131
    DesiredRoll = Angle
 end
 
+SubControl_Eps = .001
+
 function GetHydrofoilSign(BlockInfo)
    -- Check if hydrofoil's forward vector lies on Z-axis and up vector lies on Y-axis.
    local DotZ = BlockInfo.LocalForwards.z
    local DotY = (BlockInfo.LocalRotation * Vector3.up).y
-   if math.abs(DotZ) > 0.001 and math.abs(DotY) > 0.001 then
+   local ForwardSign = Sign(DotZ, 0, SubControl_Eps)
+   local UpSign = Sign(DotY, 0, SubControl_Eps)
+   if ForwardSign ~= 0 and UpSign ~= 0 then
       -- Facing forwards or backwards on XZ plane, return appropriate sign
-      return Sign(DotZ) * Sign(DotY)
+      return ForwardSign * UpSign
    else
       -- Some other orientation
       return 0

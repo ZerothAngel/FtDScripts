@@ -102,6 +102,8 @@ function SixDoF_Reset() -- luacheck: ignore 131
    ResetThrottle()
 end
 
+SixDoF_Eps = .001
+
 function SixDoF_Classify(Index, BlockInfo, IsSpinner, Fractions, Infos)
    local CoMOffset = BlockInfo.LocalPositionRelativeToCom
    local LocalForwards = IsSpinner and (BlockInfo.LocalRotation * Vector3.up) or BlockInfo.LocalForwards
@@ -115,19 +117,19 @@ function SixDoF_Classify(Index, BlockInfo, IsSpinner, Fractions, Infos)
       RightSign = 0,
       IsVertical = false,
    }
-   if math.abs(LocalForwards.y) > 0.001 then
+   local UpSign = Sign(LocalForwards.y, 0, SixDoF_Eps)
+   if UpSign ~= 0 then
       -- Vertical
-      local UpSign = Sign(LocalForwards.y)
       Info.UpSign = UpSign * Fractions.Altitude
       Info.PitchSign = Sign(CoMOffset.z) * UpSign * Fractions.Pitch
       Info.RollSign = Sign(CoMOffset.x) * UpSign * Fractions.Roll
       Info.IsVertical = true
    else
       -- Horizontal
-      local RightSign = Sign(LocalForwards.x)
-      local ZSign = Sign(CoMOffset.z)
-      Info.YawSign = RightSign * ZSign * Fractions.Yaw
-      Info.ForwardSign = Sign(LocalForwards.z) * Fractions.Forward
+      local ForwardSign = Sign(LocalForwards.z, 0, SixDoF_Eps)
+      local RightSign = Sign(LocalForwards.x, 0, SixDoF_Eps)
+      Info.YawSign = RightSign * Sign(CoMOffset.z) * Fractions.Yaw
+      Info.ForwardSign = ForwardSign * Fractions.Forward
       Info.RightSign = RightSign * Fractions.Right
    end
    if Info.UpSign ~= 0 or Info.PitchSign ~= 0 or Info.RollSign ~= 0 or Info.YawSign ~= 0 or Info.ForwardSign ~= 0 or Info.RightSign ~= 0 then
