@@ -1,4 +1,4 @@
---@ ballistic weapontypes
+--@ commons ballistic weapontypes
 -- Cannon fire control module
 
 -- Limits by slot
