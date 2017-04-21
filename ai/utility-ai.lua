@@ -32,7 +32,7 @@ function UtilityAI_MoveToGather(I, RZInfo)
 end
 
 function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
-   MoveToWaypoint(I, Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end, WaypointVelocity)
+   MoveToWaypoint(Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end, WaypointVelocity)
 end
 
 function UtilityAI_FormationMove(I)

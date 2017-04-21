@@ -27,7 +27,7 @@ function MTW_MatchSpeed(Velocity, TargetVelocity, Faster)
 end
 
 -- Move to a waypoint (using yaw & throttle only)
-function MoveToWaypoint(I, Waypoint, AdjustHeading, WaypointVelocity)
+function MoveToWaypoint(Waypoint, AdjustHeading, WaypointVelocity)
    local Offset,TargetPosition = PlanarVector(C:CoM(), Waypoint)
    local Distance = Offset.magnitude
 
@@ -65,7 +65,7 @@ function MoveToWaypoint(I, Waypoint, AdjustHeading, WaypointVelocity)
          SetThrottle(WaypointMoveConfig.ClosingDrive)
       else
          -- Only go faster if waypoint is ahead of us
-         local Faster = Vector3.Dot(I:GetConstructForwardVector(), Direction)
+         local Faster = Vector3.Dot(C:ForwardVector(), Direction)
          -- Attempt to match speed
          local DesiredSpeed,Speed = MTW_MatchSpeed(Velocity, TargetVelocity, Faster)
          -- Use PID to set throttle
