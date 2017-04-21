@@ -1,9 +1,10 @@
 --! target-ai
---@ commons firstrun periodic
+--@ commons control firstrun periodic
 --@ sixdof ytdefaults target-ai
 TargetAI = Periodic.create(UpdateRate, TargetAI_Update)
 
-Control_Reset = SixDoF_Reset
+SelectHeadingImpl(SixDoF)
+SelectThrottleImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
@@ -16,12 +17,12 @@ function Update(I) -- luacheck: ignore 131
          I:TellAiThatWeAreTakingControl()
       else
          TargetAI_Reset()
-         SixDoF_Reset()
+         V.Reset()
       end
 
-      SixDoF_Update(I)
+      SixDoF.Update(I)
    else
       TargetAI_Reset()
-      SixDoF_Disable(I)
+      SixDoF.Disable(I)
    end
 end

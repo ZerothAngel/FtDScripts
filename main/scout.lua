@@ -1,5 +1,5 @@
 --! scout
---@ commons firstrun periodic
+--@ commons control firstrun periodic
 --@ cameratrack shieldmanager balloonmanager sixdof altitudecontrol airshipdefaults naval-ai
 -- Scout main
 CameraTrack = Periodic.create(CameraTrack_UpdateRate, CameraTrack_Update, 4)
@@ -8,7 +8,11 @@ ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control,
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
 
-Control_Reset = SixDoF_Reset
+SelectHeadingImpl(SixDoF)
+SelectThrottleImpl(SixDoF)
+SelectAltitudeImpl(SixDoF)
+SelectPitchImpl(SixDoF)
+SelectRollImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
@@ -23,16 +27,16 @@ function Update(I) -- luacheck: ignore 131
          I:TellAiThatWeAreTakingControl()
       else
          NavalAI_Reset()
-         SixDoF_Reset()
+         V.Reset()
       end
 
       Altitude_Apply(I, DodgeAltitudeOffset)
-      SixDoF_Update(I)
+      SixDoF.Update(I)
 
       CameraTrack:Tick(I)
    else
       NavalAI_Reset()
-      SixDoF_Disable(I)
+      SixDoF.Disable(I)
    end
 
    ShieldManager:Tick(I)

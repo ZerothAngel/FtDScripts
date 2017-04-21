@@ -1,4 +1,4 @@
---@ commons pid planarvector quadraticintercept getbearingtopoint sign
+--@ commons control pid planarvector quadraticintercept getbearingtopoint sign
 -- Waypoint move module
 MTW_ThrottlePID = PID.create(WaypointMoveConfig.ThrottlePIDConfig, -1, 1)
 
@@ -36,16 +36,16 @@ function MoveToWaypoint(Waypoint, AdjustHeading, WaypointVelocity)
       if Distance >= WaypointMoveConfig.MaxDistance then
          local Bearing = GetBearingToPoint(Waypoint)
          AdjustHeading(Bearing)
-         SetThrottle(WaypointMoveConfig.ClosingDrive)
+         V.SetThrottle(WaypointMoveConfig.ClosingDrive)
       elseif WaypointMoveConfig.StopOnStationaryWaypoint then
-         SetThrottle(0)
+         V.SetThrottle(0)
       else
          -- Set minimum speed and constantly adjust bearing
          local Bearing = GetBearingToPoint(Waypoint)
          AdjustHeading(Bearing)
          local CV = MTW_ThrottlePID:Control(WaypointMoveConfig.MinimumSpeed - C:ForwardSpeed())
-         local Drive = math.max(0, math.min(1, CurrentThrottle + CV))
-         SetThrottle(Drive)
+         local Drive = math.max(0, math.min(1, V.GetThrottle() + CV))
+         V.SetThrottle(Drive)
       end
    else
       local Direction = Offset / Distance
@@ -62,7 +62,7 @@ function MoveToWaypoint(Waypoint, AdjustHeading, WaypointVelocity)
 
       if Distance >= WaypointMoveConfig.ApproachDistance then
          -- Go full throttle and catch up
-         SetThrottle(WaypointMoveConfig.ClosingDrive)
+         V.SetThrottle(WaypointMoveConfig.ClosingDrive)
       else
          -- Only go faster if waypoint is ahead of us
          local Faster = Vector3.Dot(C:ForwardVector(), Direction)
@@ -71,8 +71,8 @@ function MoveToWaypoint(Waypoint, AdjustHeading, WaypointVelocity)
          -- Use PID to set throttle
          local Error = DesiredSpeed - Speed
          local CV = MTW_ThrottlePID:Control(Error)
-         local Drive = math.max(0, math.min(1, CurrentThrottle + CV))
-         SetThrottle(Drive)
+         local Drive = math.max(0, math.min(1, V.GetThrottle() + CV))
+         V.SetThrottle(Drive)
       end
    end
 end

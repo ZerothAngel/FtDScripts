@@ -1,13 +1,15 @@
 --! avoidancetest
---@ commons avoidance firstrun periodic sixdof ytdefaults
+--@ commons control avoidance firstrun periodic sixdof ytdefaults
 function AvoidanceTest_Update(I)
-   SixDoF_Reset()
+   V.Reset()
 
    -- Just go as straight as possible
-   AdjustHeading(Avoidance(I, 0))
+   V.AdjustHeading(Avoidance(I, 0))
 end
 
 AvoidanceTest = Periodic.create(UpdateRate, AvoidanceTest_Update)
+
+SelectHeadingImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
@@ -19,11 +21,11 @@ function Update(I) -- luacheck: ignore 131
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
       else
-         SixDoF_Reset()
+         V.Reset()
       end
 
-      SixDoF_Update(I)
+      SixDoF.Update(I)
    else
-      SixDoF_Disable(I)
+      SixDoF.Disable(I)
    end
 end

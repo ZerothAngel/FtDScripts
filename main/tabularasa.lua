@@ -1,10 +1,13 @@
 --! tabularasa
---@ commons firstrun periodic sixdof ytdefaults
+--@ commons control firstrun periodic sixdof ytdefaults
 function TabulaRasa_Update(I)
-   SixDoF_Reset()
+   V.Reset()
 end
 
 TabulaRasa = Periodic.create(UpdateRate, TabulaRasa_Update)
+
+SelectHeadingImpl(SixDoF)
+SelectThrottleImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
@@ -16,11 +19,11 @@ function Update(I) -- luacheck: ignore 131
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
       else
-         SixDoF_Reset()
+         V.Reset()
       end
 
-      SixDoF_Update(I)
+      SixDoF.Update(I)
    else
-      SixDoF_Disable(I)
+      SixDoF.Disable(I)
    end
 end

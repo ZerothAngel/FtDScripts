@@ -1,9 +1,10 @@
 --! repair-ai
---@ commons firstrun periodic
+--@ commons control firstrun periodic
 --@ sixdof ytdefaults repair-ai repair-aicommon
 RepairAI = Periodic.create(UpdateRate, RepairAI_Update)
 
-Control_Reset = SixDoF_Reset
+SelectHeadingImpl(SixDoF)
+SelectThrottleImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
@@ -16,12 +17,12 @@ function Update(I) -- luacheck: ignore 131
          I:TellAiThatWeAreTakingControl()
       else
          RepairAI_Reset()
-         SixDoF_Reset()
+         V.Reset()
       end
 
-      SixDoF_Update(I)
+      SixDoF.Update(I)
    else
       RepairAI_Reset()
-      SixDoF_Disable(I)
+      SixDoF.Disable(I)
    end
 end

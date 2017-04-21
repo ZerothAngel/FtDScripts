@@ -1,4 +1,4 @@
---@ commons getvectorangle planarvector getbearingtopoint dodge3d evasion sign weapontypes
+--@ commons control getvectorangle planarvector getbearingtopoint dodge3d evasion sign weapontypes
 --@ quadraticintercept
 -- Gunship AI module
 DodgeAltitudeOffset = nil
@@ -69,9 +69,9 @@ function AdjustPositionToTarget(I)
       DodgeAltitudeOffset = nil
    end
 
-   AdjustHeading(Bearing)
-   AdjustPosition(Offset)
-   SetPitch((TargetPosition.y >= AirTargetAboveAltitude) and TargetPitch.Air or TargetPitch.Surface)
+   V.AdjustHeading(Bearing)
+   V.AdjustPosition(Offset)
+   V.SetPitch((TargetPosition.y >= AirTargetAboveAltitude) and TargetPitch.Air or TargetPitch.Surface)
 end
 
 function FormationMove(I)
@@ -81,23 +81,23 @@ function FormationMove(I)
       -- NB We don't bother with OriginMaxDistance
       -- This leads to tighter formations.
       local Waypoint = Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition
-      SetPosition(Waypoint)
+      V.SetPosition(Waypoint)
       if not C:FirstTarget() then
          local Offset,_ = PlanarVector(C:CoM(), Waypoint)
          if Offset.magnitude >= OriginMaxDistance then
-            SetHeading(GetVectorAngle(Offset))
+            V.SetHeading(GetVectorAngle(Offset))
          else
-            SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
+            V.SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
          end
       end
    else
       -- Head to fleet waypoint
       local Offset,_ = PlanarVector(C:CoM(), I.Waypoint)
       if Offset.magnitude >= OriginMaxDistance then
-         AdjustPosition(Offset)
+         V.AdjustPosition(Offset)
          -- Only change heading if not in combat
          if not C:FirstTarget() then
-            SetHeading(GetVectorAngle(Offset))
+            V.SetHeading(GetVectorAngle(Offset))
          end
       end
    end
@@ -108,7 +108,7 @@ function GunshipAI_Reset()
 end
 
 function GunshipAI_Update(I)
-   Control_Reset()
+   V.Reset()
 
    if C:FirstTarget() then
       AdjustPositionToTarget(I)
@@ -119,7 +119,7 @@ function GunshipAI_Update(I)
          if ReturnToOrigin then
             FormationMove(I)
          end
-         SetPitch(0)
+         V.SetPitch(0)
       end
    else
       FormationMove(I)

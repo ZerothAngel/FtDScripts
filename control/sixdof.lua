@@ -1,19 +1,21 @@
 --@ commons componenttypes propulsionapi normalizebearing sign pid thrusthack
+--# Packages don't exist, and screw accessing everything through a table.
+--# It's just a search/replace away to convert to 'proper' Lua anyway.
 -- 6DoF module (Altitude, Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
-AltitudePID = PID.create(AltitudePIDConfig, -30, 30)
-YawPID = PID.create(YawPIDConfig, -30, 30)
-PitchPID = PID.create(PitchPIDConfig, -30, 30)
-RollPID = PID.create(RollPIDConfig, -30, 30)
-ForwardPID = PID.create(ForwardPIDConfig, -30, 30)
-RightPID = PID.create(RightPIDConfig, -30, 30)
+SixDoF_AltitudePID = PID.create(SixDoFPIDConfig.Altitude, -30, 30)
+SixDoF_YawPID = PID.create(SixDoFPIDConfig.Yaw, -30, 30)
+SixDoF_PitchPID = PID.create(SixDoFPIDConfig.Pitch, -30, 30)
+SixDoF_RollPID = PID.create(SixDoFPIDConfig.Roll, -30, 30)
+SixDoF_ForwardPID = PID.create(SixDoFPIDConfig.Forward, -30, 30)
+SixDoF_RightPID = PID.create(SixDoFPIDConfig.Right, -30, 30)
 
-DesiredAltitude = 0
-DesiredHeading = nil
-DesiredPosition = nil
-DesiredThrottle = nil
-CurrentThrottle = 0
-DesiredPitch = 0
-DesiredRoll = 0
+SixDoF_DesiredAltitude = 0
+SixDoF_DesiredHeading = nil
+SixDoF_DesiredPosition = nil
+SixDoF_DesiredThrottle = nil
+SixDoF_CurrentThrottle = 0
+SixDoF_DesiredPitch = 0
+SixDoF_DesiredRoll = 0
 
 -- Keep them separated for now
 SixDoF_LastPropulsionCount = 0
@@ -34,72 +36,51 @@ SixDoF_ControlPitch = (JetFractions.Pitch > 0 or SpinnerFractions.Pitch > 0 or C
 SixDoF_ControlRoll = (JetFractions.Roll > 0 or SpinnerFractions.Roll > 0 or ControlFractions.Roll > 0)
 -- The others (yaw/forward/right) depend on an AI
 
-APRThrustHackControl = ThrustHack.create(APRThrustHackDriveMaintainerFacing)
-YLLThrustHackControl = ThrustHack.create(YLLThrustHackDriveMaintainerFacing)
+SixDoF_APRThrustHackControl = ThrustHack.create(APRThrustHackDriveMaintainerFacing)
+SixDoF_YLLThrustHackControl = ThrustHack.create(YLLThrustHackDriveMaintainerFacing)
 
-function SetAltitude(Alt) -- luacheck: ignore 131
-   DesiredAltitude = Alt
+--# Public methods on the other hand...
+SixDoF = {}
+
+function SixDoF.SetAltitude(Alt)
+   SixDoF_DesiredAltitude = Alt
 end
 
-function AdjustAltitude(Delta) -- luacheck: ignore 131
-   SetAltitude(C:Altitude() + Delta)
+function SixDoF.SetHeading(Heading)
+   SixDoF_DesiredHeading = Heading % 360
 end
 
--- Sets heading to an absolute value, 0 is north, 90 is east
-function SetHeading(Heading) -- luacheck: ignore 131
-   DesiredHeading = Heading % 360
+function SixDoF.ResetHeading()
+   SixDoF_DesiredHeading = nil
 end
 
--- Adjusts heading toward relative bearing
-function AdjustHeading(Bearing) -- luacheck: ignore 131
-   SetHeading(C:Yaw() + Bearing)
-end
-
--- Resets heading so yaw will no longer be modified
-function ResetHeading()
-   DesiredHeading = nil
-end
-
-function SetPosition(Pos) -- luacheck: ignore 131
+function SixDoF.SetPosition(Pos)
    -- Make copy to be safe
-   DesiredPosition = Vector3(Pos.x, Pos.y, Pos.z)
+   SixDoF_DesiredPosition = Vector3(Pos.x, Pos.y, Pos.z)
 end
 
-function AdjustPosition(Offset) -- luacheck: ignore 131
-   DesiredPosition = C:CoM() + Offset
+function SixDoF.ResetPosition()
+   SixDoF_DesiredPosition = nil
 end
 
-function ResetPosition()
-   DesiredPosition = nil
+function SixDoF.SetThrottle(Throttle)
+   SixDoF_DesiredThrottle = math.max(-1, math.min(1, Throttle))
 end
 
--- Sets throttle. Throttle should be [-1, 1]
-function SetThrottle(Throttle) -- luacheck: ignore 131
-   DesiredThrottle = math.max(-1, math.min(1, Throttle))
+function SixDoF.GetThrottle()
+   return SixDoF_CurrentThrottle
 end
 
--- Adjusts throttle by some delta
-function AdjustThrottle(Delta) -- luacheck: ignore 131
-   SetThrottle(CurrentThrottle + Delta)
+function SixDoF.ResetThrottle()
+   SixDoF_DesiredThrottle = nil
 end
 
--- Resets throttle so drives will no longer be modified
-function ResetThrottle()
-   DesiredThrottle = nil
+function SixDoF.SetPitch(Angle)
+   SixDoF_DesiredPitch = Angle
 end
 
-function SetPitch(Angle) -- luacheck: ignore 131
-   DesiredPitch = Angle
-end
-
-function SetRoll(Angle) -- luacheck: ignore 131
-   DesiredRoll = Angle
-end
-
-function SixDoF_Reset() -- luacheck: ignore 131
-   ResetHeading()
-   ResetPosition()
-   ResetThrottle()
+function SixDoF.SetRoll(Angle)
+   SixDoF_DesiredRoll = Angle
 end
 
 SixDoF_Eps = .001
@@ -196,35 +177,35 @@ function SixDoF_RequestControl(I, Fraction, PosControl, NegControl, CV)
    end
 end
 
-function SixDoF_Update(I)
+function SixDoF.Update(I)
    local AltitudeCV = 0
    if SixDoF_ControlAltitude then
-      local AltitudeDelta = DesiredAltitude - C:Altitude()
+      local AltitudeDelta = SixDoF_DesiredAltitude - C:Altitude()
       if not DediBladesAlwaysUp then
          -- Scale by vehicle up vector's Y component
          AltitudeDelta = AltitudeDelta * C:UpVector().y
       end
       -- Otherwise, the assumption is that it always points straight up
       -- ("always up")
-      AltitudeCV = AltitudePID:Control(AltitudeDelta)
+      AltitudeCV = SixDoF_AltitudePID:Control(AltitudeDelta)
    end
-   local YawCV = DesiredHeading and YawPID:Control(NormalizeBearing(DesiredHeading - C:Yaw())) or 0
-   local PitchCV = SixDoF_ControlPitch and PitchPID:Control(DesiredPitch - C:Pitch()) or 0
-   local RollCV = SixDoF_ControlRoll and RollPID:Control(DesiredRoll - C:Roll()) or 0
+   local YawCV = SixDoF_DesiredHeading and SixDoF_YawPID:Control(NormalizeBearing(SixDoF_DesiredHeading - C:Yaw())) or 0
+   local PitchCV = SixDoF_ControlPitch and SixDoF_PitchPID:Control(SixDoF_DesiredPitch - C:Pitch()) or 0
+   local RollCV = SixDoF_ControlRoll and SixDoF_RollPID:Control(SixDoF_DesiredRoll - C:Roll()) or 0
 
    local ForwardCV,RightCV = 0,0
-   if DesiredPosition then
-      local Offset = DesiredPosition - C:CoM()
+   if SixDoF_DesiredPosition then
+      local Offset = SixDoF_DesiredPosition - C:CoM()
       local ZProj = Vector3.Dot(Offset, C:ForwardVector())
       local XProj = Vector3.Dot(Offset, C:RightVector())
-      ForwardCV = ForwardPID:Control(ZProj)
-      RightCV = RightPID:Control(XProj)
-   elseif DesiredThrottle then
-      ForwardCV = 30 * DesiredThrottle -- PID is scaled, so scale up
-      CurrentThrottle = DesiredThrottle
+      ForwardCV = SixDoF_ForwardPID:Control(ZProj)
+      RightCV = SixDoF_RightPID:Control(XProj)
+   elseif SixDoF_DesiredThrottle then
+      ForwardCV = 30 * SixDoF_DesiredThrottle -- PID is scaled, so scale up
+      SixDoF_CurrentThrottle = SixDoF_DesiredThrottle
    end
 
-   local PlanarMovement = DesiredHeading or DesiredPosition or DesiredThrottle
+   local PlanarMovement = SixDoF_DesiredHeading or SixDoF_DesiredPosition or SixDoF_DesiredThrottle
 
    if SixDoF_UsesJets then
       SixDoF_ClassifyJets(I)
@@ -236,11 +217,11 @@ function SixDoF_Update(I)
                I:RequestThrustControl(i)
             end
          else
-            YLLThrustHackControl:SetThrottle(I, 1)
+            SixDoF_YLLThrustHackControl:SetThrottle(I, 1)
          end
       else
          -- Relinquish control
-         YLLThrustHackControl:SetThrottle(I, 0)
+         SixDoF_YLLThrustHackControl:SetThrottle(I, 0)
       end
       if SixDoF_UsesVerticalJets then
          -- Blip top & bottom thrusters
@@ -248,7 +229,7 @@ function SixDoF_Update(I)
             I:RequestThrustControl(4)
             I:RequestThrustControl(5)
          else
-            APRThrustHackControl:SetThrottle(I, 1)
+            SixDoF_APRThrustHackControl:SetThrottle(I, 1)
          end
       end
 
@@ -293,11 +274,11 @@ function SixDoF_Update(I)
    end
 end
 
-function SixDoF_Disable(I)
-   CurrentThrottle = 0
+function SixDoF.Disable(I)
+   SixDoF_CurrentThrottle = 0
    -- Disable drive maintainers, if any
-   APRThrustHackControl:SetThrottle(I, 0)
-   YLLThrustHackControl:SetThrottle(I, 0)
+   SixDoF_APRThrustHackControl:SetThrottle(I, 0)
+   SixDoF_YLLThrustHackControl:SetThrottle(I, 0)
    if SixDoF_UsesSpinners then
       SixDoF_ClassifySpinners(I)
       -- And stop spinners as well

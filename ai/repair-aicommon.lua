@@ -1,4 +1,4 @@
---@ commons planarvector spairs
+--@ commons control planarvector spairs
 -- Repair AI module (common)
 ParentID = nil
 RepairTargetID = nil
@@ -83,7 +83,7 @@ function RepairAI_Reset()
 end
 
 function RepairAI_Update(I)
-   Control_Reset()
+   V.Reset()
 
    local AIMode = I.AIMode
    if AIMode ~= "fleetmove" then

@@ -1,12 +1,16 @@
 --! drop
---@ commons firstrun periodic
+--@ commons control firstrun periodic
 --@ shieldmanager balloonmanager sixdof altitudecontrol gunshipdefaults drop-ai
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 3)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 DropAI = Periodic.create(AI_UpdateRate, DropAI_Update)
 
-Control_Reset = SixDoF_Reset
+SelectHeadingImpl(SixDoF)
+SelectPositionImpl(SixDoF)
+SelectAltitudeImpl(SixDoF)
+SelectPitchImpl(SixDoF)
+SelectRollImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I, true)
@@ -21,13 +25,13 @@ function Update(I) -- luacheck: ignore 131
          I:TellAiThatWeAreTakingControl()
       else
          DropAI_Reset()
-         SixDoF_Reset()
+         V.Reset()
       end
 
       Altitude_Apply(I, DodgeAltitudeOffset, not DropAI_Closing)
-      SixDoF_Update(I)
+      SixDoF.Update(I)
    else
-      SixDoF_Disable(I)
+      SixDoF.Disable(I)
    end
 
    ShieldManager:Tick(I)

@@ -5,18 +5,20 @@ ControlRoll = true
 ControlPitch = true
 
 -- PID values
-AltitudePIDConfig = {
-   Kp = .5,
-   Ti = 5,
-   Td = .1,
-}
-PitchPIDConfig = {
-   Kp = .5,
-   Ti = 5,
-   Td = .1,
-}
-RollPIDConfig = {
-   Kp = .5,
-   Ti = 5,
-   Td = .1,
+ThreeDoFPumpPIDConfig = {
+   Altitude = {
+      Kp = .5,
+      Ti = 5,
+      Td = .1,
+   },
+   Pitch = {
+      Kp = .5,
+      Ti = 5,
+      Td = .1,
+   },
+   Roll = {
+      Kp = .5,
+      Ti = 5,
+      Td = .1,
+   },
 }

@@ -1,4 +1,4 @@
---@ commons getbearingtopoint evasion avoidance waypointmove
+--@ commons control getbearingtopoint evasion avoidance waypointmove
 -- Utility AI module (yaw & throttle)
 
 function UtilityAI_RunAway(I, EnemyDirection)
@@ -7,16 +7,16 @@ function UtilityAI_RunAway(I, EnemyDirection)
       -- And head in the opposite direction
       local Bearing = GetBearingToPoint(C:CoM() - EnemyDirection)
       Bearing = Bearing + CalculateEvasion(RunAwayEvasion)
-      AdjustHeading(Avoidance(I, Bearing))
+      V.AdjustHeading(Avoidance(I, Bearing))
       Drive = RunAwayDrive
    end
-   SetThrottle(Drive)
+   V.SetThrottle(Drive)
 end
 
 function UtilityAI_MoveToCollect(I, Destination)
    local Bearing = GetBearingToPoint(Destination)
-   AdjustHeading(Avoidance(I, Bearing))
-   SetThrottle(CollectDrive)
+   V.AdjustHeading(Avoidance(I, Bearing))
+   V.SetThrottle(CollectDrive)
 end
 
 function UtilityAI_MoveToGather(I, RZInfo)
@@ -25,14 +25,14 @@ function UtilityAI_MoveToGather(I, RZInfo)
    local Drive = 0
    if Distance >= 0 then
       local Bearing = GetBearingToPoint(RZInfo.Position)
-      AdjustHeading(Avoidance(I, Bearing))
+      V.AdjustHeading(Avoidance(I, Bearing))
       Drive = math.max(0, math.min(1, GatherDriveGain * Distance))
    end
-   SetThrottle(Drive)
+   V.SetThrottle(Drive)
 end
 
 function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
-   MoveToWaypoint(Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end, WaypointVelocity)
+   MoveToWaypoint(Waypoint, function (Bearing) V.AdjustHeading(Avoidance(I, Bearing)) end, WaypointVelocity)
 end
 
 function UtilityAI_FormationMove(I)

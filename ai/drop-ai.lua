@@ -1,4 +1,4 @@
---@ commons getvectorangle planarvector dodge3d evasion
+--@ commons control getvectorangle planarvector dodge3d evasion
 -- Drop AI module
 DodgeAltitudeOffset = nil
 DropTargetID = nil
@@ -81,18 +81,18 @@ function DropAI_Main(I)
          Offset = Offset + Evade(ClosingEvasion, Perp)
          DodgeAltitudeOffset = nil
       end
-      AdjustPosition(Offset)
-      SetHeading(GetVectorAngle(Offset))
+      V.AdjustPosition(Offset)
+      V.SetHeading(GetVectorAngle(Offset))
    else
       if Dodging then
-         AdjustPosition(C:RightVector() * (DodgeX * VehicleRadius) + C:ForwardVector() * (DodgeZ * VehicleRadius))
+         V.AdjustPosition(C:RightVector() * (DodgeX * VehicleRadius) + C:ForwardVector() * (DodgeZ * VehicleRadius))
          -- Don't adjust altitude since we might be right over the target
       else
-         SetPosition(DropTargetPosition)
+         V.SetPosition(DropTargetPosition)
       end
       DodgeAltitudeOffset = nil
       if DropTargetSqrSpeed > 3 then
-         SetHeading(GetVectorAngle(DropTargetVelocity))
+         V.SetHeading(GetVectorAngle(DropTargetVelocity))
       end
    end
 
@@ -106,25 +106,25 @@ function FormationMove(I)
       -- NB We don't bother with OriginMaxDistance
       -- This leads to tighter formations.
       local Waypoint = Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition
-      SetPosition(Waypoint)
+      V.SetPosition(Waypoint)
       local Offset,_ = PlanarVector(C:CoM(), Waypoint)
       if Offset.magnitude >= OriginMaxDistance then
-         SetHeading(GetVectorAngle(Offset))
+         V.SetHeading(GetVectorAngle(Offset))
       else
-         SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
+         V.SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
       end
    else
       -- Head to fleet waypoint
       local Offset,_ = PlanarVector(C:CoM(), I.Waypoint)
       if Offset.magnitude >= OriginMaxDistance then
-         AdjustPosition(Offset)
-         SetHeading(GetVectorAngle(Offset))
+         V.AdjustPosition(Offset)
+         V.SetHeading(GetVectorAngle(Offset))
       end
    end
 end
 
 function DropAI_Update(I)
-   Control_Reset()
+   V.Reset()
 
    local AIMode = I.AIMode
    if AIMode ~= "fleetmove" then

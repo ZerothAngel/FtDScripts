@@ -1,15 +1,15 @@
 --@ commons propulsionapi pid normalizebearing getvectorangle sign
 -- Airplane module (Yaw, Pitch, Throttle)
-AltitudePID = PID.create(AltitudePIDConfig, -10, 10)
-YawPID = PID.create(YawPIDConfig, -1, 1)
-PitchPID = PID.create(PitchPIDConfig, -1, 1)
-RollPID = PID.create(RollPIDConfig, -1, 1)
+Airplane_AltitudePID = PID.create(AirplanePIDConfig.Altitude, -10, 10)
+Airplane_YawPID = PID.create(AirplanePIDConfig.Yaw, -1, 1)
+Airplane_PitchPID = PID.create(AirplanePIDConfig.Pitch, -1, 1)
+Airplane_RollPID = PID.create(AirplanePIDConfig.Roll, -1, 1)
 
-DesiredAltitude = 0
-DesiredHeading = nil
-DesiredRoll = 0
-DesiredThrottle = nil
-CurrentThrottle = 0
+Airplane_DesiredAltitude = 0
+Airplane_DesiredHeading = nil
+Airplane_DesiredRoll = 0
+Airplane_DesiredThrottle = nil
+Airplane_CurrentThrottle = 0
 
 Airplane_LastSpinnerCount = 0
 Airplane_SpinnerInfos = {}
@@ -22,47 +22,30 @@ MaxPitch = math.tan(math.rad(MaxPitch)) / 10
 
 Airplane_Active = false
 
-function SetAltitude(Alt)
-   DesiredAltitude = Alt
+Airplane = {}
+
+function Airplane.SetAltitude(Alt)
+   Airplane_DesiredAltitude = Alt
 end
 
-function AdjustAltitude(Delta) -- luacheck: ignore 131
-   SetAltitude(C:Altitude() + Delta)
+function Airplane.SetHeading(Heading)
+   Airplane_DesiredHeading = Heading % 360
 end
 
--- Sets heading to an absolute value, 0 is north, 90 is east
-function SetHeading(Heading)
-   DesiredHeading = Heading % 360
+function Airplane.ResetHeading()
+   Airplane_DesiredHeading = nil
 end
 
--- Adjusts heading toward relative bearing
-function AdjustHeading(Bearing) -- luacheck: ignore 131
-   SetHeading(C:Yaw() + Bearing)
+function Airplane.SetThrottle(Throttle)
+   Airplane_DesiredThrottle = math.max(0, math.min(1, Throttle))
 end
 
--- Resets heading so yaw will no longer be modified
-function ResetHeading()
-   DesiredHeading = nil
+function Airplane.GetThrottle()
+   return Airplane_CurrentThrottle
 end
 
--- Sets throttle. Throttle should be [-1, 1]
-function SetThrottle(Throttle)
-   DesiredThrottle = math.max(0, math.min(1, Throttle))
-end
-
--- Adjusts throttle by some delta
-function AdjustThrottle(Delta) -- luacheck: ignore 131
-   SetThrottle(CurrentThrottle + Delta)
-end
-
--- Resets throttle so drives will no longer be modified
-function ResetThrottle()
-   DesiredThrottle = nil
-end
-
-function Airplane_Reset()
-   ResetHeading()
-   ResetThrottle()
+function Airplane.ResetThrottle()
+   Airplane_DesiredThrottle = nil
 end
 
 Airplane_Eps = .001
@@ -111,26 +94,26 @@ function Airplane_ClassifySpinners(I)
    end
 end
 
-function Airplane_Update(I)
+function Airplane.Update(I)
    local Altitude = C:Altitude()
 
    local TargetVector = Vector3.forward
-   if DesiredHeading then
-      TargetVector = Quaternion.Euler(0, DesiredHeading, 0) * TargetVector
-      local Bearing = NormalizeBearing(DesiredHeading - GetVectorAngle(C:ForwardVector()))
+   if Airplane_DesiredHeading then
+      TargetVector = Quaternion.Euler(0, Airplane_DesiredHeading, 0) * TargetVector
+      local Bearing = NormalizeBearing(Airplane_DesiredHeading - GetVectorAngle(C:ForwardVector()))
       local AbsBearing = math.abs(Bearing)
       if AngleBeforeRoll and AbsBearing > AngleBeforeRoll and Altitude >= MinAltitudeForRoll then
          local RollAngle = RollAngleGain and math.min(MaxRollAngle, (AbsBearing - AngleBeforeRoll) * RollAngleGain) or MaxRollAngle
-         DesiredRoll = -Sign(Bearing) * RollAngle
+         Airplane_DesiredRoll = -Sign(Bearing) * RollAngle
       else
-         DesiredRoll = 0
+         Airplane_DesiredRoll = 0
       end
    else
-      DesiredRoll = 0
+      Airplane_DesiredRoll = 0
    end
 
    -- Offset by altitude and re-normalize
-   TargetVector.y = MaxPitch * AltitudePID:Control(DesiredAltitude - Altitude)
+   TargetVector.y = MaxPitch * Airplane_AltitudePID:Control(Airplane_DesiredAltitude - Altitude)
    TargetVector = TargetVector.normalized
 
    -- Convert to local coordinates
@@ -142,9 +125,9 @@ function Airplane_Update(I)
    local Pitch = math.deg(math.atan2(TargetVector.y, z))
 
    -- Run through PIDs
-   local YawCV = YawPID:Control(Yaw)
-   local PitchCV = PitchPID:Control(Pitch)
-   local RollCV = RollPID:Control(DesiredRoll - C:Roll())
+   local YawCV = Airplane_YawPID:Control(Yaw)
+   local PitchCV = Airplane_PitchPID:Control(Pitch)
+   local RollCV = Airplane_RollPID:Control(Airplane_DesiredRoll - C:Roll())
 
    -- And apply to controls
    if YawCV > 0 then
@@ -165,16 +148,16 @@ function Airplane_Update(I)
       I:RequestControl(Mode, ROLLRIGHT, -RollCV)
    end
 
-   if DesiredThrottle then
-      I:RequestControl(Mode, MAINPROPULSION, DesiredThrottle)
-      CurrentThrottle = DesiredThrottle
+   if Airplane_DesiredThrottle then
+      I:RequestControl(Mode, MAINPROPULSION, Airplane_DesiredThrottle)
+      Airplane_CurrentThrottle = Airplane_DesiredThrottle
    end
 
    if Airplane_UsesSpinners then
       Airplane_ClassifySpinners(I)
 
       -- Set spinner speed
-      local ForwardCV = DesiredThrottle and DesiredThrottle or 0
+      local ForwardCV = Airplane_DesiredThrottle and Airplane_DesiredThrottle or 0
       for _,Info in pairs(Airplane_SpinnerInfos) do
          -- Sum up inputs and constrain
          local Output = YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign
@@ -186,9 +169,9 @@ function Airplane_Update(I)
    Airplane_Active = true
 end
 
-function Airplane_Disable(I)
+function Airplane.Disable(I)
    I:RequestControl(Mode, MAINPROPULSION, 0)
-   CurrentThrottle = 0
+   Airplane_CurrentThrottle = 0
    if Airplane_UsesSpinners then
       Airplane_ClassifySpinners(I)
       -- And stop spinners as well
@@ -198,11 +181,11 @@ function Airplane_Disable(I)
    end
 end
 
-function Airplane_Release(I)
+function Airplane.Release(I)
    -- Same thing as Airplane_Disable, but only done
    -- once (until Airplane_Update is called again)
    if Airplane_Active then
-      Airplane_Disable(I)
+      Airplane.Disable(I)
       Airplane_Active = false
    end
 end

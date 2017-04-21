@@ -14,25 +14,27 @@ SpinnerFractions = {
 }
 
 -- PID values
-AltitudePIDConfig = {
-   Kp = .1,
-   Ti = 10,
-   Td = .7,
-}
-YawPIDConfig = {
-   Kp = .3,
-   Ti = 10,
-   Td = .7,
-}
-PitchPIDConfig = {
-   Kp = .5,
-   Ti = 5,
-   Td = .1,
-}
-RollPIDConfig = {
-   Kp = .5,
-   Ti = 5,
-   Td = .1,
+AirplanePIDConfig = {
+   Altitude = {
+      Kp = .1,
+      Ti = 10,
+      Td = .7,
+   },
+   Yaw = {
+      Kp = .3,
+      Ti = 10,
+      Td = .7,
+   },
+   Pitch = {
+      Kp = .5,
+      Ti = 5,
+      Td = .1,
+   },
+   Roll = {
+      Kp = .5,
+      Ti = 5,
+      Td = .1,
+   },
 }
 
 -- Pitch settings

@@ -1,4 +1,4 @@
---@ commons planarvector getbearingtopoint sign evasion normalizebearing
+--@ commons control planarvector getbearingtopoint sign evasion normalizebearing
 --@ dodgeyaw avoidance waypointmove
 -- Naval AI module
 Attacking = false
@@ -85,8 +85,8 @@ function AdjustHeadingToTarget(I)
       DodgeAltitudeOffset = nil
    end
 
-   AdjustHeading(Avoidance(I, Bearing))
-   SetThrottle(Drive)
+   V.AdjustHeading(Avoidance(I, Bearing))
+   V.SetThrottle(Drive)
 end
 
 function NavalAI_Reset()
@@ -96,7 +96,7 @@ function NavalAI_Reset()
 end
 
 function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
-   MoveToWaypoint(Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end, WaypointVelocity)
+   MoveToWaypoint(Waypoint, function (Bearing) V.AdjustHeading(Avoidance(I, Bearing)) end, WaypointVelocity)
 end
 
 function FormationMove(I)
@@ -109,7 +109,7 @@ function FormationMove(I)
 end
 
 function NavalAI_Update(I)
-   Control_Reset()
+   V.Reset()
 
    local AIMode = I.AIMode
    if AIMode ~= "fleetmove" then
@@ -121,7 +121,7 @@ function NavalAI_Update(I)
       else
          NavalAI_Reset()
          -- Just continue along with avoidance active
-         AdjustHeading(Avoidance(I, 0))
+         V.AdjustHeading(Avoidance(I, 0))
       end
    else
       NavalAI_Reset()

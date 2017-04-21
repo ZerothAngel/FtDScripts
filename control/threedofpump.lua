@@ -1,37 +1,35 @@
 --@ commons componenttypes sign pid
 -- 3DoF Pump module (Altitude, Pitch, Roll)
-AltitudePID = PID.create(AltitudePIDConfig, -10, 10)
-PitchPID = PID.create(PitchPIDConfig, -10, 10)
-RollPID = PID.create(RollPIDConfig, -10, 10)
+ThreeDoFPump_AltitudePID = PID.create(ThreeDoFPumpPIDConfig.Altitude, -10, 10)
+ThreeDoFPump_PitchPID = PID.create(ThreeDoFPumpPIDConfig.Pitch, -10, 10)
+ThreeDoFPump_RollPID = PID.create(ThreeDoFPumpPIDConfig.Roll, -10, 10)
 
-DesiredAltitude = 0
-DesiredPitch = 0
-DesiredRoll = 0
+ThreeDoFPump_DesiredAltitude = 0
+ThreeDoFPump_DesiredPitch = 0
+ThreeDoFPump_DesiredRoll = 0
 
-LastPumpCount = 0
-PumpInfos = {}
+ThreeDoFPump_LastPumpCount = 0
+ThreeDoFPump_PumpInfos = {}
 
-function SetAltitude(Alt)
-   DesiredAltitude = Alt
+ThreeDoFPump = {}
+
+function ThreeDoFPump.SetAltitude(Alt)
+   ThreeDoFPump_DesiredAltitude = Alt
 end
 
-function AdjustAltitude(Delta) -- luacheck: ignore 131
-   SetAltitude(C:Altitude() + Delta)
+function ThreeDoFPump.SetPitch(Angle)
+   ThreeDoFPump_DesiredPitch = Angle
 end
 
-function SetPitch(Angle) -- luacheck: ignore 131
-   DesiredPitch = Angle
+function ThreeDoFPump.SetRoll(Angle)
+   ThreeDoFPump_DesiredRoll = Angle
 end
 
-function SetRoll(Angle) -- luacheck: ignore 131
-   DesiredRoll = Angle
-end
-
-function ClassifyPumps(I)
+function ThreeDoFPump_ClassifyPumps(I)
    local PumpCount = I:Component_GetCount(PumpType)
-   if PumpCount ~= LastPumpCount then
-      PumpInfos = {}
-      LastPumpCount = PumpCount
+   if PumpCount ~= ThreeDoFPump_LastPumpCount then
+      ThreeDoFPump_PumpInfos = {}
+      ThreeDoFPump_LastPumpCount = PumpCount
 
       for i = 0,PumpCount-1 do
          local BlockInfo = I:Component_GetBlockInfo(PumpType, i)
@@ -40,19 +38,19 @@ function ClassifyPumps(I)
             RollSign = -1 * Sign(CoMOffset.x),
             PitchSign = Sign(CoMOffset.z),
          }
-         table.insert(PumpInfos, Info)
+         table.insert(ThreeDoFPump_PumpInfos, Info)
       end
    end
 end
       
-function ThreeDoFPump_Update(I)
-   local AltitudeCV = AltitudePID:Control(DesiredAltitude - C:Altitude())
-   local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - C:Pitch()) or 0
-   local RollCV = ControlRoll and RollPID:Control(DesiredRoll - C:Roll()) or 0
+function ThreeDoFPump.Update(I)
+   local AltitudeCV = ThreeDoFPump_AltitudePID:Control(ThreeDoFPump_DesiredAltitude - C:Altitude())
+   local PitchCV = ControlPitch and ThreeDoFPump_PitchPID:Control(ThreeDoFPump_DesiredPitch - C:Pitch()) or 0
+   local RollCV = ControlRoll and ThreeDoFPump_RollPID:Control(ThreeDoFPump_DesiredRoll - C:Roll()) or 0
 
-   ClassifyPumps(I)
+   ThreeDoFPump_ClassifyPumps(I)
 
-   for index,Info in pairs(PumpInfos) do
+   for index,Info in pairs(ThreeDoFPump_PumpInfos) do
       local Output = AltitudeCV + PitchCV * Info.PitchSign + RollCV * Info.RollSign
       Output = math.max(0, math.min(10, Output))
       I:Component_SetFloatLogic(PumpType, index, Output / 10)

@@ -1,4 +1,4 @@
---@ commons manualcontroller evasion terraincheck sign
+--@ commons control manualcontroller evasion terraincheck sign
 -- Altitude Control module
 ManualAltitudeController = ManualController.create(ManualAltitudeDriveMaintainerFacing)
 HalfMaxManualAltitude = (MaxManualAltitude - MinManualAltitude) / 2
@@ -92,5 +92,5 @@ function Altitude_Apply(_, HighPriorityOffset, NoOffset)
       AltitudeControl_LastDodge = nil
    end
    -- Constrain and set
-   SetAltitude(math.max(AltitudeControl_Min, math.min(AltitudeControl_Max, NewAltitude)))
+   V.SetAltitude(math.max(AltitudeControl_Min, math.min(AltitudeControl_Max, NewAltitude)))
 end

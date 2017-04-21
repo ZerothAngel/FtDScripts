@@ -1,35 +1,37 @@
 -- 6DOF CONFIGURATION
 
 -- PID values
-AltitudePIDConfig = {
-   Kp = 5,
-   Ti = 5,
-   Td = .3,
-}
-YawPIDConfig = {
-   Kp = .3,
-   Ti = 5,
-   Td = .4,
-}
-PitchPIDConfig = {
-   Kp = .5,
-   Ti = 5,
-   Td = .1,
-}
-RollPIDConfig = {
-   Kp = .5,
-   Ti = 5,
-   Td = .1,
-}
-ForwardPIDConfig = {
-   Kp = .5,
-   Ti = 5,
-   Td = .1,
-}
-RightPIDConfig = {
-   Kp = .5,
-   Ti = 5,
-   Td = .1,
+SixDoFPIDConfig = {
+   Altitude = {
+      Kp = 5,
+      Ti = 5,
+      Td = .3,
+   },
+   Yaw = {
+      Kp = .3,
+      Ti = 5,
+      Td = .4,
+   },
+   Pitch = {
+      Kp = .5,
+      Ti = 5,
+      Td = .1,
+   },
+   Roll = {
+      Kp = .5,
+      Ti = 5,
+      Td = .1,
+   },
+   Forward = {
+      Kp = .5,
+      Ti = 5,
+      Td = .1,
+   },
+   Right = {
+      Kp = .5,
+      Ti = 5,
+      Td = .1,
+   },
 }
 
 -- Spinner configuration

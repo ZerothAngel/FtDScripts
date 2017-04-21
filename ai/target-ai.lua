@@ -1,4 +1,4 @@
---@ commons evasion avoidance waypointmove normalizebearing
+--@ commons control evasion avoidance waypointmove normalizebearing
 -- Target AI module
 TargetHeading = nil
 
@@ -7,7 +7,7 @@ function TargetAI_Reset()
 end
 
 function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
-   MoveToWaypoint(Waypoint, function (Bearing) AdjustHeading(Avoidance(I, Bearing)) end, WaypointVelocity)
+   MoveToWaypoint(Waypoint, function (Bearing) V.AdjustHeading(Avoidance(I, Bearing)) end, WaypointVelocity)
 end
 
 function FormationMove(I)
@@ -20,7 +20,7 @@ function FormationMove(I)
 end
 
 function TargetAI_Update(I)
-   Control_Reset()
+   V.Reset()
 
    local AIMode = I.AIMode
    if AIMode ~= "fleetmove" then
@@ -31,8 +31,8 @@ function TargetAI_Update(I)
       local Bearing = NormalizeBearing(TargetHeading - C:Yaw())
       Bearing = Bearing + CalculateEvasion(TargetEvasion)
 
-      AdjustHeading(Avoidance(I, Bearing))
-      SetThrottle(TargetDrive)
+      V.AdjustHeading(Avoidance(I, Bearing))
+      V.SetThrottle(TargetDrive)
    else
       TargetAI_Reset()
       FormationMove(I)

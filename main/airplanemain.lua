@@ -1,5 +1,5 @@
 --! airplane
---@ commons firstrun periodic
+--@ commons control firstrun periodic
 --@ shieldmanager balloonmanager dualprofile airplane altitudecontrol naval-ai
 -- Airship main
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 4)
@@ -8,7 +8,9 @@ MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
 
-Control_Reset = Airplane_Reset
+SelectHeadingImpl(Airplane)
+SelectThrottleImpl(Airplane)
+SelectAltitudeImpl(Airplane)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
@@ -16,7 +18,7 @@ function Update(I) -- luacheck: ignore 131
    if not C:IsDocked() then
       if ActivateWhen[I.AIMode] then
          -- Note that the airplane module is wholly dependent on
-         -- the AI, so AltitudeControl and Airplane_Update
+         -- the AI, so AltitudeControl and Airplane.Update
          -- have been moved here.
          AltitudeControl:Tick(I)
 
@@ -26,16 +28,16 @@ function Update(I) -- luacheck: ignore 131
          I:TellAiThatWeAreTakingControl()
 
          Altitude_Apply(I, DodgeAltitudeOffset)
-         Airplane_Update(I)
+         Airplane.Update(I)
       else
          NavalAI_Reset()
-         Airplane_Release(I)
+         Airplane.Release(I)
       end
 
       MissileMain:Tick(I)
    else
       NavalAI_Reset()
-      Airplane_Disable(I)
+      Airplane.Disable(I)
    end
 
    ShieldManager:Tick(I)

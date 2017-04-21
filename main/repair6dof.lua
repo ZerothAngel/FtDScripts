@@ -1,5 +1,5 @@
 --! repair6dof
---@ commons firstrun periodic
+--@ commons control firstrun periodic
 --@ shieldmanager balloonmanager sixdof altitudecontrol gunshipdefaults repair-ai6dof repair-aicommon
 -- 6DoF repair AI
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 3)
@@ -7,7 +7,11 @@ ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control,
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 RepairAI = Periodic.create(AI_UpdateRate, RepairAI_Update)
 
-Control_Reset = SixDoF_Reset
+SelectHeadingImpl(SixDoF)
+SelectPositionImpl(SixDoF)
+SelectAltitudeImpl(SixDoF)
+SelectPitchImpl(SixDoF)
+SelectRollImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
@@ -22,14 +26,14 @@ function Update(I) -- luacheck: ignore 131
          I:TellAiThatWeAreTakingControl()
       else
          RepairAI_Reset()
-         SixDoF_Reset()
+         V.Reset()
       end
 
       Altitude_Apply(I)
-      SixDoF_Update(I)
+      SixDoF.Update(I)
    else
       RepairAI_Reset()
-      SixDoF_Disable(I)
+      SixDoF.Disable(I)
    end
 
    ShieldManager:Tick(I)

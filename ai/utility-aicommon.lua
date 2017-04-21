@@ -1,4 +1,4 @@
---@ commons planarvector spairs
+--@ commons control planarvector spairs
 -- Utility AI module (common)
 
 -- Save original MaxEnemyRange
@@ -166,7 +166,7 @@ function UtilityAI_Main(I)
 end
 
 function UtilityAI_Update(I)
-   Control_Reset()
+   V.Reset()
 
    local AIMode = I.AIMode
    if AIMode ~= "fleetmove" then

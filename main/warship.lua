@@ -1,12 +1,13 @@
 --! warship
---@ commons firstrun periodic
+--@ commons control firstrun periodic
 --@ shieldmanager dualprofile sixdof ytdefaults naval-ai
 -- Warship main
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 1)
 NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
 
-Control_Reset = SixDoF_Reset
+SelectHeadingImpl(SixDoF)
+SelectThrottleImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
@@ -19,15 +20,15 @@ function Update(I) -- luacheck: ignore 131
          I:TellAiThatWeAreTakingControl()
       else
          NavalAI_Reset()
-         SixDoF_Reset()
+         V.Reset()
       end
 
-      SixDoF_Update(I)
+      SixDoF.Update(I)
 
       MissileMain:Tick(I)
    else
       NavalAI_Reset()
-      SixDoF_Disable(I)
+      SixDoF.Disable(I)
    end
 
    ShieldManager:Tick(I)

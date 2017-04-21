@@ -1,4 +1,4 @@
---@ commons manualcontroller evasion terraincheck sign
+--@ commons control manualcontroller evasion terraincheck sign
 -- Depth Control module
 ManualDepthController = ManualController.create(ManualDepthDriveMaintainerFacing)
 
@@ -98,5 +98,5 @@ function Depth_Apply(_, HighPriorityOffset, NoOffset)
       DepthControl_LastDodge = nil
    end
    -- Constrain and set
-   SetAltitude(math.max(DepthControl_Min, math.min(DepthControl_Max, NewAltitude)))
+   V.SetAltitude(math.max(DepthControl_Min, math.min(DepthControl_Max, NewAltitude)))
 end

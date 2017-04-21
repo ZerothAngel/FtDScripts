@@ -1,35 +1,33 @@
 --@ commons componenttypes pid sign
 -- Hydrofoil submarine control module
-RollPID = PID.create(RollPIDConfig, -1, 1)
-PitchPID = PID.create(PitchPIDConfig, -1, 1)
-DepthPID = PID.create(DepthPIDConfig, -1, 1)
+SubControl_RollPID = PID.create(SubControlPIDConfig.Roll, -1, 1)
+SubControl_PitchPID = PID.create(SubControlPIDConfig.Pitch, -1, 1)
+SubControl_DepthPID = PID.create(SubControlPIDConfig.Depth, -1, 1)
 
-DesiredAltitude = 0
-DesiredPitch = 0
-DesiredRoll = 0
+SubControl_DesiredAltitude = 0
+SubControl_DesiredPitch = 0
+SubControl_DesiredRoll = 0
 
-LastHydrofoilCount = 0
-HydrofoilInfos = {}
+SubControl_LastHydrofoilCount = 0
+SubControl_HydrofoilInfos = {}
 
-function SetAltitude(Alt)
-   DesiredAltitude = Alt
+SubControl = {}
+
+function SubControl.SetAltitude(Alt)
+   SubControl_DesiredAltitude = Alt
 end
 
-function AdjustAltitude(Delta) -- luacheck: ignore 131
-   SetAltitude(C:Altitude() + Delta)
+function SubControl.SetPitch(Angle)
+   SubControl_DesiredPitch = Angle
 end
 
-function SetPitch(Angle) -- luacheck: ignore 131
-   DesiredPitch = Angle
-end
-
-function SetRoll(Angle) -- luacheck: ignore 131
-   DesiredRoll = Angle
+function SubControl.SetRoll(Angle)
+   SubControl_DesiredRoll = Angle
 end
 
 SubControl_Eps = .001
 
-function GetHydrofoilSign(BlockInfo)
+function SubControl_GetHydrofoilSign(BlockInfo)
    -- Check if hydrofoil's forward vector lies on Z-axis and up vector lies on Y-axis.
    local DotZ = BlockInfo.LocalForwards.z
    local DotY = (BlockInfo.LocalRotation * Vector3.up).y
@@ -44,12 +42,12 @@ function GetHydrofoilSign(BlockInfo)
    end
 end
 
-function ClassifyHydrofoils(I)
+function SubControl_ClassifyHydrofoils(I)
    local HydrofoilCount = I:Component_GetCount(HYDROFOIL)
-   if HydrofoilCount ~= LastHydrofoilCount then
+   if HydrofoilCount ~= SubControl_LastHydrofoilCount then
       -- Something got damaged or repaired, clear the cache
-      HydrofoilInfos = {}
-      LastHydrofoilCount = HydrofoilCount
+      SubControl_HydrofoilInfos = {}
+      SubControl_LastHydrofoilCount = HydrofoilCount
 
       -- Keep track of max negative and positive offsets
       -- Note: The numbers stored are always non-negative.
@@ -68,7 +66,7 @@ function ClassifyHydrofoils(I)
       for i = 0,HydrofoilCount-1 do
          local BlockInfo = I:Component_GetBlockInfo(HYDROFOIL, i)
          -- Determine sign and location of hydrofoil
-         local LocalSign = GetHydrofoilSign(BlockInfo)
+         local LocalSign = SubControl_GetHydrofoilSign(BlockInfo)
          if LocalSign ~= 0 then
             -- Only care about hydrofoils oriented forwards/backwards on XZ
             -- plane
@@ -86,7 +84,7 @@ function ClassifyHydrofoils(I)
                CoMOffsetX = CoMOffsetX,
                CoMOffsetZ = CoMOffsetZ,
             }
-            table.insert(HydrofoilInfos, Info)
+            table.insert(SubControl_HydrofoilInfos, Info)
 
             -- Also keep track of furthest hydrofoil on each axis
             CoMOffsetX = math.abs(CoMOffsetX)
@@ -99,7 +97,7 @@ function ClassifyHydrofoils(I)
 
       if ScaleByCoMOffset then
          -- Now go back and pre-calculate scale
-         for _,Info in pairs(HydrofoilInfos) do
+         for _,Info in pairs(SubControl_HydrofoilInfos) do
             local CoMOffsetX = Info.CoMOffsetX
             if CoMOffsetX ~= 0 then
                Info.RollScale = XMax[Info.RollScale] / CoMOffsetX
@@ -114,13 +112,17 @@ function ClassifyHydrofoils(I)
    end
 end
 
-function SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
-   ClassifyHydrofoils(I)
+function SubControl.Update(I)
+   local RollCV = ControlRoll and SubControl_RollPID:Control(SubControl_DesiredRoll - C:Roll()) or 0
+   local PitchCV = ControlPitch and SubControl_PitchPID:Control(SubControl_DesiredPitch - C:Pitch()) or 0
+   local DepthCV = ControlDepth and SubControl_DepthPID:Control((SubControl_DesiredAltitude - C:Altitude()) * C:UpVector().y) or 0
+
+   SubControl_ClassifyHydrofoils(I)
 
    -- In case vehicle is going in reverse...
    local VehicleSign = Sign(C:ForwardSpeed(), 1)
 
-   for _,Info in pairs(HydrofoilInfos) do
+   for _,Info in pairs(SubControl_HydrofoilInfos) do
       -- Sum up inputs and constrain
       local Output = (RollCV * Info.RollScale + PitchCV * Info.PitchScale + DepthCV) * 45
       Output = math.max(-45, math.min(45, Output))
@@ -129,10 +131,5 @@ function SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
    end
 end
 
-function SubControl_Update(I)
-   local RollCV = ControlRoll and RollPID:Control(DesiredRoll - C:Roll()) or 0
-   local PitchCV = ControlPitch and PitchPID:Control(DesiredPitch - C:Pitch()) or 0
-   local DepthCV = ControlDepth and DepthPID:Control((DesiredAltitude - C:Altitude()) * C:UpVector().y) or 0
-
-   SetHydrofoilAngles(I, RollCV, PitchCV, DepthCV)
+function SubControl.Disable(_)
 end
