@@ -51,7 +51,7 @@ Under the "AIRPLANE CONFIGURATION" section:
 
  1. Tune the PIDs. The defaults are OK, they work fine on the few test craft I used. Look elsewhere for tips on how to tune a PID.
  2. Modify `MaxPitch` if you want. But generally, if your `AltitudePID` is tuned well, you won't have to limit `MaxPitch` much.
- 3. Decide if you want to bank to turn and if so, how many degrees difference before banking. By default, it will bank up to 50 degrees for heading changes more than 10 degrees as long as its altitude is at least 200 meters. See `AngleBeforeRoll`, `MaxRollAngle` and other settings.
+ 3. Decide if you want to bank to turn and if so, how many degrees difference before banking. Typically, your plane will need very strong yaw authority to counteract the climb caused by the roll + pitch up maneuver.
 
 ## Balloon Manager ##
 

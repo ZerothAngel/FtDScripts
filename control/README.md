@@ -12,12 +12,9 @@ control complementary DoFs can be combined.
 ## 2 Degrees of Freedom ##
 
   * pitchrollstab &mdash; Pitch & roll stabilization by using standard ship pitch & roll controls.
-  * yawthrottle &mdash; Uses standard ship controls (e.g. as from a vehicle controller) for yaw and throttle (forward/reverse). Can also use forward/reverse-oriented spinners for propulsion and side-facing spinners for yaw.
 
 ## 3 Degrees of Freedom ##
 
-  * aprthreedof &mdash; Altitude/pitch/roll control using jets and/or spinners.
-  * yllthreedof &mdash; Yaw/longitudinal/lateral control using jets and/or spinners.
   * subcontrol &mdash; Depth and pitch/roll control using hydrofoils.
   * threedofpump &mdash; Pump control for altitude/pitch/roll.
 
@@ -27,9 +24,11 @@ control complementary DoFs can be combined.
 
 ## 6 Degrees of Freedom ##
 
-  * sixdof &mdash; Altitude/yaw/pitch/roll/longitudinal/lateral control using jets and/or spinners.
+  * sixdof &mdash; Altitude/yaw/pitch/roll/longitudinal/lateral control using jets and/or spinners. Highly configurable, can be set to only provide control along arbitrary axes.
 
 ## Interface ##
+
+The global table `V` houses the control functions, e.g. `V.SetThrottle`
 
 Set* &mdash; Set to given absolute value
 
@@ -42,11 +41,9 @@ Reset* &mdash; Hint to release control along this/these degree(s) of freedom
   * SetPosition/AdjustPosition/ResetPosition &mdash; Planar position (Global X & Z-axis)
   * SetPitch/SetRoll &mdash; Pitch & roll
   * SetThrottle/AdjustThrottle/ResetThrottle &mdash; Forward/reverse throttle (Longitudinal axis)
-  * Control_Reset &mdash; Typically releases control along X & Z plane. Main module's responsibility to actually map this function.
+  * Reset &mdash; Typically releases control along X & Z plane. Main module's responsibility to actually map this function.
 
 ## Combinations ##
 
-  * sixdof and airplane cannot be combined with other DoF modules.
-  * yawthrottle can be used with any 2DoF or 3DoF modules, with the exception of yllthreedof.
-  * yllthreedof works with pitchrollstab, subcontrol, and threedofpump.
-  * For yllthreedof + aprthreedof, use sixdof module instead.
+  * airplane cannot be combined with other DoF modules.
+  * sixdof can be combined with any 3DoF module so long as altitude/pitch/roll are not enabled.

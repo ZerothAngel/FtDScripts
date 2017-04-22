@@ -11,6 +11,22 @@ Also, I don't normally do code requests, but I'm open to interesting ideas, espe
 
 Having said that all that, here are some notes on how my scripts are used and their likely limitations.
 
+## What Scripts I Use Regularly ##
+
+Or: What can be considered relatively bug-free.
+
+Unfortunately, I don't get much feedback from other people. What I write is generally well-tested on my own designs. I'm sure with other people, if something of mine doesn't work near perfectly out-of-the-box, they drop it without a complaint. So I don't hear of problems.
+
+I pretty much regularly use all scripts that I have listed on my public page. But there's a handful of exceptions, and you should be wary about using them as well:
+
+ * airplane &mdash; This is still too new, and I have no airplane design of my own. I have been testing with the SD Wyvern, SS Retribution, and a workshop plane. All but the Retribution are just "aerodynamic bricks" &mdash; they don't actually have any lift. So something to be aware of.
+ * aerostat/subpump &mdash; I just created these out of curiosity. I don't have any helium airships nor do I use air pumps for depth control of my submarines.
+ * multiprofile/umultiprofile &mdash; Unused because I don't like how iffy it is using straight-line distance from the missile controller to bind the Lua tranceivers to a profile.
+ * pnmissile/udualprofile/unifiedmissile &mdash; These are obsolete, but they're written on top of generalmissile, so everything underneath the configuration is still well-tested.
+ * cannoncontrol &mdash; I still play with this from time to time, trying out new things (like taking target acceleration into account), but it's still pretty much unused.
+ * rocketcontrol &mdash; Created this due to a request, but I don't use it myself.
+ * interceptmanager &mdash; This was necessary on my adventure sub because I couldn't get the firing constraints to work for the side-firing anti-torpedo torpedoes. But I've since switch to LAMS.
+
 ## Mainframes ##
 
 The Lua interface to mainframes is very barebones and minimal. And like the other block-oriented Lua bindings, there's no method to directly address specific blocks.
