@@ -6,6 +6,7 @@ function SmartMine.create(Config)
 
    -- Pre-square
    self.DropDistance = self.DropDistance * self.DropDistance
+   self.MinFriendlyRange = self.MinFriendlyRange * self.MinFriendlyRange
 
    self.BeginUpdate = SmartMine.BeginUpdate
    self.Guide = SmartMine.Guide
@@ -32,7 +33,6 @@ end
 function SmartMine:BeginUpdate(_, Targets)
    -- Should be filtered already, i.e. only targetable
    self.Targets = Targets
-   self.FriendInfos = {}
 end
 
 function SmartMine:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, TargetVelocity, Missile, MissileState)
@@ -96,27 +96,14 @@ function SmartMine:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, T
          local NewMagnetRange = self.MagnetRange
 
          -- Scan for nearby friendlies
-         for findex,Friend in pairs(C:Friendlies()) do
+         for _,Friend in pairs(C:Friendlies()) do
+            local FriendCoM = Friend.CenterOfMass
             -- Only those below MaxFriendlyAltitude
-            if Friend.CenterOfMass.y < MaxFriendlyAltitude then
-               -- Already have midpoint and radius this update?
-               local FriendInfo = self.FriendInfos[findex]
-               if not FriendInfo then
-                  -- Calculate approximate midpoint and radius using AABB
-                  -- Very rough (no rotation since AABB), but conservative
-                  local HalfSize = (Friend.AxisAlignedBoundingBoxMaximum - Friend.AxisAlignedBoundingBoxMinimum) / 2
-                  -- Save for the other mines
-                  FriendInfo = {
-                     MidPoint = Friend.AxisAlignedBoundingBoxMinimum + HalfSize,
-                     Radius = math.max(HalfSize.x, math.max(HalfSize.y, HalfSize.z)),
-                  }
-                  self.FriendInfos[findex] = FriendInfo
-               end
-
-               local Offset = FriendInfo.MidPoint - MissilePosition
-               local Distance = Offset.magnitude - FriendInfo.Radius
-               if Distance <= MinFriendlyRange then
-                  -- Set magnet to minimum, no need to check more
+            if FriendCoM.y < MaxFriendlyAltitude then
+               local Offset = FriendCoM - MissilePosition
+               local SqrDistance = Offset.sqrMagnitude
+               if SqrDistance <= MinFriendlyRange then
+                  -- Set magnet to minimum and no need to check more
                   NewMagnetRange = 5
                   break
                end

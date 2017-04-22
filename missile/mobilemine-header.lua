@@ -41,5 +41,5 @@ MobileMineConfig = {
    --   conservative.)
    MaxFriendlyAltitude = 50,
    --   And within this range
-   MinFriendlyRange = 100,
+   MinFriendlyRange = 150,
 }
