@@ -314,12 +314,12 @@ function GeneralMissile:ExecuteProfile(I, TransceiverIndex, MissileIndex, Positi
    return NewAimPoint
 end
 
-function GeneralMissile:SetTarget(I, TargetPosition, _, _)
-   local TargetAltitude = TargetPosition.y
+function GeneralMissile:SetTarget(I, _, TargetAimPoint, _)
+   local TargetAltitude = TargetAimPoint.y
 
    self.TargetAltitude = TargetAltitude -- Raw altitude
    self.TargetDepth = math.min(TargetAltitude, 0) -- When below sea level
-   self.TargetGround = math.max(I:GetTerrainAltitudeForPosition(TargetPosition), 0) -- When above sea level
+   self.TargetGround = math.max(I:GetTerrainAltitudeForPosition(TargetAimPoint), 0) -- When above sea level
 
    -- For now, executing the profile is solely based on the target's
    -- elevation above sea level.

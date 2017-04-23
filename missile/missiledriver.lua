@@ -15,7 +15,7 @@ function MissileDriver_GatherTargets(GuidanceInfos)
    for _,Target in pairs(Targets) do
       local CanTarget = {}
       local InRange = {}
-      local Altitude = Target.Position.y
+      local Altitude = Target.AimPoint.y
       local Range = Target.SqrRange
       for _,GuidanceInfo in pairs(GuidanceInfos) do
          table.insert(CanTarget, Altitude >= GuidanceInfo.MinAltitude and Altitude <= GuidanceInfo.MaxAltitude)
