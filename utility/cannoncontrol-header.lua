@@ -16,6 +16,13 @@ CannonConfigs = {
          MaxRange = 9999,
          MinAltitude = -500,
          MaxAltitude = 9999,
+         -- Set to a number to constrain aim point to a minimum altitude
+         -- e.g. 0 or -1 for near-waterline.
+         -- Set to nil to disable this constraint.
+         -- This differs from the limits above in that the above limits
+         -- determine when to fire. ConstrainWaterline just moves the
+         -- aim point up if it is too low.
+         ConstrainWaterline = -1,
       }
    },
    -- Paste more copies of the above here to control more weapon slots.

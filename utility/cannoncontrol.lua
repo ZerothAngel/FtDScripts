@@ -22,9 +22,15 @@ function CannonControl_Update(I)
          local Range = Target.Range
          local Altitude = Target.Position.y
          if Range >= MinRange and Range <= MaxRange and Altitude >= MinAltitude and Altitude <= MaxAltitude then
-            -- Add relative velocity to target table
-            Target.RelativeVelocity = Target.Velocity - Velocity
-            ToFire[Slot] = Target
+            if not Target.RelativeVelocity then
+               -- Add relative velocity to target table
+               Target.RelativeVelocity = Target.Velocity - Velocity
+            end
+            -- Calculate constrained aim point
+            local AimPoint,Waterline = Target.AimPoint,Limits.ConstrainWaterline
+            AimPoint = Vector3(AimPoint.x, (Waterline and math.max(Waterline, AimPoint.y) or AimPoint.y), AimPoint.z)
+            -- And queue up this slot
+            ToFire[Slot] = { Target, AimPoint }
             Fire = true
             break
          end
@@ -37,9 +43,10 @@ function CannonControl_Update(I)
 
       -- Aim & fire each turret/cannon on the hull
       for _,Weapon in pairs(C:HullWeaponControllers()) do
-         local Target = ToFire[Weapon.Slot]
-         if Target and (Weapon.Type == TURRET or Weapon.Type == CANNON) and not Weapon.PlayerControl then
-            local AimPoint = BallisticAimPoint(Weapon.Speed, Target.AimPoint - Weapon.Position, Target.RelativeVelocity, Gravity)
+         local FireSlot = ToFire[Weapon.Slot]
+         if FireSlot and (Weapon.Type == TURRET or Weapon.Type == CANNON) and not Weapon.PlayerControl then
+            local Target,CannonAimPoint = unpack(FireSlot)
+            local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity)
             if AimPoint and I:AimWeaponInDirection(Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, Weapon.Slot) > 0 and Weapon.Type == CANNON then
                -- If this is a turret, any on-board cannons will be fired
                -- independently below.
@@ -50,9 +57,10 @@ function CannonControl_Update(I)
 
       -- Now the cannons on turrets
       for _,Weapon in pairs(C:TurretWeaponControllers()) do
-         local Target = ToFire[Weapon.Slot]
-         if Target and Weapon.Type == CANNON and not Weapon.PlayerControl then
-            local AimPoint = BallisticAimPoint(Weapon.Speed, Target.AimPoint - Weapon.Position, Target.RelativeVelocity, Gravity)
+         local FireSlot = ToFire[Weapon.Slot]
+         if FireSlot and Weapon.Type == CANNON and not Weapon.PlayerControl then 
+            local Target,CannonAimPoint = unpack(FireSlot)
+           local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity)
             if AimPoint and I:AimWeaponInDirectionOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, Weapon.Slot) > 0 then
                I:FireWeaponOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, Weapon.Slot)
             end
