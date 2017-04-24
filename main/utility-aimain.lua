@@ -18,6 +18,7 @@ function Update(I) -- luacheck: ignore 131
       else
          UtilityAI_Reset()
          V.Reset()
+         SixDoF.Release(I)
       end
 
       SixDoF.Update(I)

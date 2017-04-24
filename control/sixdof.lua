@@ -39,6 +39,8 @@ SixDoF_ControlRoll = (JetFractions.Roll > 0 or SpinnerFractions.Roll > 0 or Cont
 SixDoF_APRThrustHackControl = ThrustHack.create(APRThrustHackDriveMaintainerFacing)
 SixDoF_YLLThrustHackControl = ThrustHack.create(YLLThrustHackDriveMaintainerFacing)
 
+SixDoF_NeedsRelease = false
+
 --# Public methods on the other hand...
 SixDoF = {}
 
@@ -257,9 +259,6 @@ function SixDoF.Update(I)
             local Output = AltitudeCV * Info.UpSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign
             Output = math.max(-30, math.min(30, Output))
             I:SetSpinnerContinuousSpeed(Info.Index, Output)
-         else
-            -- Zero out (for now) FIXME Probably doesn't work for ACB/drive maintainer override
-            I:SetSpinnerContinuousSpeed(Info.Index, 0)
          end
       end
    end
@@ -271,6 +270,10 @@ function SixDoF.Update(I)
          SixDoF_RequestControl(I, ControlFractions.Yaw, YAWRIGHT, YAWLEFT, YawCV)
          SixDoF_RequestControl(I, ControlFractions.Forward, MAINPROPULSION, MAINPROPULSION, ForwardCV)
       end
+   end
+
+   if PlanarMovement then
+      SixDoF_NeedsRelease = true
    end
 end
 
@@ -289,5 +292,20 @@ function SixDoF.Disable(I)
    if SixDoF_UsesControls then
       -- Only MAINPROPULSION is stateful
       SixDoF_RequestControl(I, ControlFractions.Forward, MAINPROPULSION, MAINPROPULSION, 0)
+   end
+end
+
+function SixDoF.Release(I)
+   -- Disable non-vertical spinners just once
+   if SixDoF_NeedsRelease then
+      if SixDoF_UsesSpinners then
+         SixDoF_ClassifySpinners(I)
+         for _,Info in pairs(SixDoF_SpinnerInfos) do
+            if not Info.IsVertical then
+               I:SetSpinnerContinuousSpeed(Info.Index, 0)
+            end
+         end
+      end
+      SixDoF_NeedsRelease = false
    end
 end

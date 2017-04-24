@@ -26,6 +26,7 @@ function Update(I) -- luacheck: ignore 131
       else
          DropAI_Reset()
          V.Reset()
+         SixDoF.Release(I)
       end
 
       Altitude_Apply(I, DodgeAltitudeOffset, not DropAI_Closing)

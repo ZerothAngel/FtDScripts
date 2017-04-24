@@ -27,6 +27,7 @@ function Update(I) -- luacheck: ignore 131
       else
          GunshipAI_Reset()
          V.Reset()
+         SixDoF.Release(I)
       end
 
       Altitude_Apply(I, DodgeAltitudeOffset)

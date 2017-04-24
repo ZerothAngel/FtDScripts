@@ -21,6 +21,7 @@ function Update(I) -- luacheck: ignore 131
       else
          NavalAI_Reset()
          V.Reset()
+         SixDoF.Release(I)
       end
 
       SixDoF.Update(I)
