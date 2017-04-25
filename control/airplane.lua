@@ -98,18 +98,16 @@ function Airplane.Update(I)
    local Altitude = C:Altitude()
 
    local TargetVector = Vector3.forward
+   Airplane_DesiredRoll = 0
    if Airplane_DesiredHeading then
-      TargetVector = Quaternion.Euler(0, Airplane_DesiredHeading, 0) * TargetVector
+      local Heading = math.rad(Airplane_DesiredHeading)
+      TargetVector = Vector3(math.sin(Heading), 0, math.cos(Heading))
       local Bearing = NormalizeBearing(Airplane_DesiredHeading - GetVectorAngle(C:ForwardVector()))
       local AbsBearing = math.abs(Bearing)
       if AngleBeforeRoll and AbsBearing > AngleBeforeRoll and Altitude >= MinAltitudeForRoll then
          local RollAngle = RollAngleGain and math.min(MaxRollAngle, (AbsBearing - AngleBeforeRoll) * RollAngleGain) or MaxRollAngle
          Airplane_DesiredRoll = -Sign(Bearing) * RollAngle
-      else
-         Airplane_DesiredRoll = 0
       end
-   else
-      Airplane_DesiredRoll = 0
    end
 
    -- Offset by altitude and re-normalize
