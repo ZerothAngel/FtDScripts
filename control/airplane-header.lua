@@ -39,12 +39,11 @@ AirplanePIDConfig = {
 
 -- Pitch settings
 
--- Maximum pitch magnitude up & down relative to the horizon.
--- Can be up to, but NOT including 90. Note that this is just the maximum
--- pitch assuming the plane is flying level. While rolling, the pitch limit
--- is naturally increased because of the math, which works out well for
--- banked turns.
-MaxPitch = 45
+-- Maximum pitch magnitude up & down relative to nose. Can be up to
+-- and including 90 degrees. Note that this is the maximum pitch
+-- when roll is 0, i.e. the wings are level. Due to the math, the
+-- effective MaxPitch increases when the plane banks.
+MaxPitch = 90
 
 -- Roll settings
 

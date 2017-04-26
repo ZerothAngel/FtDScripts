@@ -7,7 +7,6 @@ Airplane_RollPID = PID.create(AirplanePIDConfig.Roll, -1, 1)
 
 Airplane_DesiredAltitude = 0
 Airplane_DesiredHeading = nil
-Airplane_DesiredRoll = 0
 Airplane_DesiredThrottle = nil
 Airplane_CurrentThrottle = 0
 
@@ -18,7 +17,9 @@ Airplane_UsesSpinners = (SpinnerFractions.Yaw > 0 or SpinnerFractions.Pitch > 0 
 
 -- Calculate tan ahead of time
 -- Also pre-divide by the AltitudePID scaling factor
-MaxPitch = math.tan(math.rad(MaxPitch)) / 10
+--# Divided by 2 because MaxPitch is split evenly between
+--# pitch up & pitch down.
+MaxPitch = math.tan(math.rad(MaxPitch / 2)) / 10
 
 Airplane_Active = false
 
@@ -98,7 +99,7 @@ function Airplane.Update(I)
    local Altitude = C:Altitude()
 
    local TargetVector = Vector3.forward
-   Airplane_DesiredRoll = 0
+   local DesiredRoll = 0
    if Airplane_DesiredHeading then
       local Heading = math.rad(Airplane_DesiredHeading)
       TargetVector = Vector3(math.sin(Heading), 0, math.cos(Heading))
@@ -106,7 +107,7 @@ function Airplane.Update(I)
       local AbsBearing = math.abs(Bearing)
       if AngleBeforeRoll and AbsBearing > AngleBeforeRoll and Altitude >= MinAltitudeForRoll then
          local RollAngle = RollAngleGain and math.min(MaxRollAngle, (AbsBearing - AngleBeforeRoll) * RollAngleGain) or MaxRollAngle
-         Airplane_DesiredRoll = -Sign(Bearing) * RollAngle
+         DesiredRoll = -Sign(Bearing) * RollAngle
       end
    end
 
@@ -124,8 +125,11 @@ function Airplane.Update(I)
 
    -- Run through PIDs
    local YawCV = Airplane_YawPID:Control(Yaw)
+   --# This is actually incorrect, but it seems to work better?
+   --# Pitch is degrees relative to local, so subtracting world pitch
+   --# doesn't make sense. The PV is potentially doubled though...
    local PitchCV = Airplane_PitchPID:Control(Pitch - C:Pitch())
-   local RollCV = Airplane_RollPID:Control(Airplane_DesiredRoll - C:Roll())
+   local RollCV = Airplane_RollPID:Control(DesiredRoll - C:Roll())
 
    -- And apply to controls
    if YawCV > 0 then
