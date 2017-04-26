@@ -124,7 +124,7 @@ function Airplane.Update(I)
 
    -- Run through PIDs
    local YawCV = Airplane_YawPID:Control(Yaw)
-   local PitchCV = Airplane_PitchPID:Control(Pitch)
+   local PitchCV = Airplane_PitchPID:Control(Pitch - C:Pitch())
    local RollCV = Airplane_RollPID:Control(Airplane_DesiredRoll - C:Roll())
 
    -- And apply to controls
