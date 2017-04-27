@@ -1,6 +1,6 @@
 --! warship
 --@ commons control firstrun periodic
---@ shieldmanager dualprofile sixdof ytdefaults naval-ai
+--@ shieldmanager multiprofile sixdof ytdefaults naval-ai
 -- Warship main
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 1)

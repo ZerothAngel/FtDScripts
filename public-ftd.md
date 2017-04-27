@@ -82,10 +82,10 @@ But it was an interesting exercise, and it **does** seem to be quite a bit more 
 
 I tend to build small and because of that, I avoid having more than a few Lua boxes. So I assemble and use combo scripts that are made up of many of my own scripts. This saves on Lua boxes and is also more efficient &mdash; stuff like targeting and weapon control only needs to happen once per run.
 
-  * [airplane](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airplane.lua) &mdash; Combo script: naval-ai + airplane + dualprofile + shieldmanager
-  * [airship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airship.lua) &mdash; Combo script: naval-ai + hover + dualprofile + shieldmanager
+  * [airplane](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airplane.lua) &mdash; Combo script: naval-ai + airplane + multiprofile + shieldmanager
+  * [airship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airship.lua) &mdash; Combo script: naval-ai + hover + multiprofile + shieldmanager
   * [drop](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/drop.lua) &mdash; Combo script: drop-ai + sixdof + shieldmanager
-  * [gunship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunship.lua) &mdash; Combo script: gunship-ai + sixdof + dualprofile + shieldmanager
+  * [gunship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunship.lua) &mdash; Combo script: gunship-ai + sixdof + multiprofile + shieldmanager
   * [utility](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility.lua) &mdash; Combo script: utility-ai + hover + shieldmanager
   * [utility6dof](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility6dof.lua) &mdash; Combo script: utility-ai + sixdof + shieldmanager
   * [utilitysub](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utilitysub.lua) &mdash; Combo script: utility-ai + subcontrol + shieldmanager
@@ -95,8 +95,8 @@ I tend to build small and because of that, I avoid having more than a few Lua bo
   * [scout](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/scout.lua) &mdash; Combo script: naval-ai + hover + shieldmanager + cameratrack
   * [scout6dof](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/scout6dof.lua) &mdash; Combo script: gunship-ai + sixdof + shieldmanager + cameratrack
   * [minelayer](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/minelayer.lua) &mdash; Combo script: gunship-ai + sixdof + mobilemine + shieldmanager
-  * [submarine](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/submarine.lua) &mdash; Combo script: naval-ai + subcontrol + dualprofile + shieldmanager
-  * [warship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/warship.lua) &mdash; Combo script: naval-ai + dualprofile + shieldmanager
+  * [submarine](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/submarine.lua) &mdash; Combo script: naval-ai + subcontrol + multiprofile + shieldmanager
+  * [warship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/warship.lua) &mdash; Combo script: naval-ai + multiprofile + shieldmanager
 
 ### Miscellaneous ###
 

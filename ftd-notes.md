@@ -21,8 +21,8 @@ I pretty much regularly use all scripts that I have listed on my public page. Bu
 
  * airplane &mdash; This is still too new, and I have no airplane design of my own. I have been testing with the SD Wyvern, SS Retribution, and a workshop plane. All but the Retribution are just "aerodynamic bricks" &mdash; they don't actually have any lift. So something to be aware of.
  * aerostat/subpump &mdash; I just created these out of curiosity. I don't have any helium airships nor do I use air pumps for depth control of my submarines.
- * multiprofile/umultiprofile &mdash; Unused because I don't like how iffy it is using straight-line distance from the missile controller to bind the Lua tranceivers to a profile.
- * pnmissile/udualprofile/unifiedmissile &mdash; These are obsolete, but they're written on top of generalmissile, so everything underneath the configuration is still well-tested.
+ * multiprofile &mdash; Though I use this regularly (it's now my standard missile script), I don't use the weapon slot or direction selectors at all.
+ * pnmissile/udualprofile/umultiprofile/unifiedmissile &mdash; These are obsolete, but they're written on top of generalmissile, so everything underneath the configuration is still well-tested.
  * cannoncontrol &mdash; I still play with this from time to time, trying out new things (like taking target acceleration into account), but it's still pretty much unused.
  * rocketcontrol &mdash; Created this due to a request, but I don't use it myself.
  * interceptmanager &mdash; This was necessary on my adventure sub because I couldn't get the firing constraints to work for the side-firing anti-torpedo torpedoes. But I've since switch to LAMS.

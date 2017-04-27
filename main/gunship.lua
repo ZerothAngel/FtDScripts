@@ -1,6 +1,6 @@
 --! gunship
 --@ commons control firstrun periodic
---@ shieldmanager balloonmanager dualprofile sixdof altitudecontrol gunshipdefaults gunship-ai
+--@ shieldmanager balloonmanager multiprofile sixdof altitudecontrol gunshipdefaults gunship-ai
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 4)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)

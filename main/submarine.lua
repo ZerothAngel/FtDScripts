@@ -1,6 +1,6 @@
 --! submarine
 --@ commons control firstrun periodic
---@ shieldmanager dualprofile subcontrol sixdof depthcontrol ytdefaults naval-ai
+--@ shieldmanager multiprofile subcontrol sixdof depthcontrol ytdefaults naval-ai
 -- Submarine main
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
 MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)

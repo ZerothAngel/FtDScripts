@@ -1,6 +1,6 @@
 --! airplane
 --@ commons control firstrun periodic
---@ shieldmanager balloonmanager dualprofile airplane altitudecontrol naval-ai
+--@ shieldmanager balloonmanager multiprofile airplane altitudecontrol naval-ai
 -- Airship main
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 4)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
