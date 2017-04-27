@@ -2,45 +2,58 @@
 
 -- How it works:
 
--- Each Lua transceiver (and thus the missiles its launch pad fires)
--- are assigned a profile.
+-- Each profile can select Lua transceivers in one of three ways:
+--   By launcher orientation (vertical, horizontal)
+--   By launcher direction (right, left, up, down, forward, back)
+--   By weapon slot of the missile controller within a given distance
 
--- The profile is selected by looking for the closest missile controller
--- that matches the profile's WeaponSlot AND is within BlockRange meters.
+-- If a Lua transceiver potentially matches multiple profiles, then
+-- the priority is the first matching profile that selects:
+--   1. By weapon slot/distance
+--   2. By direction
+--   3. By orientation
 
--- If no profiles match (probably due to damage), the first profile
--- is selected.
+-- If a Lua transceiver matches no profiles (due to damage or
+-- misconfiguration), then the 1st one is used.
 
--- If multiple profiles have the same WeaponSlot, then the last one wins.
+-- Remember that subconstructs (turrets, spinners) have their own axes
+-- independent of the main vehicle. This may make selection by
+-- orientation/direction surprising.
 
--- The following sets up sea-skimming pop-up missiles for the missile
--- launcher(s) on weapon slot 1 and bottom-attack torpedoes for the missile
--- launcher(s) on weapon slot 2.
-
--- See https://github.com/ZerothAngel/FtDScripts/blob/master/missile/generalmissile.md for details about profile configuration.
+-- See https://github.com/ZerothAngel/FtDScripts/blob/master/missile/generalmissile.md for details about profile configuration (the "Config" sections).
 
 MissileProfiles = {
    -- First profile
    {
-      -- What weapon slot to associate with. Should be 0-5, with 0 meaning
-      -- the "all" slot.
-      WeaponSlot = 1,
-      -- Set to true to have the script fire this weapon slot itself.
+      -- How Lua transceivers are selected for this profile.
+      -- You must only have one "SelectBy" expression.
+      -- Comment out or delete the rest.
+      SelectBy = {
+         -- By orientation: true = vertical, false = horizontal
+         Orientation = true,
+      },
+--      SelectBy = {
+--         -- By launcher direction. Set Direction to a list of Vector3.<dir>
+--         -- where <dir> is back, down, forward, left, right, up
+--         -- Note that it must be a list even with a single direction.
+--         Direction = { Vector3.left, Vector3.right },
+--      },
+--      SelectBy = {
+--         -- By weapon slot of the closest missile controller
+--         -- within a set (straight-line) distance
+--         WeaponSlot = 1,
+--         Distance = 5,
+--      },
+      -- Set to a number 1-5 to have the script fire this weapon slot itself.
       -- An LWC is not needed in that case. However, script-fired weapons
       -- aren't governed by failsafes, so keep that in mind...
       -- Missile controllers on turrets should be assigned the same weapon
       -- slot as their turret block.
-      FireControl = false,
+      FireWeaponSlot = nil,
       -- Target selection algorithm for newly-launched missiles.
       -- 1 = Focus on highest priority target
       -- 2 = Pseudo-random split against all targetable targets
       TargetSelector = 1,
-      -- Lua transceivers at most this far (in meters) from missile
-      -- controllers assigned to the above weapon slot are considered
-      -- part of this profile.
-      -- Note that this does not follow ACB-style Manhattan distances.
-      -- This is the actual "as the crow flies" distance.
-      BlockRange = 5,
       -- These should generally match the Local Weapon Controller to
       -- avoid locking and re-locking on things too far or out of
       -- the missile's element. (e.g. torpedoes re-locking onto air targets)
@@ -50,7 +63,7 @@ MissileProfiles = {
          MinAltitude = -25,
          MaxAltitude = 9999,
       },
-      -- Sea-skimming pop-up missiles
+      -- Javelin-style missiles
       Config = {
          MinAltitude = 0,
          DetonationRange = nil,
@@ -71,19 +84,19 @@ MissileProfiles = {
          ProfileActivationElevation = 10,
          Phases = {
             {
-               Distance = 100,
+               Distance = 150,
                Altitude = nil,
                RelativeTo = 1,
                Thrust = nil,
                ThrustAngle = nil,
             },
             {
-               Distance = 250,
+               Distance = 500,
                AboveSeaLevel = true,
                MinElevation = 3,
                ApproachAngle = nil,
-               Altitude = 30,
-               RelativeTo = 3,
+               Altitude = 0,
+               RelativeTo = 4,
                Thrust = nil,
                ThrustAngle = nil,
                Evasion = nil,
@@ -93,11 +106,11 @@ MissileProfiles = {
                AboveSeaLevel = true,
                MinElevation = 3,
                ApproachAngle = nil,
-               Altitude = nil,
-               RelativeTo = 0,
+               Altitude = 300,
+               RelativeTo = 3,
                Thrust = nil,
                ThrustAngle = nil,
-               Evasion = { 20, .25 },
+               Evasion = nil,
             },
          },
       },
@@ -105,10 +118,9 @@ MissileProfiles = {
 
    -- Second profile
    {
-      WeaponSlot = 2,
-      FireControl = false,
+      SelectBy = { Orientation = false, }, -- Horizontal
+      FireWeaponSlot = nil,
       TargetSelector = 1,
-      BlockRange = 5,
       Limits = {
          MinRange = 0,
          MaxRange = 9999,
@@ -118,7 +130,7 @@ MissileProfiles = {
       -- Bottom-attack torpedoes
       Config = {
          MinAltitude = -500,
-         DetonationRange = nil,
+         DetonationRange = 15,
          DetonationAngle = 30,
          LookAheadTime = 2,
          LookAheadResolution = 3,
@@ -126,8 +138,8 @@ MissileProfiles = {
          Phases = {
             {
                Distance = 175,
-               Altitude = nil,
-               RelativeTo = 1,
+               Altitude = 0,
+               RelativeTo = 6,
                Thrust = nil,
                ThrustAngle = nil,
             },
@@ -136,7 +148,7 @@ MissileProfiles = {
                AboveSeaLevel = false,
                MinElevation = 10,
                ApproachAngle = nil,
-               Altitude = -150,
+               Altitude = -50,
                RelativeTo = 2,
                Thrust = nil,
                ThrustAngle = nil,

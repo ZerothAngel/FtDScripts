@@ -3,7 +3,9 @@
 
 GuidanceInfos = {}
 -- Weapon slot to index (into GuidanceInfos) mapping
-GuidanceInfosIndices = {}
+MultiProfileMCMap = {}
+-- Flag to enable scanning missile controllers (kinda expensive)
+MultiProfileScanMCs = false
 
 -- Pre-process MissileProfiles, fill out GuidanceInfos
 for i = 1,#MissileProfiles do
@@ -15,51 +17,88 @@ for i = 1,#MissileProfiles do
       MinAltitude = MP.Limits.MinAltitude,
       MaxAltitude = MP.Limits.MaxAltitude,
       -- Square ranges
-      MinRange = MP.Limits.MinRange * MP.Limits.MinRange,
-      MaxRange = MP.Limits.MaxRange * MP.Limits.MaxRange,
+      MinRange = MP.Limits.MinRange^2,
+      MaxRange = MP.Limits.MaxRange^2,
       -- Extra info to make things easier
-      BlockRange = MP.BlockRange * MP.BlockRange,
-      WeaponSlot = MP.FireControl and MP.WeaponSlot or nil,
+      Orientation = MP.SelectBy.Orientation,
+      Direction = MP.SelectBy.Direction,
+      WeaponSlot = MP.FireWeaponSlot,
       TargetSelector = MP.TargetSelector,
    }
    table.insert(GuidanceInfos, GuidanceInfo)
-   GuidanceInfosIndices[MP.WeaponSlot] = i
+   local WeaponSlot = MP.SelectBy.WeaponSlot
+   if WeaponSlot then
+      -- First profile using a weapon slot wins
+      if not MultiProfileMCMap[WeaponSlot] then
+         MultiProfileMCMap[WeaponSlot] = { i, MP.SelectBy.Distance^2 }
+         MultiProfileScanMCs = true
+      end
+   end
 end
 
-MissileControllers = nil
+-- Cache of missile controllers
+MultiProfileMCs = nil
 
 -- Returns index into GuidanceInfos
 function SelectGuidance(I, TransceiverIndex)
-   if not MissileControllers then
-      MissileControllers = {}
-      for _,Weapon in pairs(C:WeaponControllers()) do
-         if Weapon.Type == MISSILECONTROL then
-            table.insert(MissileControllers, Weapon)
-         end
-      end
-   end
-
-   -- Look for closest missile controller within BlockRange
    local BlockInfo = I:GetLuaTransceiverInfo(TransceiverIndex)
-   local Closest,SelectedIndex = math.huge,1 -- Default to GuidanceInfos[1]
-   for i = 1,#MissileControllers do
-      local MC = MissileControllers[i]
-      local Index = GuidanceInfosIndices[MC.Slot]
-      if Index then
-         local Distance = (BlockInfo.Position - MC.Position).sqrMagnitude
-         if Distance <= MissileProfiles[Index].BlockRange and Distance < Closest then
-            Closest = Distance
-            SelectedIndex = Index
+
+   if MultiProfileScanMCs then
+      -- Build cache of missile controllers, if needed
+      if not MultiProfileMCs then
+         MultiProfileMCs = {}
+         for _,Weapon in pairs(C:WeaponControllers()) do
+            if Weapon.Type == MISSILECONTROL then
+               table.insert(MultiProfileMCs, Weapon)
+            end
+         end
+      end
+      -- See if any profiles using weapon slot/distance selection match
+      local Closest,SelectedIndex = math.huge,nil
+      for _,MC in pairs(MultiProfileMCs) do
+         local MCMap = MultiProfileMCMap[MC.Slot]
+         if MCMap then
+            local Index,BlockRange = unpack(MCMap)
+            local Distance = (BlockInfo.Position - MC.Position).sqrMagnitude
+            if Distance <= BlockRange and Distance < Closest then
+               Closest = Distance
+               SelectedIndex = Index
+            end
+         end
+      end
+
+      if SelectedIndex then return SelectedIndex end
+      -- Otherwise fall through
+   end
+
+   -- Selection by orientation or direction
+   for Index,GuidanceInfo in pairs(GuidanceInfos) do
+      local Direction = GuidanceInfo.Direction
+      if Direction then
+         for _,Dir in pairs(Direction) do
+            if Vector3.Dot(BlockInfo.LocalForwards, Dir) > .001 then
+               return Index
+            end
+         end
+      else
+         local Orientation = GuidanceInfo.Orientation
+         -- Explicitly match true/false because it can be nil
+         if Orientation == true and math.abs(BlockInfo.LocalForwards.y) > .001 then
+            return Index
+         elseif Orientation == false and math.abs(BlockInfo.LocalForwards.y) <= .001 then
+            return Index
          end
       end
    end
 
-   return SelectedIndex
+   -- /sad trombone
+   return 1
 end
 
 -- Main update loop
 function MissileMain_Update(I)
-   MissileControllers = nil
+   -- Clear cache before every update to avoid trouble
+   MultiProfileMCs = nil
 
    MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
 end
