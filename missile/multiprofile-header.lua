@@ -7,20 +7,20 @@
 --   By launcher direction (right, left, up, down, forward, back)
 --   By weapon slot of the missile controller within a given distance
 
--- If a Lua transceiver potentially matches multiple profiles, then
--- the priority is the first matching profile that selects:
---   1. By weapon slot/distance
---   2. By direction
---   3. By orientation
+-- If a Lua transceiver potentially matches multiple profiles, then:
+--   1. A matching profile that uses weapon slot/distance selection
+--      always wins
+--   2. Otherwise the first matching profile (going down the list)
+--      will be used
 
 -- If a Lua transceiver matches no profiles (due to damage or
--- misconfiguration), then the 1st one is used.
+-- misconfiguration), then the 1st profile is used.
 
 -- Remember that subconstructs (turrets, spinners) have their own axes
 -- independent of the main vehicle. This may make selection by
--- orientation/direction surprising.
+-- orientation/direction surprising(!).
 
--- See https://github.com/ZerothAngel/FtDScripts/blob/master/missile/generalmissile.md for details about profile configuration (the "Config" sections).
+-- See https://github.com/ZerothAngel/FtDScripts/blob/master/missile/generalmissile.md for details about generalmissile configuration (the "Config" sections).
 
 MissileProfiles = {
    -- First profile
