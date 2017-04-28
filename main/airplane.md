@@ -23,7 +23,7 @@ For attack runs:
  1. Set `AttackRuns` to `true`
  2. Set `AttackAngle` to 0 or some small angle. This is the relative bearing of the target when the plane makes an attack run. 0 is dead ahead, good for strafing runs but prone to collisions if you match altitude (more on that later).
  3. Similarly, reduce `ClosingAngle` since you probably want it to attack ASAP, even while distant.
- 4. Adjust `ForceAttackTime` and `MinAttackTime` to taste. Read the comments.
+ 4. Adjust `ForceAttackTime` and `MinAttackTime` to taste. Read the comments. Be aware that `MinAttackTime` allows the AI to override the `MinDistance` setting, which might lead to collisions. So keep it short or keep your `AttackAngle` wide.
 
 ## Waypoint Behavior ##
 
