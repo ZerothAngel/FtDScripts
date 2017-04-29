@@ -1,5 +1,7 @@
 --@ commons componenttypes
 -- ShieldManager module
+ShieldAlwaysOn = ShieldActivationAngle >= 180
+
 -- Re-do in terms of cosine
 ShieldActivationAngle = math.cos(math.rad(ShieldActivationAngle))
 
@@ -42,15 +44,22 @@ function ShieldManager_Update(I)
 
    local Now = C:Now()
    for i=0,ShieldCount-1 do
-      local BlockInfo = I:Component_GetBlockInfo(SHIELDPROJECTOR, i)
-      local Forwards = BlockInfo.Forwards
       local Activate = false
-      -- TODO Better way to do this instead of N x M?
-      for _,Target in pairs(Targets) do
-         if Vector3.Dot(Forwards, Target) >= ShieldActivationAngle then
-            Activate = true
-            break
+
+      if not ShieldAlwaysOn then
+         local BlockInfo = I:Component_GetBlockInfo(SHIELDPROJECTOR, i)
+         local Forwards = BlockInfo.Forwards
+         -- TODO Better way to do this instead of N x M?
+         for _,Target in pairs(Targets) do
+            if Vector3.Dot(Forwards, Target) >= ShieldActivationAngle then
+               Activate = true
+               break
+            end
          end
+      else
+         -- If activation angle is >= 180, then optimize a bit and
+         -- skip all the math
+         Activate = #Targets > 0
       end
 
       -- Determine last activation time
