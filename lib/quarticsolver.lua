@@ -165,7 +165,20 @@ function Roots3And4.SolveQuartic(c)
     return s
 end
 
--- Conform to QuadradicSolver's interface
+-- Conform to QuadradicSolver's interface and catch leading 0 coefficients
 function QuarticSolver(a, b, c, d, e)
-   return Roots3And4.SolveQuartic({ e, d, c, b, a })
+   if a == 0 then
+      if b == 0 then
+         if c == 0 then
+            -- It's linear then!
+            return { -e / d }
+         else
+            return Roots3And4.SolveQuadric({c, d, e})
+         end
+      else
+         return Roots3And4.SolveCubic({b, c, d, e})
+      end
+   else
+      return Roots3And4.SolveQuartic({ e, d, c, b, a })
+   end
 end
