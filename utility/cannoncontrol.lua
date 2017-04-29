@@ -1,4 +1,4 @@
---@ commons ballistic weapontypes
+--@ commons ballistic weapontypes targetaccel
 -- Cannon fire control module
 
 -- Limits by slot
@@ -41,12 +41,15 @@ function CannonControl_Update(I)
       -- Just assume all weapons have the same gravity
       local Gravity = -I:GetGravityForAltitude(C:Altitude())
 
+      --# Maybe make # samples configurable?
+      CalculateTargetAcceleration(true, 128)
+
       -- Aim & fire each turret/cannon on the hull
       for _,Weapon in pairs(C:HullWeaponControllers()) do
          local FireSlot = ToFire[Weapon.Slot]
          if FireSlot and (Weapon.Type == TURRET or Weapon.Type == CANNON) and not Weapon.PlayerControl then
             local Target,CannonAimPoint = unpack(FireSlot)
-            local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity)
+            local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity+Target.Acceleration)
             if AimPoint and I:AimWeaponInDirection(Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, Weapon.Slot) > 0 and Weapon.Type == CANNON then
                -- If this is a turret, any on-board cannons will be fired
                -- independently below.
@@ -60,7 +63,7 @@ function CannonControl_Update(I)
          local FireSlot = ToFire[Weapon.Slot]
          if FireSlot and Weapon.Type == CANNON and not Weapon.PlayerControl then 
             local Target,CannonAimPoint = unpack(FireSlot)
-           local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity)
+           local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity+Target.Acceleration)
             if AimPoint and I:AimWeaponInDirectionOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, Weapon.Slot) > 0 then
                I:FireWeaponOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, Weapon.Slot)
             end
