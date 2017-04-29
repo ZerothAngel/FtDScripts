@@ -223,7 +223,6 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
       -- Process guidance queue
       for TargetId,QueueMissiles in pairs(GuidanceQueue) do
          local Target = TargetsById[TargetId]
-         local TargetPosition,TargetAimPoint,TargetVelocity = Target.Position,Target.AimPoint,Target.Velocity
 
          local SetTargetCalled = {}
 
@@ -243,13 +242,13 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
             if not SetTargetCalled[GuidanceIndex] then
                local SetTarget = Controller.SetTarget
                if SetTarget then
-                  SetTarget(Controller, I, TargetPosition, TargetAimPoint, TargetVelocity)
+                  SetTarget(Controller, I, Target)
                end
                SetTargetCalled[GuidanceIndex] = true
             end
             -- Then call Guide method
             local tindex,mindex = QueueMissile.TransceiverIndex,QueueMissile.MissileIndex
-            local AimPoint = Controller:Guide(I, tindex, mindex, TargetPosition, TargetAimPoint, TargetVelocity, QueueMissile.Missile, QueueMissile.MissileState)
+            local AimPoint = Controller:Guide(I, tindex, mindex, Target, QueueMissile.Missile, QueueMissile.MissileState)
             -- And set aim point
             if AimPoint then
                I:SetLuaControlledMissileAimPoint(tindex, mindex, AimPoint.x, AimPoint.y, AimPoint.z)

@@ -314,7 +314,8 @@ function GeneralMissile:ExecuteProfile(I, TransceiverIndex, MissileIndex, Positi
    return NewAimPoint
 end
 
-function GeneralMissile:SetTarget(I, _, TargetAimPoint, _)
+function GeneralMissile:SetTarget(I, Target)
+   local TargetAimPoint = Target.AimPoint
    local TargetAltitude = TargetAimPoint.y
 
    self.TargetAltitude = TargetAltitude -- Raw altitude
@@ -326,7 +327,8 @@ function GeneralMissile:SetTarget(I, _, TargetAimPoint, _)
    self.DoExecuteProfile = (TargetAltitude - self.TargetGround) <= self.ProfileActivationElevation
 end
 
-function GeneralMissile:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoint, TargetVelocity, Missile, MissileState)
+function GeneralMissile:Guide(I, TransceiverIndex, MissileIndex, Target, Missile, MissileState)
+   local TargetAimPoint = Target.AimPoint
    local MissilePosition = Missile.Position
    local MissileVelocity = Missile.Velocity
    local MissileSpeed = MissileVelocity.magnitude
@@ -362,7 +364,7 @@ function GeneralMissile:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoi
       -- Don't bother with setting thrust since they don't work underwater
    elseif self.DoExecuteProfile then
       -- Execute profile
-      AimPoint = self:ExecuteProfile(I, TransceiverIndex, MissileIndex, MissilePosition, MissileVelocity, TargetAimPoint, TargetVelocity, MissileState)
+      AimPoint = self:ExecuteProfile(I, TransceiverIndex, MissileIndex, MissilePosition, MissileVelocity, TargetAimPoint, Target.Velocity, MissileState)
    else
       -- Since PN sucks at large angles, perform a "one turn" maneuver
       -- if newly-launched
@@ -371,7 +373,7 @@ function GeneralMissile:Guide(I, TransceiverIndex, MissileIndex, _, TargetAimPoi
          AimPoint = TargetAimPoint
       else
          -- Use PN guidance
-         AimPoint = ProNav(self.AntiAir.Gain, TimeStep, MissilePosition, MissileVelocity, TargetAimPoint, TargetVelocity)
+         AimPoint = ProNav(self.AntiAir.Gain, TimeStep, MissilePosition, MissileVelocity, TargetAimPoint, Target.Velocity)
       end
       -- Set thrust
       local Thrust,ThrustAngle = self.AntiAir.DefaultThrust,nil
