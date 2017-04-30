@@ -76,12 +76,15 @@ function AllDoF_Classify(Index, BlockInfo, IsSpinner, Fractions, Infos)
    local ForwardSign = Sign(LocalForwards.z, 0, AllDoF_Eps)
    local RightSign = Sign(LocalForwards.x, 0, AllDoF_Eps)
 
+   local CoMOffsetX = Sign(CoMOffset.x, 0, AllDoF_Eps)
+   local CoMOffsetZ = Sign(CoMOffset.z, 0, AllDoF_Eps)
+
    local Info = {
       Index = Index,
       AltitudeSign = Forwards.y * Fractions.Altitude,
-      YawSign = RightSign * Sign(CoMOffset.z, 0, AllDoF_Eps) * Fractions.Yaw,
-      PitchSign = Sign(CoMOffset.z, 0, AllDoF_Eps) * UpSign * Fractions.Pitch,
-      RollSign = Sign(CoMOffset.x, 0, AllDoF_Eps) * UpSign * Fractions.Roll,
+      YawSign = (RightSign * CoMOffsetZ - ForwardSign * CoMOffsetX) * Fractions.Yaw,
+      PitchSign = CoMOffsetZ * UpSign * Fractions.Pitch,
+      RollSign = CoMOffsetX * UpSign * Fractions.Roll,
       NorthSign = Forwards.z * Fractions.North,
       EastSign = Forwards.x * Fractions.East,
       ForwardSign = ForwardSign * Fractions.Forward,
