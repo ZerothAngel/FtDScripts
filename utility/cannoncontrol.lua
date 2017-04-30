@@ -1,4 +1,4 @@
---@ commons ballistic weapontypes targetaccel
+--@ commons ballistic weapontypes
 -- Cannon fire control module
 
 -- Limits by slot
@@ -10,9 +10,6 @@ for _,Config in pairs(CannonConfigs) do
 end
 
 function CannonControl_Update(I)
-   --# Maybe make # samples configurable?
-   CalculateTargetAcceleration(false, 120)
-
    -- Pick highest priority target for each configured weapon slot
    local ToFire = {}
    local Fire = false -- Because # operator only works on sequences
@@ -49,7 +46,7 @@ function CannonControl_Update(I)
          local FireSlot = ToFire[Weapon.Slot]
          if FireSlot and (Weapon.Type == TURRET or Weapon.Type == CANNON) and not Weapon.PlayerControl then
             local Target,CannonAimPoint = unpack(FireSlot)
-            local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity+Target.Acceleration)
+            local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity)
             if AimPoint and I:AimWeaponInDirection(Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, Weapon.Slot) > 0 and Weapon.Type == CANNON then
                -- If this is a turret, any on-board cannons will be fired
                -- independently below.
@@ -63,7 +60,7 @@ function CannonControl_Update(I)
          local FireSlot = ToFire[Weapon.Slot]
          if FireSlot and Weapon.Type == CANNON and not Weapon.PlayerControl then 
             local Target,CannonAimPoint = unpack(FireSlot)
-            local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity+Target.Acceleration)
+            local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity)
             if AimPoint and I:AimWeaponInDirectionOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, Weapon.Slot) > 0 then
                I:FireWeaponOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, Weapon.Slot)
             end
