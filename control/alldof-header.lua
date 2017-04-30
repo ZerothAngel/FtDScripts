@@ -23,32 +23,32 @@ SpinnerFractions = {
 -- PID values
 AllDoFPIDConfig = {
    Altitude = {
-      Kp = 5,
+      Kp = .5,
       Ti = 5,
-      Td = .3,
+      Td = .1,
    },
    Yaw = {
-      Kp = .3,
+      Kp = .25,
       Ti = 5,
-      Td = .4,
+      Td = .1,
    },
    Pitch = {
-      Kp = .5,
+      Kp = .25,
       Ti = 5,
       Td = .1,
    },
    Roll = {
-      Kp = .5,
+      Kp = .25,
       Ti = 5,
       Td = .1,
    },
    North = {
-      Kp = .5,
+      Kp = .25,
       Ti = 5,
       Td = .1,
    },
    East = {
-      Kp = .5,
+      Kp = .25,
       Ti = 5,
       Td = .1,
    },
