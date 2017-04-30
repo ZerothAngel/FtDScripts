@@ -18,6 +18,7 @@ AllDoF_DesiredRoll = 0
 -- Figure out what's being used
 AllDoF_UsesJets = (JetFractions.Altitude > 0 or JetFractions.Yaw > 0 or JetFractions.Pitch > 0 or JetFractions.Roll > 0 or JetFractions.North > 0 or JetFractions.East > 0 or JetFractions.Forward > 0)
 AllDoF_UsesSpinners = (SpinnerFractions.Altitude > 0 or SpinnerFractions.Yaw > 0 or SpinnerFractions.Pitch > 0 or SpinnerFractions.Roll > 0 or SpinnerFractions.North > 0 or SpinnerFractions.East > 0 or SpinnerFractions.Forward > 0)
+AllDoF_UsesControls = (ControlFractions.Yaw > 0 or ControlFractions.Pitch > 0 or ControlFractions.Roll > 0 or ControlFractions.Forward > 0)
 
 AllDoF_ThrustHackControl = ThrustHack.create(ThrustHackDriveMaintainerFacing)
 
@@ -117,6 +118,24 @@ function AllDoF_ClassifySpinners(I)
    return Infos
 end
 
+function AllDoF_RequestControl(I, Fraction, PosControl, NegControl, CV)
+   if Fraction > 0 then
+      -- Scale down and constrain
+      CV = math.max(-1, math.min(1, Fraction * CV / 30))
+      if PosControl ~= NegControl then
+         -- Generally yaw, pitch, roll
+         if CV > 0 then
+            I:RequestControl(Mode, PosControl, CV)
+         elseif CV < 0 then
+            I:RequestControl(Mode, NegControl, -CV)
+         end
+      else
+         -- Generally propulsion
+         I:RequestControl(Mode, PosControl, CV)
+      end
+   end
+end
+
 function AllDoF.Update(I)
    local YawCV = AllDoF_DesiredHeading and AllDoF_YawPID:Control(NormalizeBearing(AllDoF_DesiredHeading - C:Yaw())) or 0
    local PitchCV = AllDoF_PitchPID:Control(AllDoF_DesiredPitch - C:Pitch())
@@ -163,6 +182,13 @@ function AllDoF.Update(I)
          Output = math.max(-30, math.min(30, Output))
          I:SetSpinnerContinuousSpeed(Info.Index, Output)
       end
+   end
+
+   if AllDoF_UsesControls then
+      AllDoF_RequestControl(I, ControlFractions.Yaw, YAWRIGHT, YAWLEFT, YawCV)
+      AllDoF_RequestControl(I, ControlFractions.Pitch, NOSEUP, NOSEDOWN, PitchCV)
+      AllDoF_RequestControl(I, ControlFractions.Roll, ROLLLEFT, ROLLRIGHT, RollCV)
+      AllDoF_RequestControl(I, ControlFractions.Forward, MAINPROPULSION, MAINPROPULSION, ForwardCV)
    end
 end
 
