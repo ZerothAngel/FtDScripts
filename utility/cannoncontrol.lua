@@ -10,6 +10,9 @@ for _,Config in pairs(CannonConfigs) do
 end
 
 function CannonControl_Update(I)
+   --# Maybe make # samples configurable?
+   CalculateTargetAcceleration(false, 120)
+
    -- Pick highest priority target for each configured weapon slot
    local ToFire = {}
    local Fire = false -- Because # operator only works on sequences
@@ -41,9 +44,6 @@ function CannonControl_Update(I)
       -- Just assume all weapons have the same gravity
       local Gravity = -I:GetGravityForAltitude(C:Altitude())
 
-      --# Maybe make # samples configurable?
-      CalculateTargetAcceleration(true, 128)
-
       -- Aim & fire each turret/cannon on the hull
       for _,Weapon in pairs(C:HullWeaponControllers()) do
          local FireSlot = ToFire[Weapon.Slot]
@@ -63,7 +63,7 @@ function CannonControl_Update(I)
          local FireSlot = ToFire[Weapon.Slot]
          if FireSlot and Weapon.Type == CANNON and not Weapon.PlayerControl then 
             local Target,CannonAimPoint = unpack(FireSlot)
-           local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity+Target.Acceleration)
+            local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity+Target.Acceleration)
             if AimPoint and I:AimWeaponInDirectionOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, Weapon.Slot) > 0 then
                I:FireWeaponOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, Weapon.Slot)
             end

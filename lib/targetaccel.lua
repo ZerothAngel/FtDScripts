@@ -11,7 +11,7 @@ function CalculateTargetAcceleration(Relative, NumSamples)
       if Relative then Velocity = Velocity - C:Velocity() end
 
       local State = TargetStates[Target.Id]
-      if State and (State.LastTime + 1 > Now) then
+      if State and (State.LastTime + 1) > Now then
          local dV = Velocity - State.LastVelocity
          local dT = Now - State.LastTime
 
