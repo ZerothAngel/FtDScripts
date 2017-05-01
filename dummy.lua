@@ -4,12 +4,27 @@ Vector3 = {}
 
 setmetatable(Vector3, Vector3)
 
-function Vector3.__call(func, ...)
+function Vector3.__call(func, x, y, z)
+   local self = {}
+   self.x = x
+   self.y = y
+   self.z = z
+   setmetatable(self, Vector3)
+   return self
 end
 
-Vector3.back = nil
-Vector3.down = nil
-Vector3.forward = nil
-Vector3.left = nil
-Vector3.right = nil
-Vector3.up = nil
+function Vector3.__unm(op)
+   return Vector3(-op.x, -op.y, -op.z)
+end
+
+function Vector3.Cross(a, b)
+   return Vector3(0, 0, 0) -- Meh
+end
+
+Vector3.zero = Vector3(0, 0, 0)
+Vector3.back = Vector3(0, 0, -1)
+Vector3.down = Vector3(0, -1, 0)
+Vector3.forward = Vector3(0, 0, 1)
+Vector3.left = Vector3(-1, 0, 0)
+Vector3.right = Vector3(1, 0, 0)
+Vector3.up = Vector3(0, 1, 0)
