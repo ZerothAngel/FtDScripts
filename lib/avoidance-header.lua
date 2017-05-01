@@ -23,6 +23,10 @@ FriendlyCheckDistance = 500
 FriendlyAvoidanceCombat = { 20, 100 }
 FriendlyAvoidanceIdle = { 10, 100 }
 
+-- Ignore any friendlies closer than this distance. Useful for
+-- docked ships.
+FriendlyAvoidanceIgnore = 25
+
 -- Friendly avoidance weight. Generally should be >1.
 -- Set to 0 to disable friendly avoidance.
 -- Greater number means it will begin to turn away sooner.
