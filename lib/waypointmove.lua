@@ -38,7 +38,7 @@ function MoveToWaypoint(Waypoint, AdjustHeading, WaypointVelocity)
          AdjustHeading(Bearing)
          V.SetThrottle(WaypointMoveConfig.ClosingDrive)
       elseif WaypointMoveConfig.StopOnStationaryWaypoint then
-         V.SetThrottle(0)
+         if V.GetThrottle() > 0 then V.SetThrottle(0) end
       else
          -- Set minimum speed and constantly adjust bearing
          local Bearing = GetBearingToPoint(Waypoint)
