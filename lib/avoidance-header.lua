@@ -12,9 +12,10 @@ ClearanceFactor = 1.1
 
 -- FRIENDLY AVOIDANCE
 
--- Distance to check for friendlies. Friendlies beyond this
--- distance are ignored.
-FriendlyCheckDistance = 500
+-- Distance to check for friendlies. Friendlies outside these distances
+-- are ignored. The minimum distance is useful for ignoring docked ships.
+FriendlyCheckMinDistance = 25
+FriendlyCheckMaxDistance = 500
 
 -- Each of the following has two numbers:
 -- The first is a duration of time in seconds. If a collision
@@ -22,10 +23,6 @@ FriendlyCheckDistance = 500
 -- The second is the absolute minimum distance to be from friendlies.
 FriendlyAvoidanceCombat = { 20, 100 }
 FriendlyAvoidanceIdle = { 10, 100 }
-
--- Ignore any friendlies closer than this distance. Useful for
--- docked ships.
-FriendlyAvoidanceIgnore = 25
 
 -- Friendly avoidance weight. Generally should be >1.
 -- Set to 0 to disable friendly avoidance.

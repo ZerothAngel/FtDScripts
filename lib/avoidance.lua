@@ -98,7 +98,7 @@ function Avoidance(I, Bearing)
              Friend.AxisAlignedBoundingBoxMaximum.y >= LowerEdge) then
             local Offset,_ = PlanarVector(C:CoM(), Friend.CenterOfMass)
             local Distance = Offset.magnitude
-            if Distance < FriendlyCheckDistance and Distance > FriendlyAvoidanceIgnore then
+            if Distance < FriendlyCheckMaxDistance and Distance > FriendlyCheckMinDistance then
                local Direction = Offset / Distance -- aka Offset.normalized
                local Collision = false
                if Distance < MinDistance then
