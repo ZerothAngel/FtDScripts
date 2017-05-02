@@ -1,8 +1,9 @@
 --! utilitysub
 --@ commons control firstrun periodic
---@ shieldmanager subcontrol sixdof depthcontrol ytdefaults utility-ai utility-aicommon
+--@ dockmanager shieldmanager subcontrol sixdof depthcontrol ytdefaults utility-ai utility-aicommon
 -- Utility submarine main
-ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
+ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
+DockManager = Periodic.create(DockManager_UpdateRate, DockManager_Update, 2)
 DepthControl = Periodic.create(DepthControl_UpdateRate, Depth_Control, 1)
 UtilityAI = Periodic.create(AI_UpdateRate, UtilityAI_Update)
 
@@ -37,5 +38,6 @@ function Update(I) -- luacheck: ignore 131
       SixDoF.Disable(I)
    end
 
+   DockManager:Tick(I)
    ShieldManager:Tick(I)
 end

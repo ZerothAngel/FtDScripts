@@ -13,5 +13,6 @@ ActivateWhen = {
 -- responsive it will be, but it will also take more processing time.
 AI_UpdateRate = 4
 AltitudeControl_UpdateRate = 4
+DockManager_UpdateRate = nil
 ShieldManager_UpdateRate = nil
 BalloonManager_UpdateRate = nil

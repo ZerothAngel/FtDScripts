@@ -1,9 +1,10 @@
 --! utility6dof
 --@ commons control firstrun periodic
---@ shieldmanager balloonmanager sixdof altitudecontrol gunshipdefaults utility-ai6dof utility-aicommon
+--@ dockmanager shieldmanager balloonmanager sixdof altitudecontrol gunshipdefaults utility-ai6dof utility-aicommon
 -- 6DoF Utility main
-BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 3)
-ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
+BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 4)
+ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
+DockManager = Periodic.create(DockManager_UpdateRate, DockManager_Update, 2)
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 UtilityAI = Periodic.create(AI_UpdateRate, UtilityAI_Update)
 
@@ -37,6 +38,7 @@ function Update(I) -- luacheck: ignore 131
       SixDoF.Disable(I)
    end
 
+   DockManager:Tick(I)
    ShieldManager:Tick(I)
    BalloonManager:Tick(I)
 end
