@@ -9,14 +9,12 @@ function TiltSpinner.create(Axis, PIDConfig)
    self.PIDConfig = PIDConfig
 
    --# Probably a mathematical way of doing this, but eh
-   if Axis.x ~= 0 then
-      self.Forward = Vector3.forward
-   elseif Axis.y ~= 0 then
+   if Axis.z == 0 then
       self.Forward = Vector3.forward
    else
       self.Forward = Vector3(0, -Sign(Axis.z), 0)
    end
-   self.Right = Vector3.Cross(-self.Forward, Axis)
+   self.Right = Vector3.Cross(Axis, self.Forward)
 
    self.LastSpinnerCount = 0
    self.SpinnerInfos = {}
