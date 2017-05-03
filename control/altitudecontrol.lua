@@ -10,24 +10,33 @@ AltitudeControl_Max = 0
 
 AltitudeControl_LastDodge = nil
 
+AltitudeControl_CombatStart = nil
+
 function Altitude_Control(I)
    AltitudeControl_Offset = 0
    AltitudeControl_Min = HardMinAltitude
    AltitudeControl_Max = HardMaxAltitude
 
-   local NewAltitude
-   if ManualAltitudeDriveMaintainerFacing and ManualAltitudeWhen[I.AIMode] then
-      NewAltitude = MinManualAltitude + HalfMaxManualAltitude + ManualAltitudeController:GetReading(I) * HalfMaxManualAltitude
-      if ManualEvasion and C:FirstTarget() then
-         AltitudeControl_Offset = CalculateEvasion(AltitudeEvasion)
+   local Target = C:FirstTarget()
+
+   local Now = C:Now()
+   if Target then
+      if not AltitudeControl_CombatStart then
+         AltitudeControl_CombatStart = Now
       end
    else
-      if C:FirstTarget() then
-         NewAltitude = DesiredAltitudeCombat
+      AltitudeControl_CombatStart = nil
+   end
+
+   local NewAltitude = DesiredAltitudeIdle
+   if ManualAltitudeDriveMaintainerFacing and ManualAltitudeWhen[I.AIMode] then
+      NewAltitude = MinManualAltitude + HalfMaxManualAltitude + ManualAltitudeController:GetReading(I) * HalfMaxManualAltitude
+      if ManualEvasion and Target then
          AltitudeControl_Offset = CalculateEvasion(AltitudeEvasion)
-      else
-         NewAltitude = DesiredAltitudeIdle
       end
+   elseif Target and (AltitudeControl_CombatStart + DesiredAltitudeCombatDelay) <= Now then
+      NewAltitude = DesiredAltitudeCombat
+      AltitudeControl_Offset = CalculateEvasion(AltitudeEvasion)
    end
 
    if not AbsoluteAltitude then
@@ -42,7 +51,6 @@ function Altitude_Control(I)
    end
 
    if MatchTargetAboveAltitude then
-      local Target = C:FirstTarget()
       if Target and Target.AimPoint.y >= MatchTargetAboveAltitude then
          NewAltitude = Target.AimPoint.y + MatchTargetOffset
       end

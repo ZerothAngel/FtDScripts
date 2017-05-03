@@ -34,6 +34,10 @@ AbsoluteAltitude = false
 DesiredAltitudeCombat = 100
 DesiredAltitudeIdle = 100
 
+-- Delay in seconds before shifting to combat altitude. Useful if combat
+-- altitude is lower than idle and when being released from a carrier.
+DesiredAltitudeCombatDelay = 0
+
 -- If non-nil, then for targets above this altitude, the desired
 -- altitude will be set to the target's altitude plus MatchTargetOffset,
 -- instead of DesiredAltitudeCombat above.
