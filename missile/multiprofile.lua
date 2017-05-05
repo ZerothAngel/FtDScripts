@@ -8,8 +8,7 @@ MultiProfileMCMap = {}
 MultiProfileScanMCs = false
 
 -- Pre-process MissileProfiles, fill out GuidanceInfos
-for i = 1,#MissileProfiles do
-   local MP = MissileProfiles[i]
+for i,MP in ipairs(MissileProfiles) do
    local GuidanceInfo = {
       -- Create GeneralMissile instance
       Controller = GeneralMissile.create(MP.Config),

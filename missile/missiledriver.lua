@@ -33,8 +33,7 @@ end
 function MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
    local SlotsToFire = {}
    local Fire = false
-   for i = 1,#GuidanceInfos do
-      local Guidance = GuidanceInfos[i]
+   for i,Guidance in ipairs(GuidanceInfos) do
       local WeaponSlot = Guidance.WeaponSlot
       if WeaponSlot then
          for _,Target in ipairs(TargetsByPriority) do

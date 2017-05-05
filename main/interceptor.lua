@@ -46,8 +46,7 @@ function Interceptor_Update(I)
                   if not Assignment then
                      local Warning = nil
                      local ClosestDistance = math.huge -- Actually squared
-                     for windex=1,#Warnings do
-                        local WarningId = Warnings[windex]
+                     for _,WarningId in ipairs(Warnings) do
                         if JustLaunched then
                            -- If just launched, take first unassigned warning
                            if not InterceptAssignmentsByWarning[WarningId] then

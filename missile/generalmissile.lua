@@ -35,8 +35,8 @@ function GeneralMissile.create(Config)
    self.DetonationAngle = PrepareAngle(self.DetonationAngle, 1)
    self.AntiAir.ThrustAngle = PrepareAngle(self.AntiAir.ThrustAngle)
    self.AntiAir.OneTurnAngle = PrepareAngle(self.AntiAir.OneTurnAngle, 1)
-   for i = 1,#self.Phases do
-      self.Phases[i].ThrustAngle = PrepareAngle(self.Phases[i].ThrustAngle)
+   for _,Phase in pairs(self.Phases) do
+      Phase.ThrustAngle = PrepareAngle(Phase.ThrustAngle)
    end
 
    -- Handle certain nil values so they will always evaluate false

@@ -22,8 +22,8 @@ function EventDriver:Schedule(Delay, Function)
 
    local Events = self.Events
    -- Insertion sort
-   for i = 1,#Events do
-      if At < Events[i].At then
+   for i,e in ipairs(Events) do
+      if At < e.At then
          -- Insert before this one
          table.insert(Events, i, Event)
          return

@@ -6,8 +6,7 @@ GuidanceInfos = {}
 GuidanceInfosIndices = {}
 
 -- Pre-process MissileProfiles, fill out GuidanceInfos
-for i = 1,#MissileProfiles do
-   local MP = MissileProfiles[i]
+for i,MP in ipairs(MissileProfiles) do
    local GuidanceInfo = {
       -- Create UnifiedMissile instance
       Controller = UnifiedMissile.create(MP.Config),
@@ -42,8 +41,7 @@ function SelectGuidance(I, TransceiverIndex)
    -- Look for closest missile controller within BlockRange
    local BlockInfo = I:GetLuaTransceiverInfo(TransceiverIndex)
    local Closest,SelectedIndex = math.huge,1 -- Default to GuidanceInfos[1]
-   for i = 1,#MissileControllers do
-      local MC = MissileControllers[i]
+   for _,MC in pairs(MissileControllers) do
       local Index = GuidanceInfosIndices[MC.Slot]
       if Index then
          local Distance = (BlockInfo.Position - MC.Position).sqrMagnitude
