@@ -1,4 +1,4 @@
---@ commons control planarvector spairs
+--@ commonsfriends commonstargets commons control planarvector spairs
 -- Repair AI module (common)
 ParentID = nil
 RepairTargetID = nil

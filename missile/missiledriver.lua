@@ -1,4 +1,4 @@
---@ commons weapontypes
+--@ commonstargets commonsweapons commons weapontypes
 -- MissileDriver module
 LastTransceiverCount = 0
 TransceiverGuidances = {}

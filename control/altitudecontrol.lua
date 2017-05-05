@@ -1,4 +1,4 @@
---@ commons control manualcontroller evasion terraincheck sign
+--@ commonstargets commons control manualcontroller evasion terraincheck sign
 -- Altitude Control module
 ManualAltitudeController = ManualController.create(ManualAltitudeDriveMaintainerFacing)
 HalfMaxManualAltitude = (MaxManualAltitude - MinManualAltitude) / 2

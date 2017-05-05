@@ -1,11 +1,11 @@
---@ commons control planarvector spairs
+--@ commonstargets commons control planarvector spairs
 -- Utility AI module (common)
 
 -- Save original MaxEnemyRange
-EscapeRange = Commons.MaxEnemyRange
+EscapeRange = CommonsConfig.MaxEnemyRange
 
 -- And disable range check
-Commons.MaxEnemyRange = math.huge
+CommonsConfig.MaxEnemyRange = math.huge
 
 -- Note: Needs to be unfiltered (by range)
 function GetTargets()

@@ -1,4 +1,4 @@
---@ commons missiledriver unifiedmissile weapontypes
+--@ commonsweapons missiledriver unifiedmissile weapontypes
 -- Multi profile module
 
 GuidanceInfos = {}

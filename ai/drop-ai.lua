@@ -1,4 +1,4 @@
---@ commons control getvectorangle planarvector dodge3d evasion
+--@ commonstargets commons control getvectorangle planarvector dodge3d evasion
 -- Drop AI module
 DodgeAltitudeOffset = nil
 DropTargetID = nil

@@ -1,4 +1,4 @@
---@ commons deepcopy planarvector round quadraticsolver
+--@ commonsfriends deepcopy planarvector round quadraticsolver
 SmartMine = {}
 
 function SmartMine.create(Config)

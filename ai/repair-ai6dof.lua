@@ -1,4 +1,4 @@
---@ commons control planarvector getvectorangle
+--@ commonsfriends commons control planarvector getvectorangle
 -- Repair AI module (6DoF)
 function MoveToRepairTarget()
    local RepairTarget = C:FriendlyById(RepairTargetID)

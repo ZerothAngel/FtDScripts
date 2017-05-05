@@ -1,5 +1,5 @@
 --! interceptor
---@ commons periodic
+--@ periodic
 function GatherWarnings(I)
    local Warnings = {}
    local WarningsById = {}
@@ -102,8 +102,7 @@ end
 Interceptor = Periodic.create(UpdateRate, Interceptor_Update)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
-   if not C:IsDocked() then
+   if not I:IsDocked() then
       Interceptor:Tick(I)
    end
 end

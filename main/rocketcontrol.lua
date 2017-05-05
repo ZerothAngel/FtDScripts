@@ -1,5 +1,5 @@
 --! rocketcontrol
---@ commons periodic weapontypes quadraticintercept
+--@ commonstargets commonsweapons commons periodic weapontypes quadraticintercept
 function RocketControl_Update(I)
    -- Get highest-priority non-salvage target
    local Target = C:FirstTarget()

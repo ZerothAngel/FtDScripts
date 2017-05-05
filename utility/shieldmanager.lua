@@ -1,4 +1,4 @@
---@ commons componenttypes
+--@ commonstargets commons componenttypes
 -- ShieldManager module
 ShieldAlwaysOn = ShieldActivationAngle >= 180
 

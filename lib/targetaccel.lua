@@ -1,4 +1,4 @@
---@ commons movingaverage
+--@ commonstargets commons movingaverage
 -- Target acceleration measurement
 TargetStates = {}
 

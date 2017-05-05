@@ -1,5 +1,5 @@
 --! dediblademaintainer
---@ commons periodic manualcontroller spinnercontrol
+--@ periodic manualcontroller spinnercontrol
 ThrottleController = ManualController.create(ThrottleDriveMaintainerFacing)
 PropulsionSpinners = SpinnerControl.create(Vector3.forward, UseSpinners, UseDediBlades)
 
@@ -28,9 +28,8 @@ end
 DediBladeMaintainer = Periodic.create(UpdateRate, DediBladeMaintainer_Control)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
    if ActivateWhen[I.AIMode] then
-      if not C:IsDocked() then
+      if not I:IsDocked() then
          DediBladeMaintainer:Tick(I)
 
          DediBladeMaintainer_Update(I)

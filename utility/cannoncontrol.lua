@@ -1,4 +1,4 @@
---@ commons ballistic weapontypes
+--@ commonstargets commonsweapons commons ballistic weapontypes
 -- Cannon fire control module
 
 -- Limits by slot

@@ -1,4 +1,4 @@
---@ commons control manualcontroller evasion terraincheck sign
+--@ commonstargets commons control manualcontroller evasion terraincheck sign
 -- Depth Control module
 ManualDepthController = ManualController.create(ManualDepthDriveMaintainerFacing)
 

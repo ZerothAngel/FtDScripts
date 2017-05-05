@@ -1,4 +1,4 @@
---@ commons control avoidance waypointmove
+--@ commonsfriends control avoidance waypointmove
 -- Repair AI module (yaw-throttle)
 function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
    MoveToWaypoint(Waypoint, function (Bearing) V.AdjustHeading(Avoidance(I, Bearing)) end, WaypointVelocity)

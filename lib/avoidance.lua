@@ -1,4 +1,4 @@
---@ commons firstrun planarvector getvectorangle getbearingtopoint
+--@ commonsfriends commonstargets commons firstrun planarvector getvectorangle getbearingtopoint
 -- Avoidance module
 MidPoint = nil
 VerticalClearance = 0

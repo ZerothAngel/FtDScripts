@@ -1,4 +1,4 @@
---@ commons control planarvector getbearingtopoint sign evasion normalizebearing
+--@ commonstargets commons control planarvector getbearingtopoint sign evasion normalizebearing
 --@ dodgeyaw avoidance waypointmove
 -- Naval AI module
 Attacking = false

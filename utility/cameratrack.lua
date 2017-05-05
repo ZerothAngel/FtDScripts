@@ -1,4 +1,4 @@
---@ commons weapontypes
+--@ commonstargets commonsweapons weapontypes
 function CameraTrack_Update(I)
    local Target = C:FirstTarget()
    if Target then
