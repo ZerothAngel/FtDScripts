@@ -1,4 +1,4 @@
---@ commonstargets commons control planarvector spairs
+--@ commonstargets commons control planarvector
 -- Utility AI module (common)
 
 -- Save original MaxEnemyRange
@@ -6,6 +6,9 @@ EscapeRange = CommonsConfig.MaxEnemyRange
 
 -- And disable range check
 CommonsConfig.MaxEnemyRange = math.huge
+
+-- Pre-square
+GatherMaxDistance = GatherMaxDistance^2
 
 -- Note: Needs to be unfiltered (by range)
 function GetTargets()
@@ -22,7 +25,7 @@ end
 function GetResourceZones(I, ReferencePosition)
    local ResourceZones = {}
    for _,ResourceZone in ipairs(I.ResourceZones) do
-      local Distance = (ResourceZone.Position - ReferencePosition).magnitude
+      local Distance = (ResourceZone.Position - ReferencePosition).sqrMagnitude
       if Distance < GatherMaxDistance and ResourceZone.Resources.NaturalTotal > 0 then
          local RZInfo = {
             Distance = Distance,
@@ -152,11 +155,10 @@ function UtilityAI_Main(I)
       local Gathering = false
       if IsGatherer and not Collecting and HasRoom then
          local ResourceZones = GetResourceZones(I, FlagshipPosition)
-         for _,RZInfo in spairs(ResourceZones, function(t,a,b) return t[a].Distance < t[b].Distance end) do -- luacheck: ignore 512
-            UtilityAI_MoveToGather(I, RZInfo)
+         if #ResourceZones > 0 then
+            table.sort(ResourceZones, function (a,b) return a.Distance < b.Distance end)
+            UtilityAI_MoveToGather(I, ResourceZones[1])
             Gathering = true
-            -- Only care about the first one
-            break
          end
       end
 

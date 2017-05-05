@@ -1,4 +1,4 @@
---@ commonsfriends commonstargets commons control planarvector spairs
+--@ commonsfriends commonstargets commons control planarvector
 -- Repair AI module (common)
 ParentID = nil
 RepairTargetID = nil
@@ -28,7 +28,7 @@ function SelectRepairTarget()
    -- Parent first, adjust weight accordingly
    local ParentCoM = Parent.CenterOfMass
    local Offset,_ = PlanarVector(C:CoM(), ParentCoM)
-   Targets[Parent.Id] = CalculateRepairTargetWeight(Offset.magnitude, 0, Parent) * ParentBonus
+   table.insert(Targets, { Parent.Id, CalculateRepairTargetWeight(Offset.magnitude, 0, Parent) * ParentBonus })
 
    local RepairTargetMinAltitude = C:Altitude() - RepairTargetMaxAltitudeDelta
    local RepairTargetMaxAltitude = C:Altitude() + RepairTargetMaxAltitudeDelta
@@ -49,18 +49,16 @@ function SelectRepairTarget()
             FriendAlt >= RepairTargetMinAltitude and
             FriendAlt <= RepairTargetMaxAltitude and
             FriendHealth <= RepairTargetMaxHealthFraction and
-            FriendHealth >= RepairTargetMinHealthFraction then
-            Targets[Friend.Id] = CalculateRepairTargetWeight(Distance, ParentDistance, Friend)
+         FriendHealth >= RepairTargetMinHealthFraction then
+            table.insert(Targets, { Friend.Id, CalculateRepairTargetWeight(Distance, ParentDistance, Friend) })
          end
       end
    end
 
-   -- Sort
-   for k,_ in spairs(Targets, function(t,a,b) return t[b] < t[a] end) do -- luacheck: ignore 512
-      RepairTargetID = k
-      -- Only care about the first one
-      break
-   end
+   -- Sort in descending order
+   table.sort(Targets, function (a,b) return b[2] < a[2] end)
+   -- Only care about the first one
+   RepairTargetID = Targets[1][1]
 end
 
 function Imprint()
