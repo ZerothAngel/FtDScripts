@@ -68,7 +68,7 @@ function GetTerrainHeight(I, Velocity, MinAltitude, MaxAltitude)
 
    for _,Offset in pairs(TerrainCheckPoints) do
       local Side = Perp * Offset
-      for _,Distance in pairs(Distances) do
+      for _,Distance in ipairs(Distances) do
          local TestPoint = Distance + Side
          Height = math.max(Height, I:GetTerrainAltitudeForPosition(TestPoint))
       end

@@ -55,7 +55,7 @@ function GetTerrainHits(I, Angle, LowerEdge, Speed)
 
    for _,Offset in pairs(CheckPoints) do
       local Blocked = false
-      for _,Distance in pairs(Distances) do
+      for _,Distance in ipairs(Distances) do
          if Blocked then
             -- Just assume all points beyond the previous are blocked as well
             -- Also means the closer the obstacle, the greater the # of hits

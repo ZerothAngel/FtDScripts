@@ -10,7 +10,7 @@ function DropAI_GatherTargets()
    local TargetsByPriority = {}
    local TargetsById = {}
 
-   for _,Target in pairs(C:Targets()) do
+   for _,Target in ipairs(C:Targets()) do
       table.insert(TargetsByPriority, Target)
       TargetsById[Target.Id] = Target
    end
@@ -45,7 +45,7 @@ function DropAI_Main(I)
    if not DropTarget then
       -- Imprint on closest
       local ClosestDistance = math.huge -- Squared
-      for _,Target in pairs(TargetsByPriority) do
+      for _,Target in ipairs(TargetsByPriority) do
          local Offset = Target.Position - C:CoM()
          local Distance = Offset.sqrMagnitude
          if Distance < ClosestDistance then

@@ -243,7 +243,7 @@ function Commons:GatherTargets(Targets, StartIndex, MaxTargets)
    local CoM = self:CoM()
    local AttackSalvage = self.AttackSalvage
    -- Query mainframes in the preferred order
-   for _,mindex in pairs(Commons.PreferredTargetMainframes) do
+   for _,mindex in ipairs(Commons.PreferredTargetMainframes) do
       local TargetCount = self.I:GetNumberOfTargets(mindex)
       if TargetCount > 0 then
          if not StartIndex then StartIndex = 0 end

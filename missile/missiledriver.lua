@@ -12,12 +12,12 @@ function MissileDriver_GatherTargets(GuidanceInfos)
 
    -- Augment target info
    local Targets = C:Targets()
-   for _,Target in pairs(Targets) do
+   for _,Target in ipairs(Targets) do
       local CanTarget = {}
       local InRange = {}
       local Altitude = Target.AimPoint.y
       local Range = Target.SqrRange
-      for _,GuidanceInfo in pairs(GuidanceInfos) do
+      for _,GuidanceInfo in ipairs(GuidanceInfos) do
          table.insert(CanTarget, Altitude >= GuidanceInfo.MinAltitude and Altitude <= GuidanceInfo.MaxAltitude)
          table.insert(InRange, Range >= GuidanceInfo.MinRange and Range <= GuidanceInfo.MaxRange)
       end
@@ -37,7 +37,7 @@ function MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
       local Guidance = GuidanceInfos[i]
       local WeaponSlot = Guidance.WeaponSlot
       if WeaponSlot then
-         for _,Target in pairs(TargetsByPriority) do
+         for _,Target in ipairs(TargetsByPriority) do
             -- Range isn't all that accurate since it's range from Position, not turret/controller, but eh...
             if Target.CanTarget[i] and Target.InRange[i] then
                -- Respect priority and don't bother with leading the target
@@ -124,7 +124,7 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
          if not FilteredTargets then
             -- Filter prioritized targets and save.
             FilteredTargets = {}
-            for _,Target in pairs(TargetsByPriority) do
+            for _,Target in ipairs(TargetsByPriority) do
                if Target.CanTarget[GuidanceIndex] and Target.InRange[GuidanceIndex] then
                   table.insert(FilteredTargets, Target)
                end
@@ -173,7 +173,7 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
                            -- this missile can target
                            local MissilePosition = Missile.Position
                            local ClosestDistance = math.huge -- Actually squared
-                           for _,T in pairs(TargetsByPriority) do
+                           for _,T in ipairs(TargetsByPriority) do
                               if T.CanTarget[GuidanceIndex] then
                                  local Offset = T.Position - MissilePosition
                                  local Distance = Offset.sqrMagnitude

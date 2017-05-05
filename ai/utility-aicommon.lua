@@ -12,7 +12,7 @@ function GetTargets()
    local Targets = {}
    local TargetsById = {}
 
-   for _,Target in pairs(C:Targets()) do
+   for _,Target in ipairs(C:Targets()) do
       table.insert(Targets, Target)
       TargetsById[Target.Id] = Target
    end

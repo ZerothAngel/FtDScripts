@@ -32,7 +32,7 @@ function DockManager_Classify(I)
       if SequentialDelay then
          -- Sort and add delay
          table.sort(DockManager_DockInfos, function (a,b) return a.RelativeOrder < b.RelativeOrder end)
-         for i,Info in pairs(DockManager_DockInfos) do
+         for i,Info in ipairs(DockManager_DockInfos) do
             Info.ReleaseDelay = Info.ReleaseDelay + (i-1) * SequentialDelay
          end
       end
@@ -48,7 +48,7 @@ function DockManager_Update(I)
    if not ThreatsDetected then
       -- Scan for enemies within ThreatDistance
       local ThreatDistance = DockManagerConfig.ThreatDistance
-      for _,Target in pairs(C:Targets()) do
+      for _,Target in ipairs(C:Targets()) do
          local Offset,_ = PlanarVector(C:CoM(), Target.Position)
          if Offset.sqrMagnitude <= ThreatDistance then
             ThreatsDetected = true

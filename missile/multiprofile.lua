@@ -72,7 +72,7 @@ function SelectGuidance(I, TransceiverIndex)
    end
 
    -- Selection by orientation or direction
-   for Index,GuidanceInfo in pairs(GuidanceInfos) do
+   for Index,GuidanceInfo in ipairs(GuidanceInfos) do
       local Direction = GuidanceInfo.Direction
       if Direction then
          for _,Dir in pairs(Direction) do

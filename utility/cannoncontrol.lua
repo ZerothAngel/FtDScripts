@@ -18,7 +18,7 @@ function CannonControl_Update(I)
    for Slot,Limits in pairs(CannonLimits) do
       local MinRange,MaxRange = Limits.MinRange,Limits.MaxRange
       local MinAltitude,MaxAltitude = Limits.MinAltitude,Limits.MaxAltitude
-      for _,Target in pairs(Targets) do
+      for _,Target in ipairs(Targets) do
          local Range = Target.Range
          local Altitude = Target.Position.y
          if Range >= MinRange and Range <= MaxRange and Altitude >= MinAltitude and Altitude <= MaxAltitude then
