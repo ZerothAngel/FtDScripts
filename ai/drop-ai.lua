@@ -46,7 +46,7 @@ function DropAI_Main(I)
       -- Imprint on closest
       local ClosestDistance = math.huge -- Squared
       for _,Target in ipairs(TargetsByPriority) do
-         local Offset = Target.Position - C:CoM()
+         local Offset,_ = PlanarVector(C:CoM(), Target.Position)
          local Distance = Offset.sqrMagnitude
          if Distance < ClosestDistance then
             DropTargetID = Target.Id
