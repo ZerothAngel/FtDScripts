@@ -67,7 +67,7 @@ function Imprint()
    local Closest = math.huge
    for _,Friend in pairs(C:Friendlies()) do
       local Offset,_ = PlanarVector(C:CoM(), Friend.CenterOfMass)
-      local Distance = Offset.magnitude
+      local Distance = Offset.sqrMagnitude
       if Distance < Closest then
          Closest = Distance
          ParentID = Friend.Id
