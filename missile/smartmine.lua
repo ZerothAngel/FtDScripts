@@ -15,10 +15,9 @@ function SmartMine.create(Config)
 end
 
 function SmartMine.SendUpdate(I, TransceiverIndex, MissileIndex, NewState)
-   local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
-   local BallastDepth,MagnetRange = NewState.BallastDepth,NewState.MagnetRange
-   local Thrust = NewState.Thrust
+   local BallastDepth,MagnetRange,Thrust = NewState.BallastDepth,NewState.MagnetRange,NewState.Thrust
    if not (BallastDepth or MagnetRange or Thrust) then return end
+   local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
    for _,Part in pairs(MissileInfo.Parts) do
       if BallastDepth and Part.Name == "missile ballast" then
          Part:SendRegister(1, BallastDepth)
