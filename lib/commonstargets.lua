@@ -17,7 +17,7 @@ function Commons:GatherTargets(Targets, StartIndex, MaxTargets)
    local CoM = self:CoM()
    local AttackSalvage = self.AttackSalvage
    -- Query mainframes in the preferred order
-   for _,mindex in ipairs(CommonsConfig.PreferredTargetMainframes) do
+   for _,mindex in ipairs(CommonsTargetConfig.PreferredTargetMainframes) do
       local TargetCount = self.I:GetNumberOfTargets(mindex)
       if TargetCount > 0 then
          if not StartIndex then StartIndex = 0 end
@@ -29,7 +29,7 @@ function Commons:GatherTargets(Targets, StartIndex, MaxTargets)
             if TargetInfo.Valid and (TargetInfo.Protected or AttackSalvage) then
                local Offset = TargetInfo.Position - CoM
                local Range = Offset.magnitude
-               if Range <= CommonsConfig.MaxEnemyRange then
+               if Range <= CommonsTargetConfig.MaxEnemyRange then
                   table.insert(Targets, Commons.ConvertTarget(tindex, TargetInfo, Offset, Range))
                end
             end

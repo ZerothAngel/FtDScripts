@@ -32,7 +32,7 @@ function Evade(Evasion, Perp)
    end
 end
 
-function DropAI_Main(I)
+function DropAI_Main()
    local TargetsByPriority,TargetsById = DropAI_GatherTargets()
 
    if #TargetsByPriority == 0 then return false end
@@ -69,7 +69,7 @@ function DropAI_Main(I)
 
    local Offset = PlanarVector(C:CoM(), DropTargetPosition)
    local Distance = Offset.magnitude
-   local DodgeX,DodgeY,DodgeZ,Dodging = Dodge(I)
+   local DodgeX,DodgeY,DodgeZ,Dodging = Dodge()
    DropAI_Closing = Distance > OriginMaxDistance
    if DropAI_Closing then
       if Dodging then
@@ -128,7 +128,7 @@ function DropAI_Update(I)
 
    local AIMode = I.AIMode
    if AIMode ~= "fleetmove" then
-      if not DropAI_Main(I) then
+      if not DropAI_Main() then
          DropAI_Reset()
          if ReturnToOrigin then
             FormationMove(I)

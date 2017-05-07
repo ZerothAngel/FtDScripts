@@ -1,4 +1,4 @@
---@ commons firstrun raysphereintersect sign
+--@ commonswarnings commons firstrun raysphereintersect sign
 -- Dodge (common) module
 LastDodgeDirection = nil
 LastDodgeProjectile = nil
@@ -56,19 +56,15 @@ function CalculateDodge(Projectile)
    return { Sign(ImpactPoint.x, 1), Sign(ImpactPoint.y, 1), Sign(ImpactPoint.z, 1) },ImpactTime
 end
 
-function Dodge(I)
-   if MissileWarningMainframe then
+function Dodge()
+   if DodgingEnabled then
       local DodgeDirection,Soonest,ProjectileId = nil,math.huge,nil
-      for pindex = 0,I:GetNumberOfWarnings(MissileWarningMainframe)-1 do
-         local Projectile = I:GetMissileWarning(MissileWarningMainframe, pindex)
-         -- Only if valid (when wouldn't it be?)
-         if Projectile.Valid then
-            local Direction,ImpactTime = CalculateDodge(Projectile)
-            if Direction and ImpactTime <= DodgeTimeHorizon and ImpactTime < Soonest then
-               DodgeDirection = Direction
-               Soonest = ImpactTime
-               ProjectileId = Projectile.Id
-            end
+      for _,Projectile in pairs(C:MissileWarnings()) do
+         local Direction,ImpactTime = CalculateDodge(Projectile)
+         if Direction and ImpactTime <= DodgeTimeHorizon and ImpactTime < Soonest then
+            DodgeDirection = Direction
+            Soonest = ImpactTime
+            ProjectileId = Projectile.Id
          end
       end
 

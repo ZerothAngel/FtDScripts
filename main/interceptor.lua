@@ -1,23 +1,15 @@
 --! interceptor
---@ periodic
-function GatherWarnings(I)
+--@ commonswarnings periodic
+function GatherWarnings()
    local Warnings = {}
    local WarningsById = {}
 
-   for mindex=0,I:GetNumberOfMainframes()-1 do
-      for windex=0,I:GetNumberOfWarnings(mindex)-1 do
-         local Missile = I:GetMissileWarning(mindex, windex)
-         -- TODO Closing check?
-         if Missile.Valid and Missile.Range <= 1000 then
-            local MissileId = Missile.Id
-            table.insert(Warnings, MissileId)
-            WarningsById[MissileId] = {
-               Id = MissileId,
-               MainframeIndex = mindex,
-               WarningIndex = windex,
-               Position = Missile.Position,
-            }
-         end
+   for _,Missile in pairs(C:MissileWarnings()) do
+      -- TODO Closing check?
+      if Missile.Range <= 1000 then
+         local MissileId = Missile.Id
+         table.insert(Warnings, MissileId)
+         WarningsById[MissileId] = Missile
       end
    end
 
@@ -29,7 +21,7 @@ InterceptAssignments = {}
 InterceptAssignmentsByWarning = {}
 
 function Interceptor_Update(I)
-   local Warnings,WarningsById = GatherWarnings(I)
+   local Warnings,WarningsById = GatherWarnings()
    if #Warnings > 0 then
 
       local NewInterceptAssignments = {}
@@ -81,7 +73,7 @@ function Interceptor_Update(I)
                         end
 
                         -- And actually assign the missile
-                        I:SetLuaControlledMissileInterceptorTarget(tindex, mindex, Warning.MainframeIndex, Warning.WarningIndex)
+                        I:SetLuaControlledMissileInterceptorTarget(tindex, mindex, Warning.MainframeIndex, Warning.Index)
                      end
                   elseif WarningsById[Assignment] then
                      -- Move info to next update if warning still valid
@@ -102,7 +94,8 @@ end
 Interceptor = Periodic.create(UpdateRate, Interceptor_Update)
 
 function Update(I) -- luacheck: ignore 131
-   if not I:IsDocked() then
+   C = Commons.create(I)
+   if not C:IsDocked() then
       Interceptor:Tick(I)
    end
 end

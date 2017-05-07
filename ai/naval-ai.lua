@@ -73,7 +73,7 @@ function AdjustHeadingToTarget(I)
    end
 
    local Bearing
-   local DodgeAngle,DodgeY,Dodging = Dodge(I)
+   local DodgeAngle,DodgeY,Dodging = Dodge()
    if Dodging then
       Bearing = DodgeAngle
       DodgeAltitudeOffset = DodgeY * VehicleRadius

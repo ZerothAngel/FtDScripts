@@ -1,6 +1,6 @@
--- COMMONS SETTINGS
+-- COMMONS TARGETING SETTINGS
 
-CommonsConfig = {
+CommonsTargetConfig = {
    -- Preferred mainframe indexes for target priority.
    -- Once a mainframe is successfully queried, the rest are ignored.
    -- First mainframe (in "C" screen) = 0, 2nd = 1, etc.

@@ -11,9 +11,8 @@ VehicleRadius = nil
 -- longest dimension of the vehicle to set VehicleRadius.
 VehicleRadiusPadding = 2
 
--- Mainframe to use for missile warnings.
--- Set to nil to disable dodging.
-MissileWarningMainframe = 0
+-- Whether or not dodging is enabled.
+DodgingEnabled = true
 
 -- Only consider missiles that are predicted to impact within this
 -- number of seconds.

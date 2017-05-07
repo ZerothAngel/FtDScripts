@@ -2,10 +2,10 @@
 -- Utility AI module (common)
 
 -- Save original MaxEnemyRange
-EscapeRange = CommonsConfig.MaxEnemyRange
+EscapeRange = CommonsTargetConfig.MaxEnemyRange
 
 -- And disable range check
-CommonsConfig.MaxEnemyRange = math.huge
+CommonsTargetConfig.MaxEnemyRange = math.huge
 
 -- Pre-square
 GatherMaxDistance = GatherMaxDistance^2

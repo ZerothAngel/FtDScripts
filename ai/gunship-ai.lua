@@ -23,7 +23,7 @@ function Gunship_GetWeaponSpeed(WeaponSlot)
    return nil
 end
 
-function AdjustPositionToTarget(I)
+function AdjustPositionToTarget()
    local TargetPosition = C:FirstTarget().Position
    local GroundVector = PlanarVector(C:CoM(), TargetPosition)
    local Distance = GroundVector.magnitude
@@ -60,7 +60,7 @@ function AdjustPositionToTarget(I)
    local Bearing = GetBearingToPoint(TargetPosition)
    Bearing = Bearing - Sign(Bearing, 1) * TargetAngle
    local Offset
-   local DodgeX,DodgeY,DodgeZ,Dodging = Dodge(I)
+   local DodgeX,DodgeY,DodgeZ,Dodging = Dodge()
    if Dodging then
       Offset = C:RightVector() * (DodgeX * VehicleRadius) + C:ForwardVector() * (DodgeZ * VehicleRadius)
       DodgeAltitudeOffset = DodgeY * VehicleRadius
@@ -111,7 +111,7 @@ function GunshipAI_Update(I)
    V.Reset()
 
    if C:FirstTarget() then
-      AdjustPositionToTarget(I)
+      AdjustPositionToTarget()
    end
 
    if I.AIMode ~= "fleetmove" then
