@@ -1,5 +1,4 @@
 #!/bin/sh
-PATH=/bin:/usr/bin:/usr/local/bin:$HOME/.luacheck/bin; export PATH
 
 if ! test -d out; then
   exit 0
@@ -19,7 +18,7 @@ TEMP=$(mktemp /tmp/check.XXXXXX)
 trap "rm -f $TEMP" EXIT
 
 for f in out/*.lua; do
-  if lua52 -l dummy "$f"; then
+  if lua51 -l dummy "$f"; then
     echo -n "$f: "
     if check_commons "$f"; then
       if luacheck "$f" >$TEMP; then
