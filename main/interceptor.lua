@@ -1,14 +1,15 @@
 --! interceptor
---@ commonswarnings periodic
+--@ commonswarnings commonsweapons commons periodic quadraticintercept weapontypes
 function GatherWarnings()
    local Warnings = {}
    local WarningsById = {}
 
    for _,Missile in pairs(C:MissileWarnings()) do
-      -- TODO Closing check?
-      if Missile.Range <= 1000 then
+      if Missile.Range <= MissileInterceptorRange then
+         --# Note that closing check seems to make it more ineffective since
+         --# VLS missiles won't initially be heading this way.
          local MissileId = Missile.Id
-         table.insert(Warnings, MissileId)
+         table.insert(Warnings, Missile)
          WarningsById[MissileId] = Missile
       end
    end
@@ -24,6 +25,20 @@ function Interceptor_Update(I)
    local Warnings,WarningsById = GatherWarnings()
    if #Warnings > 0 then
 
+      --# TODO Only launch if there are unassigned warnings
+      if MissileInterceptorWeaponSlot then
+         -- Just "aim" at first warning
+         local AimPoint = Warnings[1].Position
+         -- Only hull-mounted interceptors for now
+         for _,Weapon in pairs(C:HullWeaponControllers()) do
+            if Weapon.Slot == MissileInterceptorWeaponSlot and Weapon.Type == MISSILECONTROL and not Weapon.PlayerControl then
+               if I:AimWeaponInDirection(Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, MissileInterceptorWeaponSlot) > 0 then
+                  I:FireWeapon(Weapon.Index, MissileInterceptorWeaponSlot)
+               end
+            end
+         end
+      end
+
       local NewInterceptAssignments = {}
       local NewInterceptAssignmentsByWarning = {}
 
@@ -38,7 +53,8 @@ function Interceptor_Update(I)
                   if not Assignment then
                      local Warning = nil
                      local ClosestDistance = math.huge -- Actually squared
-                     for _,WarningId in ipairs(Warnings) do
+                     for _,W in ipairs(Warnings) do
+                        local WarningId = W.Id
                         if JustLaunched then
                            -- If just launched, take first unassigned warning
                            if not InterceptAssignmentsByWarning[WarningId] then
@@ -72,13 +88,27 @@ function Interceptor_Update(I)
                            InterceptAssignmentsByWarning[WarningId] = MissileId
                         end
 
-                        -- And actually assign the missile
-                        I:SetLuaControlledMissileInterceptorTarget(tindex, mindex, Warning.MainframeIndex, Warning.Index)
+                        if GuideMissileInterceptors then
+                           Assignment = WarningId
+                        else
+                           -- And actually assign the missile
+                           I:SetLuaControlledMissileInterceptorTarget(tindex, mindex, Warning.MainframeIndex, Warning.Index)
+                        end
                      end
                   elseif WarningsById[Assignment] then
                      -- Move info to next update if warning still valid
                      NewInterceptAssignments[MissileId] = Assignment
                      NewInterceptAssignmentsByWarning[Assignment] = MissileId
+                  end
+
+                  if GuideMissileInterceptors then
+                     local Warning = WarningsById[Assignment]
+                     if Warning then
+                        -- And guide the missile
+                        I:SetLuaControlledMissileInterceptorStandardGuidanceOnOff(tindex, mindex, false)
+                        local AimPoint = QuadraticIntercept(Missile.Position, Vector3.Dot(Missile.Velocity, Missile.Velocity), Warning.Position, Warning.Velocity, 9999)
+                        I:SetLuaControlledMissileAimPoint(tindex, mindex, AimPoint.x, AimPoint.y, AimPoint.z)
+                     end
                   end
                end
             end
