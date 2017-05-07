@@ -1,4 +1,4 @@
---@ deepcopy
+--@ shallowcopy
 -- Commons module
 
 -- The one global that holds the Commons instance.
@@ -11,7 +11,7 @@ C = nil
 Commons = {}
 
 function Commons.create(I, AttackSalvage)
-   local self = deepcopy(Commons)
+   local self = shallowcopy(Commons)
 
    self.I = I
    self.AttackSalvage = AttackSalvage
