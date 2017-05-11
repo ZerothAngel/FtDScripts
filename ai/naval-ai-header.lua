@@ -18,6 +18,13 @@ AttackDrive = 1
 -- Set to nil to disable, e.g. AttackEvasion = nil
 AttackEvasion = { 10, .125 }
 
+-- If set, it should be between MinDistance and MaxDistance.
+-- Only applies when MinDistance < target range < MaxDistance.
+-- While target range < AttackDistance, AttackAngle is taken to be
+-- 180 - AttackAngle. Otherwise AttackAngle is as specified above.
+-- To have any effect, AttackAngle should NOT be 90 degrees.
+AttackDistance = nil
+
 -- Closing behavior (target range > MaxDistance)
 -- ClosingAngle should be <90 to actually close with the target.
 ClosingAngle = 40

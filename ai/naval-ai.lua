@@ -65,7 +65,11 @@ function AdjustHeadingToTarget(I)
          Evasion = ClosingEvasion
       elseif Distance > MinDistance then
          -- Attacking
-         TargetAngle = AttackAngle
+         if AttackDistance and Distance < AttackDistance then
+            TargetAngle = 180 - AttackAngle
+         else
+            TargetAngle = AttackAngle
+         end
          Drive = AttackDrive
          Evasion = AttackEvasion
       end
