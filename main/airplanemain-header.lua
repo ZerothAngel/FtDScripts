@@ -1,5 +1,7 @@
 -- CONFIGURATION
 
+-- See https://github.com/ZerothAngel/FtDScripts/blob/master/main/airplane.md for details.
+
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",
 -- "patrol", and "fleetmove".
 ActivateWhen = {

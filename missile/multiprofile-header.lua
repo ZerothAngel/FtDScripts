@@ -1,5 +1,7 @@
 -- MULTI PROFILE CONFIGURATION
 
+-- Also see https://github.com/ZerothAngel/FtDScripts/blob/master/missile/multiprofile.md
+
 -- How it works:
 
 -- Each profile can select Lua transceivers in one of three ways:
