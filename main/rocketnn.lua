@@ -1,5 +1,5 @@
 --! rocketnn
---@ commonstargets commonsweapons commons eventdriver firstrun weapontypes neuralnet secant debug
+--@ commonstargets commonsweapons commons eventdriver firstrun weapontypes neuralnet secant shuffle debug
 -- Neural net-based rocket turret predictor
 Main = EventDriver.create()
 
@@ -51,6 +51,7 @@ function RocketControl_Train(I)
             DummyPrediction = true
          end
 
+         shuffle(TrainingSets)
          -- TrainingSetIndex already 0
          LastMaxRMS = 0
          Main:Schedule(1, RocketControl_Train)
@@ -118,6 +119,7 @@ function RocketControl_Capture(I)
    -- Keep capturing until we have enough samples, otherwise start training
    if TrainingSamplesCaptured >= TrainingSamplesNeeded then
       I:LogToHud(string.format("Starting training with %d sets!", #TrainingSets))
+      shuffle(TrainingSets)
       Main:Schedule(1, RocketControl_Train)
    else
       Main:Schedule(Capture_UpdateRate, RocketControl_Capture)
