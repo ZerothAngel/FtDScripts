@@ -20,10 +20,16 @@ AttackEvasion = { 10, .125 }
 
 -- If set, it should be between MinDistance and MaxDistance.
 -- Only applies when MinDistance < target range < MaxDistance.
--- While target range < AttackDistance, AttackAngle is taken to be
--- 180 - AttackAngle. Otherwise AttackAngle is as specified above.
 -- To have any effect, AttackAngle should NOT be 90 degrees.
 AttackDistance = nil
+-- PID for adjusting AttackAngle when near AttackDistance.
+-- Effective AttackAngle will be scaled between AttackAngle and
+-- 180 - AttackAngle depending on output of PID.
+AttackPIDConfig = {
+   Kp = .5,
+   Ti = 5,
+   Td = .1,
+}
 
 -- Closing behavior (target range > MaxDistance)
 -- ClosingAngle should be <90 to actually close with the target.

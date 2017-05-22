@@ -1,10 +1,12 @@
---@ commonstargets commons control planarvector getbearingtopoint sign evasion normalizebearing
+--@ commonstargets commons control planarvector getbearingtopoint sign evasion normalizebearing pid
 --@ dodgeyaw avoidance waypointmove
 -- Naval AI module
 Attacking = false
 LastAttackTime = nil
 
 DodgeAltitudeOffset = nil -- luacheck: ignore 131
+
+AttackPID = PID.create(AttackPIDConfig, -1, 1)
 
 -- Modifies bearing by some amount for evasive maneuvers
 function Evade(Evasion)
@@ -65,8 +67,10 @@ function AdjustHeadingToTarget(I)
          Evasion = ClosingEvasion
       elseif Distance > MinDistance then
          -- Attacking
-         if AttackDistance and Distance < AttackDistance then
-            TargetAngle = 180 - AttackAngle
+         if AttackDistance then
+            local Delta = AttackDistance - Distance
+            local BroadsideAngle = 90 - AttackAngle
+            TargetAngle = 90 + AttackPID:Control(Delta) * BroadsideAngle
          else
             TargetAngle = AttackAngle
          end
