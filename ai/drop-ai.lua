@@ -61,7 +61,7 @@ function DropAI_Main()
    local DropTargetSqrSpeed = DropTargetVelocity.sqrMagnitude
    if DropTargetSqrSpeed <= 3 then
       -- Velocity is really small, use our current orientation
-      DropTargetPosition = DropTargetPosition + C:ToGlobal() * DropTargetOffset
+      DropTargetPosition = DropTargetPosition + C:ToWorld() * DropTargetOffset
    else
       -- Rotate offset
       DropTargetPosition = DropTargetPosition + Quaternion.LookRotation(DropTargetVelocity, Vector3.up) * DropTargetOffset

@@ -118,16 +118,16 @@ function Commons:RightVector()
    return self._RightVector
 end
 
-function Commons:ToGlobal()
-   if not self._ToGlobal then
-      self._ToGlobal = Quaternion.LookRotation(self:ForwardVector(), self:UpVector())
+function Commons:ToWorld()
+   if not self._ToWorld then
+      self._ToWorld = Quaternion.LookRotation(self:ForwardVector(), self:UpVector())
    end
-   return self._ToGlobal
+   return self._ToWorld
 end
 
 function Commons:ToLocal()
    if not self._ToLocal then
-      self._ToLocal = Quaternion.Inverse(self:ToGlobal())
+      self._ToLocal = Quaternion.Inverse(self:ToWorld())
    end
    return self._ToLocal
 end

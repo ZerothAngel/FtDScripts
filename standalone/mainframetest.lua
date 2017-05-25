@@ -5,8 +5,8 @@ function round(num, idp)
 end
 
 function Update(I)
-   local ToGlobal = Quaternion.LookRotation(I:GetConstructForwardVector(), I:GetConstructUpVector())
-   local ToLocal = Quaternion.Inverse(ToGlobal)
+   local ToWorld = Quaternion.LookRotation(I:GetConstructForwardVector(), I:GetConstructUpVector())
+   local ToLocal = Quaternion.Inverse(ToWorld)
    for i = 0,I:GetNumberOfMainframes()-1 do
       local Position = I:GetAiPosition(i) - I:GetConstructCenterOfMass()
       local LocalPosition = ToLocal * Position
