@@ -83,11 +83,12 @@ I tend to build small and because of that, I avoid having more than a few Lua bo
 
   * [airplane](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airplane.lua) &mdash; Combo script: naval-ai + airplane + multiprofile + shieldmanager
   * [airship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airship.lua) &mdash; Combo script: naval-ai + hover + multiprofile + shieldmanager
+  * [carrier](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/carrier.lua) &mdash; Combo script: naval-ai + dockmanager + shieldmanager
   * [drop](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/drop.lua) &mdash; Combo script: drop-ai + sixdof + shieldmanager
   * [gunship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunship.lua) &mdash; Combo script: gunship-ai + sixdof + multiprofile + shieldmanager
-  * [utility](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility.lua) &mdash; Combo script: utility-ai + hover + shieldmanager
-  * [utility6dof](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility6dof.lua) &mdash; Combo script: utility-ai + sixdof + shieldmanager
-  * [utilitysub](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utilitysub.lua) &mdash; Combo script: utility-ai + subcontrol + shieldmanager
+  * [utility](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility.lua) &mdash; Combo script: utility-ai + hover + dockmanager + shieldmanager
+  * [utility6dof](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utility6dof.lua) &mdash; Combo script: utility-ai + sixdof + dockmanager + shieldmanager
+  * [utilitysub](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/utilitysub.lua) &mdash; Combo script: utility-ai + subcontrol + dockmanager + shieldmanager
   * [repair](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repair.lua) &mdash; Combo script: repair-ai + hover + shieldmanager
   * [repair6dof](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repair6dof.lua) &mdash; Combo script: repair-ai + sixdof + shieldmanager
   * [repairsub](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/repairsub.lua) &mdash; Combo script: repair-ai + subcontrol + shieldmanager
@@ -102,3 +103,17 @@ I tend to build small and because of that, I avoid having more than a few Lua bo
   * [dediblademaintainer](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/dediblademaintainer.lua) &mdash; Allows linking a drive maintainer to forward/reverse-oriented dediblades for propulsion. This gives you full manual *analog* control of dediblades, allowing a quick way to zero-out the throttle (as with the "water drive") and also go in reverse.
   * [interceptmanager](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/interceptmanager.lua) &mdash; Fires a weapon slot (presumably a missile interceptor launcher) associated with one of the 4 directional quadrants whenever hostile missiles are detected. Distinguishes between incoming missiles & torpedoes. Saves ammo.
   * [shieldmanager](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/shieldmanager.lua) &mdash; Only activates shields facing enemies. Saves power.
+  * [dockmanager](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/dockmanager.lua) &mdash; Staggered release of tractor beams (front-to-back) after first enemy detection. Delayed recall of fighters after last enemy dies.
+
+### Experimental ###
+
+More or less functional, but still works-in-progress.
+
+The "alldof" module is basically a version of the sixdof module that continuously calculates the facing of all propulsive elements, making it suitable for tilt-rotor & vectored thrust vehicles.
+
+  * [airshipadof](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airshipadof.lua) &mdash; Combo script: naval-ai + alldof + multiprofile + shieldmanager
+  * [gunshipadof](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/gunshipadof.lua) &mdash; Combo script: gunship-ai + alldof + multiprofile + shieldmanager
+  * [quadtilt](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/quadtilt.lua) &mdash; Combo script: naval-ai + quadtilt + alldof + multiprofile + shieldmanager. Quad-tilt rotor/thruster script. I'm not really satisfied with the way it works (weak altitude control), I'll probably start anew if I ever get interested in these types of vehicles again. **Very tricky to set up, just avoid using it**.
+  * [interceptor](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/interceptor.lua) &mdash; Full-fledged Lua-guided missile interceptor script. Attempts to assign interceptors 1-to-1 to missiles, also uses quadratic predictive guidance to guide interceptors to their missile. Still useless since interceptors are pretty weak against missiles, especially with the missile HP buff.
+  * [rocketlerp](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/rocketlerp.lua) &mdash; Adaptive turret controller for dumbfire rockets. Linear interpolation version.
+  * [rocketnn](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/rocketnn.lua) &mdash; Adaptive turret controller for dumbfire rockets. Neural network version.
