@@ -1,4 +1,4 @@
---@ commonstargets commons planarvector
+--@ commonstargets commons componenttypes planarvector
 -- Dock manager module
 DockManager_LastDockCount = 0
 DockManager_DockInfos = {}
