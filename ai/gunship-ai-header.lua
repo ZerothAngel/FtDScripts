@@ -30,5 +30,15 @@ EscapePitch = {
 EscapeEvasion = { 30, .25 }
 EscapeLeadWeaponSlot = nil
 
+RelativePitch = {
+   -- If enabled, the appropriate configured pitch (e.g. AttackPitch.Surface
+   -- or AttackPitch.Air) is added to the elevation of the target and
+   -- then constrained.
+   Enabled = false,
+   -- Constraints only used when Enabled = true
+   MinPitch = -30,
+   MaxPitch = 30,
+}
+
 ReturnToOrigin = true
 OriginMaxDistance = 100

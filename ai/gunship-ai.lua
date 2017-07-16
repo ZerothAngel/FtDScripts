@@ -71,7 +71,17 @@ function AdjustPositionToTarget()
 
    V.AdjustHeading(Bearing)
    V.AdjustPosition(Offset)
-   V.SetPitch((TargetPosition.y >= AirTargetAboveAltitude) and TargetPitch.Air or TargetPitch.Surface)
+
+   -- Determine pitch
+   local TargetAltitude = TargetPosition.y
+   local DesiredPitch = (TargetAltitude >= AirTargetAboveAltitude) and TargetPitch.Air or TargetPitch.Surface
+   if RelativePitch.Enabled then
+      local TargetElevation = 90 - math.deg(math.atan2(Distance, TargetAltitude - C:Altitude()))
+      DesiredPitch = DesiredPitch + TargetElevation
+      -- Constrain
+      DesiredPitch = math.max(RelativePitch.MinPitch, math.min(RelativePitch.MaxPitch, DesiredPitch))
+   end
+   V.SetPitch(DesiredPitch)
 end
 
 function FormationMove(I)
