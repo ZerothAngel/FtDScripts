@@ -1,4 +1,4 @@
---@ commons quadraticintercept pronav getvectorangle round deepcopy sign
+--@ commons quadraticintercept pronav getvectorangle round deepcopy sign missilecommand
 -- GeneralMissile implementation
 GeneralMissile = {}
 
@@ -55,32 +55,16 @@ function GeneralMissile.create(Config)
    return self
 end
 
--- Initialize state, save info about missile
-function InitMissileState(I, TransceiverIndex, MissileIndex, MissileState)
-   local Fuel = 0
-   local ThrusterCount,Thrust = 0,0
-   local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
-   for _,Part in pairs(MissileInfo.Parts) do
-      if Part.Name == "missile fuel tank" then
-         Fuel = Fuel + 5000
-      elseif Part.Name == "missile variable speed thruster" then
-         ThrusterCount = ThrusterCount + 1
-         Thrust = Thrust + Part.Registers[2]
-      end
-   end
-   MissileState.Fuel = Fuel
-   MissileState.ThrusterCount = ThrusterCount
-   MissileState.CurrentThrust = Thrust
-end
-
 -- Update state, including fuel estimation
 function UpdateMissileState(I, TransceiverIndex, MissileIndex, Position, Missile, MissileState)
-   local Fuel = MissileState.Fuel
-   if not Fuel then
+   local Command = MissileState.Command
+   if not Command then
       -- Initialize state
-      InitMissileState(I, TransceiverIndex, MissileIndex, MissileState)
-      Fuel = MissileState.Fuel
+      MissileState.Command = MissileCommand.create(I, TransceiverIndex, MissileIndex)
+      Command = MissileState.Command
+      MissileState.Fuel = Command.Fuel
    end
+   local Fuel = MissileState.Fuel
 
    -- Determine time step
    local LastTime = MissileState.LastTime
@@ -96,7 +80,8 @@ function UpdateMissileState(I, TransceiverIndex, MissileIndex, Position, Missile
       -- Variable thrusters consume no fuel when underwater
       -- But torpedo props do. So this will be inaccurate if there are
       -- torpedo props...
-      Fuel = Fuel - MissileState.CurrentThrust * TimeStep -- Assumes 1 fuel per thrust per second
+      local CurrentThrust = Command.VarThrust or 0
+      Fuel = Fuel - CurrentThrust * TimeStep -- Assumes 1 fuel per thrust per second
    end
    MissileState.Fuel = math.max(Fuel, 0)
 
@@ -107,40 +92,22 @@ end
 function SetMissileThrust(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, MissileState, Thrust, ThrustAngle, ImpactTime)
    if not Thrust then return end
 
+   if ThrustAngle then
+      -- Note we end up calculating this twice in certain circumstances,
+      -- but that's ok
+      -- Sometimes it's the predicted aim point, sometimes it's the real
+      -- one
+      local TargetVector = AimPoint - Position
+      local CosAngle = Vector3.Dot(TargetVector.normalized, Velocity.normalized)
+      if CosAngle < ThrustAngle then return end -- Not yet
+   end
+
    if Thrust < 0 then
       -- Base thrust on current (estimated) fuel and predicted impact time
       Thrust = Round(MissileState.Fuel / ImpactTime, 1)
-      -- Constrain (is this needed?)
-      Thrust = math.max(50, math.min(10000, Thrust))
    end
 
-   -- Set thrust if different
-   if MissileState.CurrentThrust ~= Thrust then
-      if ThrustAngle then
-         -- Note we end up calculating this twice in certain circumstances,
-         -- but that's ok
-         -- Sometimes it's the predicted aim point, sometimes it's the real
-         -- one
-         local TargetVector = AimPoint - Position
-         local CosAngle = Vector3.Dot(TargetVector.normalized, Velocity.normalized)
-         if CosAngle < ThrustAngle then return end -- Not yet
-      end
-      -- Perform voodoo that is apparently deprecated and/or unstable
-      -- But since all the cool kids are doing it...
-
-      -- How do we check if this is valid?
-      local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
-
-      local ThrusterCount = MissileState.ThrusterCount
-      for _,Part in pairs(MissileInfo.Parts) do
-         -- Is this name constant or localized?
-         if Part.Name == "missile variable speed thruster" then
-            -- Each thruster carries its share
-            Part:SendRegister(2, Thrust / ThrusterCount)
-         end
-      end
-      MissileState.CurrentThrust = Thrust
-   end
+   MissileState.Command:SendUpdate(I, TransceiverIndex, MissileIndex, { VarThrust = Thrust })
 end
 
 -- Return highest terrain seen within look-ahead distance
