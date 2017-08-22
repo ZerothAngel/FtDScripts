@@ -1,4 +1,4 @@
---@ commonsfriends deepcopy planarvector round quadraticsolver
+--@ commonsfriends deepcopy planarvector round quadraticsolver missilecommand
 SmartMine = {}
 
 function SmartMine.create(Config)
@@ -14,21 +14,6 @@ function SmartMine.create(Config)
    return self
 end
 
-function SmartMine.SendUpdate(I, TransceiverIndex, MissileIndex, NewState)
-   local BallastDepth,MagnetRange,Thrust = NewState.BallastDepth,NewState.MagnetRange,NewState.Thrust
-   if not (BallastDepth or MagnetRange or Thrust) then return end
-   local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
-   for _,Part in pairs(MissileInfo.Parts) do
-      if BallastDepth and Part.Name == "missile ballast" then
-         Part:SendRegister(1, BallastDepth)
-      elseif MagnetRange and Part.Name == "missile magnet" then
-         Part:SendRegister(1, MagnetRange)
-      elseif Thrust and Part.Name == "missile short range thruster" then
-         Part:SendRegister(2, Thrust)
-      end
-   end
-end
-
 function SmartMine:BeginUpdate(_, Targets)
    -- Should be filtered already, i.e. only targetable
    self.Targets = Targets
@@ -39,29 +24,17 @@ function SmartMine:Guide(I, TransceiverIndex, MissileIndex, TheTarget, Missile, 
 
    -- Initialize state, if needed
    if not MissileState.Initialized then
-      -- Read current ballast/magnet settings
-      local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
-      for _,Part in pairs(MissileInfo.Parts) do
-         -- Last one of each part wins
-         if Part.Name == "missile ballast" then
-            MissileState.BallastDepth = Part.Registers[1]
-         elseif Part.Name == "missile magnet" then
-            MissileState.MagnetRange = Part.Registers[1]
-         elseif Part.Name == "missile short range thruster" then
-            MissileState.Thrust = Part.Registers[2]
-         end
-      end
-
+      MissileState.Command = MissileCommand.create(I, TransceiverIndex, MissileIndex)
       MissileState.LaunchPosition = MissilePosition
       MissileState.Initialized = true
    end
 
-   local NewState = {}
+   local NewCommand = {}
 
    if MissileState.NoThrust or MissilePosition.y <= 0 then
       MissileState.NoThrust = true
 
-      if MissileState.BallastDepth then
+      if MissileState.Command.BallastDepth then
          -- Set depth according to closest enemy
          local Closest,Selected = math.huge,nil
          for _,Target in pairs(self.Targets) do
@@ -83,13 +56,10 @@ function SmartMine:Guide(I, TransceiverIndex, MissileIndex, TheTarget, Missile, 
          -- is supposed to be positive)
          NewDepth = -math.min(-self.MinDepth, math.max(-500, NewDepth))
 
-         -- Only change if different
-         if NewDepth ~= MissileState.BallastDepth then
-            NewState.BallastDepth = NewDepth
-         end
+         NewCommand.BallastDepth = NewDepth
       end
 
-      if MissileState.MagnetRange then
+      if MissileState.Command.MagnetRange then
          local MaxFriendlyAltitude = self.MaxFriendlyAltitude
          local MinFriendlyRange = self.MinFriendlyRange
          local NewMagnetRange = self.MagnetRange
@@ -109,16 +79,11 @@ function SmartMine:Guide(I, TransceiverIndex, MissileIndex, TheTarget, Missile, 
             end
          end
 
-         -- Only change if different
-         if NewMagnetRange ~= MissileState.MagnetRange then
-            NewState.MagnetRange = NewMagnetRange
-         end
+         NewCommand.MagnetRange = NewMagnetRange
       end
 
       -- Cut thrust unconditionally
-      if MissileState.Thrust and MissileState.Thrust ~= 0 then
-         NewState.Thrust = 0
-      end
+      NewCommand.ThrustDuration = 0
    else
       -- Still above water
       local MissileVelocity = Missile.Velocity
@@ -157,17 +122,7 @@ function SmartMine:Guide(I, TransceiverIndex, MissileIndex, TheTarget, Missile, 
    end
 
    -- Make changes, update state
-   SmartMine.SendUpdate(I, TransceiverIndex, MissileIndex, NewState)
-
-   if NewState.BallastDepth then
-      MissileState.BallastDepth = NewState.BallastDepth
-   end
-   if NewState.MagnetRange then
-      MissileState.MagnetRange = NewState.MagnetRange
-   end
-   if NewState.Thrust then
-      MissileState.Thrust = NewState.Thrust
-   end
+   MissileState.Command:SendUpdate(I, TransceiverIndex, MissileIndex, NewCommand)
 
    return nil -- No aim point, purely ballistic
 end
