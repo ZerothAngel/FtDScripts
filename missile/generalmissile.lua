@@ -81,6 +81,11 @@ function UpdateMissileState(I, TransceiverIndex, MissileIndex, Position, Missile
       -- But torpedo props do. So this will be inaccurate if there are
       -- torpedo props...
       local CurrentThrust = Command.VarThrust or 0
+      -- Also factor in short range thrusters, as long as they are still active
+      if Command.ThrustCount and Now > Command.ThrustDelay and (Command.ThrustDelay + Command.ThrustDuration) > Now then
+         CurrentThrust = CurrentThrust + 1000
+      end
+      -- TODO torpedo props?
       Fuel = Fuel - CurrentThrust * TimeStep -- Assumes 1 fuel per thrust per second
    end
    MissileState.Fuel = math.max(Fuel, 0)
@@ -89,8 +94,8 @@ function UpdateMissileState(I, TransceiverIndex, MissileIndex, Position, Missile
 end
 
 -- Set thrust according to flavor
-function SetMissileThrust(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, MissileState, Thrust, ThrustAngle, ImpactTime)
-   if not Thrust then return end
+function SetMissileThrust(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, MissileState, Thrust, ThrustAngle, ThrustDuration, ImpactTime)
+   if not (Thrust or ThrustDuration) then return end
 
    if ThrustAngle then
       -- Note we end up calculating this twice in certain circumstances,
@@ -102,12 +107,12 @@ function SetMissileThrust(I, TransceiverIndex, MissileIndex, Position, Velocity,
       if CosAngle < ThrustAngle then return end -- Not yet
    end
 
-   if Thrust < 0 then
+   if Thrust and Thrust < 0 then
       -- Base thrust on current (estimated) fuel and predicted impact time
       Thrust = Round(MissileState.Fuel / ImpactTime, 1)
    end
 
-   MissileState.Command:SendUpdate(I, TransceiverIndex, MissileIndex, { VarThrust = Thrust })
+   MissileState.Command:SendUpdate(I, TransceiverIndex, MissileIndex, { VarThrust = Thrust, ThrustDuration = ThrustDuration })
 end
 
 -- Return highest terrain seen within look-ahead distance
@@ -218,7 +223,7 @@ function GeneralMissile:ExecuteProfile(I, TransceiverIndex, MissileIndex, Positi
          AimPoint = Vector3(AimPoint.x, self:ModifyAltitude(Position, AimPoint, Altitude, TerminalPhase.RelativeTo), AimPoint.z)
       end
 
-      SetMissileThrust(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, MissileState, TerminalPhase.Thrust, TerminalPhase.ThrustAngle, ImpactTime)
+      SetMissileThrust(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, MissileState, TerminalPhase.Thrust, TerminalPhase.ThrustAngle, TerminalPhase.ThrustDuration, ImpactTime)
 
       return AimPoint
    end
@@ -269,7 +274,7 @@ function GeneralMissile:ExecuteProfile(I, TransceiverIndex, MissileIndex, Positi
    -- Modify altitude according to parameters
    NewAimPoint.y = self:GetPhaseAltitude(I, Position, Velocity, Phase, ToNextPhase)
    -- Set thrust
-   SetMissileThrust(I, TransceiverIndex, MissileIndex, Position, Velocity, NewAimPoint, MissileState, Phase.Thrust, Phase.ThrustAngle, ImpactTime)
+   SetMissileThrust(I, TransceiverIndex, MissileIndex, Position, Velocity, NewAimPoint, MissileState, Phase.Thrust, Phase.ThrustAngle, Phase.ThrustDuration, ImpactTime)
    -- Perform horizontal evasion, if any
    local Evasion = Phase.Evasion
    if Evasion then
@@ -343,13 +348,14 @@ function GeneralMissile:Guide(I, TransceiverIndex, MissileIndex, Target, Missile
          AimPoint = ProNav(self.AntiAir.Gain, TimeStep, MissilePosition, MissileVelocity, TargetAimPoint, Target.Velocity)
       end
       -- Set thrust
-      local Thrust,ThrustAngle = self.AntiAir.DefaultThrust,nil
+      local Thrust,ThrustAngle,ThrustDuration = self.AntiAir.DefaultThrust,nil,nil
       local TerminalRange = self.AntiAir.TerminalRange
       if TerminalRange and TargetRange <= TerminalRange then
          Thrust = self.AntiAir.Thrust
          ThrustAngle = self.AntiAir.ThrustAngle
+         ThrustDuration = self.AntiAir.ThrustDuration
       end
-      SetMissileThrust(I, TransceiverIndex, MissileIndex, MissilePosition, MissileVelocity, TargetAimPoint, MissileState, Thrust, ThrustAngle, TargetRange / MissileSpeed)
+      SetMissileThrust(I, TransceiverIndex, MissileIndex, MissilePosition, MissileVelocity, TargetAimPoint, MissileState, Thrust, ThrustAngle, ThrustDuration, TargetRange / MissileSpeed)
    end
 
    return AimPoint

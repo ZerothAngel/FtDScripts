@@ -135,6 +135,7 @@ in this mode.
  * TerminalRange &mdash; If non-nil, range from the target in which to use *Thrust* and *ThrustAngle*
  * Thrust &mdash; Thrust to use when within *TerminalRange* and *ThrustAngle* condition met. If negative then thrust is computed dynamically based on estimated remaining fuel and predicted impact time.
  * ThrustAngle &mdash; If non-nil, this is the maximum target vector angle before modifying thrust.
+ * ThrustDuration &mdash; If non-nil, then assuming the *TerminalRange* and *ThrustAngle* conditions are met, the duration of any short range thrusters are set to this value. Most useful in shutting them off (duration 0).
  * OneTurnTime &mdash; If non-nil, turn the missile directly at the target within this number of seconds after launch.
  * OneTurnAngle &mdash; If nil, base one-turn solely on launch time. Otherwise, the one-turn phase will potentially end early once the target vector angle is below this angle.
  * Gain &mdash; The PN gain. 5 seems to be good. Torpedoes seem to require much higher (like 500 or so). Too high and the missile will make loops at the slightest target movement (which is bad).
@@ -161,7 +162,7 @@ in this mode.
  * Altitude &mdash; If non-nil, the altitude will be modified by adding this number with another. See *RelativeTo*
 
    For the terminal phase, this allows modification of the final aim point, e.g. to constrain it above (or below) the water line.
- * RelativeTo &mdash; Determines what *Altitude* is relative to. May be a number from 0 to 4:
+ * RelativeTo &mdash; Determines what *Altitude* is relative to. May be a number from 0 to 6:
    * 0 &mdash; *Altitude* is an absolute altitude
    * 1 &mdash; *Altitude* is added to the target's absolute altitude
    * 2 &mdash; *Altitude* is added to the target's sea depth, which will be negative and at most 0 (so not really a true depth).
@@ -171,6 +172,7 @@ in this mode.
    * 6 &mdash; *Altitude* is an upper bound, i.e. min(target altitude, *Altitude*)
  * Thrust &mdash; Thrust to use when *ThrustAngle* condition met. If negative then thrust is computed dynamically based on estimated remaining fuel and predicted impact time (only makes sense for terminal phase otherwise you'll burn all your fuel early).
  * ThrustAngle &mdash; If non-nil, this is the maximum target vector angle before modifying thrust. If nil, then thrust is unconditionally modified upon switching to this phase. A non-nil value probably only makes sense for the terminal phase.
+ * ThrustDuration &mdash; If non-nil, then the duration of any short range thrusters is set to this value. "0" is probably the only non-nil value that makes sense and will shut down all short-range thrusters during this phase. Yes, it is possible to restart thrusters after shut down by setting the duration to something like 20 (the max).
  * Evasion &mdash; nil or an array of two values. If non-nil, the first value is the maximum horizontal displacement in meters. The second value is the time scale, usually positive values <1 work well.
 
 ## Omitting Anti-Air or Profile Configs ##
