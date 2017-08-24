@@ -47,10 +47,15 @@ function CannonControl_Update(I)
          if FireSlot and (Weapon.Type == TURRET or Weapon.Type == CANNON) and not Weapon.PlayerControl then
             local Target,CannonAimPoint = unpack(FireSlot)
             local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity)
-            if AimPoint and I:AimWeaponInDirection(Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, Weapon.Slot) > 0 and Weapon.Type == CANNON then
-               -- If this is a turret, any on-board cannons will be fired
-               -- independently below.
-               I:FireWeapon(Weapon.Index, Weapon.Slot)
+            if AimPoint then
+               -- Docs say this doesn't have to be normalized, but as of
+               -- 2.02 or so, it does. (Otherwise crazy recoil happens...)
+               AimPoint = AimPoint.normalized
+               if I:AimWeaponInDirection(Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, Weapon.Slot) > 0 and Weapon.Type == CANNON then
+                  -- If this is a turret, any on-board cannons will be fired
+                  -- independently below.
+                  I:FireWeapon(Weapon.Index, Weapon.Slot)
+               end
             end
          end
       end
@@ -61,8 +66,11 @@ function CannonControl_Update(I)
          if FireSlot and Weapon.Type == CANNON and not Weapon.PlayerControl then 
             local Target,CannonAimPoint = unpack(FireSlot)
             local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity)
-            if AimPoint and I:AimWeaponInDirectionOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, Weapon.Slot) > 0 then
-               I:FireWeaponOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, Weapon.Slot)
+            if AimPoint then
+               AimPoint = AimPoint.normalized
+               if I:AimWeaponInDirectionOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, Weapon.Slot) > 0 then
+                  I:FireWeaponOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, Weapon.Slot)
+               end
             end
          end
       end
