@@ -79,8 +79,10 @@ When the profile is active, it will pop-up 250 meters from the target (as given 
              Distance = 100,
              Altitude = nil,
              RelativeTo = 1,
-             Thrust = nil,
-             ThrustAngle = nil,
+             Change = {
+                When = { Angle = nil },
+                Thrust = nil,
+             }
           },
           {
              Distance = 250,
@@ -89,8 +91,10 @@ When the profile is active, it will pop-up 250 meters from the target (as given 
              ApproachAngle = nil,
              Altitude = 30,
              RelativeTo = 3,
-             Thrust = nil,
-             ThrustAngle = nil,
+             Change = {
+                When = { Angle = nil },
+                Thrust = nil,
+             },
              Evasion = nil,
           },
           {
@@ -100,8 +104,10 @@ When the profile is active, it will pop-up 250 meters from the target (as given 
              ApproachAngle = nil,
              Altitude = nil,
              RelativeTo = 0,
-             Thrust = nil,
-             ThrustAngle = nil,
+             Change = {
+                When = { Angle = nil },
+                Thrust = nil,
+             },
              Evasion = { 20, .25 },
           },
        },
@@ -170,9 +176,7 @@ in this mode.
    * 4 &mdash; *Altitude* is added to the missile's current altitude. Using 0 for *Altitude* is probably best.
    * 5 &mdash; *Altitude* is a lower bound, i.e. max(target altitude, *Altitude*)
    * 6 &mdash; *Altitude* is an upper bound, i.e. min(target altitude, *Altitude*)
- * Thrust &mdash; Thrust to use when *ThrustAngle* condition met. If negative then thrust is computed dynamically based on estimated remaining fuel and predicted impact time (only makes sense for terminal phase otherwise you'll burn all your fuel early).
- * ThrustAngle &mdash; If non-nil, this is the maximum target vector angle before modifying thrust. If nil, then thrust is unconditionally modified upon switching to this phase. A non-nil value probably only makes sense for the terminal phase.
- * ThrustDuration &mdash; If non-nil, then the duration of any short range thrusters is set to this value. "0" is probably the only non-nil value that makes sense and will shut down all short-range thrusters during this phase. Yes, it is possible to restart thrusters after shut down by setting the duration to something like 20 (the max).
+ * Change &mdash; An optional (i.e. can be nil) table of parameters that specific changes to the missile's state, e.g. variable thrust change, ballast depth change, etc. See the section below for more details.
  * Evasion &mdash; nil or an array of two values. If non-nil, the first value is the maximum horizontal displacement in meters. The second value is the time scale, usually positive values <1 work well.
 
 ## Omitting Anti-Air or Profile Configs ##
@@ -183,11 +187,56 @@ If you omit the *Phases* section, then the missiles will always be in anti-air m
 
 If neither are omitted, then you **must** define *ProfileActivationElevation* to differentiate between the two modes.
 
+## Change Parameters ##
+
+All phases in the profile may have an optional set of parameters that determine when and how to change the missile's state.
+
+An example, which includes all currently supported parameters:
+
+    Change = {
+       When = {
+          Angle = nil,
+          Range = nil,
+          AltitudeGT = nil,
+          AltitudeLT = nil,
+       },
+       Thrust = nil,
+       ThrustDelay = nil,
+       ThrustDuration = nil,
+       BallastDepth = nil,
+       BallastBuoyancy = nil,
+       MagnetRange = nil,
+       MagnetDelay = nil,
+    }
+
+The *When* section describes when the state change is made. If it is omitted (or if all its conditions are nil), then the state change will be made immediately upon entering that phase.
+
+### When Conditions ###
+
+If there are multiple non-nil conditions, then all conditions must be met before the state is changed.
+
+ * Angle &mdash; Maximum target vector angle before modifying state, e.g. if set to 7 then the state will be changed once the missile's velocity is pointing within 7 degrees of the aim point.
+ * Range &mdash; Maximum range (straight-line distance) before modifying state, e.g. if set to 300 then the state will be changed once the missile is 300 meters or closer.
+ * AltitudeGT &mdash; Altitude greater than some number. If the altitude of the missile is greater than this, then the state will be changed.
+ * AltitudeLT &mdash; Altitude less than some number. If the altitude of the missile is less than this, then the state will be changed.
+
+### State Parameters ###
+
+Each parameter affects a single type of missile part. If there are multiple of such parts, then the same value is set in all of them (which the exception of variable thrusters, noted below).
+
+ * Thrust &mdash; Set variable thrust. This number is divided by the number of variable thrusters. If *Thrust* is less than 0, then the thrust will be computed dynamically based on the estimated time to impact and the (estimated) remaining fuel. This is very useful for terminal phases, but should include some sort of *Angle* condition.
+ * ThrustDelay &mdash; Start delay of short range thrusters. For example, you can configure the missile with maximum delay (using the 'Q' screen) of 60 seconds and then have the Lua script set the delay to 0 after a certain phase has been reached, which will ignite all short range thrusters.
+ * ThrustDuration &mdash; Burn duration of short range thrusters. You can, for example, set this to 0 once reaching a certain phase to shut down all short range thrusters and glide (ballistically) the rest of the way to the target.
+ * BallastDepth &mdash; Depth setting of all ballast tanks.
+ * BallastBuoyancy &mdash; Buoyancy setting of all ballast tanks.
+ * MagnetRange &mdash; Range of all magnets.
+ * MagnetDelay &mdash; Start delay of all magnets. For example, useful for only enabling magnets after reaching terminal phase.
+
 ## More Examples ##
 
-Note that none of these examples take advantage of *Thrust* and *ThrustAngle*. That's really up to you and the type of missile you build.
+Note that none of these examples take advantage of *Thrust* and *Angle*/*ThrustAngle*. That's really up to you and the type of missile you build.
 
-However, in almost all non-torpedo cases that use variable thrusters, you will probably benefit from dynamic terminal thrust: set *Thrust* to -1 and *ThrustAngle* to something small, like 3 to 7 degrees.
+However, in almost all non-torpedo cases that use variable thrusters, you will probably benefit from dynamic terminal thrust: set *Thrust* to -1 and *Angle* to something small, like 3 to 7 degrees.
 
 If you do set terminal thrust, it is also best to set *Thrust* of all non-terminal phases (or *DefaultThrust* for *AntiAir*). This ensures the missile resumes normal thrust should it happen to miss.
 
@@ -209,8 +258,6 @@ Approaches 150 meters below target. In general, (closing depth)^2 + (terminal ph
              Distance = 175,
              Altitude = nil,
              RelativeTo = 1,
-             Thrust = nil,
-             ThrustAngle = nil,
           },
           {
              Distance = 50,
@@ -219,8 +266,6 @@ Approaches 150 meters below target. In general, (closing depth)^2 + (terminal ph
              ApproachAngle = nil,
              Altitude = -150,
              RelativeTo = 2,
-             Thrust = nil,
-             ThrustAngle = nil,
              Evasion = nil,
           },
        },
@@ -259,8 +304,6 @@ Like bottom-attack torpedoes above, (closing altitude)^2 + (terminal phase groun
              Distance = 150,
              Altitude = nil,
              RelativeTo = 1,
-             Thrust = nil,
-             ThrustAngle = nil,
           },
           {
              Distance = 50,
@@ -269,8 +312,6 @@ Like bottom-attack torpedoes above, (closing altitude)^2 + (terminal phase groun
              ApproachAngle = nil,
              Altitude = 0,
              RelativeTo = 4,
-             Thrust = nil,
-             ThrustAngle = nil,
              Evasion = { 20, .25 },
           },
        },
@@ -305,8 +346,6 @@ If your normal engagement range is closer than 500 meters, change the *Distance*
              Distance = 150,
              Altitude = nil,
              RelativeTo = 1,
-             Thrust = nil,
-             ThrustAngle = nil,
           },
           {
              Distance = 500,
@@ -315,8 +354,6 @@ If your normal engagement range is closer than 500 meters, change the *Distance*
              ApproachAngle = nil,
              Altitude = 0,
              RelativeTo = 4,
-             Thrust = nil,
-             ThrustAngle = nil,
              Evasion = { 20, .25 },
           },
           {
@@ -326,8 +363,6 @@ If your normal engagement range is closer than 500 meters, change the *Distance*
              ApproachAngle = nil,
              Altitude = 300,
              RelativeTo = 3,
-             Thrust = nil,
-             ThrustAngle = nil,
              Evasion = { 20, .25 },
           },
        },
@@ -364,8 +399,6 @@ Missile should be a full explosive missile with a single torpedo propeller or ba
              Distance = 50,
              Altitude = nil,
              RelativeTo = 1,
-             Thrust = nil,
-             ThrustAngle = nil,
           },
           {
              Distance = 110,
@@ -374,8 +407,6 @@ Missile should be a full explosive missile with a single torpedo propeller or ba
              ApproachAngle = nil,
              Altitude = -25,
              RelativeTo = 2,
-             Thrust = nil,
-             ThrustAngle = nil,
              Evasion = nil,
           },
           {
@@ -385,8 +416,6 @@ Missile should be a full explosive missile with a single torpedo propeller or ba
              ApproachAngle = nil,
              Altitude = nil,
              RelativeTo = 0,
-             Thrust = nil,
-             ThrustAngle = nil,
              Evasion = { 20, .25 },
           },
        },
@@ -423,8 +452,6 @@ phase altitude appropriately (it is meant to approach <50 meters above the sea).
              Distance = 300,
              Altitude = nil,
              RelativeTo = 1,
-             Thrust = nil,
-             ThrustAngle = nil,
           },
           {
              Distance = 400,
@@ -433,8 +460,6 @@ phase altitude appropriately (it is meant to approach <50 meters above the sea).
              ApproachAngle = nil,
              Altitude = 50,
              RelativeTo = 3,
-             Thrust = nil,
-             ThrustAngle = nil,
              Evasion = nil,
           },
           {
@@ -444,8 +469,6 @@ phase altitude appropriately (it is meant to approach <50 meters above the sea).
              ApproachAngle = nil,
              Altitude = 0,
              RelativeTo = 4,
-             Thrust = nil,
-             ThrustAngle = nil,
              Evasion = { 20, .25 },
           },
        },
@@ -498,8 +521,6 @@ less extreme closing depth.
              Distance = 150,
              Altitude = nil,
              RelativeTo = 1,
-             Thrust = nil,
-             ThrustAngle = nil,
           },
           {
              Distance = 50,
@@ -508,8 +529,6 @@ less extreme closing depth.
              ApproachAngle = nil,
              Altitude = -10,
              RelativeTo = 2,
-             Thrust = nil,
-             ThrustAngle = nil,
              Evasion = nil,
           },
        },

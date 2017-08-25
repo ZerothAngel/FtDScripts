@@ -46,8 +46,10 @@ Config = {
          Distance = 100,
          Altitude = nil,
          RelativeTo = 1,
-         Thrust = nil,
-         ThrustAngle = nil,
+         Change = {
+            When = { Angle = nil },
+            Thrust = nil,
+         },
       },
       {
          Distance = 250,
@@ -56,8 +58,10 @@ Config = {
          ApproachAngle = nil,
          Altitude = 30,
          RelativeTo = 3,
-         Thrust = nil,
-         ThrustAngle = nil,
+         Change = {
+            When = { Angle = nil },
+            Thrust = nil,
+         },
          Evasion = nil,
       },
       {
@@ -67,8 +71,10 @@ Config = {
          ApproachAngle = nil,
          Altitude = nil,
          RelativeTo = 0,
-         Thrust = nil,
-         ThrustAngle = nil,
+         Change = {
+            When = { Angle = nil },
+            Thrust = nil,
+         },
          Evasion = { 20, .25 },
       },
    },

@@ -36,7 +36,9 @@ function GeneralMissile.create(Config)
    self.AntiAir.ThrustAngle = PrepareAngle(self.AntiAir.ThrustAngle)
    self.AntiAir.OneTurnAngle = PrepareAngle(self.AntiAir.OneTurnAngle, 1)
    for _,Phase in pairs(self.Phases) do
-      Phase.ThrustAngle = PrepareAngle(Phase.ThrustAngle)
+      if Phase.Change and Phase.Change.When then
+         Phase.Change.When.Angle = PrepareAngle(Phase.Change.When.Angle)
+      end
    end
 
    -- Handle certain nil values so they will always evaluate false
@@ -93,26 +95,41 @@ function UpdateMissileState(I, TransceiverIndex, MissileIndex, Position, Missile
    return Now,TimeStep
 end
 
--- Set thrust according to flavor
-function SetMissileThrust(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, MissileState, Thrust, ThrustAngle, ThrustDuration, ImpactTime)
-   if not (Thrust or ThrustDuration) then return end
+-- Handle a missile state change
+function HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, MissileState, ImpactTime, Change)
+   if not Change then return end
 
-   if ThrustAngle then
-      -- Note we end up calculating this twice in certain circumstances,
-      -- but that's ok
-      -- Sometimes it's the predicted aim point, sometimes it's the real
-      -- one
+   if Change.When then
+      -- Check conditions, exit if not met
       local TargetVector = AimPoint - Position
-      local CosAngle = Vector3.Dot(TargetVector.normalized, Velocity.normalized)
-      if CosAngle < ThrustAngle then return end -- Not yet
+      if Change.When.Angle then
+         -- Note we end up calculating this twice in certain circumstances,
+         -- but that's ok
+         -- Sometimes it's the predicted aim point, sometimes it's the real
+         -- one
+         local CosAngle = Vector3.Dot(TargetVector.normalized, Velocity.normalized)
+         if CosAngle < Change.When.Angle then return end -- Not yet
+      end
+      if Change.When.Range then
+         if TargetVector.magnitude > Change.When.Range then return end
+      end
+      if Change.When.AltitudeGT then
+         if Position.y <= Change.When.AltitudeGT then return end
+      end
+      if Change.When.AltitudeLT then
+         if Position.y >= Change.When.AltitudeLT then return end
+      end
    end
 
-   if Thrust and Thrust < 0 then
+   --# The following is a no-no since the config is shared between all
+   --# missiles. But it's not like we're multithreaded...
+   Change.VarThrust = Change.Thrust
+   if Change.VarThrust and Change.VarThrust < 0 then
       -- Base thrust on current (estimated) fuel and predicted impact time
-      Thrust = Round(MissileState.Fuel / ImpactTime, 1)
+      Change.VarThrust = Round(MissileState.Fuel / ImpactTime, 1)
    end
 
-   MissileState.Command:SendUpdate(I, TransceiverIndex, MissileIndex, { VarThrust = Thrust, ThrustDuration = ThrustDuration })
+   MissileState.Command:SendUpdate(I, TransceiverIndex, MissileIndex, Change)
 end
 
 -- Return highest terrain seen within look-ahead distance
@@ -223,7 +240,7 @@ function GeneralMissile:ExecuteProfile(I, TransceiverIndex, MissileIndex, Positi
          AimPoint = Vector3(AimPoint.x, self:ModifyAltitude(Position, AimPoint, Altitude, TerminalPhase.RelativeTo), AimPoint.z)
       end
 
-      SetMissileThrust(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, MissileState, TerminalPhase.Thrust, TerminalPhase.ThrustAngle, TerminalPhase.ThrustDuration, ImpactTime)
+      HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, MissileState, ImpactTime, TerminalPhase.Change)
 
       return AimPoint
    end
@@ -273,8 +290,8 @@ function GeneralMissile:ExecuteProfile(I, TransceiverIndex, MissileIndex, Positi
 
    -- Modify altitude according to parameters
    NewAimPoint.y = self:GetPhaseAltitude(I, Position, Velocity, Phase, ToNextPhase)
-   -- Set thrust
-   SetMissileThrust(I, TransceiverIndex, MissileIndex, Position, Velocity, NewAimPoint, MissileState, Phase.Thrust, Phase.ThrustAngle, Phase.ThrustDuration, ImpactTime)
+   -- Change state, if configured
+   HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, Velocity, NewAimPoint, MissileState, ImpactTime, Phase.Change)
    -- Perform horizontal evasion, if any
    local Evasion = Phase.Evasion
    if Evasion then
@@ -348,14 +365,20 @@ function GeneralMissile:Guide(I, TransceiverIndex, MissileIndex, Target, Missile
          AimPoint = ProNav(self.AntiAir.Gain, TimeStep, MissilePosition, MissileVelocity, TargetAimPoint, Target.Velocity)
       end
       -- Set thrust
-      local Thrust,ThrustAngle,ThrustDuration = self.AntiAir.DefaultThrust,nil,nil
+      local Change = {
+         Thrust = self.AntiAir.DefaultThrust,
+         ThrustDuration = nil,
+      }
       local TerminalRange = self.AntiAir.TerminalRange
       if TerminalRange and TargetRange <= TerminalRange then
-         Thrust = self.AntiAir.Thrust
-         ThrustAngle = self.AntiAir.ThrustAngle
-         ThrustDuration = self.AntiAir.ThrustDuration
+         Change = {
+            -- ThrustAngle should already be prepared
+            When = { Angle = self.AntiAir.ThrustAngle },
+            Thrust = self.AntiAir.Thrust,
+            ThrustDuration = self.AntiAir.ThrustDuration,
+         }
       end
-      SetMissileThrust(I, TransceiverIndex, MissileIndex, MissilePosition, MissileVelocity, TargetAimPoint, MissileState, Thrust, ThrustAngle, ThrustDuration, TargetRange / MissileSpeed)
+      HandleMissileChange(I, TransceiverIndex, MissileIndex, MissilePosition, MissileVelocity, TargetAimPoint, MissileState, TargetRange / MissileSpeed, Change)
    end
 
    return AimPoint

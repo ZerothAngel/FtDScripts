@@ -21,8 +21,10 @@ function UnifiedMissile.create(Config)
       Phases = {
          {
             Distance = Config.TerminalDistance,
-            Thrust = Config.TerminalThrust,
-            ThrustAngle = Config.TerminalThrustAngle,
+            Change = {
+               When = { Angle = Config.TerminalThrustAngle, },
+               Thrust = Config.TerminalThrust,
+            },
          },
          {
             Distance = Config.ClosingDistance,
@@ -30,8 +32,10 @@ function UnifiedMissile.create(Config)
             MinElevation = Config.ClosingElevation,
             Altitude = Config.ClosingAltitude,
             RelativeTo = Config.ClosingAltitudeRelativeTo,
-            Thrust = Config.ClosingThrust,
-            ThrustAngle = Config.ClosingThrustAngle,
+            Change = {
+               When = { Angle = Config.ClosingThrustAngle, },
+               Thrust = Config.ClosingThrust,
+            },
             Evasion = Config.Evasion,
          },
       },
@@ -44,8 +48,10 @@ function UnifiedMissile.create(Config)
          MinElevation = Config.SpecialManeuverElevation,
          Altitude = Config.SpecialManeuverAltitude,
          RelativeTo = Config.SpecialManeuverAltitudeRelativeTo,
-         Thrust = Config.SpecialManeuverThrust,
-         ThrustAngle = Config.SpecialManeuverThrustAngle,
+         Change = {
+            When = { Angle = Config.SpecialManeuverThrustAngle, },
+            Thrust = Config.SpecialManeuverThrust,
+         },
       }
       table.insert(GMConfig.Phases, 2, SpecialManeuverPhase)
    end

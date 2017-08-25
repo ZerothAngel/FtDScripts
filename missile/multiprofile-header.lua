@@ -89,8 +89,10 @@ MissileProfiles = {
                Distance = 150,
                Altitude = nil,
                RelativeTo = 1,
-               Thrust = nil,
-               ThrustAngle = nil,
+               Change = {
+                  When = { Angle = nil },
+                  Thrust = nil,
+               },
             },
             {
                Distance = 500,
@@ -99,8 +101,10 @@ MissileProfiles = {
                ApproachAngle = nil,
                Altitude = 0,
                RelativeTo = 4,
-               Thrust = nil,
-               ThrustAngle = nil,
+               Change = {
+                  When = { Angle = nil },
+                  Thrust = nil,
+               },
                Evasion = nil,
             },
             {
@@ -110,8 +114,10 @@ MissileProfiles = {
                ApproachAngle = nil,
                Altitude = 300,
                RelativeTo = 3,
-               Thrust = nil,
-               ThrustAngle = nil,
+               Change = {
+                  When = { Angle = nil },
+                  Thrust = nil,
+               },
                Evasion = nil,
             },
          },
@@ -142,8 +148,6 @@ MissileProfiles = {
                Distance = 175,
                Altitude = 0,
                RelativeTo = 6,
-               Thrust = nil,
-               ThrustAngle = nil,
             },
             {
                Distance = 50,
@@ -152,8 +156,6 @@ MissileProfiles = {
                ApproachAngle = nil,
                Altitude = -50,
                RelativeTo = 2,
-               Thrust = nil,
-               ThrustAngle = nil,
                Evasion = nil,
             },
          },

@@ -63,8 +63,6 @@ A typical profile will look something like this:
                    Distance = 175,
                    Altitude = 0,
                    RelativeTo = 6,
-                   Thrust = nil,
-                   ThrustAngle = nil,
                 },
                 {
                    Distance = 50,
@@ -73,8 +71,6 @@ A typical profile will look something like this:
                    ApproachAngle = nil,
                    Altitude = -50,
                    RelativeTo = 2,
-                   Thrust = nil,
-                   ThrustAngle = nil,
                    Evasion = nil,
                 },
              },
