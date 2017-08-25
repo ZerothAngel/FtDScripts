@@ -41,37 +41,18 @@ Config = {
    Phases = {
       {
          Distance = 100,
-         Altitude = nil,
-         RelativeTo = 1,
-         Change = {
-            When = { Angle = nil },
-            Thrust = nil,
-         },
       },
       {
          Distance = 250,
          AboveSeaLevel = true,
          MinElevation = 3,
-         ApproachAngle = nil,
          Altitude = 30,
          RelativeTo = 3,
-         Change = {
-            When = { Angle = nil },
-            Thrust = nil,
-         },
-         Evasion = nil,
       },
       {
          Distance = 50,
          AboveSeaLevel = true,
          MinElevation = 3,
-         ApproachAngle = nil,
-         Altitude = nil,
-         RelativeTo = 0,
-         Change = {
-            When = { Angle = nil },
-            Thrust = nil,
-         },
          Evasion = { 20, .25 },
       },
    },
