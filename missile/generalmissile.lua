@@ -1,4 +1,4 @@
---@ commons quadraticintercept pronav getvectorangle round deepcopy sign missilecommand
+--@ commons quadraticintercept getvectorangle round deepcopy sign missilecommand
 -- GeneralMissile implementation
 GeneralMissile = {}
 
@@ -13,12 +13,15 @@ function GeneralMissile.create(Config)
    -- If one config set or the other is missing, set defaults and activation
    -- appropriately
    if not self.AntiAir then
-      self.ProfileActivationElevation = math.huge
+      self.AirProfileElevation = math.huge
       self.AntiAir = {
-         Gain = 5,
+         Phases = {
+            {
+            },
+         },
       }
    elseif not self.Phases then
-      self.ProfileActivationElevation = -math.huge
+      self.AirProfileElevation = -math.huge
       self.Phases = {
          {
             Distance = 150,
@@ -33,8 +36,11 @@ function GeneralMissile.create(Config)
 
    -- Calculate cosine of all angle parameters ahead of time
    self.DetonationAngle = PrepareAngle(self.DetonationAngle, 1)
-   self.AntiAir.ThrustAngle = PrepareAngle(self.AntiAir.ThrustAngle)
-   self.AntiAir.OneTurnAngle = PrepareAngle(self.AntiAir.OneTurnAngle, 1)
+   for _,Phase in pairs(self.AntiAir.Phases) do
+      if Phase.Change and Phase.Change.When then
+         Phase.Change.When.Angle = PrepareAngle(Phase.Change.When.Angle)
+      end
+   end
    for _,Phase in pairs(self.Phases) do
       if Phase.Change and Phase.Change.When then
          Phase.Change.When.Angle = PrepareAngle(Phase.Change.When.Angle)
@@ -43,13 +49,23 @@ function GeneralMissile.create(Config)
 
    -- Handle certain nil values so they will always evaluate false
    if not self.DetonationRange then self.DetonationRange = -1 end
-   if not self.AntiAir.OneTurnTime then self.AntiAir.OneTurnTime = -1 end
+
+   -- Fix up 3D phases, if needed
+   if #self.AntiAir.Phases == 1 then
+      -- Only has terminal phase, set range appropriately
+      self.AntiAir.Phases[1].Range = math.huge
+      -- Add a dummy closing phase
+      table.insert(self.AntiAir.Phases, {})
+   end
+   -- Set 3D closing range (currently unused)
+   self.AntiAir.Phases[#self.AntiAir.Phases].Range = math.huge
 
    -- Methods (because no setmetatable)
    self.GetTerrainHeight = GeneralMissile.GetTerrainHeight
    self.ModifyAltitude = GeneralMissile.ModifyAltitude
-   self.GetPhaseAltitude = GeneralMissile.GetPhaseAltitude
-   self.ExecuteProfile = GeneralMissile.ExecuteProfile
+   self.GetPhaseAltitude2D = GeneralMissile.GetPhaseAltitude2D
+   self.ExecuteProfile2D = GeneralMissile.ExecuteProfile2D
+   self.ExecuteProfile3D = GeneralMissile.ExecuteProfile3D
    -- "Public" methods
    self.SetTarget = GeneralMissile.SetTarget
    self.Guide = GeneralMissile.Guide
@@ -91,8 +107,6 @@ function UpdateMissileState(I, TransceiverIndex, MissileIndex, Position, Missile
       Fuel = Fuel - CurrentThrust * TimeStep -- Assumes 1 fuel per thrust per second
    end
    MissileState.Fuel = math.max(Fuel, 0)
-
-   return Now,TimeStep
 end
 
 -- Handle a missile state change
@@ -201,8 +215,8 @@ function GeneralMissile:ModifyAltitude(Position, AimPoint, Altitude, RelativeTo)
    end
 end
 
--- Modify altitude according to flavor
-function GeneralMissile:GetPhaseAltitude(I, Position, Velocity, Phase, MaxDistance)
+-- Modify altitude according to flavor (2D version)
+function GeneralMissile:GetPhaseAltitude2D(I, Position, Velocity, Phase, MaxDistance)
    local Height = self:GetTerrainHeight(I, Position, Velocity, MaxDistance)
    if Phase.AboveSeaLevel then
       -- Constrain terrain hugging to sea level
@@ -221,7 +235,7 @@ function GeneralMissile:GetPhaseAltitude(I, Position, Velocity, Phase, MaxDistan
 end
 
 -- Adjust aim point according to current profile phase
-function GeneralMissile:ExecuteProfile(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, TargetVelocity, MissileState)
+function GeneralMissile:ExecuteProfile2D(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, TargetVelocity, MissileState)
    -- Use quadratic prediction to determine aim point and predicted impact time
    local ImpactTime
    AimPoint,ImpactTime = QuadraticIntercept(Position, Vector3.Dot(Velocity, Velocity), AimPoint, TargetVelocity, 9999)
@@ -289,7 +303,7 @@ function GeneralMissile:ExecuteProfile(I, TransceiverIndex, MissileIndex, Positi
    local NewAimPoint = Position + GroundDirection * AimDistance
 
    -- Modify altitude according to parameters
-   NewAimPoint.y = self:GetPhaseAltitude(I, Position, Velocity, Phase, ToNextPhase)
+   NewAimPoint.y = self:GetPhaseAltitude2D(I, Position, Velocity, Phase, ToNextPhase)
    -- Change state, if configured
    HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, Velocity, NewAimPoint, MissileState, ImpactTime, Phase.Change)
    -- Perform horizontal evasion, if any
@@ -303,6 +317,63 @@ function GeneralMissile:ExecuteProfile(I, TransceiverIndex, MissileIndex, Positi
    return NewAimPoint
 end
 
+function GeneralMissile:ExecuteProfile3D(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, TargetVelocity, MissileState)
+   -- Use quadratic prediction to determine aim point and predicted impact time
+   local ImpactTime
+   AimPoint,ImpactTime = QuadraticIntercept(Position, Vector3.Dot(Velocity, Velocity), AimPoint, TargetVelocity, 9999)
+
+   local TargetOffset = AimPoint - Position
+   local TargetRange = TargetOffset.magnitude
+
+   -- First check if within terminal distance
+   local TerminalPhase = self.AntiAir.Phases[1]
+   if TargetRange < TerminalPhase.Range then
+      -- Modify aim point, if configured to do so
+      local Altitude = TerminalPhase.Altitude
+      if Altitude then
+         AimPoint = Vector3(AimPoint.x, self:ModifyAltitude(Position, AimPoint, Altitude, TerminalPhase.RelativeTo), AimPoint.z)
+      end
+
+      HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, MissileState, ImpactTime, TerminalPhase.Change)
+
+      return AimPoint
+   end
+
+   -- The assumption is that the phases are in order, closest to farthest
+   -- Except for the last, which is always the closing phase regardless of
+   -- its Range
+   local PreviousPhase
+   local Phase = TerminalPhase
+   for i = 2,#self.AntiAir.Phases do
+      PreviousPhase = Phase
+      Phase = self.AntiAir.Phases[i]
+      if TargetRange < Phase.Range then break end
+      -- If it's the last one (closing phase), the loop will end anyway
+   end
+
+   local TargetDirection,ToNextPhase
+
+   -- TODO ApproachAngle
+
+   TargetDirection = TargetOffset / TargetRange
+   ToNextPhase = TargetRange - PreviousPhase.Range
+
+   -- New aim point is toward target at edge of next phase
+   local NewAimPoint = Position + TargetDirection * ToNextPhase
+
+   -- Modify altitude according to parameters
+   local Altitude = Phase.Altitude
+   if Altitude then
+      NewAimPoint.y = self:ModifyAltitude(Position, nil, Altitude, Phase.RelativeTo)
+   end
+   -- Change state, if configured
+   HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, Velocity, NewAimPoint, MissileState, ImpactTime, Phase.Change)
+
+   -- TODO Evasion
+
+   return NewAimPoint
+end
+
 function GeneralMissile:SetTarget(I, Target)
    local TargetAimPoint = Target.AimPoint
    local TargetAltitude = TargetAimPoint.y
@@ -311,9 +382,9 @@ function GeneralMissile:SetTarget(I, Target)
    self.TargetDepth = math.min(TargetAltitude, 0) -- When below sea level
    self.TargetGround = math.max(I:GetTerrainAltitudeForPosition(TargetAimPoint), 0) -- When above sea level
 
-   -- For now, executing the profile is solely based on the target's
+   -- For now, which profile to execute is solely based on the target's
    -- elevation above sea level.
-   self.DoExecuteProfile = (TargetAltitude - self.TargetGround) <= self.ProfileActivationElevation
+   self.Use2DProfile = (TargetAltitude - self.TargetGround) <= self.AirProfileElevation
 end
 
 function GeneralMissile:Guide(I, TransceiverIndex, MissileIndex, Target, Missile, MissileState)
@@ -322,7 +393,7 @@ function GeneralMissile:Guide(I, TransceiverIndex, MissileIndex, Target, Missile
    local MissileVelocity = Missile.Velocity
    local MissileSpeed = MissileVelocity.magnitude
 
-   local Now,TimeStep = UpdateMissileState(I, TransceiverIndex, MissileIndex, MissilePosition, Missile, MissileState)
+   UpdateMissileState(I, TransceiverIndex, MissileIndex, MissilePosition, Missile, MissileState)
 
    -- Note these are against the true aim point
    local TargetVector = TargetAimPoint - MissilePosition
@@ -338,47 +409,17 @@ function GeneralMissile:Guide(I, TransceiverIndex, MissileIndex, Target, Missile
 
    local AimPoint
 
-   local OneTurnStart = MissileState.OneTurnStart
    local MinAltitude = self.MinAltitude
-
-   if not OneTurnStart and MissilePosition.y >= MinAltitude then
-      -- Record the first time it is above minimum altitude
-      OneTurnStart = Now
-      MissileState.OneTurnStart = Now
-   end
-
    if MissilePosition.y < MinAltitude then
       -- Below minimum altitude, head straight up
       AimPoint = Vector3(MissilePosition.x, MinAltitude+1000, MissilePosition.z)
       -- Don't bother with setting thrust since they don't work underwater
-   elseif self.DoExecuteProfile then
-      -- Execute profile
-      AimPoint = self:ExecuteProfile(I, TransceiverIndex, MissileIndex, MissilePosition, MissileVelocity, TargetAimPoint, Target.Velocity, MissileState)
+   elseif self.Use2DProfile then
+      -- Execute 2D profile
+      AimPoint = self:ExecuteProfile2D(I, TransceiverIndex, MissileIndex, MissilePosition, MissileVelocity, TargetAimPoint, Target.Velocity, MissileState)
    else
-      -- Since PN sucks at large angles, perform a "one turn" maneuver
-      -- if newly-launched
-      if Now <= (self.AntiAir.OneTurnTime + OneTurnStart) and CosAngle <= self.AntiAir.OneTurnAngle then
-         -- Just turn straight toward target
-         AimPoint = TargetAimPoint
-      else
-         -- Use PN guidance
-         AimPoint = ProNav(self.AntiAir.Gain, TimeStep, MissilePosition, MissileVelocity, TargetAimPoint, Target.Velocity)
-      end
-      -- Set thrust
-      local Change = {
-         Thrust = self.AntiAir.DefaultThrust,
-         ThrustDuration = nil,
-      }
-      local TerminalRange = self.AntiAir.TerminalRange
-      if TerminalRange and TargetRange <= TerminalRange then
-         Change = {
-            -- ThrustAngle should already be prepared
-            When = { Angle = self.AntiAir.ThrustAngle },
-            Thrust = self.AntiAir.Thrust,
-            ThrustDuration = self.AntiAir.ThrustDuration,
-         }
-      end
-      HandleMissileChange(I, TransceiverIndex, MissileIndex, MissilePosition, MissileVelocity, TargetAimPoint, MissileState, TargetRange / MissileSpeed, Change)
+      -- Execute 3D profile
+      AimPoint = self:ExecuteProfile3D(I, TransceiverIndex, MissileIndex, MissilePosition, MissileVelocity, TargetAimPoint, Target.Velocity, MissileState)
    end
 
    return AimPoint

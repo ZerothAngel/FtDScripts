@@ -30,17 +30,14 @@ Config = {
    LookAheadTime = 2,
    LookAheadResolution = 3,
 
+   AirProfileElevation = 10,
    AntiAir = {
-      DefaultThrust = nil,
-      TerminalRange = nil,
-      Thrust = nil,
-      ThrustAngle = nil,
-      OneTurnTime = 3,
-      OneTurnAngle = 15,
-      Gain = 5,
+      Phases = {
+         {
+         },
+      },
    },
 
-   ProfileActivationElevation = 10,
    Phases = {
       {
          Distance = 100,

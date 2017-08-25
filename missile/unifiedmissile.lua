@@ -4,7 +4,7 @@ UnifiedMissile = {}
 
 function UnifiedMissile.create(Config)
    local GMConfig = {
-      ProfileActivationElevation = Config.SpecialAttackElevation,
+      AirProfileElevation = Config.SpecialAttackElevation,
       MinAltitude = Config.MinimumAltitude,
       DetonationRange = Config.DetonationRange,
       DetonationAngle = Config.DetonationAngle,
@@ -12,10 +12,13 @@ function UnifiedMissile.create(Config)
       LookAheadResolution = Config.LookAheadResolution,
 
       AntiAir = {
-         DefaultThrust = Config.DefaultThrust,
-         OneTurnTime = 3,
-         OneTurnAngle = 15,
-         Gain = 5,
+         Phases = {
+            {
+               Change = {
+                  Thrust = Config.DefaultThrust,
+               },
+            },
+         }
       },
 
       Phases = {
