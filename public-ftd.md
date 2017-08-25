@@ -62,7 +62,6 @@ These use the new configuration scheme detailed [in this doc](https://github.com
 
 These all use generalmissile under the hood, but continue to be configured as they were before. I will most likely not add any new configuration options, but they should continue to work for the foreseeable future.
 
-  * [pnmissile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/pnmissile.lua) &mdash; Experimental script for pure proportional-navigation guidance.
   * [udualprofile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/udualprofile.lua) &mdash; Dual-profile missile script, using a separate unifiedmissile instance for vertically- and horizontally-launched missiles. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=21639))
   * [umultiprofile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/umultiprofile.lua) &mdash; Multiple profile missile script, up to one unifiedmissile instance for each weapon slot. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=21639))
   * [unifiedmissile](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/unifiedmissile.lua) &mdash; Highly configurable advanced missile script that supports a variety of attack profiles. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=21639))
