@@ -19,7 +19,7 @@ for i,MP in ipairs(MissileProfiles) do
       MinRange = MP.Limits.MinRange^2,
       MaxRange = MP.Limits.MaxRange^2,
       -- Extra info to make things easier
-      Orientation = MP.SelectBy.Orientation,
+      Vertical = MP.SelectBy.Vertical,
       Direction = MP.SelectBy.Direction,
       WeaponSlot = MP.FireWeaponSlot,
       TargetSelector = MP.TargetSelector,
@@ -80,11 +80,11 @@ function SelectGuidance(I, TransceiverIndex)
             end
          end
       else
-         local Orientation = GuidanceInfo.Orientation
+         local Vertical = GuidanceInfo.Vertical
          -- Explicitly match true/false because it can be nil
-         if Orientation == true and math.abs(BlockInfo.LocalForwards.y) > .001 then
+         if Vertical == true and math.abs(BlockInfo.LocalForwards.y) > .001 then
             return Index
-         elseif Orientation == false and math.abs(BlockInfo.LocalForwards.y) <= .001 then
+         elseif Vertical == false and math.abs(BlockInfo.LocalForwards.y) <= .001 then
             return Index
          end
       end

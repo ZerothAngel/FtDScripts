@@ -32,7 +32,7 @@ MissileProfiles = {
       -- Comment out or delete the rest.
       SelectBy = {
          -- By orientation: true = vertical, false = horizontal
-         Orientation = true,
+         Vertical = true,
       },
 --      SelectBy = {
 --         -- By launcher direction. Set Direction to a list of Vector3.<dir>
@@ -105,7 +105,7 @@ MissileProfiles = {
 
    -- Second profile
    {
-      SelectBy = { Orientation = false, }, -- Horizontal
+      SelectBy = { Vertical = false, }, -- Horizontal
       FireWeaponSlot = nil,
       TargetSelector = 1,
       Limits = {

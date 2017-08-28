@@ -41,7 +41,7 @@ Note that it helps to have a Lua-aware editor that will automatically indent lin
 A typical profile will look something like this:
 
        {
-          SelectBy = { Orientation = false, }, -- Horizontal
+          SelectBy = { Vertical = false, }, -- Horizontal
           FireWeaponSlot = nil,
           TargetSelector = 1,
           Limits = {
@@ -83,7 +83,7 @@ I recommend deleting any profiles that you don't use.
 
 This section covers this part
 
-          SelectBy = { Orientation = false, }, -- Horizontal
+          SelectBy = { Vertical = false, }, -- Horizontal
 
 and is how the profile selects which Lua transceivers to associate with (which then determine the behavior for that Lua transceiver's/launch pad's missiles).
 
@@ -106,11 +106,11 @@ Very simple. Distinguishes between vertical launchers and horizontal launchers.
 
 To select vertical launchers:
 
-    SelectBy = { Orientation = true, },
+    SelectBy = { Vertical = true, },
 
 To select horizontal launchers:
 
-    SelectBy = { Orientation = false, },
+    SelectBy = { Vertical = false, },
 
 Fairly straightforward.
 
