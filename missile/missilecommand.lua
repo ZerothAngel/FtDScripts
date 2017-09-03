@@ -8,7 +8,7 @@ function MissileCommand.create(I, TransceiverIndex, MissileIndex)
    -- instance because they may change.
    -- We leave tracking (by missile ID) to the caller.
 
-   local Fuel,VarThrustCount,VarThrust,ThrustCount = 0,0,0,0
+   local Fuel,Lifetime,VarThrustCount,VarThrust,ThrustCount = 0,30,0,0,0
 
    local switch = {}
    -- All names have a spaces, so can't use shortcut
@@ -18,6 +18,9 @@ function MissileCommand.create(I, TransceiverIndex, MissileIndex)
    end
    switch["missile fuel tank"] = function (_)
       Fuel = Fuel + 5000
+   end
+   switch["missile regulator"] = function (_)
+      Lifetime = Lifetime + 180
    end
    switch["missile short range thruster"] = function (Part)
       ThrustCount = ThrustCount + 1
@@ -37,12 +40,13 @@ function MissileCommand.create(I, TransceiverIndex, MissileIndex)
    local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
    for _,Part in ipairs(MissileInfo.Parts) do
       -- For most parts, the last one looked at wins.
-      -- Except var thrusters and fuel tanks, which are summed.
+      -- Except var thrusters, fuel tanks, and regulators, which are summed.
       local f = switch[Part.Name]
       if f then f(Part) end
    end
 
    self.Fuel = Fuel
+   self.Lifetime = Lifetime
    if VarThrustCount > 0 then
       self.VarThrustCount = VarThrustCount
       self.VarThrust = VarThrust
