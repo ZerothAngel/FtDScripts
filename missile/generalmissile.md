@@ -129,7 +129,7 @@ Both anti-air and surface profiles have a *Phases* array. The first phase in the
    * The *Range* value is used to deterimine when this phase is active. This is the straight-line distance between the missile and target.
    * The closing phase may be omitted if there are no other phases other than the terminal phase. In this case, the terminal phase may also omit its *Range*.
    * If there is a closing phase, it may omit its *Range* (the range for the closing phase is always taken to be infinite).
- * For the surface profile, the *Distance* value is used when the phase is active. This is the ground distance between missile and target.
+ * For the surface profile, the *Distance* value is used to determine when the phase is active. This is the ground distance between missile and target.
 
 ## Common Phase Parameters ##
 
