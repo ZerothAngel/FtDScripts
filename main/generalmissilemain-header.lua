@@ -1,3 +1,7 @@
+-- If you only have a single missile system on your vehicle, this script
+-- is fine. But if you have more than one (e.g. anti-air & torpedoes),
+-- look at my "multiprofile" script instead. It's a wrapper around this one.
+
 -- CONFIGURATION
 
 -- Generally these should match the settings on your Local Weapon Controller.
