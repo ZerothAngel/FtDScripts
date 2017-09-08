@@ -1,4 +1,4 @@
---@ commonstargets commonsweapons commons ballistic weapontypes
+--@ commonstargets commonsweapons commons ballistic weapontypes targetaccel
 -- Cannon fire control module
 
 -- Limits by slot
@@ -10,6 +10,11 @@ for _,Config in pairs(CannonConfigs) do
 end
 
 function CannonControl_Update(I)
+   --# The reasoning for not using relative acceleration is that
+   --# the shell will no longer accelerate (due to own vehicle) once fired.
+   --# Maybe make # samples configurable?
+   CalculateTargetAcceleration(false, 120)
+
    -- Pick highest priority target for each configured weapon slot
    local ToFire = {}
    local Fire = false -- Because # operator only works on sequences
@@ -46,7 +51,7 @@ function CannonControl_Update(I)
          local FireSlot = ToFire[Weapon.Slot]
          if FireSlot and (Weapon.Type == TURRET or Weapon.Type == CANNON) and not Weapon.PlayerControl then
             local Target,CannonAimPoint = unpack(FireSlot)
-            local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity)
+            local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity+Target.Acceleration)
             if AimPoint then
                -- Docs say this doesn't have to be normalized, but as of
                -- 2.02 or so, it does. (Otherwise crazy recoil happens...)
@@ -65,7 +70,7 @@ function CannonControl_Update(I)
          local FireSlot = ToFire[Weapon.Slot]
          if FireSlot and Weapon.Type == CANNON and not Weapon.PlayerControl then 
             local Target,CannonAimPoint = unpack(FireSlot)
-            local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity)
+            local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity+Target.Acceleration)
             if AimPoint then
                AimPoint = AimPoint.normalized
                if I:AimWeaponInDirectionOnTurretOrSpinner(Weapon.TurretIndex, Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, Weapon.Slot) > 0 then
