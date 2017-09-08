@@ -11,7 +11,7 @@ function MovingAverage.create(MaxSamples, Zero)
    self.SampleCount = 0
    self.NextSample = 0 -- This will be 0-indexed for sanity
    self.Samples = {}
-   self.Total = Zero or 0
+   self.Average = Zero or 0
 
    self.AddSample = MovingAverage.AddSample
    self.GetAverage = MovingAverage.GetAverage
@@ -21,24 +21,16 @@ end
 
 function MovingAverage:AddSample(Sample)
    local MaxSamples,SampleCount,NextSample = self.MaxSamples,self.SampleCount,self.NextSample
-   local LastSample = (NextSample + 1) % MaxSamples
 
    if SampleCount >= MaxSamples then
-      -- Remove oldest sample from total
-      self.Total = self.Total - self.Samples[1 + LastSample]
+      -- Add new sample while removing oldest
+      self.Average = self.Average + (Sample - self.Samples[1 + NextSample]) / MaxSamples
+   else
+      -- Not enough samples yet, do cumulative moving average
+      self.Average = (Sample + self.Average * SampleCount) / (SampleCount + 1)
    end
 
    self.SampleCount = math.min(MaxSamples, SampleCount + 1)
    self.Samples[1 + NextSample] = Sample
-   self.Total = self.Total + Sample
-   self.NextSample = LastSample
-end
-
-function MovingAverage:GetAverage()
-   local SampleCount = self.SampleCount
-   if SampleCount == 0 then
-      return self.Total -- Meh...
-   else
-      return self.Total / SampleCount
-   end
+   self.NextSample = (NextSample + 1) % MaxSamples
 end

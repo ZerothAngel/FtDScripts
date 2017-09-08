@@ -18,7 +18,7 @@ function CalculateTargetAcceleration(Relative, NumSamples)
          State.LastTime = Now
          State.LastVelocity = Velocity
          State.AccelMA:AddSample(dV / dT)
-         State.LastAcceleration = State.AccelMA:GetAverage()
+         State.LastAcceleration = State.AccelMA.Average
       else
          -- New target or timed out
          State = {
