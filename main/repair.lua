@@ -1,17 +1,20 @@
 --! repair
 --@ commons control firstrun periodic
---@ shieldmanager balloonmanager sixdof altitudecontrol airshipdefaults repair-ai repair-aicommon
+--@ shieldmanager balloonmanager rollturn sixdof altitudecontrol airshipdefaults repair-ai repair-aicommon
 -- Quadcopter repair AI
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 3)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 RepairAI = Periodic.create(AI_UpdateRate, RepairAI_Update)
 
-SelectHeadingImpl(SixDoF)
+SelectHeadingImpl(SixDoF, RollTurnControl)
+SelectRollImpl(SixDoF, RollTurnControl)
+
+SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
 SelectAltitudeImpl(SixDoF)
 SelectPitchImpl(SixDoF)
-SelectRollImpl(SixDoF)
+SelectRollImpl(RollTurn)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)

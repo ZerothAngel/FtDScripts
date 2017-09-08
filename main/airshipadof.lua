@@ -1,6 +1,6 @@
 --! airshipadof
 --@ commons control firstrun periodic
---@ shieldmanager balloonmanager multiprofile alldof altitudecontrol naval-ai
+--@ shieldmanager balloonmanager multiprofile rollturn alldof altitudecontrol naval-ai
 -- Airship main
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 4)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
@@ -8,11 +8,14 @@ MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
 
-SelectHeadingImpl(AllDoF)
+SelectHeadingImpl(AllDoF, RollTurnControl)
+SelectRollImpl(AllDoF, RollTurnControl)
+
+SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(AllDoF)
 SelectAltitudeImpl(AllDoF)
 SelectPitchImpl(AllDoF)
-SelectRollImpl(AllDoF)
+SelectRollImpl(RollTurn)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)

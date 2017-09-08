@@ -1,6 +1,6 @@
 --! utility
 --@ commons control firstrun periodic
---@ dockmanager shieldmanager balloonmanager sixdof altitudecontrol airshipdefaults utility-ai utility-aicommon
+--@ dockmanager shieldmanager balloonmanager rollturn sixdof altitudecontrol airshipdefaults utility-ai utility-aicommon
 -- Utility main
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 4)
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
@@ -8,11 +8,14 @@ DockManager = Periodic.create(DockManager_UpdateRate, DockManager_Update, 2)
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 UtilityAI = Periodic.create(AI_UpdateRate, UtilityAI_Update)
 
-SelectHeadingImpl(SixDoF)
+SelectHeadingImpl(SixDoF, RollTurnControl)
+SelectRollImpl(SixDoF, RollTurnControl)
+
+SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
 SelectAltitudeImpl(SixDoF)
 SelectPitchImpl(SixDoF)
-SelectRollImpl(SixDoF)
+SelectRollImpl(RollTurn)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)

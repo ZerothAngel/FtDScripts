@@ -1,6 +1,6 @@
 --! scout
 --@ commons control firstrun periodic
---@ cameratrack shieldmanager balloonmanager sixdof altitudecontrol airshipdefaults naval-ai
+--@ cameratrack shieldmanager balloonmanager rollturn sixdof altitudecontrol airshipdefaults naval-ai
 -- Scout main
 CameraTrack = Periodic.create(CameraTrack_UpdateRate, CameraTrack_Update, 4)
 BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 3)
@@ -8,11 +8,14 @@ ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control,
 AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
 NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
 
-SelectHeadingImpl(SixDoF)
+SelectHeadingImpl(SixDoF, RollTurnControl)
+SelectRollImpl(SixDoF, RollTurnControl)
+
+SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
 SelectAltitudeImpl(SixDoF)
 SelectPitchImpl(SixDoF)
-SelectRollImpl(SixDoF)
+SelectRollImpl(RollTurn)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)

@@ -1,17 +1,20 @@
 --! utilitysub
 --@ commons control firstrun periodic
---@ dockmanager shieldmanager subcontrol sixdof depthcontrol ytdefaults utility-ai utility-aicommon
+--@ dockmanager shieldmanager rollturn subcontrol sixdof depthcontrol ytdefaults utility-ai utility-aicommon
 -- Utility submarine main
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
 DockManager = Periodic.create(DockManager_UpdateRate, DockManager_Update, 2)
 DepthControl = Periodic.create(DepthControl_UpdateRate, Depth_Control, 1)
 UtilityAI = Periodic.create(AI_UpdateRate, UtilityAI_Update)
 
-SelectHeadingImpl(SixDoF)
+SelectHeadingImpl(SixDoF, RollTurnControl)
+SelectRollImpl(SubControl, RollTurnControl)
+
+SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
 SelectAltitudeImpl(SubControl)
 SelectPitchImpl(SubControl)
-SelectRollImpl(SubControl)
+SelectRollImpl(RollTurn)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)

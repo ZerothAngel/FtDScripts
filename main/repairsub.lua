@@ -1,16 +1,19 @@
 --! repairsub
 --@ commons control firstrun periodic
---@ shieldmanager subcontrol sixdof depthcontrol ytdefaults repair-ai repair-aicommon
+--@ shieldmanager subcontrol rollturn sixdof depthcontrol ytdefaults repair-ai repair-aicommon
 -- Repair submarine main
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 DepthControl = Periodic.create(DepthControl_UpdateRate, Depth_Control, 1)
 RepairAI = Periodic.create(AI_UpdateRate, RepairAI_Update)
 
-SelectHeadingImpl(SixDoF)
+SelectHeadingImpl(SixDoF, RollTurnControl)
+SelectRollImpl(SubControl, RollTurnControl)
+
+SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
 SelectAltitudeImpl(SubControl)
 SelectPitchImpl(SubControl)
-SelectRollImpl(SubControl)
+SelectRollImpl(RollTurn)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.create(I)
