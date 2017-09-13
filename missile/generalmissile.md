@@ -462,3 +462,38 @@ less extreme closing depth.
           },
        },
     }
+
+### "Ballistic" Missiles ###
+
+Vertically-launched missiles (with ejectors) made up of: fins, short range
+thruster(s), fuel tanks, Lua receiver, APN (gain 10), warheads, and a seeker
+head of some sort (radar works). Guidance delay should be set to max.
+
+Climbs up to ~350 meters, gets within 650 meters (ground distance) of the
+target, kills the short range thruster and then glides the rest of the way
+in. Undetectable by missile warners.
+
+    Config = {
+       MinAltitude = 0,
+       DetonationRange = nil,
+       DetonationAngle = 30,
+       LookAheadTime = 2,
+       LookAheadResolution = 3,
+
+       Phases = {
+          {
+             Distance = 650,
+             Change = {
+                When = { AltitudeGT = 100, },
+                ThrustDuration = 0,
+             },
+          },
+          {
+             Distance = 50,
+             AboveSeaLevel = true,
+             MinElevation = 3,
+             Altitude = 350,
+             RelativeTo = 0,
+          },
+       },
+    }
