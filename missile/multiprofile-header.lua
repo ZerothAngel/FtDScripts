@@ -84,6 +84,7 @@ MissileProfiles = {
          Phases = {
             {
                Distance = 150,
+--               Change = { When = { Angle = 3, }, Thrust = -1, },
             },
             {
                Distance = 500,
@@ -91,13 +92,15 @@ MissileProfiles = {
                MinElevation = 3,
                Altitude = 0,
                RelativeTo = 4,
+--               Change = { Thrust = 300, },
             },
             {
                Distance = 50,
                AboveSeaLevel = true,
                MinElevation = 3,
                Altitude = 300,
-               RelativeTo = 3,
+               RelativeTo = 0,
+--               Change = { Thrust = 300, },
             },
          },
       },

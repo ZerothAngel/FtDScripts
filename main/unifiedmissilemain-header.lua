@@ -1,3 +1,7 @@
+-- If you only have a single missile system on your vehicle, this script
+-- is fine. But if you have more than one (e.g. anti-air & torpedoes),
+-- look at my "umultiprofile" script instead. It's a wrapper around this one.
+
 -- Have a decent editor or are you somewhat familiar with coding? (Lua
 -- knowledge not necessary.) Have a look at my generalmissile-based
 -- scripts instead. Lots of options, lots of docs!
@@ -27,11 +31,11 @@ MissileWeaponSlot = nil
 -- 2 = Pseudo-random split against all targetable targets
 MissileTargetSelector = 1
 
--- NOTE: The following config is for sea-skimming "pop-up" missiles.
+-- NOTE: The following config is for javelin-style top-attack missiles.
 -- There are more examples below it, including:
---  Javelin-style top-attack
+--  Sea-skimming pop-up missiles
 --  Bottom-attack torpedoes
---  Sea-skimming pop-under missiles
+--  Sea-skimming duck-under missiles
 
 -- Always be sure each setting ends with a comma!
 
@@ -93,7 +97,7 @@ Config = {
 
    -- Closing altitude. Set to nil to only hug terrain.
    -- If set to a number, you should also set ClosingAltitudeRelativeTo.
-   ClosingAltitude = nil,
+   ClosingAltitude = 300,
 
    -- See the "RelativeTo" explanation above. Only used if ClosingAltitude
    -- is a number and not nil.
@@ -116,7 +120,7 @@ Config = {
 
    -- Ground distance from target at which to perform the special maneuver.
    -- Set to nil to disable.
-   SpecialManeuverDistance = 250,
+   SpecialManeuverDistance = 300,
 
    -- Whether the special maneuver phase takes place above or below sea level.
    -- This affects terrain hugging.
@@ -126,11 +130,11 @@ Config = {
    SpecialManeuverElevation = 3,
 
    -- Special maneuver altitude. Set to nil to only hug terrain.
-   SpecialManeuverAltitude = 30,
+   SpecialManeuverAltitude = 0,
 
    -- See the "RelativeTo" explanation above. Only used if
    -- SpecialManeuverAltitude is a number and not nil.
-   SpecialManeuverAltitudeRelativeTo = 3,
+   SpecialManeuverAltitudeRelativeTo = 4,
 
    -- Special maneuver phase thrust setting for variable thrusters.
    -- nil to disable.
@@ -143,13 +147,17 @@ Config = {
    -- Ground distance from target for terminal phase. During this phase,
    -- it will intercept the target as normal, i.e. aim straight for the
    -- predicted aim point.
-   TerminalDistance = 100,
+   TerminalDistance = 150,
 
    -- Terminal phase thrust setting for variable thrusters. nil to disable.
+   -- Set to -1 to burn all remaining fuel using estimated time to impact
+   -- and estimated remaining fuel.
    TerminalThrust = nil,
 
    -- Maximum angle between target & missile velocity in degrees before
    -- modifying thrust. nil to set thrust regardless of angle.
+   -- Setting this to a small number (e.g. 3 to 7 degrees) is recommended
+   -- if TerminalThrust is non-nil.
    TerminalThrustAngle = nil,
 
    -- TERRAIN HUGGING
@@ -162,13 +170,13 @@ Config = {
    -- Set to 0 to disable terrain hugging, in which case the "ground"
    -- will always be assumed to be -500 or 0 (depending on the related
    -- sea level setting)
-   LookAheadResolution = 3,
+   LookAheadResolution = 0,
 }
 
--- Javelin-style top-attack profile
--- Change "JavelinConfig" to simply "Config" to overwrite the
--- above settings.
-JavelinConfig = {
+-- Sea-skimming pop-up missiles
+-- Change "PopUpConfig" to simply "Config" to overwrite the
+-- default profile.
+PopUpConfig = {
    SpecialAttackElevation = 10,
    MinimumAltitude = 0,
    DefaultThrust = nil,
@@ -177,28 +185,28 @@ JavelinConfig = {
    ClosingDistance = 50,
    ClosingAboveSeaLevel = true,
    ClosingElevation = 3,
-   ClosingAltitude = 100,
-   ClosingAltitudeRelativeTo = 3, -- i.e. relative to target's ground
+   ClosingAltitude = nil,
+   ClosingAltitudeRelativeTo = 0,
    ClosingThrust = nil,
    ClosingThrustAngle = nil,
    Evasion = { 20, .25 },
-   SpecialManeuverDistance = nil, -- No special maneuver phase
+   SpecialManeuverDistance = 250,
    SpecialManeuverAboveSeaLevel = true,
    SpecialManeuverElevation = 3,
    SpecialManeuverAltitude = 30,
    SpecialManeuverAltitudeRelativeTo = 3,
    SpecialManeuverThrust = nil,
    SpecialManeuverThrustAngle = nil,
-   TerminalDistance = 150,
+   TerminalDistance = 100,
    TerminalThrust = nil,
    TerminalThrustAngle = nil,
    LookAheadTime = 2,
-   LookAheadResolution = 0, -- No need to look at terrain
+   LookAheadResolution = 3,
 }
 
 -- Bottom-attack torpedoes
 -- Change "TorpedoConfig" to simply "Config" to overwrite the
--- above settings.
+-- default profile.
 TorpedoConfig = {
    SpecialAttackElevation = 9999, -- Always use special attack profile
    MinimumAltitude = -500,
@@ -227,13 +235,13 @@ TorpedoConfig = {
    LookAheadResolution = 3,
 }
 
--- Sea-skimming pop-under missiles
--- Change "PopUnderConfig" to simply "Config" to overwrite the
--- above settings.
+-- Sea-skimming duck-under missiles
+-- Change "DuckUnderConfig" to simply "Config" to overwrite the
+-- default profile.
 -- Needs a lot of experimentation, but the following settings
 -- work for me using 6-block missiles: Fin x3, Var thruster (300 thrust),
 -- Torpedo prop, Fuel x2, Lua receiver, Warhead x4.
-PopUnderConfig = {
+DuckUnderConfig = {
    SpecialAttackElevation = 10,
    MinimumAltitude = -50, -- Should be lower than SpecialManeuverAltitude
    DefaultThrust = nil,

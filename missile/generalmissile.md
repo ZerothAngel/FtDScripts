@@ -238,6 +238,17 @@ However, in almost all non-torpedo cases that use variable thrusters, you will p
 
 If you do set terminal thrust, it is also best to set *Thrust* of all non-terminal phases. This ensures the missile resumes normal thrust should it happen to miss.
 
+    Phases = {
+       ...
+       -- Other phases
+       {
+          Distance = 400,
+          ...
+          Change = { Thrust = 300, },
+       },
+       ...
+    }
+
 Also be sure to read up on the wiki [on calculating turning radius](http://fromthedepths.gamepedia.com/Missile_aerodynamics#Turn_speed) from the displayed turning rate. Since many profiles involve a 90-degree turn in the terminal phase, knowing the radius will help tune altitude (or depth) and the terminal phase ground distance.
 
 ### Bottom-attack Torpedoes ###
@@ -307,7 +318,7 @@ Like bottom-attack torpedoes above, (closing altitude)^2 + (terminal phase groun
 
 ### Javelin-style Missiles (Alternate) ###
 
-Alternate high-altitude version. If launched >500 meters (ground distance) from the target, it will climb to 300 meters. Works best when the terminal phase *Thrust* is set to -1 (along with a suitably small terminal phase *ThrustAngle*).
+Alternate high-altitude version. If launched >500 meters (ground distance) from the target, it will climb to 300 meters. Works best when the terminal phase *Thrust* is set to -1 (along with a suitably small terminal phase *Angle*).
 
 If your normal engagement range is closer than 500 meters, change the *Distance* of the middle phase. The idea behind the middle phase is to prevent the missile from climbing to 300 meters should it miss (or while pursuing an air target that crashed).
 
@@ -343,7 +354,7 @@ If your normal engagement range is closer than 500 meters, change the *Distance*
              AboveSeaLevel = true,
              MinElevation = 3,
              Altitude = 300,
-             RelativeTo = 3,
+             RelativeTo = 0,
              Evasion = { 20, .25 },
           },
        },
