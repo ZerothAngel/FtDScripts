@@ -14,7 +14,6 @@ function MovingAverage.create(MaxSamples, Zero)
    self.Average = Zero or 0
 
    self.AddSample = MovingAverage.AddSample
-   self.GetAverage = MovingAverage.GetAverage
 
    return self
 end
@@ -22,15 +21,20 @@ end
 function MovingAverage:AddSample(Sample)
    local MaxSamples,SampleCount,NextSample = self.MaxSamples,self.SampleCount,self.NextSample
 
+   --# Following is overloaded, used both as real index (of oldest sample)
+   --# and the next 0-index.
+   local LastSample = NextSample + 1
+   --# Optimizing myself, but eh, dunno how good Lua runtime is...
+   local SampleCountP1 = SampleCount + 1
    if SampleCount >= MaxSamples then
       -- Add new sample while removing oldest
-      self.Average = self.Average + (Sample - self.Samples[1 + NextSample]) / MaxSamples
+      self.Average = self.Average + (Sample - self.Samples[LastSample]) / MaxSamples
    else
       -- Not enough samples yet, do cumulative moving average
-      self.Average = (Sample + self.Average * SampleCount) / (SampleCount + 1)
+      self.Average = (Sample + self.Average * SampleCount) / SampleCountP1
    end
 
-   self.SampleCount = math.min(MaxSamples, SampleCount + 1)
-   self.Samples[1 + NextSample] = Sample
-   self.NextSample = (NextSample + 1) % MaxSamples
+   self.SampleCount = math.min(MaxSamples, SampleCountP1)
+   self.Samples[LastSample] = Sample
+   self.NextSample = LastSample % MaxSamples
 end
