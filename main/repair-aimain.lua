@@ -1,9 +1,12 @@
 --! repair-ai
 --@ commons control firstrun periodic
---@ sixdof ytdefaults repair-ai repair-aicommon
+--@ rollturn sixdof ytdefaults repair-ai repair-aicommon
 RepairAI = Periodic.create(UpdateRate, RepairAI_Update)
 
-SelectHeadingImpl(SixDoF)
+SelectHeadingImpl(SixDoF, RollTurnControl)
+SelectRollImpl(SixDoF, RollTurnControl)
+
+SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131

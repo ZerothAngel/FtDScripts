@@ -1,12 +1,15 @@
 --! carrier
 --@ commons control firstrun periodic
---@ shieldmanager dockmanager sixdof ytdefaults naval-ai
+--@ shieldmanager dockmanager rollturn sixdof ytdefaults naval-ai
 -- Warship main
 ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 DockManager = Periodic.create(DockManager_UpdateRate, DockManager_Update, 1)
 NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
 
-SelectHeadingImpl(SixDoF)
+SelectHeadingImpl(SixDoF, RollTurnControl)
+SelectRollImpl(SixDoF, RollTurnControl)
+
+SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131

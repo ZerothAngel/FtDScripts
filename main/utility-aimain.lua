@@ -1,9 +1,12 @@
 --! utility-ai
 --@ commons control firstrun periodic
---@ sixdof ytdefaults utility-ai utility-aicommon
+--@ rollturn sixdof ytdefaults utility-ai utility-aicommon
 UtilityAI = Periodic.create(UpdateRate, UtilityAI_Update)
 
-SelectHeadingImpl(SixDoF)
+SelectHeadingImpl(SixDoF, RollTurnControl)
+SelectRollImpl(SixDoF, RollTurnControl)
+
+SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131

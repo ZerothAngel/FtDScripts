@@ -1,9 +1,12 @@
 --! naval-ai
 --@ commons control firstrun periodic
---@ sixdof ytdefaults naval-ai
+--@ rollturn sixdof ytdefaults naval-ai
 NavalAI = Periodic.create(UpdateRate, NavalAI_Update)
 
-SelectHeadingImpl(SixDoF)
+SelectHeadingImpl(SixDoF, RollTurnControl)
+SelectRollImpl(SixDoF, RollTurnControl)
+
+SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
