@@ -7,6 +7,7 @@ Airplane_RollPID = PID.create(AirplanePIDConfig.Roll, -1, 1)
 
 Airplane_DesiredAltitude = 0
 Airplane_DesiredHeading = nil
+Airplane_DesiredPosition = nil
 Airplane_DesiredThrottle = nil
 Airplane_CurrentThrottle = 0
 
@@ -35,6 +36,15 @@ end
 
 function Airplane.ResetHeading()
    Airplane_DesiredHeading = nil
+end
+
+function Airplane.SetPosition(Pos)
+   -- Make copy to be safe
+   Airplane_DesiredPosition = Vector3(Pos.x, Pos.y, Pos.z)
+end
+
+function Airplane.ResetPosition()
+   Airplane_DesiredPosition = nil
 end
 
 function Airplane.SetThrottle(Throttle)
@@ -98,24 +108,37 @@ end
 function Airplane.Update(I)
    local Altitude = C:Altitude()
 
-   local TargetVector = Vector3.forward
+   -- Determine target vector
+   local TargetVector,DesiredHeading
+   if Airplane_DesiredPosition then
+      TargetVector = Airplane_DesiredPosition - C:CoM()
+      DesiredHeading = GetVectorAngle(TargetVector)
+   else
+      DesiredHeading = Airplane_DesiredHeading
+      if DesiredHeading then
+         local Heading = math.rad(DesiredHeading)
+         TargetVector = Vector3(math.sin(Heading), 0, math.cos(Heading))
+      else
+         TargetVector = Vector3.forward
+      end
+      -- Offset by altitude
+      TargetVector.y = MaxPitch * Airplane_AltitudePID:Control(Airplane_DesiredAltitude - Altitude)
+   end
+
+   TargetVector = TargetVector.normalized
+
+   -- Roll turn logic
    local DesiredRoll = 0
-   if Airplane_DesiredHeading then
-      local Heading = math.rad(Airplane_DesiredHeading)
-      TargetVector = Vector3(math.sin(Heading), 0, math.cos(Heading))
-      local Bearing = NormalizeBearing(Airplane_DesiredHeading - GetVectorAngle(C:ForwardVector()))
+   if AngleBeforeRoll and DesiredHeading then
+      local Bearing = NormalizeBearing(DesiredHeading - GetVectorAngle(C:ForwardVector()))
       local AbsBearing = math.abs(Bearing)
-      if AngleBeforeRoll and AbsBearing > AngleBeforeRoll and Altitude >= MinAltitudeForRoll then
+      if AbsBearing > AngleBeforeRoll and Altitude >= MinAltitudeForRoll then
          local RollAngle = RollAngleGain and math.min(MaxRollAngle, (AbsBearing - AngleBeforeRoll) * RollAngleGain) or MaxRollAngle
          DesiredRoll = -Sign(Bearing) * RollAngle
       end
    end
 
-   -- Offset by altitude and re-normalize
-   TargetVector.y = MaxPitch * Airplane_AltitudePID:Control(Airplane_DesiredAltitude - Altitude)
-   TargetVector = TargetVector.normalized
-
-   -- Convert to local coordinates
+   -- Convert TargetVector to local coordinates
    TargetVector = C:ToLocal() * TargetVector
 
    -- Determine angles
