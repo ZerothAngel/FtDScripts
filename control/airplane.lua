@@ -16,11 +16,8 @@ Airplane_SpinnerInfos = {}
 
 Airplane_UsesSpinners = (SpinnerFractions.Yaw > 0 or SpinnerFractions.Pitch > 0 or SpinnerFractions.Roll > 0 or SpinnerFractions.Throttle > 0)
 
--- Calculate tan ahead of time
--- Also pre-divide by the AltitudePID scaling factor
---# Divided by 2 because MaxPitch is split evenly between
---# pitch up & pitch down.
-MaxPitch = math.tan(math.rad(MaxPitch / 2)) / 10
+-- Pre-divide by the AltitudePID scaling factor
+MaxPitch = MaxPitch / -10
 
 Airplane_Active = false
 
@@ -111,21 +108,13 @@ function Airplane.Update(I)
    -- Determine target vector
    local TargetVector,DesiredHeading
    if Airplane_DesiredPosition then
-      TargetVector = Airplane_DesiredPosition - C:CoM()
+      TargetVector = (Airplane_DesiredPosition - C:CoM()).normalized
       DesiredHeading = GetVectorAngle(TargetVector)
    else
       DesiredHeading = Airplane_DesiredHeading
-      if DesiredHeading then
-         local Heading = math.rad(DesiredHeading)
-         TargetVector = Vector3(math.sin(Heading), 0, math.cos(Heading))
-      else
-         TargetVector = Vector3.forward
-      end
-      -- Offset by altitude
-      TargetVector.y = MaxPitch * Airplane_AltitudePID:Control(Airplane_DesiredAltitude - Altitude)
+      local PitchForAltitude = MaxPitch * Airplane_AltitudePID:Control(Airplane_DesiredAltitude - Altitude)
+      TargetVector = Quaternion.Euler(PitchForAltitude, DesiredHeading or 0, 0) * Vector3.forward
    end
-
-   TargetVector = TargetVector.normalized
 
    -- Roll turn logic
    local DesiredRoll = 0

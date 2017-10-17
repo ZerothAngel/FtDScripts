@@ -43,7 +43,7 @@ AirplanePIDConfig = {
 -- and including 90 degrees. Note that this is the maximum pitch
 -- when roll is 0, i.e. the wings are level. Due to the math, the
 -- effective MaxPitch increases when the plane banks.
-MaxPitch = 90
+MaxPitch = 45
 
 -- Roll settings
 
