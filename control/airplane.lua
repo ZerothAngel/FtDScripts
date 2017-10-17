@@ -148,10 +148,7 @@ function Airplane.Update(I)
 
    -- Run through PIDs
    local YawCV = Airplane_YawPID:Control(Yaw)
-   --# This is actually incorrect, but it seems to work better?
-   --# Pitch is degrees relative to local, so subtracting world pitch
-   --# doesn't make sense. The PV is potentially doubled though...
-   local PitchCV = Airplane_PitchPID:Control(Pitch - C:Pitch())
+   local PitchCV = Airplane_PitchPID:Control(Pitch)
    local RollCV = Airplane_RollPID:Control(DesiredRoll - C:Roll())
 
    -- And apply to controls
