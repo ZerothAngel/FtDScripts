@@ -44,19 +44,19 @@ function UnifiedMissile.create(Config)
       },
    }
 
-   if Config.SpecialManeuverDistance then
-      local SpecialManeuverPhase = {
-         Distance = Config.SpecialManeuverDistance,
-         AboveSeaLevel = Config.SpecialManeuverAboveSeaLevel,
-         MinElevation = Config.SpecialManeuverElevation,
-         Altitude = Config.SpecialManeuverAltitude,
-         RelativeTo = Config.SpecialManeuverAltitudeRelativeTo,
+   if Config.MiddleDistance then
+      local MiddlePhase = {
+         Distance = Config.MiddleDistance,
+         AboveSeaLevel = Config.MiddleAboveSeaLevel,
+         MinElevation = Config.MiddleElevation,
+         Altitude = Config.MiddleAltitude,
+         RelativeTo = Config.MiddleAltitudeRelativeTo,
          Change = {
-            When = { Angle = Config.SpecialManeuverThrustAngle, },
-            Thrust = Config.SpecialManeuverThrust,
+            When = { Angle = Config.MiddleThrustAngle, },
+            Thrust = Config.MiddleThrust,
          },
       }
-      table.insert(GMConfig.Phases, 2, SpecialManeuverPhase)
+      table.insert(GMConfig.Phases, 2, MiddlePhase)
    end
 
    return GeneralMissile.create(GMConfig)

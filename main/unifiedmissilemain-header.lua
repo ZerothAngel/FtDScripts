@@ -44,7 +44,7 @@ Config = {
 
    -- If the target's elevation (that is, altitude relative to the ground
    -- it is over) is below this, use the special attack profile (closing,
-   -- special maneuver, etc.).
+   -- middle, etc.).
    -- Note that the "ground" is capped at 0 (sea level), so keep this in
    -- mind for submarine targets. Their elevation will always be negative.
    -- If not using the special attack profile, it will intercept as normal.
@@ -79,8 +79,8 @@ Config = {
 
    -- SPECIAL ATTACK PROFILE
 
-   -- The missile can have up to 3 phases: closing, special maneuver, terminal.
-   -- To disable the special maneuver phase, set SpecialManeuverDistance
+   -- The missile can have up to 3 phases: closing, middle, terminal.
+   -- To disable the middle phase, set MiddleDistance
    -- to nil.
 
    -- Distance to aim toward target when closing.
@@ -118,31 +118,31 @@ Config = {
    -- Set whole thing to nil to disable, e.g. Evasion = nil
    Evasion = { 20, .25 },
 
-   -- Ground distance from target at which to perform the special maneuver.
+   -- Ground distance from target at which to perform the middle phase.
    -- Set to nil to disable.
-   SpecialManeuverDistance = 300,
+   MiddleDistance = 300,
 
-   -- Whether the special maneuver phase takes place above or below sea level.
+   -- Whether the middle phase takes place above or below sea level.
    -- This affects terrain hugging.
-   SpecialManeuverAboveSeaLevel = true,
+   MiddleAboveSeaLevel = true,
 
    -- Minimum distance above terrain (or sea level)
-   SpecialManeuverElevation = 3,
+   MiddleElevation = 3,
 
-   -- Special maneuver altitude. Set to nil to only hug terrain.
-   SpecialManeuverAltitude = 0,
+   -- Middle phase altitude. Set to nil to only hug terrain.
+   MiddleAltitude = 0,
 
    -- See the "RelativeTo" explanation above. Only used if
-   -- SpecialManeuverAltitude is a number and not nil.
-   SpecialManeuverAltitudeRelativeTo = 4,
+   -- MiddleAltitude is a number and not nil.
+   MiddleAltitudeRelativeTo = 4,
 
-   -- Special maneuver phase thrust setting for variable thrusters.
+   -- Middle phase thrust setting for variable thrusters.
    -- nil to disable.
-   SpecialManeuverThrust = nil,
+   MiddleThrust = nil,
 
    -- Maximum angle between target & missile velocity in degrees before
    -- modifying thrust. nil to set thrust regardless of angle.
-   SpecialManeuverThrustAngle = nil,
+   MiddleThrustAngle = nil,
 
    -- Ground distance from target for terminal phase. During this phase,
    -- it will intercept the target as normal, i.e. aim straight for the
@@ -190,13 +190,13 @@ PopUpConfig = {
    ClosingThrust = nil,
    ClosingThrustAngle = nil,
    Evasion = { 20, .25 },
-   SpecialManeuverDistance = 250,
-   SpecialManeuverAboveSeaLevel = true,
-   SpecialManeuverElevation = 3,
-   SpecialManeuverAltitude = 30,
-   SpecialManeuverAltitudeRelativeTo = 3,
-   SpecialManeuverThrust = nil,
-   SpecialManeuverThrustAngle = nil,
+   MiddleDistance = 250,
+   MiddleAboveSeaLevel = true,
+   MiddleElevation = 3,
+   MiddleAltitude = 30,
+   MiddleAltitudeRelativeTo = 3,
+   MiddleThrust = nil,
+   MiddleThrustAngle = nil,
    TerminalDistance = 100,
    TerminalThrust = nil,
    TerminalThrustAngle = nil,
@@ -221,13 +221,13 @@ TorpedoConfig = {
    ClosingThrust = nil,
    ClosingThrustAngle = nil,
    Evasion = nil,
-   SpecialManeuverDistance = nil, -- No special maneuver phase
-   SpecialManeuverAboveSeaLevel = true,
-   SpecialManeuverElevation = 3,
-   SpecialManeuverAltitude = 30,
-   SpecialManeuverAltitudeRelativeTo = 3,
-   SpecialManeuverThrust = nil,
-   SpecialManeuverThrustAngle = nil,
+   MiddleDistance = nil, -- No middle phase
+   MiddleAboveSeaLevel = true,
+   MiddleElevation = 3,
+   MiddleAltitude = 30,
+   MiddleAltitudeRelativeTo = 3,
+   MiddleThrust = nil,
+   MiddleThrustAngle = nil,
    TerminalDistance = 175,
    TerminalThrust = nil,
    TerminalThrustAngle = nil,
@@ -243,7 +243,7 @@ TorpedoConfig = {
 -- Torpedo prop, Fuel x2, Lua receiver, Warhead x4.
 DuckUnderConfig = {
    SpecialAttackElevation = 10,
-   MinimumAltitude = -50, -- Should be lower than SpecialManeuverAltitude
+   MinimumAltitude = -50, -- Should be lower than MiddleAltitude
    DefaultThrust = nil,
    DetonationRange = nil,
    DetonationAngle = 30,
@@ -255,13 +255,13 @@ DuckUnderConfig = {
    ClosingThrust = nil,
    ClosingThrustAngle = nil,
    Evasion = { 20, .25 },
-   SpecialManeuverDistance = 110,
-   SpecialManeuverAboveSeaLevel = false,
-   SpecialManeuverElevation = 10,
-   SpecialManeuverAltitude = -25,
-   SpecialManeuverAltitudeRelativeTo = 2, -- i.e. 25 meters below target's depth
-   SpecialManeuverThrust = nil,
-   SpecialManeuverThrustAngle = nil,
+   MiddleDistance = 110,
+   MiddleAboveSeaLevel = false,
+   MiddleElevation = 10,
+   MiddleAltitude = -25,
+   MiddleAltitudeRelativeTo = 2, -- i.e. 25 meters below target's depth
+   MiddleThrust = nil,
+   MiddleThrustAngle = nil,
    TerminalDistance = 50,
    TerminalThrust = nil,
    TerminalThrustAngle = nil,
