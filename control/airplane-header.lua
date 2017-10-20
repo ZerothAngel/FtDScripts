@@ -39,11 +39,16 @@ AirplanePIDConfig = {
 
 -- Pitch settings
 
--- Maximum pitch magnitude up & down relative to nose. Can be up to
--- and including 90 degrees. Note that this is the maximum pitch
--- when roll is 0, i.e. the wings are level. Due to the math, the
--- effective MaxPitch increases when the plane banks.
-MaxPitch = 45
+-- Maximum pitch magnitude up & down relative to horizon. Allows for a
+-- series of values based on altitude. Each row should be
+-- "{ altitude, maxpitch },"
+-- First row should always be altitude 0. Then have increasing
+-- altitudes from there. The angles will be smoothly interpolated
+-- between each point you provide.
+MaxPitch = {
+   { 0, 45 },
+   -- More altitudes here if you want
+}
 
 -- Roll settings
 

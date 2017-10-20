@@ -1,4 +1,4 @@
---@ commons propulsionapi pid normalizebearing getvectorangle sign
+--@ commons propulsionapi pid lookuptable normalizebearing getvectorangle sign
 -- Airplane module (Yaw, Pitch, Throttle)
 Airplane_AltitudePID = PID.create(AirplanePIDConfig.Altitude, -10, 10)
 Airplane_YawPID = PID.create(AirplanePIDConfig.Yaw, -1, 1)
@@ -16,8 +16,7 @@ Airplane_SpinnerInfos = {}
 
 Airplane_UsesSpinners = (SpinnerFractions.Yaw > 0 or SpinnerFractions.Pitch > 0 or SpinnerFractions.Roll > 0 or SpinnerFractions.Throttle > 0)
 
--- Pre-divide by the AltitudePID scaling factor
-MaxPitch = MaxPitch / -10
+Airplane_MaxPitch = LookupTable.create(MaxPitch[1][1], math.max(500, MaxPitch[#MaxPitch][1]), MaxPitch[1][2], MaxPitch[#MaxPitch][2], 100, MaxPitch)
 
 Airplane_Active = false
 
@@ -112,7 +111,8 @@ function Airplane.Update(I)
       DesiredHeading = GetVectorAngle(TargetVector)
    else
       DesiredHeading = Airplane_DesiredHeading
-      local PitchForAltitude = MaxPitch * Airplane_AltitudePID:Control(Airplane_DesiredAltitude - Altitude)
+      -- Be sure to flip sign and divide by PID scale
+      local PitchForAltitude = Airplane_MaxPitch:Lookup(Altitude) * Airplane_AltitudePID:Control(Airplane_DesiredAltitude - Altitude) / -10
       TargetVector = Quaternion.Euler(PitchForAltitude, DesiredHeading or 0, 0) * Vector3.forward
    end
 
