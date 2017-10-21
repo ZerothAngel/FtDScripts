@@ -75,7 +75,7 @@ function CruiseGuidance(I, Target)
          end
          -- Save speed sample
          CruiseSpeedSamples[1+CruiseSpeedIndex] = Speed
-         CruiseSpeedIndex = CruiseSpeedIndex % CruiseSpeedLength
+         CruiseSpeedIndex = (CruiseSpeedIndex + 1) % CruiseSpeedLength
       end
 
       V.SetPosition(AimPoint)
