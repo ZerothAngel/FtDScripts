@@ -4,13 +4,20 @@
 DodgeAltitudeOffset = nil
 CruiseIsClosing = false
 CruiseArmed = false
-CruiseLastSpeed = 0
+CruiseSpeedSamples = {}
+CruiseSpeedIndex = 0
 
 -- Pre-square
 CruiseMissileConfig.ArmingRange = CruiseMissileConfig.ArmingRange^2
 if CruiseMissileConfig.DetonationRange then
    CruiseMissileConfig.DetonationRange = CruiseMissileConfig.DetonationRange^2
 end
+-- And pre-negate (because deceleration)
+if CruiseMissileConfig.DetonationDecel then
+   CruiseMissileConfig.DetonationDecel = -CruiseMissileConfig.DetonationDecel
+end
+
+CruiseSpeedLength = 40 / CruiseMissileConfig.UpdateRate
 
 function CruiseGuidance(I)
    local CMC = CruiseMissileConfig
@@ -22,8 +29,6 @@ function CruiseGuidance(I)
 
    if not CruiseArmed and SqrRange < CMC.ArmingRange then
       CruiseArmed = true
-      CruiseLastSpeed = 0
-      I:LogToHud("Cruise missile armed!")
    elseif CruiseArmed and SqrRange >= CMC.ArmingRange then
       CruiseArmed = false
    end
@@ -49,14 +54,18 @@ function CruiseGuidance(I)
          I:RequestComplexControllerStimulus(CMC.TerminalKey)
       end
 
-      -- Detonate if magnitude of deceleration is > config
-      if CMC.DetonationKey and CMC.DetonationDecel and CruiseArmed then
-         local Speed = Velocity.magnitude
-         local Accel = Speed - CruiseLastSpeed
-         CruiseLastSpeed = Speed
-         if Accel < 0 and math.abs(Accel) > CMC.DetonationDecel then
-            I:RequestComplexControllerStimulus(CMC.DetonationKey)
+      if CMC.DetonationKey and CMC.DetonationDecel then
+         local Speed = Vector3.Dot(Velocity, C:ForwardVector())
+         -- Detonate if magnitude of deceleration is > config
+         if CruiseArmed and #CruiseSpeedSamples >= CruiseSpeedLength then
+            local Accel = Speed - CruiseSpeedSamples[1+CruiseSpeedIndex]
+            if Accel <  CMC.DetonationDecel then
+               I:RequestComplexControllerStimulus(CMC.DetonationKey)
+            end
          end
+         -- Save speed sample
+         CruiseSpeedSamples[1+CruiseSpeedIndex] = Speed
+         CruiseSpeedIndex = CruiseSpeedIndex % CruiseSpeedLength
       end
 
       V.SetPosition(AimPoint)
@@ -111,7 +120,8 @@ function CruiseAI_Reset()
    DodgeAltitudeOffset = nil
    CruiseIsClosing = false
    CruiseArmed = false
-   CruiseLastSpeed = 0
+   CruiseSpeedSamples = {}
+   CruiseSpeedIndex = 0
 end
 
 function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
