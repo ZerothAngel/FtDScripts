@@ -1,6 +1,9 @@
 -- CRUISE MISSILE AI
 
 CruiseMissileConfig = {
+   -- Target selection
+   MinTargetAltitude = -10,
+
    -- Detonation behavior
    ArmingRange = 200,
    DetonationRange = 20,

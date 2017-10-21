@@ -19,10 +19,20 @@ end
 
 CruiseSpeedLength = 40 / CruiseMissileConfig.UpdateRate
 
-function CruiseGuidance(I)
+function CruiseGetTarget()
+   local MinAltitude = CruiseMissileConfig.MinTargetAltitude
+   for _,Target in ipairs(C:Targets()) do
+      -- Always take the first one (highest priority)
+      if Target.AimPoint.y > MinAltitude then
+         return Target
+      end
+   end
+   return nil
+end
+
+function CruiseGuidance(I, Target)
    local CMC = CruiseMissileConfig
 
-   local Target = C:FirstTarget()
    local TargetPosition = Target.AimPoint
    local SqrRange = (TargetPosition - C:CoM()).sqrMagnitude
    local Distance = PlanarVector(C:CoM(), TargetPosition).magnitude
@@ -142,8 +152,9 @@ function CruiseAI_Update(I)
 
    local AIMode = I.AIMode
    if AIMode ~= "fleetmove" then
-      if C:FirstTarget() then
-         CruiseGuidance(I)
+      local Target = CruiseGetTarget()
+      if Target then
+         CruiseGuidance(I, Target)
       elseif ReturnToOrigin then
          CruiseAI_Reset()
          FormationMove(I)
