@@ -1,3 +1,7 @@
+-- Meant for vehicles with yaw + propulsion control that have
+-- an independent means for staying aloft (jets and/or dediblades).
+-- Vehicle should have repair tentacles and material storage.
+
 -- CONFIGURATION
 
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",

@@ -1,3 +1,8 @@
+-- Meant for naval surface or submarine vehicles with yaw + propulsion
+-- control.
+-- Should have hydrofoils in front of and behind the CoM, otherwise use
+-- my warship.lua script.
+
 -- CONFIGURATION
 
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",

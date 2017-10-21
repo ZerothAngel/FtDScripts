@@ -1,3 +1,9 @@
+-- Meant for any vehicle with yaw + propulsion control.
+-- If it is a submarine, depth must be controlled some other means (or
+-- see my repairsub.lua script for hydrofoil-based vehicles).
+-- If it is an airship, see my repair.lua script instead.
+-- Vehicle should have repair tentacles and material storage.
+
 -- CONFIGURATION
 
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",

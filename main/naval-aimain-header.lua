@@ -1,3 +1,8 @@
+-- Meant for any vehicle with yaw + propulsion control.
+-- If it is a submarine, depth must be controlled some other means (or
+-- see my submarine.lua script for hydrofoil-based vehicles).
+-- If it is an airship, see my airship.lua script instead.
+
 -- CONFIGURATION
 
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",

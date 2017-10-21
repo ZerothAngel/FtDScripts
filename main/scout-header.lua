@@ -1,3 +1,8 @@
+-- Meant for vehicles with yaw + propulsion control that have
+-- an independent means for staying aloft (jets and/or dediblades).
+-- Vehicle should have turreted sensor array(s). Otherwise use my
+-- airship.lua script.
+
 -- CONFIGURATION
 
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",

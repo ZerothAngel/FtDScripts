@@ -1,3 +1,6 @@
+-- Meant for naval surface vessels with yaw + propulsion control that serve
+-- as carriers (by way of having one or more tractor beams).
+
 -- CONFIGURATION
 
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",

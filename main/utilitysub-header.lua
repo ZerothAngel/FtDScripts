@@ -1,3 +1,10 @@
+-- Meant for naval surface or submarine vehicles with yaw + propulsion
+-- control.
+-- Should have hydrofoils in front of and behind the CoM, otherwise use
+-- a different script (utility-ai.lua, utility.lua).
+-- Should have material gatherers and/or plenty of cargo space depending on
+-- configuration.
+
 -- CONFIGURATION
 
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",

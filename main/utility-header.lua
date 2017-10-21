@@ -1,3 +1,8 @@
+-- Meant for vehicles with yaw + propulsion control that have
+-- an independent means for staying aloft (jets and/or dediblades).
+-- Should have material gatherers and/or plenty of cargo space depending on
+-- configuration.
+
 -- CONFIGURATION
 
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",

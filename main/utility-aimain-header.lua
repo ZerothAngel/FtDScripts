@@ -1,3 +1,10 @@
+-- Meant for vehicles with yaw + propulsion control.
+-- If it is a submarine, depth must be controlled some other means (or
+-- see my utilitysub.lua script for hydrofoil-based vehicles).
+-- If it is an airship, see my utility.lua script instead.
+-- Should have material gatherers and/or plenty of cargo space depending on
+-- configuration.
+
 -- CONFIGURATION
 
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",

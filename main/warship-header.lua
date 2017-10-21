@@ -1,3 +1,8 @@
+-- Meant for naval surface vehicles with yaw + propulsion control.
+-- If it is a hydrofoil-based surface or submarine vessel, see my
+-- submarine.lua instead.
+-- If it is an airship, see airship.lua instead.
+
 -- CONFIGURATION
 
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",

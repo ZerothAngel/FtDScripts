@@ -1,3 +1,9 @@
+-- Meant for vehicles with full six-degrees of freedom movement. This
+-- means jets and/or dediblades facing in all 6 directions, balanced around
+-- the CoM.
+-- Should have material gatherers and/or plenty of cargo space depending on
+-- configuration.
+
 -- CONFIGURATION
 
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",

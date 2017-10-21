@@ -1,3 +1,9 @@
+-- Meant for naval surface or submarine vehicles with yaw + propulsion
+-- control.
+-- Should have hydrofoils in front of and behind the CoM, otherwise use
+-- a different script (repair-ai.lua, repair.lua).
+-- Vehicle should have repair tentacles and material storage.
+
 -- CONFIGURATION
 
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",

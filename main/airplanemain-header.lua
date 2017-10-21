@@ -1,3 +1,6 @@
+-- Meant for vehicles with yaw, pitch, roll and propulsion control.
+-- Basically anything that must keep moving forward to fly.
+
 -- CONFIGURATION
 
 -- See https://github.com/ZerothAngel/FtDScripts/blob/master/main/airplane.md for details.

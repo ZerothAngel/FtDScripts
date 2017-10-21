@@ -1,3 +1,6 @@
+-- Meant for vehicles with yaw + propulsion control that have
+-- an independent means for staying aloft (jets and/or dediblades).
+
 -- CONFIGURATION
 
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",

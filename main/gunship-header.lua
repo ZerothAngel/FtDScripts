@@ -1,3 +1,7 @@
+-- Meant for vehicles with full six-degrees of freedom movement. This
+-- means jets and/or dediblades facing in all 6 directions, balanced around
+-- the CoM.
+
 -- CONFIGURATION
 
 -- Activate on these AI modes. Valid keys are "off", "on", "combat",
