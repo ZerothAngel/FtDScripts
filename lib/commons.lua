@@ -131,3 +131,11 @@ function Commons:ToLocal()
    end
    return self._ToLocal
 end
+
+function Commons:Ground()
+   if not self._Ground then
+      self._Ground = math.max(0, self.I:GetTerrainAltitudeForPosition(self:CoM()))
+   end
+   return self._Ground
+end
+
