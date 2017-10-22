@@ -30,6 +30,10 @@ AttackPIDConfig = {
    Ti = 5,
    Td = .1,
 }
+-- If true, then instead of flipping AttackAngle, AttackDrive will
+-- be negated (so presumably your vehicle will go in reverse). The PID
+-- above will be applied to the throttle instead.
+AttackReverse = false
 
 -- Closing behavior (target range > MaxDistance)
 -- ClosingAngle should be <90 to actually close with the target.

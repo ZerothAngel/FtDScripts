@@ -67,15 +67,20 @@ function AdjustHeadingToTarget(I)
          Evasion = ClosingEvasion
       elseif Distance > MinDistance then
          -- Attacking
-         if AttackDistance then
-            local Delta = AttackDistance - Distance
-            local BroadsideAngle = 90 - AttackAngle
-            TargetAngle = 90 + AttackPID:Control(Delta) * BroadsideAngle
-         else
-            TargetAngle = AttackAngle
-         end
+         TargetAngle = AttackAngle
          Drive = AttackDrive
          Evasion = AttackEvasion
+         -- Attempt to keep at a certain distance by either flipping
+         -- AttackAngle or reversing.
+         if AttackDistance then
+            local Delta = AttackDistance - Distance
+            if AttackReverse then
+               Drive = AttackPID:Control(Delta) * -AttackDrive
+            else
+               local BroadsideAngle = 90 - AttackAngle
+               TargetAngle = 90 + AttackPID:Control(Delta) * BroadsideAngle
+            end
+         end
       end
       -- Otherwise escaping
    end
