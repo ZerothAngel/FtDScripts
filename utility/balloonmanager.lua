@@ -1,7 +1,7 @@
 --@ commons
 -- Balloon manager module
 function BalloonManager_Update(I)
-   local Altitude = C:Altitude()
+   local Altitude = C:Altitude() - (BalloonManagerConfig.GroundRelative and C:Ground() or 0)
    -- Always deploy when below deployment altitude
    if Altitude < BalloonManagerConfig.DeployBelow then
       I:DeployAllBalloons()
