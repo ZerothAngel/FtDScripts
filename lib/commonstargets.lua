@@ -1,4 +1,21 @@
 --@ commons
+--# These will actually be a methods for Target instances
+--# Note that I don't want them to be closures for the ConvertTarget method
+--# below, so they will require I to be passed in.
+function CommonsTarget_Ground(self, I)
+   if not self._Ground then
+      self._Ground = math.max(0, I:GetTerrainAltitudeForPosition(self.AimPoint))
+   end
+   return self._Ground
+end
+
+function CommonsTarget_Elevation(self, I)
+   if not self._Elevation then
+      self._Elevation = self.AimPoint.y - self:Ground(I)
+   end
+   return self._Elevation
+end
+
 function Commons.ConvertTarget(Index, TargetInfo, Offset, Range)
    local Target = {
       Id = TargetInfo.Id,
@@ -9,6 +26,9 @@ function Commons.ConvertTarget(Index, TargetInfo, Offset, Range)
       SqrRange = Range * Range,
       AimPoint = TargetInfo.AimPointPosition,
       Velocity = TargetInfo.Velocity,
+      -- Lazy init methods
+      Ground = CommonsTarget_Ground,
+      Elevation = CommonsTarget_Elevation,
    }
    return Target
 end

@@ -49,8 +49,8 @@ EscapeEvasion = { 20, .25 }
 
 -- Air raid evasion
 -- Overrides current evasion settings when target is
--- above a certain altitude
-AirRaidAboveAltitude = 50
+-- above a certain elevation (i.e. altitude relative to ground)
+AirRaidAboveElevation = 50
 AirRaidEvasion = { 40, .25 }
 
 -- Preferred side to face toward enemy.

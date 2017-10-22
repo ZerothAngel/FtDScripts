@@ -10,7 +10,7 @@ AttackPID = PID.create(AttackPIDConfig, -1, 1)
 
 -- Modifies bearing by some amount for evasive maneuvers
 function Evade(Evasion)
-   if AirRaidEvasion and C:FirstTarget().Position.y >= AirRaidAboveAltitude then
+   if AirRaidEvasion and C:FirstTarget():Elevation(C.I) >= AirRaidAboveElevation then
       Evasion = AirRaidEvasion
    end
 

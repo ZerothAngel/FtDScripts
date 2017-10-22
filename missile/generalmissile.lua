@@ -380,7 +380,7 @@ function GeneralMissile:SetTarget(I, Target)
 
    self.TargetAltitude = TargetAltitude -- Raw altitude
    self.TargetDepth = math.min(TargetAltitude, 0) -- When below sea level
-   self.TargetGround = math.max(I:GetTerrainAltitudeForPosition(TargetAimPoint), 0) -- When above sea level
+   self.TargetGround = Target:Ground(I)
 
    -- For now, which profile to execute is solely based on the target's
    -- elevation above sea level.

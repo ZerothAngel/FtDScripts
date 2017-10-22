@@ -86,7 +86,7 @@ function CruiseGuidance(I, Target)
    -- 2D guidance
    local TargetBearing = GetBearingToPoint(AimPoint)
    -- Start with target's ground
-   local TargetAltitude = math.max(I:GetTerrainAltitudeForPosition(TargetPosition), 0)
+   local TargetAltitude = Target:Ground(I)
    local Throttle
    if CMC.MiddleDistance and Distance < CMC.MiddleDistance then
       -- Middle phase
