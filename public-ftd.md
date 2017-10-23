@@ -13,6 +13,20 @@ I'll only list the interesting scripts (the ones not used for research or testin
 
 Also see my [notes]({filename}ftd-notes.md) about assumptions and possible gotchas.
 
+## How to Use ##
+
+When configuring one of my scripts, I recommend doing so in an external text editor. (Unless it's a really small change, don't do it within the game. Also the game only displays the first 500 lines or so which may be a problem for my larger scripts.)
+
+On Windows, use something like [Notepad++](https://notepad-plus-plus.org). Don't use the editors that come with Windows (Notepad, WordPad).
+
+On Macs, "Text Edit" might be good enough (be sure to switch it to plain text), but I recommend something more programming-oriented. There's plenty of choices, maybe start with [TextWrangler](https://www.barebones.com/products/textwrangler/) or [Sublime Text](https://www.sublimetext.com).
+
+Once you've made your changes in an editor, CTRL-A then CTRL-C (or the Mac equivalent) to get the entire script into your clipboard.
+
+Then open the Lua box (make sure it is on the edit tab), and (**very important!**) CTRL-A to fully select the existing script.
+
+Then CTRL-V. Hit "apply changes" and you should be good to go.
+
 ### AI Replacements ###
 
 These scripts wholly replace the "combat" and "fleetmove" behavior of the stock AI. (Still, using the stock Naval AI Card with these scripts is recommended, even for aircraft, as it provides a sane "patrol" behavior.)
