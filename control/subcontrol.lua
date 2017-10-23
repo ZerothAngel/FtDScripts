@@ -1,4 +1,4 @@
---@ commons componenttypes pid sign
+--@ commons componenttypes pid sign clamp
 -- Hydrofoil submarine control module
 SubControl_RollPID = PID.create(SubControlPIDConfig.Roll, -1, 1)
 SubControl_PitchPID = PID.create(SubControlPIDConfig.Pitch, -1, 1)
@@ -124,8 +124,7 @@ function SubControl.Update(I)
 
    for _,Info in pairs(SubControl_HydrofoilInfos) do
       -- Sum up inputs and constrain
-      local Output = (RollCV * Info.RollScale + PitchCV * Info.PitchScale + DepthCV) * 45
-      Output = math.max(-45, math.min(45, Output))
+      local Output = Clamp((RollCV * Info.RollScale + PitchCV * Info.PitchScale + DepthCV) * 45, -45, 45)
 
       I:Component_SetFloatLogic(HYDROFOIL, Info.Index, VehicleSign * Info.LocalSign * Output)
    end

@@ -1,4 +1,4 @@
---@ commons control pid planarvector quadraticintercept getbearingtopoint sign
+--@ commons control pid planarvector quadraticintercept getbearingtopoint sign clamp
 -- Waypoint move module
 MTW_ThrottlePID = PID.create(WaypointMoveConfig.ThrottlePIDConfig, -1, 1)
 
@@ -44,7 +44,7 @@ function MoveToWaypoint(Waypoint, AdjustHeading, WaypointVelocity)
          local Bearing = GetBearingToPoint(Waypoint)
          AdjustHeading(Bearing)
          local CV = MTW_ThrottlePID:Control(WaypointMoveConfig.MinimumSpeed - C:ForwardSpeed())
-         local Drive = math.max(0, math.min(1, V.GetThrottle() + CV))
+         local Drive = Clamp(V.GetThrottle() + CV, 0, 1)
          V.SetThrottle(Drive)
       end
    else
@@ -71,7 +71,7 @@ function MoveToWaypoint(Waypoint, AdjustHeading, WaypointVelocity)
          -- Use PID to set throttle
          local Error = DesiredSpeed - Speed
          local CV = MTW_ThrottlePID:Control(Error)
-         local Drive = math.max(0, math.min(1, V.GetThrottle() + CV))
+         local Drive = Clamp(V.GetThrottle() + CV, 0, 1)
          V.SetThrottle(Drive)
       end
    end

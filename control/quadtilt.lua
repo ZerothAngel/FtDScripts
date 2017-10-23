@@ -1,4 +1,4 @@
---@ commons control tiltspinner
+--@ commons control tiltspinner clamp
 QuadTilt_TiltSpinner = TiltSpinner.create(Vector3.right, { Kp = .01, Ti = 10, Td = 0, })
 
 QuadTilt_DesiredHeading = nil
@@ -25,7 +25,7 @@ end
 
 function QuadTilt.SetThrottle(Throttle)
    QuadTiltControl.SetThrottle(Throttle)
-   QuadTilt_DesiredThrottle = math.max(-1, math.min(1, Throttle))
+   QuadTilt_DesiredThrottle = Clamp(Throttle, -1, 1)
 end
 
 function QuadTilt.GetThrottle()

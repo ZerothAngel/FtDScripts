@@ -1,4 +1,4 @@
---@ commonsfriends deepcopy planarvector round quadraticsolver missilecommand
+--@ commonsfriends deepcopy planarvector round quadraticsolver missilecommand clamp
 SmartMine = {}
 
 function SmartMine.create(Config)
@@ -54,9 +54,7 @@ function SmartMine:Guide(I, TransceiverIndex, MissileIndex, TheTarget, Missile, 
          NewDepth = NewDepth + self.DepthOffset
          -- Constrain and negate (because ballast depth
          -- is supposed to be positive)
-         NewDepth = -math.min(-self.MinDepth, math.max(-500, NewDepth))
-
-         NewCommand.BallastDepth = NewDepth
+         NewCommand.BallastDepth = -Clamp(NewDepth, -500, -self.MinDepth)
       end
 
       if MissileState.Command.MagnetRange then

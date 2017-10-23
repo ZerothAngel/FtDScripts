@@ -1,4 +1,4 @@
---@ commons componenttypes propulsionapi normalizebearing sign pid thrusthack
+--@ commons componenttypes propulsionapi normalizebearing sign pid thrusthack clamp
 -- All DoF module
 AllDoF_AltitudePID = PID.create(AllDoFPIDConfig.Altitude, -30, 30)
 AllDoF_YawPID = PID.create(AllDoFPIDConfig.Yaw, -30, 30)
@@ -46,7 +46,7 @@ function AllDoF.ResetPosition()
 end
 
 function AllDoF.SetThrottle(Throttle)
-   AllDoF_DesiredThrottle = math.max(-1, math.min(1, Throttle))
+   AllDoF_DesiredThrottle = Clamp(Throttle, -1, 1)
 end
 
 function AllDoF.GetThrottle()
@@ -121,7 +121,7 @@ end
 function AllDoF_RequestControl(I, Fraction, PosControl, NegControl, CV)
    if Fraction > 0 then
       -- Scale down and constrain
-      CV = math.max(-1, math.min(1, Fraction * CV / 30))
+      CV = Clamp(Fraction * CV / 30, -1, 1)
       if PosControl ~= NegControl then
          -- Generally yaw, pitch, roll
          if CV > 0 then
@@ -166,8 +166,7 @@ function AllDoF.Update(I)
       -- Set drive fraction accordingly
       for _,Info in pairs(Infos) do
          -- Sum up inputs and constrain
-         local Output = AltitudeCV * Info.AltitudeSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + NorthCV * Info.NorthSign + EastCV * Info.EastSign + ForwardCV * Info.ForwardSign
-         Output = math.max(0, math.min(30, Output))
+         local Output = Clamp(AltitudeCV * Info.AltitudeSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + NorthCV * Info.NorthSign + EastCV * Info.EastSign + ForwardCV * Info.ForwardSign, 0, 30)
          I:Component_SetFloatLogic(PROPULSION, Info.Index, Output / 30)
       end
    end
@@ -178,8 +177,7 @@ function AllDoF.Update(I)
       -- Set spinner speed
       for _,Info in pairs(Infos) do
          -- Sum up inputs and constrain
-         local Output = AltitudeCV * Info.AltitudeSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + NorthCV * Info.NorthSign + EastCV * Info.EastSign + ForwardCV * Info.ForwardSign
-         Output = math.max(-30, math.min(30, Output))
+         local Output = Clamp(AltitudeCV * Info.AltitudeSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + NorthCV * Info.NorthSign + EastCV * Info.EastSign + ForwardCV * Info.ForwardSign, -30, 30)
          I:SetSpinnerContinuousSpeed(Info.Index, Output)
       end
    end

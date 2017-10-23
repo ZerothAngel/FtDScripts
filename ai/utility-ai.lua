@@ -1,4 +1,4 @@
---@ commons control getbearingtopoint evasion avoidance waypointmove
+--@ commons control getbearingtopoint evasion avoidance waypointmove clamp
 -- Utility AI module (yaw & throttle)
 
 function UtilityAI_RunAway(I, EnemyDirection)
@@ -26,7 +26,7 @@ function UtilityAI_MoveToGather(I, RZInfo)
    if Distance >= 0 then
       local Bearing = GetBearingToPoint(RZInfo.Position)
       V.AdjustHeading(Avoidance(I, Bearing))
-      Drive = math.max(0, math.min(1, GatherDriveGain * Distance))
+      Drive = Clamp(GatherDriveGain * Distance, 0, 1)
    end
    V.SetThrottle(Drive)
 end

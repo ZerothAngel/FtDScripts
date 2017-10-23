@@ -1,4 +1,4 @@
---@ commonstargets commons control manualcontroller evasion terraincheck sign
+--@ commonstargets commons control manualcontroller evasion terraincheck sign clamp
 -- Depth Control module
 ManualDepthController = ManualController.create(ManualDepthDriveMaintainerFacing)
 
@@ -48,9 +48,8 @@ function Depth_Control(I)
          -- Set new absolute minimum
          DepthControl_Min = math.max(DepthControl_Min, TerrainHeight)
          -- And offset desired depth (actually desired elevation) by terrain
-         DesiredDepth = DesiredDepth + TerrainHeight
          -- And constrain by relative limits
-         DesiredDepth = math.max(-TerrainMaxDepth, math.min(-TerrainMinDepth, DesiredDepth))
+         DesiredDepth = Clamp(DesiredDepth + TerrainHeight, -TerrainMaxDepth, -TerrainMinDepth)
       end
 
       DepthControl_Desired = DesiredDepth
@@ -98,5 +97,5 @@ function Depth_Apply(_, HighPriorityOffset, NoOffset)
       DepthControl_LastDodge = nil
    end
    -- Constrain and set
-   V.SetAltitude(math.max(DepthControl_Min, math.min(DepthControl_Max, NewAltitude)))
+   V.SetAltitude(Clamp(NewAltitude, DepthControl_Min, DepthControl_Max))
 end

@@ -1,3 +1,4 @@
+--@ clamp
 -- MissileCommand implementation
 MissileCommand = {}
 
@@ -73,7 +74,7 @@ function MissileCommand:SendUpdate(I, TransceiverIndex, MissileIndex, Command)
    local ShouldUpdate = MissileCommand.ShouldUpdate
    if ShouldUpdate(Command.VarThrust, self.VarThrust) then
       -- Divide desired thrust among all variable thrusters
-      local Thrust = math.max(50, math.min(10000, Command.VarThrust / self.VarThrustCount))
+      local Thrust = Clamp(Command.VarThrust / self.VarThrustCount, 50, 10000)
       switch["missile variable speed thruster"] = function (Part)
          Part:SendRegister(2, Thrust)
       end
@@ -81,8 +82,8 @@ function MissileCommand:SendUpdate(I, TransceiverIndex, MissileIndex, Command)
       DoUpdate = true
    end
    if ShouldUpdate(Command.ThrustDelay, self.ThrustDelay) or ShouldUpdate(Command.ThrustDuration, self.ThrustDuration) then
-      local Delay = Command.ThrustDelay and math.max(0, math.min(60, Command.ThrustDelay)) or nil
-      local Duration = Command.ThrustDuration and math.max(0, math.min(20, Command.ThrustDuration)) or nil
+      local Delay = Command.ThrustDelay and Clamp(Command.ThrustDelay, 0, 60) or nil
+      local Duration = Command.ThrustDuration and Clamp(Command.ThrustDuration, 0, 20) or nil
       switch["missile short range thruster"] = function (Part)
          if Delay then Part:SendRegister(1, Delay) end
          if Duration then Part:SendRegister(2, Duration) end
@@ -92,8 +93,8 @@ function MissileCommand:SendUpdate(I, TransceiverIndex, MissileIndex, Command)
       DoUpdate = true
    end
    if ShouldUpdate(Command.MagnetRange, self.MagnetRange) or ShouldUpdate(Command.MagnetDelay, self.MagnetDelay) then
-      local Range = Command.MagnetRange and math.max(5, math.min(100, Command.MagnetRange)) or nil
-      local Delay = Command.MagnetDelay and math.max(3, math.min(30, Command.MagnetDelay)) or nil
+      local Range = Command.MagnetRange and Clamp(Command.MagnetRange, 5, 100) or nil
+      local Delay = Command.MagnetDelay and Clamp(Command.MagnetDelay, 3, 30) or nil
       switch["missile magnet"] = function (Part)
          if Range then Part:SendRegister(1, Range) end
          if Delay then Part:SendRegister(2, Delay) end
@@ -103,8 +104,8 @@ function MissileCommand:SendUpdate(I, TransceiverIndex, MissileIndex, Command)
       DoUpdate = true
    end
    if ShouldUpdate(Command.BallastDepth, self.BallastDepth) or ShouldUpdate(Command.BallastBuoyancy, self.BallastBuoyancy) then
-      local Depth = Command.BallastDepth and math.max(0, math.min(500, Command.BallastDepth)) or nil
-      local Buoyancy = Command.BallastBuoyancy and math.max(-5, math.min(5, Command.BallastBuoyancy)) or nil
+      local Depth = Command.BallastDepth and Clamp(Command.BallastDepth, 0, 500) or nil
+      local Buoyancy = Command.BallastBuoyancy and Clamp(Command.BallastBuoyancy, -5, 5) or nil
       switch["missile ballast"] = function (Part)
          if Depth then Part:SendRegister(1, Depth) end
          if Buoyancy then Part:SendRegister(2, Buoyancy) end

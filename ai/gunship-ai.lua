@@ -1,4 +1,4 @@
---@ commonstargets commonsweapons commons control getvectorangle planarvector getbearingtopoint dodge3d evasion sign weapontypes
+--@ commonstargets commonsweapons commons control getvectorangle planarvector getbearingtopoint dodge3d evasion sign weapontypes clamp
 --@ quadraticintercept
 -- Gunship AI module
 DodgeAltitudeOffset = nil
@@ -79,7 +79,7 @@ function AdjustPositionToTarget()
       local TargetElevation = 90 - math.deg(math.atan2(Distance, TargetAltitude - C:Altitude()))
       DesiredPitch = DesiredPitch + TargetElevation
       -- Constrain
-      DesiredPitch = math.max(RelativePitch.MinPitch, math.min(RelativePitch.MaxPitch, DesiredPitch))
+      DesiredPitch = Clamp(DesiredPitch, RelativePitch.MinPitch, RelativePitch.MaxPitch)
    end
    V.SetPitch(DesiredPitch)
 end

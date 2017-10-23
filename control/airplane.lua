@@ -1,4 +1,4 @@
---@ commons propulsionapi pid lookuptable normalizebearing getvectorangle sign
+--@ commons propulsionapi pid lookuptable normalizebearing getvectorangle sign clamp
 -- Airplane module (Yaw, Pitch, Throttle)
 Airplane_AltitudePID = PID.create(AirplanePIDConfig.Altitude, -10, 10)
 Airplane_YawPID = PID.create(AirplanePIDConfig.Yaw, -1, 1)
@@ -44,7 +44,7 @@ function Airplane.ResetPosition()
 end
 
 function Airplane.SetThrottle(Throttle)
-   Airplane_DesiredThrottle = math.max(0, math.min(1, Throttle))
+   Airplane_DesiredThrottle = Clamp(Throttle, 0, 1)
 end
 
 function Airplane.GetThrottle()
@@ -171,8 +171,7 @@ function Airplane.Update(I)
       local ForwardCV = Airplane_DesiredThrottle and Airplane_DesiredThrottle or 0
       for _,Info in pairs(Airplane_SpinnerInfos) do
          -- Sum up inputs and constrain
-         local Output = YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign
-         Output = math.max(-1, math.min(1, Output))
+         local Output = Clamp(YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign, -1, 1)
          I:SetSpinnerContinuousSpeed(Info.Index, 30 * Output)
       end
    end

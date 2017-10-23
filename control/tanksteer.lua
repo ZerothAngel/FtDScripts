@@ -1,4 +1,4 @@
---@ commons pid thrusthack normalizebearing
+--@ commons pid thrusthack normalizebearing clamp
 -- Tank steering module via drive maintainers
 TankSteer_YawPID = PID.create(TankSteerConfig.YawPIDConfig, -1, 1)
 
@@ -22,7 +22,7 @@ function TankSteer.ResetHeading()
 end
 
 function TankSteer.SetThrottle(Throttle)
-   TankSteer_DesiredThrottle = math.max(-1, math.min(1, Throttle))
+   TankSteer_DesiredThrottle = Clamp(Throttle, -1, 1)
 end
 
 function TankSteer.GetThrottle()
@@ -41,8 +41,8 @@ function TankSteer.Update(I)
       TankSteer_CurrentThrottle = TankSteer_DesiredThrottle
    end
 
-   local LeftTrack = math.max(-1, math.min(1, ForwardCV + YawCV))
-   local RightTrack = math.max(-1, math.min(1, ForwardCV - YawCV))
+   local LeftTrack = Clamp(ForwardCV + YawCV, -1, 1)
+   local RightTrack = Clamp(ForwardCV - YawCV, -1, 1)
 
    TankSteer_LeftTrackControl:SetThrottle(I, LeftTrack)
    TankSteer_RightTrackControl:SetThrottle(I, RightTrack)

@@ -1,4 +1,4 @@
---@ commonstargets commons control manualcontroller evasion terraincheck sign
+--@ commonstargets commons control manualcontroller evasion terraincheck sign clamp
 -- Altitude Control module
 ManualAltitudeController = ManualController.create(ManualAltitudeDriveMaintainerFacing)
 HalfMaxManualAltitude = (MaxManualAltitude - MinManualAltitude) / 2
@@ -45,9 +45,8 @@ function Altitude_Control(I)
       -- Set new absolute minimum
       AltitudeControl_Min = math.max(AltitudeControl_Min, TerrainHeight)
       -- And offset desired altitude (actually desired elevation) by terrain
-      NewAltitude = NewAltitude + TerrainHeight
       -- And constrain by relative limits
-      NewAltitude = math.max(TerrainMinAltitude, math.min(TerrainMaxAltitude, NewAltitude))
+      NewAltitude = Clamp(NewAltitude + TerrainHeight, TerrainMinAltitude, TerrainMaxAltitude)
    end
 
    if MatchTargetAboveAltitude then
@@ -100,5 +99,5 @@ function Altitude_Apply(_, HighPriorityOffset, NoOffset)
       AltitudeControl_LastDodge = nil
    end
    -- Constrain and set
-   V.SetAltitude(math.max(AltitudeControl_Min, math.min(AltitudeControl_Max, NewAltitude)))
+   V.SetAltitude(Clamp(NewAltitude, AltitudeControl_Min, AltitudeControl_Max))
 end

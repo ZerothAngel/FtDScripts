@@ -1,4 +1,4 @@
---@ commons componenttypes sign pid
+--@ commons componenttypes sign pid clamp
 -- 3DoF Pump module (Altitude, Pitch, Roll)
 ThreeDoFPump_AltitudePID = PID.create(ThreeDoFPumpPIDConfig.Altitude, -10, 10)
 ThreeDoFPump_PitchPID = PID.create(ThreeDoFPumpPIDConfig.Pitch, -10, 10)
@@ -51,8 +51,7 @@ function ThreeDoFPump.Update(I)
    ThreeDoFPump_ClassifyPumps(I)
 
    for index,Info in pairs(ThreeDoFPump_PumpInfos) do
-      local Output = AltitudeCV + PitchCV * Info.PitchSign + RollCV * Info.RollSign
-      Output = math.max(0, math.min(10, Output))
+      local Output = Clamp(AltitudeCV + PitchCV * Info.PitchSign + RollCV * Info.RollSign, 0, 10)
       I:Component_SetFloatLogic(PumpType, index, Output / 10)
    end
 end

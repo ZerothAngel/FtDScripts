@@ -1,4 +1,4 @@
---@ commons componenttypes propulsionapi normalizebearing sign pid thrusthack
+--@ commons componenttypes propulsionapi normalizebearing sign pid thrusthack clamp
 --# Packages don't exist, and screw accessing everything through a table.
 --# It's just a search/replace away to convert to 'proper' Lua anyway.
 -- 6DoF module (Altitude, Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
@@ -66,7 +66,7 @@ function SixDoF.ResetPosition()
 end
 
 function SixDoF.SetThrottle(Throttle)
-   SixDoF_DesiredThrottle = math.max(-1, math.min(1, Throttle))
+   SixDoF_DesiredThrottle = Clamp(Throttle, -1, 1)
 end
 
 function SixDoF.GetThrottle()
@@ -164,7 +164,7 @@ end
 function SixDoF_RequestControl(I, Fraction, PosControl, NegControl, CV)
    if Fraction > 0 then
       -- Scale down and constrain
-      CV = math.max(-1, math.min(1, Fraction * CV / 30))
+      CV = Clamp(Fraction * CV / 30, -1, 1)
       if PosControl ~= NegControl then
          -- Generally yaw, pitch, roll
          if CV > 0 then
@@ -239,8 +239,7 @@ function SixDoF.Update(I)
       for _,Info in pairs(SixDoF_PropulsionInfos) do
          if Info.IsVertical or PlanarMovement then
             -- Sum up inputs and constrain
-            local Output = AltitudeCV * Info.UpSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign
-            Output = math.max(0, math.min(30, Output))
+            local Output = Clamp(AltitudeCV * Info.UpSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign, 0, 30)
             I:Component_SetFloatLogic(PROPULSION, Info.Index, Output / 30)
          else
             -- Restore full drive fraction for manual/stock AI control
@@ -256,8 +255,7 @@ function SixDoF.Update(I)
       for _,Info in pairs(SixDoF_SpinnerInfos) do
          if Info.IsVertical or PlanarMovement then
             -- Sum up inputs and constrain
-            local Output = AltitudeCV * Info.UpSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign
-            Output = math.max(-30, math.min(30, Output))
+            local Output = Clamp(AltitudeCV * Info.UpSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign, -30, 30)
             I:SetSpinnerContinuousSpeed(Info.Index, Output)
          end
       end
