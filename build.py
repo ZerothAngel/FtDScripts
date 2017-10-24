@@ -50,7 +50,8 @@ def create_chunk(fn, strip=False, strip_comments=False, strip_empty=False):
 
 def generate_version_header(version, modules):
     s = """-- Generated from ZerothAngel's FtDScripts version {}""" + NL + \
-        """-- Modules: {}""" + NL
+        """-- Modules: {}""" + NL + NL + \
+        """-- MIT licensed. See https://github.com/ZerothAngel/FtDScripts for raw code.""" + NL
     return s.format(version, ', '.join(modules))
 
 
