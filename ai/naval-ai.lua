@@ -90,6 +90,7 @@ function AdjustHeadingToTarget(I)
    if Dodging then
       Bearing = DodgeAngle
       DodgeAltitudeOffset = DodgeY * VehicleRadius
+      Drive = Sign(C:ForwardSpeed(), 1)
    else
       Bearing = GetBearingToPoint(TargetPosition)
       Bearing = Bearing - (PreferredBroadside or Sign(Bearing, 1)) * TargetAngle
