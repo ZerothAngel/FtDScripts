@@ -56,6 +56,8 @@ In order to properly close with the target, `ClosingAngle` should be < 90 degree
 
 In order to properly escape from the target, `EscapeAngle` should be > 90 degrees.
 
+#### With AttackReverse = false (default) ####
+
 **However**, when attacking, the `AttackAngle` takes on a different meaning. It represents the maximum angle at which to close to `AttackDistance` (i.e. when `AttackDistance` < target distance < `MaxDistance`). Conversely, `180 - AttackAngle` then becomes the maximum angle at which to escape back out to `AttackDistance` (i.e. when `MinDistance` < target distance < `AttackDistance`).
 
 So if `AttackAngle` is 75 degrees, it will close to `AttackDistance` at 75 degrees. If it is closer than `AttackDistance`, it will attempt to escape at 105 degrees (180 - 75).
@@ -63,6 +65,14 @@ So if `AttackAngle` is 75 degrees, it will close to `AttackDistance` at 75 degre
 In this mode, `AttackAngle` must never be explicitly set to 90 degrees.
 
 But it's still a bit more complicated. The delta between target distance and `AttackDistance` (i.e. `AttackDistance - target distance`) is fed to a PID configured by `AttackPIDConfig`. The output of this PID is then used to compute the attacking angle. This smoothly scales the attack angle between `AttackAngle` and `180 - AttackAngle` and prevents the vehicle from rapidly switching between the two angles when straddling `AttackDistance`.
+
+#### With AttackReverse = true ####
+
+When `AttackReverse` is true, the method for maintaining `AttackDistance` changes: Rather than "flipping" `AttackAngle` (i.e. `180 - AttackAngle`), the script will instead negate `AttackDrive` resulting in reverse motion. This works best when `AttackAngle` is close to (or even equal to) 0 as it keeps the front facing the enemy. This is ideal for tanks, which are presumably armored primarily in the front. (This is the colloquially known "frontal broadside" mode.)
+
+Needless to say, your vehicle should be able to move in reverse. Dediblades, propellers & wheels will work fine. Unfortunately, backwards-facing jets inexplicably do not activate when the main drive is reversed, so the default configuration (which acts by sending standard vehicle controls) does not work. Note that moving in reverse isn't a strict requirement, as this mode will still provide a stop-fire-move-stop-fire-move sort of behavior in that case.
+
+Behind-the-scenes, the same PID that was used for `AttackAngle` is instead used to scale the throttle between `-AttackDrive` and `AttackDrive`. So in theory it should smoothly maintain `AttackDistance` as long as the vehicle response is "good enough" and the PID is tuned. (Wheels tend to slip a lot, so they will probably never be good enough.)
 
 ### Attack Runs ###
 
