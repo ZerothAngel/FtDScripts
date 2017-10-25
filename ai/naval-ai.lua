@@ -23,6 +23,7 @@ function AdjustHeadingToTarget(I)
    local Distance = PlanarVector(C:CoM(), TargetPosition).magnitude
 
    local TargetAngle,Drive,Evasion = EscapeAngle,EscapeDrive,EscapeEvasion
+   local ScaledDrive = false
    if AttackRuns then
       -- Attack run behavior
       if not LastAttackTime then
@@ -76,6 +77,7 @@ function AdjustHeadingToTarget(I)
             local Delta = AttackDistance - Distance
             if AttackReverse then
                Drive = AttackPID:Control(Delta) * -AttackDrive
+               ScaledDrive = true
             else
                local BroadsideAngle = 90 - AttackAngle
                TargetAngle = 90 + AttackPID:Control(Delta) * BroadsideAngle
@@ -90,7 +92,11 @@ function AdjustHeadingToTarget(I)
    if Dodging then
       Bearing = DodgeAngle
       DodgeAltitudeOffset = DodgeY * VehicleRadius
-      Drive = Sign(C:ForwardSpeed(), 1)
+      if ScaledDrive then
+         -- Because of the PID, Drive may be (close to) 0.
+         -- So it's better to force it to max in the current direction.
+         Drive = Sign(C:ForwardSpeed(), 1) * AttackDrive
+      end
    else
       Bearing = GetBearingToPoint(TargetPosition)
       Bearing = Bearing - (PreferredBroadside or Sign(Bearing, 1)) * TargetAngle

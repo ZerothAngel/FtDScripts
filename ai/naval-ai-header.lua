@@ -10,6 +10,8 @@ MaxDistance = 500
 AttackAngle = 80
 -- Drive fraction from -1 to 1. This script will probably only
 -- work when moving forward, so always set >0
+-- If you have an urge to set this to 0, look instead at the
+-- AttackDistance + AttackReverse options.
 AttackDrive = 1
 -- Evasion settings have two values:
 -- The magnitude of evasive maneuvers, in degrees
