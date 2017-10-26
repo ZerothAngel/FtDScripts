@@ -94,7 +94,7 @@ function AdjustHeadingToTarget(I)
       if ScaledDrive then
          -- Because of the PID, Drive may be (close to) 0.
          -- So it's better to force it to max in the current direction.
-         Drive = Sign(C:ForwardSpeed(), 1) * AttackDrive
+         Drive = Sign(C:ForwardSpeed(), 1)
       end
       Bearing = DodgeAngle * Sign(Drive, 1)
    else
