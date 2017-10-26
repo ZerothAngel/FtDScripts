@@ -1,8 +1,8 @@
 --@ componenttypes
--- Thrust hack via drive maintainer
-ThrustHack = {}
+-- Drive maintainer control module
+DriveMaintainer = {}
 
-function ThrustHack.create(Direction)
+function DriveMaintainer.create(Direction)
    local self = {}
 
    if Direction then
@@ -10,7 +10,7 @@ function ThrustHack.create(Direction)
       self.LastDriveMaintainerCount = 0
       self.DriveMaintainerIndex = nil
 
-      self.SetThrottle = ThrustHack.SetThrottle
+      self.SetThrottle = DriveMaintainer.SetThrottle
    else
       -- Dummy method for safety. Better to just not call.
       self.SetThrottle = function (_, _, _) end
@@ -19,7 +19,7 @@ function ThrustHack.create(Direction)
    return self
 end
 
-function ThrustHack:SetThrottle(I, Throttle)
+function DriveMaintainer:SetThrottle(I, Throttle)
    local DriveMaintainerCount = I:Component_GetCount(DRIVEMAINTAINER)
    if DriveMaintainerCount ~= self.LastDriveMaintainerCount then
       -- Clear cached index

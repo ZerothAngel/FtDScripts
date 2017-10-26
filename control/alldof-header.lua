@@ -75,8 +75,9 @@ AllDoFPIDConfig = {
 -- THRUST HACK CONFIGURATION
 
 -- Use thrust hack instead of standard Lua control of thrusters.
--- Requires a drive maintainer facing in the given direction.
--- Drive maintainer should be set up on its own drive (e.g. tertiary).
--- All related jets should be bound to that drive.
+-- Select a complex controller key and make sure all related jets
+-- have that key bound as a green input.
+-- See Lua box help > Propulsion > RequestComplexControllerStimulus
+-- for key mapping.
 
-ThrustHackDriveMaintainerFacing = nil
+ThrustHackKey = nil

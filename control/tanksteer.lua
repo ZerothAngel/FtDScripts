@@ -1,4 +1,4 @@
---@ commons pid thrusthack normalizebearing clamp
+--@ commons pid drivemaintainer normalizebearing clamp
 -- Tank steering module via drive maintainers
 TankSteer_YawPID = PID.create(TankSteerConfig.YawPIDConfig, -1, 1)
 
@@ -6,8 +6,8 @@ TankSteer_DesiredHeading = nil
 TankSteer_DesiredThrottle = nil
 TankSteer_CurrentThrottle = 0
 
-TankSteer_LeftTrackControl = ThrustHack.create(TankSteerConfig.LeftTrackDriveMaintainerFacing)
-TankSteer_RightTrackControl = ThrustHack.create(TankSteerConfig.RightTrackDriveMaintainerFacing)
+TankSteer_LeftTrackControl = DriveMaintainer.create(TankSteerConfig.LeftTrackDriveMaintainerFacing)
+TankSteer_RightTrackControl = DriveMaintainer.create(TankSteerConfig.RightTrackDriveMaintainerFacing)
 
 TankSteer_NeedsRelease = false
 

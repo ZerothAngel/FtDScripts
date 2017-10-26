@@ -1,4 +1,4 @@
---@ commons componenttypes propulsionapi normalizebearing sign pid thrusthack clamp
+--@ commons componenttypes propulsionapi normalizebearing sign pid clamp
 -- All DoF module
 AllDoF_AltitudePID = PID.create(AllDoFPIDConfig.Altitude, -30, 30)
 AllDoF_YawPID = PID.create(AllDoFPIDConfig.Yaw, -30, 30)
@@ -19,8 +19,6 @@ AllDoF_DesiredRoll = 0
 AllDoF_UsesJets = (JetFractions.Altitude > 0 or JetFractions.Yaw > 0 or JetFractions.Pitch > 0 or JetFractions.Roll > 0 or JetFractions.North > 0 or JetFractions.East > 0 or JetFractions.Forward > 0)
 AllDoF_UsesSpinners = (SpinnerFractions.Altitude > 0 or SpinnerFractions.Yaw > 0 or SpinnerFractions.Pitch > 0 or SpinnerFractions.Roll > 0 or SpinnerFractions.North > 0 or SpinnerFractions.East > 0 or SpinnerFractions.Forward > 0)
 AllDoF_UsesControls = (ControlFractions.Yaw > 0 or ControlFractions.Pitch > 0 or ControlFractions.Roll > 0 or ControlFractions.Forward > 0)
-
-AllDoF_ThrustHackControl = ThrustHack.create(ThrustHackDriveMaintainerFacing)
 
 AllDoF = {}
 
@@ -155,12 +153,12 @@ function AllDoF.Update(I)
       local Infos = AllDoF_ClassifyJets(I)
 
       -- Blip EVERYTHING
-      if not ThrustHackDriveMaintainerFacing then
+      if not ThrustHackKey then
          for i = 0,5 do
             I:RequestThrustControl(i)
          end
       else
-         AllDoF_ThrustHackControl:SetThrottle(I, 1)
+         I:RequestComplexControllerStimulus(ThrustHackKey)
       end
 
       -- Set drive fraction accordingly
@@ -192,11 +190,9 @@ end
 
 function AllDoF.Disable(I)
    AllDoF_CurrentThrottle = 0
-   -- Disable drive maintainers, if any
-   AllDoF_ThrustHackControl:SetThrottle(I, 0)
    if AllDoF_UsesSpinners then
       local Infos = AllDoF_ClassifySpinners(I)
-      -- And stop spinners as well
+      -- Stop spinners
       for _,Info in pairs(Infos) do
          I:SetSpinnerContinuousSpeed(Info.Index, 0)
       end

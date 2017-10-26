@@ -1,4 +1,4 @@
---@ commons componenttypes propulsionapi normalizebearing sign pid thrusthack clamp
+--@ commons componenttypes propulsionapi normalizebearing sign pid clamp
 --# Packages don't exist, and screw accessing everything through a table.
 --# It's just a search/replace away to convert to 'proper' Lua anyway.
 -- 6DoF module (Altitude, Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
@@ -35,9 +35,6 @@ SixDoF_ControlAltitude = (JetFractions.Altitude > 0 or SpinnerFractions.Altitude
 SixDoF_ControlPitch = (JetFractions.Pitch > 0 or SpinnerFractions.Pitch > 0 or ControlFractions.Pitch > 0)
 SixDoF_ControlRoll = (JetFractions.Roll > 0 or SpinnerFractions.Roll > 0 or ControlFractions.Roll > 0)
 -- The others (yaw/forward/right) depend on an AI
-
-SixDoF_APRThrustHackControl = ThrustHack.create(APRThrustHackDriveMaintainerFacing)
-SixDoF_YLLThrustHackControl = ThrustHack.create(YLLThrustHackDriveMaintainerFacing)
 
 SixDoF_NeedsRelease = false
 
@@ -214,24 +211,21 @@ function SixDoF.Update(I)
 
       if SixDoF_UsesHorizontalJets and PlanarMovement then
          -- Blip horizontal thrusters
-         if not YLLThrustHackDriveMaintainerFacing then
+         if not YLLThrustHackKey then
             for i = 0,3 do
                I:RequestThrustControl(i)
             end
          else
-            SixDoF_YLLThrustHackControl:SetThrottle(I, 1)
+            I:RequestComplexControllerStimulus(YLLThrustHackKey)
          end
-      else
-         -- Relinquish control
-         SixDoF_YLLThrustHackControl:SetThrottle(I, 0)
       end
       if SixDoF_UsesVerticalJets then
          -- Blip top & bottom thrusters
-         if not APRThrustHackDriveMaintainerFacing then
+         if not APRThrustHackKey then
             I:RequestThrustControl(4)
             I:RequestThrustControl(5)
          else
-            SixDoF_APRThrustHackControl:SetThrottle(I, 1)
+            I:RequestComplexControllerStimulus(APRThrustHackKey)
          end
       end
 
@@ -277,12 +271,9 @@ end
 
 function SixDoF.Disable(I)
    SixDoF_CurrentThrottle = 0
-   -- Disable drive maintainers, if any
-   SixDoF_APRThrustHackControl:SetThrottle(I, 0)
-   SixDoF_YLLThrustHackControl:SetThrottle(I, 0)
    if SixDoF_UsesSpinners then
       SixDoF_ClassifySpinners(I)
-      -- And stop spinners as well
+      -- Stop spinners
       for _,Info in pairs(SixDoF_SpinnerInfos) do
          I:SetSpinnerContinuousSpeed(Info.Index, 0)
       end
