@@ -1,6 +1,6 @@
---@ commonstargets commons control manualcontroller evasion terraincheck sign clamp
+--@ commonstargets commons control drivemaintainer evasion terraincheck sign clamp
 -- Depth Control module
-ManualDepthController = ManualController.create(ManualDepthDriveMaintainerFacing)
+ManualDepthController = DriveMaintainer.create(ManualDepthDriveMaintainerFacing)
 
 -- Note: Aside from Offset, all should be absolute altitudes, i.e. -depth
 DepthControl_Desired = 0
@@ -19,7 +19,7 @@ function Depth_Control(I)
       local DesiredDepth,Absolute
       if ManualDepthDriveMaintainerFacing and ManualDepthWhen[I.AIMode] then
          -- Manual depth control
-         local ManualDesiredDepth = ManualDepthController:GetReading(I)
+         local ManualDesiredDepth = ManualDepthController:GetThrottle(I)
          if ManualDesiredDepth > 0 then
             -- Relative
             DesiredDepth,Absolute = (500 - ManualDesiredDepth*500),false

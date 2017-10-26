@@ -1,6 +1,6 @@
 --! dediblademaintainer
---@ periodic manualcontroller spinnercontrol
-ThrottleController = ManualController.create(ThrottleDriveMaintainerFacing)
+--@ periodic drivemaintainer spinnercontrol
+ThrottleController = DriveMaintainer.create(ThrottleDriveMaintainerFacing)
 PropulsionSpinners = SpinnerControl.create(Vector3.forward, UseSpinners, UseDediBlades)
 
 DesiredThrottle = 0
@@ -10,7 +10,7 @@ function DediBladeMaintainer_Control(I)
    if Throttle then
       DesiredThrottle = Throttle
    else
-      DesiredThrottle = ThrottleController:GetReading(I)
+      DesiredThrottle = ThrottleController:GetThrottle(I)
    end
 end
 
