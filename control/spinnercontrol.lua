@@ -4,7 +4,7 @@ SpinnerControl = {}
 
 -- Note: Axis should be a unit vector depicting the positive direction
 -- Typically Vector3.up, Vector3.forward, etc.
-function SpinnerControl.create(Axis, UseSpinners, UseDediBlades, AlwaysUp)
+function SpinnerControl.new(Axis, UseSpinners, UseDediBlades, AlwaysUp)
    local self = {}
 
    self.Axis = Axis

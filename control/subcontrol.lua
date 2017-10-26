@@ -1,8 +1,8 @@
 --@ commons componenttypes pid sign clamp
 -- Hydrofoil submarine control module
-SubControl_RollPID = PID.create(SubControlPIDConfig.Roll, -1, 1)
-SubControl_PitchPID = PID.create(SubControlPIDConfig.Pitch, -1, 1)
-SubControl_DepthPID = PID.create(SubControlPIDConfig.Depth, -1, 1)
+SubControl_RollPID = PID.new(SubControlPIDConfig.Roll, -1, 1)
+SubControl_PitchPID = PID.new(SubControlPIDConfig.Pitch, -1, 1)
+SubControl_DepthPID = PID.new(SubControlPIDConfig.Depth, -1, 1)
 
 SubControl_DesiredAltitude = 0
 SubControl_DesiredPitch = 0

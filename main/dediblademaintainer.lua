@@ -1,7 +1,7 @@
 --! dediblademaintainer
 --@ periodic drivemaintainer spinnercontrol
-ThrottleController = DriveMaintainer.create(ThrottleDriveMaintainerFacing)
-PropulsionSpinners = SpinnerControl.create(Vector3.forward, UseSpinners, UseDediBlades)
+ThrottleController = DriveMaintainer.new(ThrottleDriveMaintainerFacing)
+PropulsionSpinners = SpinnerControl.new(Vector3.forward, UseSpinners, UseDediBlades)
 
 DesiredThrottle = 0
 
@@ -25,7 +25,7 @@ function DediBladeMaintainer_Disable(I)
    PropulsionSpinners:SetSpeed(I, 0)
 end
 
-DediBladeMaintainer = Periodic.create(UpdateRate, DediBladeMaintainer_Control)
+DediBladeMaintainer = Periodic.new(UpdateRate, DediBladeMaintainer_Control)
 
 function Update(I) -- luacheck: ignore 131
    if ActivateWhen[I.AIMode] then

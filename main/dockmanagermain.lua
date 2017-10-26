@@ -1,8 +1,8 @@
 --! dockmanager
 --@ commons periodic dockmanager
-DockManager = Periodic.create(UpdateRate, DockManager_Update)
+DockManager = Periodic.new(UpdateRate, DockManager_Update)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    DockManager:Tick(I)
 end

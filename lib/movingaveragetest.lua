@@ -1,6 +1,6 @@
 require("movingaverage")
 
-ma = MovingAverage.create(3)
+ma = MovingAverage.new(3)
 ma:AddSample(1)
 ma:AddSample(5)
 ma:AddSample(10)

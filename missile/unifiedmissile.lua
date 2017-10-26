@@ -2,7 +2,7 @@
 -- UnifiedMissile implementation
 UnifiedMissile = {}
 
-function UnifiedMissile.create(Config)
+function UnifiedMissile.new(Config)
    local GMConfig = {
       AirProfileElevation = Config.SpecialAttackElevation,
       MinAltitude = Config.MinimumAltitude,
@@ -59,5 +59,5 @@ function UnifiedMissile.create(Config)
       table.insert(GMConfig.Phases, 2, MiddlePhase)
    end
 
-   return GeneralMissile.create(GMConfig)
+   return GeneralMissile.new(GMConfig)
 end

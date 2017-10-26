@@ -7,12 +7,12 @@ function AvoidanceTest_Update(I)
    V.AdjustHeading(Avoidance(I, 0))
 end
 
-AvoidanceTest = Periodic.create(UpdateRate, AvoidanceTest_Update)
+AvoidanceTest = Periodic.new(UpdateRate, AvoidanceTest_Update)
 
 SelectHeadingImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
       if ActivateWhen[I.AIMode] then

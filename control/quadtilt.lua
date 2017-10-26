@@ -1,5 +1,5 @@
 --@ commons control tiltspinner clamp
-QuadTilt_TiltSpinner = TiltSpinner.create(Vector3.right, { Kp = .01, Ti = 10, Td = 0, })
+QuadTilt_TiltSpinner = TiltSpinner.new(Vector3.right, { Kp = .01, Ti = 10, Td = 0, })
 
 QuadTilt_DesiredHeading = nil
 QuadTilt_DesiredThrottle = nil

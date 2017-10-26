@@ -2,7 +2,7 @@
 -- MissileCommand implementation
 MissileCommand = {}
 
-function MissileCommand.create(I, TransceiverIndex, MissileIndex)
+function MissileCommand.new(I, TransceiverIndex, MissileIndex)
    local self = {}
 
    -- Note we don't bother saving TransceiverIndex & MissileIndex in the

@@ -29,7 +29,7 @@ DemoGuidance = {}
 
 -- The constructor for the class
 -- We'll go ahead and accept a single argument used for configuration.
-function DemoGuidance.create(Config)
+function DemoGuidance.new(Config)
    -- Create an "instance" of your class
    local self = {}
 

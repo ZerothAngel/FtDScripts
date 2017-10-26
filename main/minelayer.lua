@@ -1,11 +1,11 @@
 --! minelayer
 --@ commons control firstrun periodic
 --@ shieldmanager balloonmanager mobilemine sixdof altitudecontrol gunshipdefaults gunship-ai
-BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 4)
-ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
-MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
-AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
-GunshipAI = Periodic.create(AI_UpdateRate, GunshipAI_Update)
+BalloonManager = Periodic.new(BalloonManager_UpdateRate, BalloonManager_Control, 4)
+ShieldManager = Periodic.new(ShieldManager_UpdateRate, ShieldManager_Control, 3)
+MissileMain = Periodic.new(Missile_UpdateRate, MissileMain_Update, 2)
+AltitudeControl = Periodic.new(AltitudeControl_UpdateRate, Altitude_Control, 1)
+GunshipAI = Periodic.new(AI_UpdateRate, GunshipAI_Update)
 
 SelectHeadingImpl(SixDoF)
 SelectPositionImpl(SixDoF)
@@ -14,7 +14,7 @@ SelectPitchImpl(SixDoF)
 SelectRollImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
       AltitudeControl:Tick(I)

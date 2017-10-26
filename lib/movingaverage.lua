@@ -4,7 +4,7 @@
 --# decay. I want old values gone exactly after N samples.
 MovingAverage = {}
 
-function MovingAverage.create(MaxSamples, Zero)
+function MovingAverage.new(MaxSamples, Zero)
    local self = {}
 
    self.MaxSamples = MaxSamples

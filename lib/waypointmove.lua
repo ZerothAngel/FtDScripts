@@ -1,6 +1,6 @@
 --@ commons control pid planarvector quadraticintercept getbearingtopoint sign clamp
 -- Waypoint move module
-MTW_ThrottlePID = PID.create(WaypointMoveConfig.ThrottlePIDConfig, -1, 1)
+MTW_ThrottlePID = PID.new(WaypointMoveConfig.ThrottlePIDConfig, -1, 1)
 
 if not WaypointMoveConfig.MinimumSpeed then WaypointMoveConfig.MinimumSpeed = 0 end
 

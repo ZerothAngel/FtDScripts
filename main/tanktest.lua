@@ -5,7 +5,7 @@ LastTurn = nil
 
 ThrottleIndex = 0
 
-TankTest = EventDriver.create()
+TankTest = EventDriver.new()
 
 function TankTest_FirstRun(_)
    TankTest:Schedule(0, TankTest_Throttle)
@@ -43,7 +43,7 @@ SelectHeadingImpl(TankSteer)
 SelectThrottleImpl(TankSteer)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
       if ActivateWhen[I.AIMode] then

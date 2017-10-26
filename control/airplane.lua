@@ -1,9 +1,9 @@
 --@ commons propulsionapi pid lookuptable normalizebearing getvectorangle sign clamp
 -- Airplane module (Yaw, Pitch, Throttle)
-Airplane_AltitudePID = PID.create(AirplanePIDConfig.Altitude, -10, 10)
-Airplane_YawPID = PID.create(AirplanePIDConfig.Yaw, -1, 1)
-Airplane_PitchPID = PID.create(AirplanePIDConfig.Pitch, -1, 1)
-Airplane_RollPID = PID.create(AirplanePIDConfig.Roll, -1, 1)
+Airplane_AltitudePID = PID.new(AirplanePIDConfig.Altitude, -10, 10)
+Airplane_YawPID = PID.new(AirplanePIDConfig.Yaw, -1, 1)
+Airplane_PitchPID = PID.new(AirplanePIDConfig.Pitch, -1, 1)
+Airplane_RollPID = PID.new(AirplanePIDConfig.Roll, -1, 1)
 
 Airplane_DesiredAltitude = 0
 Airplane_DesiredHeading = nil
@@ -16,7 +16,7 @@ Airplane_SpinnerInfos = {}
 
 Airplane_UsesSpinners = (SpinnerFractions.Yaw > 0 or SpinnerFractions.Pitch > 0 or SpinnerFractions.Roll > 0 or SpinnerFractions.Throttle > 0)
 
-Airplane_MaxPitch = LookupTable.create(MaxPitch[1][1], math.max(500, MaxPitch[#MaxPitch][1]), MaxPitch[1][2], MaxPitch[#MaxPitch][2], 100, MaxPitch)
+Airplane_MaxPitch = LookupTable.new(MaxPitch[1][1], math.max(500, MaxPitch[#MaxPitch][1]), MaxPitch[1][2], MaxPitch[#MaxPitch][2], 100, MaxPitch)
 
 Airplane_Active = false
 

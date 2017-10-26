@@ -1,7 +1,7 @@
 --! unifiedmissile
 --@ commons periodic missiledriver unifiedmissile
 -- Unified missile main
-MyMissile = UnifiedMissile.create(Config)
+MyMissile = UnifiedMissile.new(Config)
 
 GuidanceInfos = {
    {
@@ -24,10 +24,10 @@ function MissileMain_Update(I)
    MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
 end
 
-MissileMain = Periodic.create(UpdateRate, MissileMain_Update)
+MissileMain = Periodic.new(UpdateRate, MissileMain_Update)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if not C:IsDocked() then
       MissileMain:Tick(I)
    end

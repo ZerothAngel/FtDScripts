@@ -121,10 +121,10 @@ function Interceptor_Update(I)
    end
 end
 
-Interceptor = Periodic.create(UpdateRate, Interceptor_Update)
+Interceptor = Periodic.new(UpdateRate, Interceptor_Update)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if not C:IsDocked() then
       Interceptor:Tick(I)
    end

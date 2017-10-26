@@ -1,6 +1,6 @@
 --@ missiledriver smartmine
 -- Mobile mine main
-MyMissile = SmartMine.create(MobileMineConfig)
+MyMissile = SmartMine.new(MobileMineConfig)
 
 GuidanceInfos = {
    {

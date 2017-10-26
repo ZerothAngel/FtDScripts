@@ -2,11 +2,11 @@
 --@ commons control firstrun periodic
 --@ dockmanager shieldmanager balloonmanager sixdof altitudecontrol gunshipdefaults utility-ai6dof utility-aicommon
 -- 6DoF Utility main
-BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 4)
-ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
-DockManager = Periodic.create(DockManager_UpdateRate, DockManager_Update, 2)
-AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
-UtilityAI = Periodic.create(AI_UpdateRate, UtilityAI_Update)
+BalloonManager = Periodic.new(BalloonManager_UpdateRate, BalloonManager_Control, 4)
+ShieldManager = Periodic.new(ShieldManager_UpdateRate, ShieldManager_Control, 3)
+DockManager = Periodic.new(DockManager_UpdateRate, DockManager_Update, 2)
+AltitudeControl = Periodic.new(AltitudeControl_UpdateRate, Altitude_Control, 1)
+UtilityAI = Periodic.new(AI_UpdateRate, UtilityAI_Update)
 
 SelectHeadingImpl(SixDoF)
 SelectPositionImpl(SixDoF)
@@ -15,7 +15,7 @@ SelectPitchImpl(SixDoF)
 SelectRollImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
       AltitudeControl:Tick(I)

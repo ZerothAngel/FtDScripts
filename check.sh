@@ -6,8 +6,8 @@ fi
 
 check_commons() {
   if fgrep Modules: "$1" | fgrep commons >/dev/null; then
-    if ! egrep '^\W*C = Commons\.create' "$1" >/dev/null; then
-      echo "missing call to Commons.create"
+    if ! egrep '^\W*C = Commons\.new' "$1" >/dev/null; then
+      echo "missing call to Commons.new"
       return 1
     fi
   fi

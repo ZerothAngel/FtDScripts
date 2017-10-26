@@ -1,7 +1,7 @@
 --! utility-ai
 --@ commons control firstrun periodic
 --@ rollturn sixdof ytdefaults utility-ai utility-aicommon
-UtilityAI = Periodic.create(UpdateRate, UtilityAI_Update)
+UtilityAI = Periodic.new(UpdateRate, UtilityAI_Update)
 
 SelectHeadingImpl(SixDoF, RollTurnControl)
 SelectRollImpl(SixDoF, RollTurnControl)
@@ -10,7 +10,7 @@ SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
       if ActivateWhen[I.AIMode] then

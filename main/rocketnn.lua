@@ -1,9 +1,9 @@
 --! rocketnn
 --@ commonstargets commonsweapons commons eventdriver firstrun weapontypes neuralnet secant shuffle debug
 -- Neural net-based rocket turret predictor
-Main = EventDriver.create()
+Main = EventDriver.new()
 
-NN = NeuralNet.create(1, 3, 1)
+NN = NeuralNet.new(1, 3, 1)
 NN:Randomize()
 
 TrainingSets = {}
@@ -185,7 +185,7 @@ function RocketControl_Update(I)
 end
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() and ActivateWhen[I.AIMode] then
       Main:Tick(I)

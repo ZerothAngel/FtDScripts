@@ -2,12 +2,12 @@
 --# Packages don't exist, and screw accessing everything through a table.
 --# It's just a search/replace away to convert to 'proper' Lua anyway.
 -- 6DoF module (Altitude, Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
-SixDoF_AltitudePID = PID.create(SixDoFPIDConfig.Altitude, -30, 30)
-SixDoF_YawPID = PID.create(SixDoFPIDConfig.Yaw, -30, 30)
-SixDoF_PitchPID = PID.create(SixDoFPIDConfig.Pitch, -30, 30)
-SixDoF_RollPID = PID.create(SixDoFPIDConfig.Roll, -30, 30)
-SixDoF_ForwardPID = PID.create(SixDoFPIDConfig.Forward, -30, 30)
-SixDoF_RightPID = PID.create(SixDoFPIDConfig.Right, -30, 30)
+SixDoF_AltitudePID = PID.new(SixDoFPIDConfig.Altitude, -30, 30)
+SixDoF_YawPID = PID.new(SixDoFPIDConfig.Yaw, -30, 30)
+SixDoF_PitchPID = PID.new(SixDoFPIDConfig.Pitch, -30, 30)
+SixDoF_RollPID = PID.new(SixDoFPIDConfig.Roll, -30, 30)
+SixDoF_ForwardPID = PID.new(SixDoFPIDConfig.Forward, -30, 30)
+SixDoF_RightPID = PID.new(SixDoFPIDConfig.Right, -30, 30)
 
 SixDoF_DesiredAltitude = 0
 SixDoF_DesiredHeading = nil

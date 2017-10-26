@@ -1,6 +1,6 @@
 --@ commonstargets commons control drivemaintainer evasion terraincheck sign clamp
 -- Altitude Control module
-ManualAltitudeController = DriveMaintainer.create(ManualAltitudeDriveMaintainerFacing)
+ManualAltitudeController = DriveMaintainer.new(ManualAltitudeDriveMaintainerFacing)
 HalfMaxManualAltitude = (MaxManualAltitude - MinManualAltitude) / 2
 
 AltitudeControl_Desired = 0

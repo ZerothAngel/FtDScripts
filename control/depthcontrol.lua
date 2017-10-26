@@ -1,6 +1,6 @@
 --@ commonstargets commons control drivemaintainer evasion terraincheck sign clamp
 -- Depth Control module
-ManualDepthController = DriveMaintainer.create(ManualDepthDriveMaintainerFacing)
+ManualDepthController = DriveMaintainer.new(ManualDepthDriveMaintainerFacing)
 
 -- Note: Aside from Offset, all should be absolute altitudes, i.e. -depth
 DepthControl_Desired = 0

@@ -1,6 +1,6 @@
 LookupTable = {}
 
-function LookupTable.create(XMin, XMax, YMin, YMax, Size, DataPoints)
+function LookupTable.new(XMin, XMax, YMin, YMax, Size, DataPoints)
    -- Make shallow copy of data
    local DP = { unpack(DataPoints) }
    -- And sort it by X value

@@ -62,10 +62,10 @@ function InterceptManager_Update(I)
    end
 end
 
-InterceptManager = Periodic.create(UpdateRate, InterceptManager_Update)
+InterceptManager = Periodic.new(UpdateRate, InterceptManager_Update)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if not C:IsDocked() then
       InterceptManager:Tick(I)
    end

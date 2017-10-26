@@ -1,8 +1,8 @@
 --@ commons componenttypes sign pid clamp
 -- 3DoF Pump module (Altitude, Pitch, Roll)
-ThreeDoFPump_AltitudePID = PID.create(ThreeDoFPumpPIDConfig.Altitude, -10, 10)
-ThreeDoFPump_PitchPID = PID.create(ThreeDoFPumpPIDConfig.Pitch, -10, 10)
-ThreeDoFPump_RollPID = PID.create(ThreeDoFPumpPIDConfig.Roll, -10, 10)
+ThreeDoFPump_AltitudePID = PID.new(ThreeDoFPumpPIDConfig.Altitude, -10, 10)
+ThreeDoFPump_PitchPID = PID.new(ThreeDoFPumpPIDConfig.Pitch, -10, 10)
+ThreeDoFPump_RollPID = PID.new(ThreeDoFPumpPIDConfig.Roll, -10, 10)
 
 ThreeDoFPump_DesiredAltitude = 0
 ThreeDoFPump_DesiredPitch = 0

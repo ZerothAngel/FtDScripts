@@ -6,7 +6,7 @@ LastAttackTime = nil
 
 DodgeAltitudeOffset = nil -- luacheck: ignore 131
 
-AttackPID = PID.create(AttackPIDConfig, -1, 1)
+AttackPID = PID.new(AttackPIDConfig, -1, 1)
 
 -- Modifies bearing by some amount for evasive maneuvers
 function Evade(Evasion)

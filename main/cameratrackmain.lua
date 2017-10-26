@@ -1,9 +1,9 @@
 --! cameratrack
 --@ commons periodic cameratrack
-CameraTrack = Periodic.create(UpdateRate, CameraTrack_Update)
+CameraTrack = Periodic.new(UpdateRate, CameraTrack_Update)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if not C:IsDocked() then
       CameraTrack:Tick(I)
    end

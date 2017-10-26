@@ -19,10 +19,10 @@ function RocketControl_Update(I)
    end
 end
 
-RocketControl = Periodic.create(UpdateRate, RocketControl_Update)
+RocketControl = Periodic.new(UpdateRate, RocketControl_Update)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if not C:IsDocked() and ActivateWhen[I.AIMode] then
       RocketControl:Tick(I)
    end

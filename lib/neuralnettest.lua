@@ -19,7 +19,7 @@ TrainingSets = {
    },
 }
 
-NN = NeuralNet.create(2, 3, 1)
+NN = NeuralNet.new(2, 3, 1)
 math.randomseed(os.time())
 NN:Randomize()
 

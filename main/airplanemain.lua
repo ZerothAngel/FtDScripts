@@ -2,18 +2,18 @@
 --@ commons control firstrun periodic
 --@ shieldmanager balloonmanager multiprofile airplane altitudecontrol naval-ai
 -- Airship main
-BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 4)
-ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
-MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
-AltitudeControl = Periodic.create(AltitudeControl_UpdateRate, Altitude_Control, 1)
-NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
+BalloonManager = Periodic.new(BalloonManager_UpdateRate, BalloonManager_Control, 4)
+ShieldManager = Periodic.new(ShieldManager_UpdateRate, ShieldManager_Control, 3)
+MissileMain = Periodic.new(Missile_UpdateRate, MissileMain_Update, 2)
+AltitudeControl = Periodic.new(AltitudeControl_UpdateRate, Altitude_Control, 1)
+NavalAI = Periodic.new(AI_UpdateRate, NavalAI_Update)
 
 SelectHeadingImpl(Airplane)
 SelectThrottleImpl(Airplane)
 SelectAltitudeImpl(Airplane)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
       if ActivateWhen[I.AIMode] then

@@ -1,7 +1,7 @@
 --! repair-ai
 --@ commons control firstrun periodic
 --@ rollturn sixdof ytdefaults repair-ai repair-aicommon
-RepairAI = Periodic.create(UpdateRate, RepairAI_Update)
+RepairAI = Periodic.new(UpdateRate, RepairAI_Update)
 
 SelectHeadingImpl(SixDoF, RollTurnControl)
 SelectRollImpl(SixDoF, RollTurnControl)
@@ -10,7 +10,7 @@ SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
       if ActivateWhen[I.AIMode] then

@@ -2,10 +2,10 @@
 --@ commons control firstrun periodic
 --@ shieldmanager multiprofile rollturn subcontrol sixdof depthcontrol ytdefaults naval-ai
 -- Submarine main
-ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
-MissileMain = Periodic.create(Missile_UpdateRate, MissileMain_Update, 2)
-DepthControl = Periodic.create(SubControl_UpdateRate, Depth_Control, 1)
-NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
+ShieldManager = Periodic.new(ShieldManager_UpdateRate, ShieldManager_Control, 3)
+MissileMain = Periodic.new(Missile_UpdateRate, MissileMain_Update, 2)
+DepthControl = Periodic.new(SubControl_UpdateRate, Depth_Control, 1)
+NavalAI = Periodic.new(AI_UpdateRate, NavalAI_Update)
 
 SelectHeadingImpl(SixDoF, RollTurnControl)
 SelectRollImpl(SubControl, RollTurnControl)
@@ -17,7 +17,7 @@ SelectPitchImpl(SubControl)
 SelectRollImpl(RollTurn)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
       DepthControl:Tick(I)

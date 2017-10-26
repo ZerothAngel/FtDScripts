@@ -1,11 +1,11 @@
 --! scout6dof
 --@ commons control firstrun periodic
 --@ cameratrack shieldmanager balloonmanager altitudecontrol sixdof gunshipdefaults gunship-ai
-BalloonManager = Periodic.create(BalloonManager_UpdateRate, BalloonManager_Control, 4)
-CameraTrack = Periodic.create(CameraTrack_UpdateRate, CameraTrack_Update, 3)
-ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
-Hover = Periodic.create(Hover_UpdateRate, Altitude_Control, 1)
-GunshipAI = Periodic.create(AI_UpdateRate, GunshipAI_Update)
+BalloonManager = Periodic.new(BalloonManager_UpdateRate, BalloonManager_Control, 4)
+CameraTrack = Periodic.new(CameraTrack_UpdateRate, CameraTrack_Update, 3)
+ShieldManager = Periodic.new(ShieldManager_UpdateRate, ShieldManager_Control, 2)
+Hover = Periodic.new(Hover_UpdateRate, Altitude_Control, 1)
+GunshipAI = Periodic.new(AI_UpdateRate, GunshipAI_Update)
 
 SelectHeadingImpl(SixDoF)
 SelectPositionImpl(SixDoF)
@@ -14,7 +14,7 @@ SelectPitchImpl(SixDoF)
 SelectRollImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I, true)
+   C = Commons.new(I, true)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
       Hover:Tick(I)

@@ -1,7 +1,7 @@
 -- Neural network module
 NeuralNet = {}
 
-function NeuralNet.create(NumInput, NumHidden, NumOutput)
+function NeuralNet.new(NumInput, NumHidden, NumOutput)
    if type(NumHidden) ~= "table" then
       NumHidden = { NumHidden }
    end

@@ -2,7 +2,7 @@
 -- Drive maintainer module
 DriveMaintainer = {}
 
-function DriveMaintainer.create(Direction)
+function DriveMaintainer.new(Direction)
    local self = {}
 
    if Direction then

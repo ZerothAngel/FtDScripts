@@ -2,7 +2,7 @@
 TiltSpinner = {}
 
 --# TODO Selection of spinners by local offset from origin?
-function TiltSpinner.create(Axis, PIDConfig)
+function TiltSpinner.new(Axis, PIDConfig)
    local self = {}
 
    self.Axis = Axis
@@ -63,7 +63,7 @@ function TiltSpinner:Classify(I)
                local Info = {
                   Index = i,
                   AxisSign = AxisSign,
-                  PID = PID.create(self.PIDConfig, -1, 1),
+                  PID = PID.new(self.PIDConfig, -1, 1),
                   AngleIndex = TiltSpinner_GetOctantIndex(C:ToLocal() * (BlockInfo.Position - C:CoM())),
                }
                table.insert(self.SpinnerInfos, Info)

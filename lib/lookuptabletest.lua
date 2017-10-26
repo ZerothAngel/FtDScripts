@@ -11,6 +11,6 @@ function dump(t)
    end
 end
 
-LT6 = LookupTable.create(0, 90, 0, 1, 6, DataPoints)
-LT9 = LookupTable.create(0, 90, 0, 1, 9, DataPoints)
-LT18 = LookupTable.create(0, 90, 0, 1, 18, DataPoints)
+LT6 = LookupTable.new(0, 90, 0, 1, 6, DataPoints)
+LT9 = LookupTable.new(0, 90, 0, 1, 9, DataPoints)
+LT18 = LookupTable.new(0, 90, 0, 1, 18, DataPoints)

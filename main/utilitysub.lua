@@ -2,10 +2,10 @@
 --@ commons control firstrun periodic
 --@ dockmanager shieldmanager rollturn subcontrol sixdof depthcontrol ytdefaults utility-ai utility-aicommon
 -- Utility submarine main
-ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 3)
-DockManager = Periodic.create(DockManager_UpdateRate, DockManager_Update, 2)
-DepthControl = Periodic.create(DepthControl_UpdateRate, Depth_Control, 1)
-UtilityAI = Periodic.create(AI_UpdateRate, UtilityAI_Update)
+ShieldManager = Periodic.new(ShieldManager_UpdateRate, ShieldManager_Control, 3)
+DockManager = Periodic.new(DockManager_UpdateRate, DockManager_Update, 2)
+DepthControl = Periodic.new(DepthControl_UpdateRate, Depth_Control, 1)
+UtilityAI = Periodic.new(AI_UpdateRate, UtilityAI_Update)
 
 SelectHeadingImpl(SixDoF, RollTurnControl)
 SelectRollImpl(SubControl, RollTurnControl)
@@ -17,7 +17,7 @@ SelectPitchImpl(SubControl)
 SelectRollImpl(RollTurn)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
       DepthControl:Tick(I)

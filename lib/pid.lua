@@ -2,7 +2,7 @@
 -- PID implementation
 PID = {}
 
-function PID.create(Config, Min, Max)
+function PID.new(Config, Min, Max)
    local self = {}
    self.Kp = Config.Kp
    if Config.Ti ~= 0 then

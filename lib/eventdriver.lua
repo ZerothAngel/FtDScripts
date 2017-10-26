@@ -1,7 +1,7 @@
 -- EventDriver implementation
 EventDriver = {}
 
-function EventDriver.create()
+function EventDriver.new()
    local self = {}
 
    self.Ticks = 0

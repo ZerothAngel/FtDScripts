@@ -2,9 +2,9 @@
 --@ commons control firstrun periodic
 --@ shieldmanager dockmanager rollturn sixdof ytdefaults naval-ai
 -- Warship main
-ShieldManager = Periodic.create(ShieldManager_UpdateRate, ShieldManager_Control, 2)
-DockManager = Periodic.create(DockManager_UpdateRate, DockManager_Update, 1)
-NavalAI = Periodic.create(AI_UpdateRate, NavalAI_Update)
+ShieldManager = Periodic.new(ShieldManager_UpdateRate, ShieldManager_Control, 2)
+DockManager = Periodic.new(DockManager_UpdateRate, DockManager_Update, 1)
+NavalAI = Periodic.new(AI_UpdateRate, NavalAI_Update)
 
 SelectHeadingImpl(SixDoF, RollTurnControl)
 SelectRollImpl(SixDoF, RollTurnControl)
@@ -13,7 +13,7 @@ SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
       if ActivateWhen[I.AIMode] then

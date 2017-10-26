@@ -1,7 +1,7 @@
 --@ commonsfriends deepcopy planarvector round quadraticsolver missilecommand clamp
 SmartMine = {}
 
-function SmartMine.create(Config)
+function SmartMine.new(Config)
    local self = deepcopy(Config)
 
    -- Pre-square
@@ -24,7 +24,7 @@ function SmartMine:Guide(I, TransceiverIndex, MissileIndex, TheTarget, Missile, 
 
    -- Initialize state, if needed
    if not MissileState.Initialized then
-      MissileState.Command = MissileCommand.create(I, TransceiverIndex, MissileIndex)
+      MissileState.Command = MissileCommand.new(I, TransceiverIndex, MissileIndex)
       MissileState.LaunchPosition = MissilePosition
       MissileState.Initialized = true
    end

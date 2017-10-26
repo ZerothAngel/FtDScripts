@@ -3,7 +3,7 @@
 
 FakeTDC = {}
 
-function FakeTDC.create(Config)
+function FakeTDC.new(Config)
    local self = deepcopy(Config)
 
    self.Guide = FakeTDC.Guide

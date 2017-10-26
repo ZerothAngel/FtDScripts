@@ -24,7 +24,7 @@ function CalculateTargetAcceleration(Relative, NumSamples)
          State = {
             LastTime = Now,
             LastVelocity = Velocity,
-            AccelMA = MovingAverage.create(NumSamples, Vector3.zero),
+            AccelMA = MovingAverage.new(NumSamples, Vector3.zero),
             LastAcceleration = Vector3.zero,
          }
       end

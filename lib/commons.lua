@@ -10,7 +10,7 @@ C = nil
 -- the result for the lifetime of the instance.
 Commons = {}
 
-function Commons.create(I, AttackSalvage)
+function Commons.new(I, AttackSalvage)
    local self = shallowcopy(Commons)
 
    self.I = I

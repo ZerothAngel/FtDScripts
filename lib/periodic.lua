@@ -1,7 +1,7 @@
 -- Periodic implementation
 Periodic = {}
 
-function Periodic.create(Period, Function, Start)
+function Periodic.new(Period, Function, Start)
    local self = {}
 
    self.Ticks = Start and Start or Period

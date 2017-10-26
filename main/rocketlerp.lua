@@ -1,7 +1,7 @@
 --! rocketlerp
 --@ commonstargets commonsweapons commons eventdriver firstrun weapontypes lookuptable secant
 -- Linear interpolation-based rocket turret predictor
-Main = EventDriver.create()
+Main = EventDriver.new()
 
 TrainingSets = {}
 TrainingSamplesCaptured = 0
@@ -17,7 +17,7 @@ function RocketControl_Train(I)
    table.sort(TrainingSets, function (a,b) return a[1] < b[1] end)
    -- Create lookup table
    local MaxRange = math.ceil(TrainingSets[#TrainingSets][2])
-   DistanceTable = LookupTable.create(0, TimeScale, 0, MaxRange, LookupTableSize, TrainingSets)
+   DistanceTable = LookupTable.new(0, TimeScale, 0, MaxRange, LookupTableSize, TrainingSets)
    -- And we're done
    I:LogToHud(string.format("Training complete! EffMaxRange = %.01f m", MaxRange))
 end
@@ -143,7 +143,7 @@ function RocketControl_Update(I)
 end
 
 function Update(I) -- luacheck: ignore 131
-   C = Commons.create(I)
+   C = Commons.new(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() and ActivateWhen[I.AIMode] then
       Main:Tick(I)

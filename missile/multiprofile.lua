@@ -11,7 +11,7 @@ MultiProfileScanMCs = false
 for i,MP in ipairs(MissileProfiles) do
    local GuidanceInfo = {
       -- Create GeneralMissile instance
-      Controller = GeneralMissile.create(MP.Config),
+      Controller = GeneralMissile.new(MP.Config),
       -- Set limits
       MinAltitude = MP.Limits.MinAltitude,
       MaxAltitude = MP.Limits.MaxAltitude,

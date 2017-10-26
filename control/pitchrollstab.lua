@@ -1,7 +1,7 @@
 --@ commons propulsionapi pid
 -- Pitch/roll stabilizer module
-RollPID = PID.create(RollPIDConfig, -1, 1)
-PitchPID = PID.create(PitchPIDConfig, -1, 1)
+RollPID = PID.new(RollPIDConfig, -1, 1)
+PitchPID = PID.new(PitchPIDConfig, -1, 1)
 
 DesiredPitch = 0
 DesiredRoll = 0

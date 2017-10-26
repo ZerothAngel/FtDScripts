@@ -1,11 +1,11 @@
 --@ commons componenttypes propulsionapi normalizebearing sign pid clamp
 -- All DoF module
-AllDoF_AltitudePID = PID.create(AllDoFPIDConfig.Altitude, -30, 30)
-AllDoF_YawPID = PID.create(AllDoFPIDConfig.Yaw, -30, 30)
-AllDoF_PitchPID = PID.create(AllDoFPIDConfig.Pitch, -30, 30)
-AllDoF_RollPID = PID.create(AllDoFPIDConfig.Roll, -30, 30)
-AllDoF_NorthPID = PID.create(AllDoFPIDConfig.North, -30, 30)
-AllDoF_EastPID = PID.create(AllDoFPIDConfig.East, -30, 30)
+AllDoF_AltitudePID = PID.new(AllDoFPIDConfig.Altitude, -30, 30)
+AllDoF_YawPID = PID.new(AllDoFPIDConfig.Yaw, -30, 30)
+AllDoF_PitchPID = PID.new(AllDoFPIDConfig.Pitch, -30, 30)
+AllDoF_RollPID = PID.new(AllDoFPIDConfig.Roll, -30, 30)
+AllDoF_NorthPID = PID.new(AllDoFPIDConfig.North, -30, 30)
+AllDoF_EastPID = PID.new(AllDoFPIDConfig.East, -30, 30)
 
 AllDoF_DesiredAltitude = 0
 AllDoF_DesiredHeading = nil

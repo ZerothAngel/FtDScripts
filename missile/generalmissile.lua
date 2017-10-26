@@ -7,7 +7,7 @@ function PrepareAngle(Angle, Default)
    return Angle and math.cos(math.rad(Angle)) or Default
 end
 
-function GeneralMissile.create(Config)
+function GeneralMissile.new(Config)
    local self = deepcopy(Config)
 
    -- If one config set or the other is missing, set defaults and activation
@@ -78,7 +78,7 @@ function UpdateMissileState(I, TransceiverIndex, MissileIndex, Position, Missile
    local Command = MissileState.Command
    if not Command then
       -- Initialize state
-      MissileState.Command = MissileCommand.create(I, TransceiverIndex, MissileIndex)
+      MissileState.Command = MissileCommand.new(I, TransceiverIndex, MissileIndex)
       Command = MissileState.Command
       MissileState.Fuel = Command.Fuel
    end
