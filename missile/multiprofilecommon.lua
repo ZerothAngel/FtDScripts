@@ -8,8 +8,9 @@ MultiProfileMCMap = {}
 MultiProfileScanMCs = false
 
 -- Pre-process MissileProfiles, fill out GuidanceInfos
-function MultiProfile_Init(MissileClass)
+function MultiProfile_Init(DefaultMissileClass, MissileClassMap)
    for i,MP in ipairs(MissileProfiles) do
+      local MissileClass = MP.Class and MissileClassMap[MP.Class] or DefaultMissileClass
       local GuidanceInfo = {
          -- Create missile guidance instance
          Controller = MissileClass.new(MP.Config),
