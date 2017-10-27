@@ -1,4 +1,4 @@
---@ commons componenttypes propulsionapi normalizebearing sign pid clamp
+--@ commons componenttypes propulsionapi requestcontrol normalizebearing sign pid clamp
 -- All DoF module
 AllDoF_AltitudePID = PID.new(AllDoFPIDConfig.Altitude, -30, 30)
 AllDoF_YawPID = PID.new(AllDoFPIDConfig.Yaw, -30, 30)
@@ -116,23 +116,7 @@ function AllDoF_ClassifySpinners(I)
    return Infos
 end
 
-function AllDoF_RequestControl(I, Fraction, PosControl, NegControl, CV)
-   if Fraction > 0 then
-      -- Scale down and constrain
-      CV = Clamp(Fraction * CV / 30, -1, 1)
-      if PosControl ~= NegControl then
-         -- Generally yaw, pitch, roll
-         if CV > 0 then
-            I:RequestControl(Mode, PosControl, CV)
-         elseif CV < 0 then
-            I:RequestControl(Mode, NegControl, -CV)
-         end
-      else
-         -- Generally propulsion
-         I:RequestControl(Mode, PosControl, CV)
-      end
-   end
-end
+AllDoF_RequestControl = MakeRequestControl(1/30)
 
 function AllDoF.Update(I)
    local YawCV = AllDoF_DesiredHeading and AllDoF_YawPID:Control(NormalizeBearing(AllDoF_DesiredHeading - C:Yaw())) or 0

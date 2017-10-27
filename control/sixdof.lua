@@ -1,4 +1,4 @@
---@ commons componenttypes propulsionapi normalizebearing sign pid clamp
+--@ commons componenttypes propulsionapi requestcontrol normalizebearing sign pid clamp
 --# Packages don't exist, and screw accessing everything through a table.
 --# It's just a search/replace away to convert to 'proper' Lua anyway.
 -- 6DoF module (Altitude, Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
@@ -158,23 +158,7 @@ function SixDoF_ClassifySpinners(I)
    end
 end
 
-function SixDoF_RequestControl(I, Fraction, PosControl, NegControl, CV)
-   if Fraction > 0 then
-      -- Scale down and constrain
-      CV = Clamp(Fraction * CV / 30, -1, 1)
-      if PosControl ~= NegControl then
-         -- Generally yaw, pitch, roll
-         if CV > 0 then
-            I:RequestControl(Mode, PosControl, CV)
-         elseif CV < 0 then
-            I:RequestControl(Mode, NegControl, -CV)
-         end
-      else
-         -- Generally propulsion
-         I:RequestControl(Mode, PosControl, CV)
-      end
-   end
-end
+SixDoF_RequestControl = MakeRequestControl(1/30)
 
 function SixDoF.Update(I)
    local AltitudeCV = 0

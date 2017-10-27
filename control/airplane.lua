@@ -1,4 +1,4 @@
---@ commons propulsionapi pid lookuptable normalizebearing getvectorangle sign clamp
+--@ commons propulsionapi requestcontrol pid lookuptable normalizebearing getvectorangle sign clamp
 -- Airplane module (Yaw, Pitch, Throttle)
 Airplane_AltitudePID = PID.new(AirplanePIDConfig.Altitude, -10, 10)
 Airplane_YawPID = PID.new(AirplanePIDConfig.Yaw, -1, 1)
@@ -101,6 +101,8 @@ function Airplane_ClassifySpinners(I)
    end
 end
 
+Airplane_RequestControl = MakeRequestControl()
+
 function Airplane.Update(I)
    local Altitude = C:Altitude()
 
@@ -141,26 +143,13 @@ function Airplane.Update(I)
    local RollCV = Airplane_RollPID:Control(DesiredRoll - C:Roll())
 
    -- And apply to controls
-   if YawCV > 0 then
-      I:RequestControl(Mode, YAWRIGHT, YawCV)
-   elseif YawCV < 0 then
-      I:RequestControl(Mode, YAWLEFT, -YawCV)
-   end
-
-   if PitchCV > 0 then
-      I:RequestControl(Mode, NOSEUP, PitchCV)
-   elseif PitchCV < 0 then
-      I:RequestControl(Mode, NOSEDOWN, -PitchCV)
-   end
-
-   if RollCV > 0 then
-      I:RequestControl(Mode, ROLLLEFT, RollCV)
-   elseif RollCV < 0 then
-      I:RequestControl(Mode, ROLLRIGHT, -RollCV)
-   end
-
+   Airplane_RequestControl(I, 1, YAWRIGHT, YAWLEFT, YawCV)
+   Airplane_RequestControl(I, 1, NOSEUP, NOSEDOWN, PitchCV)
+   Airplane_RequestControl(I, 1, ROLLLEFT, ROLLRIGHT, RollCV)
    if Airplane_DesiredThrottle then
-      I:RequestControl(Mode, MAINPROPULSION, Airplane_DesiredThrottle)
+      --# Use of Airplane_RequestControl is questionable here, especially
+      --# since fraction is always 1 (for now)
+      Airplane_RequestControl(I, 1, MAINPROPULSION, MAINPROPULSION, Airplane_DesiredThrottle)
       Airplane_CurrentThrottle = Airplane_DesiredThrottle
    end
 
@@ -180,7 +169,7 @@ function Airplane.Update(I)
 end
 
 function Airplane.Disable(I)
-   I:RequestControl(Mode, MAINPROPULSION, 0)
+   Airplane_RequestControl(I, 1, MAINPROPULSION, MAINPROPULSION, Airplane_DesiredThrottle)
    Airplane_CurrentThrottle = 0
    if Airplane_UsesSpinners then
       Airplane_ClassifySpinners(I)

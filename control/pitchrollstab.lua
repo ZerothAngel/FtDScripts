@@ -1,4 +1,4 @@
---@ commons propulsionapi pid
+--@ commons propulsionapi requestcontrol pid
 -- Pitch/roll stabilizer module
 RollPID = PID.new(RollPIDConfig, -1, 1)
 PitchPID = PID.new(PitchPIDConfig, -1, 1)
@@ -14,6 +14,8 @@ function SetRoll(Angle) -- luacheck: ignore 131
    DesiredRoll = Angle
 end
 
+PRStabilizer_RequestControl = MakeRequestControl()
+
 -- Stabilizes via pitch/roll commands.
 -- Should be called every update.
 function PRStabilizer_Update(I)
@@ -23,15 +25,7 @@ function PRStabilizer_Update(I)
 
       -- Dead simple, just set the appropriate control.
       -- The only advantage over in-game PIDs is the windup prevention...
-      if RollCV > 0 then
-         I:RequestControl(Mode, ROLLLEFT, RollCV)
-      elseif RollCV < 0 then
-         I:RequestControl(Mode, ROLLRIGHT, -RollCV)
-      end
-      if PitchCV > 0 then
-         I:RequestControl(Mode, NOSEUP, PitchCV)
-      elseif PitchCV < 0 then
-         I:RequestControl(Mode, NOSEDOWN, -PitchCV)
-      end
+      PRStabilizer_RequestControl(I, 1, ROLLLEFT, ROLLRIGHT, RollCV)
+      PRStabilizer_RequestControl(I, 1, NOSEUP, NOSEDOWN, PitchCV)
    end
 end
