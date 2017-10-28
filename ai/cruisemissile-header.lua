@@ -11,6 +11,7 @@ CruiseMissileConfig = {
    DetonationKey = nil,
 
    -- Terminal phase
+   Gain = 3,
    TerminalDistance = 500,
    TerminalThrottle = 1,
    TerminalKey = nil,

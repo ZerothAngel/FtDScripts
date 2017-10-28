@@ -52,14 +52,11 @@ function CruiseGuidance(I, Target)
 
    -- Guidance
    local Velocity = C:Velocity()
-   local AimPoint = QuadraticIntercept(C:CoM(), Vector3.Dot(Velocity, Velocity), TargetPosition, Target.Velocity)
-
    CruiseIsClosing = false
 
    -- 3D guidance
    if Distance < CMC.TerminalDistance then
       -- Terminal phase
-      -- (use AimPoint as-is)
       if CMC.TerminalKey then
          I:RequestComplexControllerStimulus(CMC.TerminalKey)
       end
@@ -78,12 +75,26 @@ function CruiseGuidance(I, Target)
          CruiseSpeedIndex = (CruiseSpeedIndex + 1) % CruiseSpeedLength
       end
 
-      V.SetPosition(AimPoint)
+      -- Textbook proportional navigation
+      local Offset = TargetPosition - C:CoM()
+      local RelativeVelocity = Target.Velocity - Velocity
+      local Omega = Vector3.Cross(Offset, RelativeVelocity) / Vector3.Dot(Offset, Offset)
+      local Direction = Velocity.normalized
+      local Acceleration = Vector3.Cross(Direction * CMC.Gain * -RelativeVelocity.magnitude, Omega)
+      -- Add augmented term
+      -- (just offset our gravity for now)
+      Acceleration = Acceleration - I:GetGravityForAltitude(C:Altitude()) * CMC.Gain * 0.5
+
+      --# Fixing the time step at 1 second was a lot better for
+      --# vehicle pro-nav. Why?
+      V.AdjustPosition(Velocity + Acceleration * 0.5)
       V.SetThrottle(CMC.TerminalThrottle)
       return
    end
 
    -- 2D guidance
+   local AimPoint = QuadraticIntercept(C:CoM(), Vector3.Dot(Velocity, Velocity), TargetPosition, Target.Velocity)
+
    local TargetBearing = GetBearingToPoint(AimPoint)
    -- Start with target's ground
    local TargetAltitude = Target:Ground(I)
