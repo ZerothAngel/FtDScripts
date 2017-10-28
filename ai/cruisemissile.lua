@@ -6,6 +6,7 @@ CruiseIsClosing = false
 CruiseArmed = false
 CruiseSpeedSamples = {}
 CruiseSpeedIndex = 0
+CruiseSpeedMax = -math.huge
 
 -- Pre-square
 CruiseMissileConfig.ArmingRange = CruiseMissileConfig.ArmingRange^2
@@ -64,11 +65,24 @@ function CruiseGuidance(I, Target)
       if CMC.DetonationKey and CMC.DetonationDecel then
          local Speed = Vector3.Dot(Velocity, C:ForwardVector())
          -- Detonate if magnitude of deceleration is > config
-         if CruiseArmed and #CruiseSpeedSamples >= CruiseSpeedLength then
-            local Accel = Speed - CruiseSpeedSamples[1+CruiseSpeedIndex]
-            if Accel <  CMC.DetonationDecel then
+         if CruiseArmed then
+            if (Speed - CruiseSpeedMax) < CMC.DetonationDecel then
                I:RequestComplexControllerStimulus(CMC.DetonationKey)
             end
+         end
+         -- If buffer full and oldest sample was >= max, recalculate
+         --# Also don't bother doing this if current speed >= max
+         if #CruiseSpeedSamples >= CruiseSpeedLength and Speed < CruiseSpeedMax and CruiseSpeedSamples[1+CruiseSpeedIndex] >= CruiseSpeedMax then
+            -- (Better way to do this?)
+            CruiseSpeedMax = -math.huge
+            for i = 0,#CruiseSpeedSamples-1 do
+               -- Be sure to ignore outgoing sample
+               if i ~= CruiseSpeedIndex then
+                  CruiseSpeedMax = math.max(CruiseSpeedMax, CruiseSpeedSamples[1+i])
+               end
+            end
+         else
+            CruiseSpeedMax = math.max(CruiseSpeedMax, Speed)
          end
          -- Save speed sample
          CruiseSpeedSamples[1+CruiseSpeedIndex] = Speed
@@ -94,7 +108,6 @@ function CruiseGuidance(I, Target)
 
    -- 2D guidance
    local AimPoint = QuadraticIntercept(C:CoM(), Vector3.Dot(Velocity, Velocity), TargetPosition, Target.Velocity)
-
    local TargetBearing = GetBearingToPoint(AimPoint)
    -- Start with target's ground
    local TargetAltitude = Target:Ground(I)
@@ -143,6 +156,7 @@ function CruiseAI_Reset()
    CruiseArmed = false
    CruiseSpeedSamples = {}
    CruiseSpeedIndex = 0
+   CruiseSpeedMax = -math.huge
 end
 
 function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
