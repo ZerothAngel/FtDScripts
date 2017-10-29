@@ -102,7 +102,12 @@ function CruiseGuidance(I, Target)
       local Acceleration = Vector3.Cross(Direction * CMC.Gain * -RelativeVelocity.magnitude, Omega)
       -- Add augmented term
       -- (just offset our gravity for now)
-      Acceleration = Acceleration - I:GetGravityForAltitude(C:Altitude()) * CMC.Gain * 0.5
+      local TargetAcceleration = -I:GetGravityForAltitude(C:Altitude())
+      -- Project onto LOS
+      local LOS = Offset.normalized
+      local Proj = LOS * Vector3.Dot(TargetAcceleration, LOS)
+      -- And use rejection (which should be ortho LOS) for augmented term
+      Acceleration = Acceleration + (TargetAcceleration - Proj) * CMC.Gain * 0.5
 
       --# Fixing the time step at 1 second was a lot better for
       --# vehicle pro-nav. Why?
