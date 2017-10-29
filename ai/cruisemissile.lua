@@ -20,6 +20,12 @@ end
 
 CruiseSpeedLength = 40 / CruiseMissileConfig.UpdateRate
 
+function CruiseArmingReset()
+   CruiseSpeedSamples = {}
+   CruiseSpeedIndex = 0
+   CruiseSpeedMax = -math.huge
+end
+
 function CruiseGetTarget()
    local MinAltitude = CruiseMissileConfig.MinTargetAltitude
    for _,Target in ipairs(C:Targets()) do
@@ -40,6 +46,7 @@ function CruiseGuidance(I, Target)
 
    if not CruiseArmed and SqrRange < CMC.ArmingRange then
       CruiseArmed = true
+      CruiseArmingReset()
    elseif CruiseArmed and SqrRange >= CMC.ArmingRange then
       CruiseArmed = false
    end
@@ -62,13 +69,11 @@ function CruiseGuidance(I, Target)
          I:RequestComplexControllerStimulus(CMC.TerminalKey)
       end
 
-      if CMC.DetonationKey and CMC.DetonationDecel then
+      if CMC.DetonationKey and CMC.DetonationDecel and CruiseArmed then
          local Speed = Vector3.Dot(Velocity, C:ForwardVector())
          -- Detonate if magnitude of deceleration is > config
-         if CruiseArmed then
-            if (Speed - CruiseSpeedMax) < CMC.DetonationDecel then
-               I:RequestComplexControllerStimulus(CMC.DetonationKey)
-            end
+         if (Speed - CruiseSpeedMax) < CMC.DetonationDecel then
+            I:RequestComplexControllerStimulus(CMC.DetonationKey)
          end
          -- If buffer full and oldest sample was >= max, recalculate
          --# Also don't bother doing this if current speed >= max
@@ -154,9 +159,7 @@ function CruiseAI_Reset()
    DodgeAltitudeOffset = nil
    CruiseIsClosing = false
    CruiseArmed = false
-   CruiseSpeedSamples = {}
-   CruiseSpeedIndex = 0
-   CruiseSpeedMax = -math.huge
+   CruiseArmingReset()
 end
 
 function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
