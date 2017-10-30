@@ -3,7 +3,10 @@
 -- Cruise Missile AI
 DodgeAltitudeOffset = nil
 CruiseIsClosing = false
+
 CruiseArmed = false
+CruiseDetonationTime = nil
+
 CruiseSpeedSamples = {}
 CruiseSpeedIndex = 0
 CruiseSpeedMax = -math.huge
@@ -19,6 +22,17 @@ if CruiseMissileConfig.DetonationDecel then
 end
 
 CruiseSpeedLength = 40 / CruiseMissileConfig.UpdateRate
+
+function CruiseAI_Detonator(I)
+   local CMC = CruiseMissileConfig
+   if CMC.DetonationKey and CruiseArmed and CruiseDetonationTime and (CruiseDetonationTime + CMC.DetonationDelay) <= C:Now() then
+      I:RequestComplexControllerStimulus(CMC.DetonationKey)
+   end
+end
+
+function CruiseAI_Detonate()
+   if not CruiseDetonationTime then CruiseDetonationTime = C:Now() end
+end
 
 function CruiseArmingReset()
    CruiseSpeedSamples = {}
@@ -52,10 +66,8 @@ function CruiseGuidance(I, Target)
    end
 
    -- Detonation check
-   if CMC.DetonationKey and CMC.DetonationRange and CruiseArmed then
-      if SqrRange < CMC.DetonationRange then
-         I:RequestComplexControllerStimulus(CMC.DetonationKey)
-      end
+   if CMC.DetonationKey and CMC.DetonationRange and CruiseArmed and SqrRange < CMC.DetonationRange then
+      CruiseAI_Detonate()
    end
 
    -- Guidance
@@ -73,7 +85,7 @@ function CruiseGuidance(I, Target)
          local Speed = Vector3.Dot(Velocity, C:ForwardVector())
          -- Detonate if magnitude of deceleration is > config
          if (Speed - CruiseSpeedMax) < CMC.DetonationDecel then
-            I:RequestComplexControllerStimulus(CMC.DetonationKey)
+            CruiseAI_Detonate()
          end
          -- If buffer full and oldest sample was >= max, recalculate
          --# Also don't bother doing this if current speed >= max
@@ -163,6 +175,7 @@ function CruiseAI_Reset()
    DodgeAltitudeOffset = nil
    CruiseIsClosing = false
    CruiseArmed = false
+   CruiseDetonationTime = nil
    CruiseArmingReset()
 end
 

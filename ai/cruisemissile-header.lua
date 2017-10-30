@@ -6,6 +6,7 @@ CruiseMissileConfig = {
 
    -- Detonation behavior
    ArmingRange = 200,
+   DetonationDelay = 0,
    DetonationRange = 20,
    DetonationDecel = 15,
    DetonationKey = nil,

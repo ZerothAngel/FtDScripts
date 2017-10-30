@@ -29,6 +29,8 @@ function Update(I) -- luacheck: ignore 131
 
          Altitude_Apply(I, DodgeAltitudeOffset, not CruiseIsClosing)
          Airplane.Update(I)
+
+         CruiseAI_Detonator(I)
       else
          CruiseAI_Reset()
          Airplane.Release(I)
