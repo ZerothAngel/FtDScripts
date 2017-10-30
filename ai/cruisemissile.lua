@@ -115,9 +115,10 @@ function CruiseGuidance(I, Target)
       -- Add augmented term
       -- (just offset our gravity for now)
       local TargetAcceleration = -I:GetGravityForAltitude(C:Altitude())
-      -- Project onto velocity
-      local Proj = Direction * Vector3.Dot(TargetAcceleration, Direction)
-      -- And use rejection (which should be ortho velocity) for augmented term
+      -- Project onto LOS
+      local LOS = Offset.normalized
+      local Proj = LOS * Vector3.Dot(TargetAcceleration, LOS)
+      -- And use rejection (which should be ortho LOS) for augmented term
       Acceleration = Acceleration + (TargetAcceleration - Proj) * CMC.Gain * 0.5
 
       --# Fixing the time step at 1 second was a lot better for
