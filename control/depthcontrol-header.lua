@@ -1,8 +1,5 @@
 -- DEPTH CONTROL
 
--- Set to false to disable depth control
-ControlDepth = true
-
 -- Switch to manual depth control on these AI modes. Valid keys are "off",
 -- "on", "combat", "patrol", and "fleetmove".
 -- Only used when ManualDepthDriveMaintainerFacing below is non-nil.

@@ -15,45 +15,43 @@ function Depth_Control(I)
    DepthControl_Min = -HardMaxDepth
    DepthControl_Max = -HardMinDepth
 
-   if ControlDepth then
-      local DesiredDepth,Absolute
-      if ManualDepthDriveMaintainerFacing and ManualDepthWhen[I.AIMode] then
-         -- Manual depth control
-         local ManualDesiredDepth = ManualDepthController:GetThrottle(I)
-         if ManualDesiredDepth > 0 then
-            -- Relative
-            DesiredDepth,Absolute = (500 - ManualDesiredDepth*500),false
-         else
-            -- Absolute
-            DesiredDepth,Absolute = -ManualDesiredDepth*500,true
-         end
-         if ManualEvasion and C:FirstTarget() then
-            DepthControl_Offset = CalculateEvasion(DepthEvasion)
-         end
+   local DesiredDepth,Absolute
+   if ManualDepthDriveMaintainerFacing and ManualDepthWhen[I.AIMode] then
+      -- Manual depth control
+      local ManualDesiredDepth = ManualDepthController:GetThrottle(I)
+      if ManualDesiredDepth > 0 then
+         -- Relative
+         DesiredDepth,Absolute = (500 - ManualDesiredDepth*500),false
       else
-         -- Use configured depths
-         if C:FirstTarget() then
-            DesiredDepth,Absolute = DesiredDepthCombat.Depth,DesiredDepthCombat.Absolute
-            DepthControl_Offset = CalculateEvasion(DepthEvasion)
-         else
-            DesiredDepth,Absolute = DesiredDepthIdle.Depth,DesiredDepthIdle.Absolute
-         end
+         -- Absolute
+         DesiredDepth,Absolute = -ManualDesiredDepth*500,true
       end
-
-      if Absolute then
-         DesiredDepth = -DesiredDepth
+      if ManualEvasion and C:FirstTarget() then
+         DepthControl_Offset = CalculateEvasion(DepthEvasion)
+      end
+   else
+      -- Use configured depths
+      if C:FirstTarget() then
+         DesiredDepth,Absolute = DesiredDepthCombat.Depth,DesiredDepthCombat.Absolute
+         DepthControl_Offset = CalculateEvasion(DepthEvasion)
       else
-         -- Look ahead at terrain
-         local TerrainHeight = GetTerrainHeight(I, C:Velocity(), -500, -TerrainMinDepth)
-         -- Set new absolute minimum
-         DepthControl_Min = math.max(DepthControl_Min, TerrainHeight)
-         -- And offset desired depth (actually desired elevation) by terrain
-         -- And constrain by relative limits
-         DesiredDepth = Clamp(DesiredDepth + TerrainHeight, -TerrainMaxDepth, -TerrainMinDepth)
+         DesiredDepth,Absolute = DesiredDepthIdle.Depth,DesiredDepthIdle.Absolute
       end
-
-      DepthControl_Desired = DesiredDepth
    end
+
+   if Absolute then
+      DesiredDepth = -DesiredDepth
+   else
+      -- Look ahead at terrain
+      local TerrainHeight = GetTerrainHeight(I, C:Velocity(), -500, -TerrainMinDepth)
+      -- Set new absolute minimum
+      DepthControl_Min = math.max(DepthControl_Min, TerrainHeight)
+      -- And offset desired depth (actually desired elevation) by terrain
+      -- And constrain by relative limits
+      DesiredDepth = Clamp(DesiredDepth + TerrainHeight, -TerrainMaxDepth, -TerrainMinDepth)
+   end
+
+   DepthControl_Desired = DesiredDepth
 end
 
 function Depth_Apply(_, HighPriorityOffset, NoOffset)

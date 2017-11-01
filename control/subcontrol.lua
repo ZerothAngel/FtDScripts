@@ -11,6 +11,11 @@ SubControl_DesiredRoll = 0
 SubControl_LastHydrofoilCount = 0
 SubControl_HydrofoilInfos = {}
 
+SubControl_UsesHydrofoils = HydrofoilControl.Depth > 0 or HydrofoilControl.Pitch > 0 or HydrofoilControl.Roll > 0
+SubControl_ControlAltitude = HydrofoilControl.Depth > 0
+SubControl_ControlPitch = HydrofoilControl.Pitch > 0
+SubControl_ControlRoll = HydrofoilControl.Roll > 0
+
 SubControl = {}
 
 function SubControl.SetAltitude(Alt)
@@ -62,6 +67,8 @@ function SubControl_ClassifyHydrofoils(I)
       ZMax[0] = 0
       ZMax[1] = 0
 
+      local DepthFraction,PitchFraction,RollFraction = HydrofoilControl.Depth,HydrofoilControl.Pitch,HydrofoilControl.Roll
+
       -- And repopulate it
       for i = 0,HydrofoilCount-1 do
          local BlockInfo = I:Component_GetBlockInfo(HYDROFOIL, i)
@@ -78,6 +85,7 @@ function SubControl_ClassifyHydrofoils(I)
             local Info = {
                Index = i,
                LocalSign = LocalSign,
+               DepthScale = DepthFraction,
                -- Default scale is 1, -1, or 0 depending on sign of offset
                RollScale = RollScale,
                PitchScale = PitchScale,
@@ -95,9 +103,9 @@ function SubControl_ClassifyHydrofoils(I)
          end
       end
 
-      if ScaleByCoMOffset then
-         -- Now go back and pre-calculate scale
-         for _,Info in pairs(SubControl_HydrofoilInfos) do
+      -- Now go back and pre-calculate scale
+      for _,Info in pairs(SubControl_HydrofoilInfos) do
+         if ScaleByCoMOffset then
             local CoMOffsetX = Info.CoMOffsetX
             if CoMOffsetX ~= 0 then
                Info.RollScale = XMax[Info.RollScale] / CoMOffsetX
@@ -108,25 +116,29 @@ function SubControl_ClassifyHydrofoils(I)
                Info.PitchScale = ZMax[Info.PitchScale] / CoMOffsetZ
             end
          end
+         Info.RollScale = RollFraction * Info.RollScale
+         Info.PitchScale = PitchFraction * Info.PitchScale
       end
    end
 end
 
 function SubControl.Update(I)
-   local RollCV = ControlRoll and SubControl_RollPID:Control(SubControl_DesiredRoll - C:Roll()) or 0
-   local PitchCV = ControlPitch and SubControl_PitchPID:Control(SubControl_DesiredPitch - C:Pitch()) or 0
-   local DepthCV = ControlDepth and SubControl_DepthPID:Control((SubControl_DesiredAltitude - C:Altitude()) * C:UpVector().y) or 0
+   local RollCV = SubControl_ControlRoll and SubControl_RollPID:Control(SubControl_DesiredRoll - C:Roll()) or 0
+   local PitchCV = SubControl_ControlPitch and SubControl_PitchPID:Control(SubControl_DesiredPitch - C:Pitch()) or 0
+   local DepthCV = SubControl_ControlAltitude and SubControl_DepthPID:Control((SubControl_DesiredAltitude - C:Altitude()) * C:UpVector().y) or 0
 
-   SubControl_ClassifyHydrofoils(I)
+   if SubControl_UsesHydrofoils then
+      SubControl_ClassifyHydrofoils(I)
 
-   -- In case vehicle is going in reverse...
-   local VehicleSign = Sign(C:ForwardSpeed(), 1)
+      -- In case vehicle is going in reverse...
+      local VehicleSign = Sign(C:ForwardSpeed(), 1)
 
-   for _,Info in pairs(SubControl_HydrofoilInfos) do
-      -- Sum up inputs and constrain
-      local Output = Clamp((RollCV * Info.RollScale + PitchCV * Info.PitchScale + DepthCV) * 45, -45, 45)
+      for _,Info in pairs(SubControl_HydrofoilInfos) do
+         -- Sum up inputs and constrain
+         local Output = Clamp((RollCV * Info.RollScale + PitchCV * Info.PitchScale + Info.DepthScale * DepthCV) * 45, -45, 45)
 
-      I:Component_SetFloatLogic(HYDROFOIL, Info.Index, VehicleSign * Info.LocalSign * Output)
+         I:Component_SetFloatLogic(HYDROFOIL, Info.Index, VehicleSign * Info.LocalSign * Output)
+      end
    end
 end
 

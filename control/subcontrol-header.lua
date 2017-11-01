@@ -1,8 +1,11 @@
 -- HYDROFOIL CONFIGURATION
 
--- Switches to enable/disable control of each axis.
-ControlRoll = true
-ControlPitch = true
+-- Control fraction (for hydrofoils) to dedicate to each axis.
+HydrofoilControl = {
+   Roll = 1,
+   Pitch = 1,
+   Depth = 1,
+}
 
 -- PID values for hydrofoils
 -- Start with { 1, 0, 0 } and tune from there.

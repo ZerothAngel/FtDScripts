@@ -4,7 +4,7 @@
 -- Submarine main
 ShieldManager = Periodic.new(ShieldManager_UpdateRate, ShieldManager_Control, 3)
 MissileMain = Periodic.new(Missile_UpdateRate, MissileMain_Update, 2)
-DepthControl = Periodic.new(SubControl_UpdateRate, Depth_Control, 1)
+DepthControl = Periodic.new(DepthControl_UpdateRate, Depth_Control, 1)
 NavalAI = Periodic.new(AI_UpdateRate, NavalAI_Update)
 
 SelectHeadingImpl(SixDoF, RollTurnControl)
