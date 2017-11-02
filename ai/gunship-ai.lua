@@ -23,8 +23,9 @@ function Gunship_GetWeaponSpeed(WeaponSlot)
    return nil
 end
 
-function AdjustPositionToTarget()
-   local TargetPosition = C:FirstTarget().Position
+function AdjustPositionToTarget(I)
+   local Target = C:FirstTarget()
+   local TargetPosition = Target.AimPoint
    local GroundVector = PlanarVector(C:CoM(), TargetPosition)
    local Distance = GroundVector.magnitude
 
@@ -52,7 +53,7 @@ function AdjustPositionToTarget()
       local WeaponSpeed = Gunship_GetWeaponSpeed(LeadWeaponSlot)
       if WeaponSpeed then
          -- Predict intercept point
-         TargetPosition = QuadraticIntercept(C:CoM(), WeaponSpeed*WeaponSpeed, TargetPosition, C:FirstTarget().Velocity, 9999)
+         TargetPosition = QuadraticIntercept(C:CoM(), WeaponSpeed*WeaponSpeed, TargetPosition, Target.Velocity, 9999)
          -- And set angle offset to 0
          TargetAngle = 0
       end
@@ -73,10 +74,9 @@ function AdjustPositionToTarget()
    V.AdjustPosition(Offset)
 
    -- Determine pitch
-   local TargetAltitude = TargetPosition.y
-   local DesiredPitch = (TargetAltitude >= AirTargetAboveAltitude) and TargetPitch.Air or TargetPitch.Surface
+   local DesiredPitch = (Target:Elevation(I) >= AirTargetAboveElevation) and TargetPitch.Air or TargetPitch.Surface
    if RelativePitch.Enabled then
-      local TargetElevation = 90 - math.deg(math.atan2(Distance, TargetAltitude - C:Altitude()))
+      local TargetElevation = 90 - math.deg(math.atan2(Distance, Target.AimPoint.y - C:Altitude()))
       DesiredPitch = DesiredPitch + TargetElevation
       -- Constrain
       DesiredPitch = Clamp(DesiredPitch, RelativePitch.MinPitch, RelativePitch.MaxPitch)
@@ -121,7 +121,7 @@ function GunshipAI_Update(I)
    V.Reset()
 
    if C:FirstTarget() then
-      AdjustPositionToTarget()
+      AdjustPositionToTarget(I)
    end
 
    if I.AIMode ~= "fleetmove" then
