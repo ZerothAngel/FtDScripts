@@ -27,6 +27,8 @@ function Update(I) -- luacheck: ignore 131
          -- Suppress default AI
          I:TellAiThatWeAreTakingControl()
 
+         if BalloonManager_Kill() then V.Reset() end
+
          Altitude_Apply(I, DodgeAltitudeOffset, not CruiseIsClosing)
          Airplane.Update(I)
 

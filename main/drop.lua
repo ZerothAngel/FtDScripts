@@ -29,6 +29,8 @@ function Update(I) -- luacheck: ignore 131
          SixDoF.Release(I)
       end
 
+      if BalloonManager_Kill() then V.Reset() end
+
       Altitude_Apply(I, DodgeAltitudeOffset, not DropAI_Closing)
       SixDoF.Update(I)
    else

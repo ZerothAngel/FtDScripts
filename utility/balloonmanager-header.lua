@@ -7,4 +7,6 @@ BalloonManagerConfig = {
    SeverAbove = 20,
    -- If true, take the above altitudes as being relative to ground/sea level
    GroundRelative = true,
+   -- If true, kill propulsion while balloons are deployed
+   KillPropulsion = true,
 }

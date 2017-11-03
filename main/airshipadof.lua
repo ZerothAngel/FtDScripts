@@ -33,6 +33,8 @@ function Update(I) -- luacheck: ignore 131
          V.Reset()
       end
 
+      if BalloonManager_Kill() then V.Reset() end
+
       Altitude_Apply(I, DodgeAltitudeOffset)
       AllDoF.Update(I)
 
