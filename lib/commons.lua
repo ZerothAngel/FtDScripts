@@ -61,13 +61,7 @@ end
 
 function Commons:Pitch()
    if not self._Pitch then
-      local Pitch = self.I:GetConstructPitch()
-      if Pitch > 180 then
-         Pitch = 360 - Pitch
-      else
-         Pitch = -Pitch
-      end
-      self._Pitch = Pitch
+      self._Pitch = -self.I:GetConstructPitch()
    end
    return self._Pitch
 end
