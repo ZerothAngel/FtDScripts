@@ -69,8 +69,11 @@ function Dodge()
       end
 
       if DodgeDirection then
-         -- First dodge or different projectile?
-         if not LastDodgeDirection or LastDodgeProjectile ~= ProjectileId then
+         -- First dodge or different projectile or different quadrant?
+         if (not LastDodgeDirection or LastDodgeProjectile ~= ProjectileId or
+                DodgeDirection[1] ~= LastDodgeDirection[1] or
+                DodgeDirection[2] ~= LastDodgeDirection[2] or
+             DodgeDirection[3] ~= LastDodgeDirection[3]) then
             LastDodgeDirection = DodgeDirection
             LastDodgeProjectile = ProjectileId
          end
