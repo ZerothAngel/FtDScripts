@@ -8,8 +8,7 @@ MaxDistance = 500
 -- All angles are relative to the target's bearing. So 0 heads
 -- straight toward the target and 180 is straight away from it.
 AttackAngle = 80
--- Drive fraction from -1 to 1. This script will probably only
--- work when moving forward, so always set >0
+-- Drive fraction from -1 to 1.
 -- If you have an urge to set this to 0, look instead at the
 -- AttackDistance + AttackReverse options.
 AttackDrive = 1

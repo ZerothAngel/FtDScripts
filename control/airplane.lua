@@ -143,7 +143,7 @@ function Airplane.Update(I)
    local RollCV = Airplane_RollPID:Control(DesiredRoll - C:Roll())
 
    -- And apply to controls
-   Airplane_RequestControl(I, 1, YAWRIGHT, YAWLEFT, YawCV)
+   Airplane_RequestControl(I, 1, YAWRIGHT, YAWLEFT, YawCV * Sign(C:ForwardSpeed(), 1))
    Airplane_RequestControl(I, 1, NOSEUP, NOSEDOWN, PitchCV)
    Airplane_RequestControl(I, 1, ROLLLEFT, ROLLRIGHT, RollCV)
    if Airplane_DesiredThrottle then
