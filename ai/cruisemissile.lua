@@ -151,6 +151,9 @@ function CruiseGuidance(I, Target)
       local DodgeAngle,DodgeY,Dodging = Dodge()
       if Dodging then
          TargetBearing = DodgeAngle
+         -- If you really want to dodge in reverse, go right ahead...
+         --# But this is really here to quell unused warnings
+         if DodgeDrive then Throttle = DodgeDrive end
          DodgeAltitudeOffset = DodgeY * VehicleRadius
       else
          -- Evasion

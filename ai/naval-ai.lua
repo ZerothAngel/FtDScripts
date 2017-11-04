@@ -92,7 +92,9 @@ function AdjustHeadingToTarget(I)
    if Dodging then
       Bearing = DodgeAngle
       DodgeAltitudeOffset = DodgeY * VehicleRadius
-      if ScaledDrive then
+      if DodgeDrive then
+         Drive = DodgeDrive
+      elseif ScaledDrive then
          -- Because of the PID, Drive may be (close to) 0.
          -- So it's better to force it to max in the current direction.
          Drive = Sign(C:ForwardSpeed(), 1)
