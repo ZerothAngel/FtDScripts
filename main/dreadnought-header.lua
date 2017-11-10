@@ -23,3 +23,8 @@ Missile_UpdateRate = 4
 ShieldManager_UpdateRate = nil
 DockManager_UpdateRate = nil
 BalloonManager_UpdateRate = nil
+
+-- Number of acceleration samples to take for *each* target.
+-- Note that a running average is maintained, so it's best to keep this small.
+-- Set to nil to disable acceleration sampling.
+AccelerationSamples = 120

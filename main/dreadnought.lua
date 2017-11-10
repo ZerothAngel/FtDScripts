@@ -1,6 +1,6 @@
 --! dreadnought
 --@ commons control firstrun periodic
---@ shieldmanager dockmanager balloonmanager multiprofile cannoncontrol rollturn sixdof altitudecontrol airshipdefaults naval-ai
+--@ shieldmanager dockmanager balloonmanager multiprofile cannoncontrol targetaccel rollturn sixdof altitudecontrol airshipdefaults naval-ai
 -- Dreadnought main
 DockManager = Periodic.new(DockManager_UpdateRate, DockManager_Update, 5)
 BalloonManager = Periodic.new(BalloonManager_UpdateRate, BalloonManager_Control, 4)
@@ -23,6 +23,7 @@ function Update(I) -- luacheck: ignore 131
    C = Commons.new(I)
    if FirstRun then FirstRun(I) end
    if not C:IsDocked() then
+      if AccelerationSamples then CalculateTargetAcceleration(AccelerationSamples) end
       AltitudeControl:Tick(I)
 
       if ActivateWhen[I.AIMode] then

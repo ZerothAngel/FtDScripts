@@ -1,16 +1,15 @@
 --@ commonstargets commons movingaverage
 -- Target acceleration measurement
-TargetStates = {}
+TargetAccel_TargetStates = {}
 
-function CalculateTargetAcceleration(Relative, NumSamples)
+function CalculateTargetAcceleration(NumSamples)
    local NewTargetStates = {}
 
    local Now = C:Now()
    for _,Target in pairs(C:Targets()) do
       local Velocity = Target.Velocity
-      if Relative then Velocity = Velocity - C:Velocity() end
 
-      local State = TargetStates[Target.Id]
+      local State = TargetAccel_TargetStates[Target.Id]
       if State and (State.LastTime + 1) > Now then
          local dV = Velocity - State.LastVelocity
          local dT = Now - State.LastTime
@@ -33,5 +32,5 @@ function CalculateTargetAcceleration(Relative, NumSamples)
       Target.Acceleration = State.LastAcceleration
    end
 
-   TargetStates = NewTargetStates
+   TargetAccel_TargetStates = NewTargetStates
 end

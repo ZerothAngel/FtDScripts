@@ -15,3 +15,8 @@ AI_UpdateRate = 4
 Cannon_UpdateRate = 1
 Missile_UpdateRate = nil
 ShieldManager_UpdateRate = nil
+
+-- Number of acceleration samples to take for *each* target.
+-- Note that a running average is maintained, so it's best to keep this small.
+-- Set to nil to disable acceleration sampling.
+AccelerationSamples = 120

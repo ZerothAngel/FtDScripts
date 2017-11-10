@@ -26,3 +26,8 @@ DockManager_UpdateRate = nil
 -- Only used when controlling altitude in some way.
 -- (see CONTROL CONFIGURATION and HYDROFOIL CONFIGURATION)
 FixedAltitude = 0
+
+-- Number of acceleration samples to take for *each* target.
+-- Note that a running average is maintained, so it's best to keep this small.
+-- Set to nil to disable acceleration sampling.
+AccelerationSamples = 120
