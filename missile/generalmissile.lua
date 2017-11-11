@@ -3,7 +3,7 @@
 GeneralMissile = {}
 
 -- Returns cosine of Angle (given in degrees) or Default
-function PrepareAngle(Angle, Default)
+function GeneralMissile_PrepareAngle(Angle, Default)
    return Angle and math.cos(math.rad(Angle)) or Default
 end
 
@@ -35,15 +35,15 @@ function GeneralMissile.new(Config)
    end
 
    -- Calculate cosine of all angle parameters ahead of time
-   self.DetonationAngle = PrepareAngle(self.DetonationAngle, 1)
+   self.DetonationAngle = GeneralMissile_PrepareAngle(self.DetonationAngle, 1)
    for _,Phase in pairs(self.AntiAir.Phases) do
       if Phase.Change and Phase.Change.When then
-         Phase.Change.When.Angle = PrepareAngle(Phase.Change.When.Angle)
+         Phase.Change.When.Angle = GeneralMissile_PrepareAngle(Phase.Change.When.Angle)
       end
    end
    for _,Phase in pairs(self.Phases) do
       if Phase.Change and Phase.Change.When then
-         Phase.Change.When.Angle = PrepareAngle(Phase.Change.When.Angle)
+         Phase.Change.When.Angle = GeneralMissile_PrepareAngle(Phase.Change.When.Angle)
       end
    end
 
@@ -74,7 +74,7 @@ function GeneralMissile.new(Config)
 end
 
 -- Update state, including fuel estimation
-function UpdateMissileState(I, TransceiverIndex, MissileIndex, Position, Missile, MissileState)
+function GeneralMissile_UpdateMissileState(I, TransceiverIndex, MissileIndex, Position, Missile, MissileState)
    local Command = MissileState.Command
    if not Command then
       -- Initialize state
@@ -90,6 +90,9 @@ function UpdateMissileState(I, TransceiverIndex, MissileIndex, Position, Missile
    local Now = Missile.TimeSinceLaunch
    local TimeStep = Now - LastTime
    MissileState.LastTime = Now
+   -- Save for downstream methods
+   MissileState.Now = Now
+   MissileState.TimeStep = TimeStep
 
    -- Integrate to figure out how much fuel was consumed since LastTime.
    -- Note that var thrust ramp up screws this up slightly.
@@ -110,37 +113,26 @@ function UpdateMissileState(I, TransceiverIndex, MissileIndex, Position, Missile
 end
 
 -- Handle a missile state change
-function HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, MissileState, ImpactTime, Change)
+function GeneralMissile_HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, MissileState, ImpactTime, Change)
    if not Change then return end
 
    if Change.When then
       -- Check conditions, exit if not met
-      local TargetVector = AimPoint - Position
-      if Change.When.Angle then
-         -- Note we end up calculating this twice in certain circumstances,
-         -- but that's ok
-         -- Sometimes it's the predicted aim point, sometimes it's the real
-         -- one
-         local CosAngle = Vector3.Dot(TargetVector.normalized, Velocity.normalized)
-         if CosAngle < Change.When.Angle then return end -- Not yet
-      end
-      if Change.When.Range then
-         if TargetVector.magnitude > Change.When.Range then return end
-      end
-      if Change.When.AltitudeGT then
-         if Position.y <= Change.When.AltitudeGT then return end
-      end
-      if Change.When.AltitudeLT then
-         if Position.y >= Change.When.AltitudeLT then return end
-      end
+      if Change.When.Angle and MissileState.TargetCosAngle < Change.When.Angle then return end
+      if Change.When.Range and MissileState.TargetRange > Change.When.Range then return end
+      if Change.When.AltitudeGT and Position.y <= Change.When.AltitudeGT then return end
+      if Change.When.AltitudeLT and Position.y >= Change.When.AltitudeLT then return end
    end
 
    --# The following is a no-no since the config is shared between all
    --# missiles. But it's not like we're multithreaded...
    Change.VarThrust = Change.Thrust
    if Change.VarThrust and Change.VarThrust < 0 then
-      -- Base thrust on current (estimated) fuel and predicted impact time
-      Change.VarThrust = Round(MissileState.Fuel / ImpactTime, 1)
+      -- Use smaller of remaining lifetime or predicted impact time
+      local Remaining = math.max(MissileState.Command.Lifetime - MissileState.Now, 0)
+      ImpactTime = math.min(Remaining, ImpactTime)
+      -- Base thrust on current (estimated) fuel and time horizon
+      Change.VarThrust = (ImpactTime > 0) and Round(MissileState.Fuel / ImpactTime, 1) or math.huge
    end
 
    MissileState.Command:SendUpdate(I, TransceiverIndex, MissileIndex, Change)
@@ -254,7 +246,7 @@ function GeneralMissile:ExecuteProfile2D(I, TransceiverIndex, MissileIndex, Posi
          AimPoint = Vector3(AimPoint.x, self:ModifyAltitude(Position, AimPoint, Altitude, TerminalPhase.RelativeTo), AimPoint.z)
       end
 
-      HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, MissileState, ImpactTime, TerminalPhase.Change)
+      GeneralMissile_HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, MissileState, ImpactTime, TerminalPhase.Change)
 
       return AimPoint
    end
@@ -305,7 +297,7 @@ function GeneralMissile:ExecuteProfile2D(I, TransceiverIndex, MissileIndex, Posi
    -- Modify altitude according to parameters
    NewAimPoint.y = self:GetPhaseAltitude2D(I, Position, Velocity, Phase, ToNextPhase)
    -- Change state, if configured
-   HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, Velocity, NewAimPoint, MissileState, ImpactTime, Phase.Change)
+   GeneralMissile_HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, MissileState, ImpactTime, Phase.Change)
    -- Perform horizontal evasion, if any
    local Evasion = Phase.Evasion
    if Evasion then
@@ -334,7 +326,7 @@ function GeneralMissile:ExecuteProfile3D(I, TransceiverIndex, MissileIndex, Posi
          AimPoint = Vector3(AimPoint.x, self:ModifyAltitude(Position, AimPoint, Altitude, TerminalPhase.RelativeTo), AimPoint.z)
       end
 
-      HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, MissileState, ImpactTime, TerminalPhase.Change)
+      GeneralMissile_HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, MissileState, ImpactTime, TerminalPhase.Change)
 
       return AimPoint
    end
@@ -367,7 +359,7 @@ function GeneralMissile:ExecuteProfile3D(I, TransceiverIndex, MissileIndex, Posi
       NewAimPoint.y = self:ModifyAltitude(Position, nil, Altitude, Phase.RelativeTo)
    end
    -- Change state, if configured
-   HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, Velocity, NewAimPoint, MissileState, ImpactTime, Phase.Change)
+   GeneralMissile_HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, MissileState, ImpactTime, Phase.Change)
 
    -- TODO Evasion
 
@@ -393,13 +385,17 @@ function GeneralMissile:Guide(I, TransceiverIndex, MissileIndex, Target, Missile
    local MissileVelocity = Missile.Velocity
    local MissileSpeed = MissileVelocity.magnitude
 
-   UpdateMissileState(I, TransceiverIndex, MissileIndex, MissilePosition, Missile, MissileState)
+   GeneralMissile_UpdateMissileState(I, TransceiverIndex, MissileIndex, MissilePosition, Missile, MissileState)
 
    -- Note these are against the true aim point
    local TargetVector = TargetAimPoint - MissilePosition
    local TargetRange = TargetVector.magnitude
    -- Calculate angle between missile velocity and target vector
    local CosAngle = Vector3.Dot(TargetVector / TargetRange, MissileVelocity / MissileSpeed)
+   -- Save for other downstream methods
+   MissileState.TargetVector = TargetVector
+   MissileState.TargetRange = TargetRange
+   MissileState.TargetCosAngle = CosAngle
 
    -- Check if we should detonate
    if TargetRange <= self.DetonationRange and CosAngle <= self.DetonationAngle then

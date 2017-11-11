@@ -47,9 +47,9 @@ Config = {
          -- Terminal phase
          Distance = 150,
          -- Uncomment the following (the "Change" line) to adjust variable
-         -- thrusters for max burn once heading within 3 degrees of aim point.
+         -- thrusters for max burn once heading within 10 degrees of aim point.
          -- Recommend you set default thrust in other phases as well (see below).
---         Change = { When = { Angle = 3, }, Thrust = -1, },
+--         Change = { When = { Angle = 10, }, Thrust = -1, },
       },
       {
          -- Middle phase: hold current altitude

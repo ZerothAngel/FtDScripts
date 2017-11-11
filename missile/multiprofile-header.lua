@@ -84,7 +84,7 @@ MissileProfiles = {
          Phases = {
             {
                Distance = 150,
---               Change = { When = { Angle = 3, }, Thrust = -1, },
+--               Change = { When = { Angle = 10, }, Thrust = -1, },
             },
             {
                Distance = 500,
