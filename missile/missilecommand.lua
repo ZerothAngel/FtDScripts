@@ -9,7 +9,7 @@ function MissileCommand.new(I, TransceiverIndex, MissileIndex)
    -- instance because they may change.
    -- We leave tracking (by missile ID) to the caller.
 
-   local Fuel,Lifetime,VarThrustCount,VarThrust,ThrustCount = 0,30,0,0,0
+   local Fuel,Lifetime,VarThrustCount,VarThrust,ThrustCount = 0,45,0,0,0
 
    local switch = {}
    -- All names have a spaces, so can't use shortcut
