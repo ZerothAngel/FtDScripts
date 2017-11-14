@@ -72,17 +72,7 @@ function GetTerrainHits(I, Angle, LowerEdge, Speed)
    return Hits
 end
 
--- Modifies bearing to avoid any friendlies & terrain
-function Avoidance(I, Bearing)
-   -- Required clearance above and below
-   local PositionY = C:Position().y + MidPoint.y -- Not necessarily Altitude
-   local UpperEdge = PositionY + VerticalClearance
-   local LowerEdge = PositionY - VerticalClearance
-
-   local Velocity = C:Velocity()
-   Velocity = Vector3(Velocity.x, 0, Velocity.z)
-   local Speed = Velocity.magnitude
-
+function FriendlyAvoidanceVector(UpperEdge, LowerEdge, Velocity)
    -- Look for nearby friendlies
    local FCount,FAvoid = 0,Vector3.zero
    if FriendlyAvoidanceWeight > 0 then
@@ -124,6 +114,10 @@ function Avoidance(I, Bearing)
       end
    end
 
+   return FCount, FAvoid
+end
+
+function TerrainAvoidanceVector(I, LowerEdge, Velocity, Speed)
    local TCount,TAvoid = 0,Vector3.zero
    if TerrainAvoidanceWeight > 0 then
       local VelocityAngle = GetVectorAngle(Velocity)
@@ -148,6 +142,31 @@ function Avoidance(I, Bearing)
          PreviousTAvoid = Vector3.right
       end
    end
+
+   return TCount, TAvoid
+end
+
+function AvoidanceVectors(I)
+   -- Required clearance above and below
+   local PositionY = C:Position().y + MidPoint.y -- Not necessarily Altitude
+   local UpperEdge = PositionY + VerticalClearance
+   local LowerEdge = PositionY - VerticalClearance
+
+   -- Flatten velocity
+   local Velocity = C:Velocity()
+   Velocity = Vector3(Velocity.x, 0, Velocity.z)
+   local Speed = Velocity.magnitude
+
+   -- Get friendly & terrain avoidance vectors
+   local FCount, FAvoid = FriendlyAvoidanceVector(UpperEdge, LowerEdge, Velocity)
+   local TCount, TAvoid = TerrainAvoidanceVector(I, LowerEdge, Velocity, Speed)
+
+   return FCount, FAvoid, TCount, TAvoid
+end
+
+-- Modifies bearing to avoid any friendlies & terrain
+function Avoidance(I, Bearing)
+   local FCount, FAvoid, TCount, TAvoid = AvoidanceVectors(I)
 
    if (FCount + TCount) == 0 then
       return Bearing
