@@ -1,4 +1,4 @@
---@ commonstargets commonsweapons commons control getvectorangle planarvector getbearingtopoint dodge3d evasion sign weapontypes clamp
+--@ commonstargets commonsweapons commons control getvectorangle planarvector getbearingtopoint dodge3d evasion sign weapontypes clamp avoidance6dof
 --@ quadraticintercept
 -- Gunship AI module
 DodgeAltitudeOffset = nil
@@ -71,7 +71,7 @@ function AdjustPositionToTarget(I)
    end
 
    V.AdjustHeading(Bearing)
-   V.AdjustPosition(Offset)
+   V.AdjustPosition(Avoidance(I, Offset, true))
 
    -- Determine pitch
    local DesiredPitch = (Target:Elevation(I) >= AirTargetAboveElevation) and TargetPitch.Air or TargetPitch.Surface
@@ -91,7 +91,7 @@ function FormationMove(I)
       -- NB We don't bother with OriginMaxDistance
       -- This leads to tighter formations.
       local Waypoint = Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition
-      V.SetPosition(Waypoint)
+      V.SetPosition(Avoidance(I, Waypoint))
       if not C:FirstTarget() then
          local Offset,_ = PlanarVector(C:CoM(), Waypoint)
          if Offset.magnitude >= OriginMaxDistance then
@@ -104,7 +104,7 @@ function FormationMove(I)
       -- Head to fleet waypoint
       local Offset,_ = PlanarVector(C:CoM(), I.Waypoint)
       if Offset.magnitude >= OriginMaxDistance then
-         V.AdjustPosition(Offset)
+         V.AdjustPosition(Avoidance(I, Offset, true))
          -- Only change heading if not in combat
          if not C:FirstTarget() then
             V.SetHeading(GetVectorAngle(Offset))

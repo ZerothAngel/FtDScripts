@@ -1,10 +1,10 @@
---@ commonsfriends commons control planarvector getvectorangle
+--@ commonsfriends commons control planarvector getvectorangle avoidance6dof
 -- Repair AI module (6DoF)
-function MoveToRepairTarget()
+function MoveToRepairTarget(I)
    local RepairTarget = C:FriendlyById(RepairTargetID)
    if RepairTarget and RepairTarget.Valid then
       local RepairTargetCoM = RepairTarget.CenterOfMass + RepairTarget.ForwardVector * RepairTargetOffset.z + RepairTarget.RightVector * RepairTargetOffset.x
-      V.SetPosition(RepairTargetCoM)
+      V.SetPosition(Avoidance(I, RepairTargetCoM))
       local Offset,_ = PlanarVector(C:CoM(), RepairTargetCoM)
       if Offset.magnitude >= OriginMaxDistance then
          V.SetHeading(GetVectorAngle(Offset))
@@ -14,7 +14,7 @@ function MoveToRepairTarget()
    end
 end
 
-function RepairAI_Main(_)
+function RepairAI_Main(I)
    if not ParentID then
       Imprint()
    end
@@ -22,7 +22,7 @@ function RepairAI_Main(_)
       SelectRepairTarget()
    end
    if RepairTargetID then
-      MoveToRepairTarget()
+      MoveToRepairTarget(I)
    end
 end
 
@@ -33,7 +33,7 @@ function RepairAI_FormationMove(I)
       -- NB We don't bother with OriginMaxDistance
       -- This leads to tighter formations.
       local Waypoint = Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition
-      V.SetPosition(Waypoint)
+      V.SetPosition(Avoidance(I, Waypoint))
       local Offset,_ = PlanarVector(C:CoM(), Waypoint)
       if Offset.magnitude >= OriginMaxDistance then
          V.SetHeading(GetVectorAngle(Offset))
@@ -44,7 +44,7 @@ function RepairAI_FormationMove(I)
       -- Head to fleet waypoint
       local Offset,_ = PlanarVector(C:CoM(), I.Waypoint)
       if Offset.magnitude >= OriginMaxDistance then
-         V.AdjustPosition(Offset)
+         V.AdjustPosition(Avoidance(I, Offset, true))
          V.SetHeading(GetVectorAngle(Offset))
       end
    end

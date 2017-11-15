@@ -1,8 +1,8 @@
---@ commons control planarvector getvectorangle evasion
+--@ commons control planarvector getvectorangle evasion avoidance6dof
 -- Utility AI module (6DoF)
 
-function MoveToWaypoint(Waypoint, Evasion)
-   V.SetPosition(Waypoint)
+function MoveToWaypoint(I, Waypoint, Evasion)
+   V.SetPosition(Avoidance(I, Waypoint))
    local Offset,_ = PlanarVector(C:CoM(), Waypoint)
    local Distance = Offset.magnitude
    if Evasion then
@@ -13,20 +13,20 @@ function MoveToWaypoint(Waypoint, Evasion)
    end
 end
 
-function UtilityAI_RunAway(_, EnemyDirection)
+function UtilityAI_RunAway(I, EnemyDirection)
    if EnemyDirection then
       -- Head some arbitrary point the other way
       local Direction = (C:CoM() - EnemyDirection).normalized
-      MoveToWaypoint(Direction * RunAwayDistance, RunAwayEvasion)
+      MoveToWaypoint(I, Direction * RunAwayDistance, RunAwayEvasion)
    end
 end
 
-function UtilityAI_MoveToCollect(_, Destination)
-   MoveToWaypoint(Destination)
+function UtilityAI_MoveToCollect(I, Destination)
+   MoveToWaypoint(I, Destination)
 end
 
-function UtilityAI_MoveToGather(_, RZInfo)
-   MoveToWaypoint(RZInfo.Position)
+function UtilityAI_MoveToGather(I, RZInfo)
+   MoveToWaypoint(I, RZInfo.Position)
 end
 
 function UtilityAI_FormationMove(I)
@@ -36,7 +36,7 @@ function UtilityAI_FormationMove(I)
       -- NB We don't bother with OriginMaxDistance
       -- This leads to tighter formations.
       local Waypoint = Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition
-      V.SetPosition(Waypoint)
+      V.SetPosition(Avoidance(I, Waypoint))
       local Offset,_ = PlanarVector(C:CoM(), Waypoint)
       if Offset.magnitude >= OriginMaxDistance then
          V.SetHeading(GetVectorAngle(Offset))
@@ -47,7 +47,7 @@ function UtilityAI_FormationMove(I)
       -- Head to fleet waypoint
       local Offset,_ = PlanarVector(C:CoM(), I.Waypoint)
       if Offset.magnitude >= OriginMaxDistance then
-         V.AdjustPosition(Offset)
+         V.AdjustPosition(Avoidance(I, Offset, true))
          V.SetHeading(GetVectorAngle(Offset))
       end
    end
