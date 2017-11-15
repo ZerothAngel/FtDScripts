@@ -110,7 +110,15 @@ function FriendlyAvoidanceVector(UpperEdge, LowerEdge, Velocity)
          end
       end
       if FCount > 0 then
-         FAvoid = FAvoid * FriendlyAvoidanceWeight
+         -- Project onto velocity and use rejection
+         local VNorm = Velocity.normalized
+         local Rej = FAvoid - VNorm * Vector3.Dot(FAvoid, VNorm)
+         if Rej.sqrMagnitude == 0 then
+            -- However unlikely this is, default to right
+            FAvoid = Vector3.Cross(Vector3.up, VNorm) * FriendlyAvoidanceWeight
+         else
+            FAvoid = Rej.normalized * FriendlyAvoidanceWeight
+         end
       end
    end
 
@@ -137,7 +145,7 @@ function TerrainAvoidanceVector(I, LowerEdge, Velocity, Speed)
          end
          Avoidance_PreviousTAvoid = TAvoid
          TCount = ForwardHits + LeftHits + RightHits
-         TAvoid = Quaternion.Euler(0, C:Yaw(), 0) * TAvoid * TerrainAvoidanceWeight
+         TAvoid = Quaternion.Euler(0, VelocityAngle, 0) * TAvoid * TerrainAvoidanceWeight
       else
          Avoidance_PreviousTAvoid = Vector3.right
       end
