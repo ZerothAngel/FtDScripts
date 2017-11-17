@@ -169,5 +169,9 @@ function AvoidanceVectors(I)
    local FCount, FAvoid = FriendlyAvoidanceVector(UpperEdge, LowerEdge, Velocity)
    local TCount, TAvoid = TerrainAvoidanceVector(I, LowerEdge, Velocity, Speed)
 
-   return FCount, FAvoid, TCount, TAvoid
+   if (FCount + TCount) == 0 then
+      return nil
+   else
+      return FAvoid + TAvoid
+   end
 end
