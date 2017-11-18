@@ -3,6 +3,7 @@
 MTW_ThrottlePID = PID.new(WaypointMoveConfig.ThrottlePIDConfig, -1, 1)
 
 if not WaypointMoveConfig.MinimumSpeed then WaypointMoveConfig.MinimumSpeed = 0 end
+if WaypointMoveConfig.StopOnStationaryWaypoint == nil then WaypointMoveConfig.StopOnStationaryWaypoint = true end
 
 -- Scale desired speed up (or down) depending on angle between velocities
 function MTW_MatchSpeed(Velocity, TargetVelocity, Faster)

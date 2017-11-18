@@ -20,7 +20,8 @@ WaypointMoveConfig = {
    -- Whether or not to stop at stationary waypoints (i.e. the 'M' map
    -- waypoint when this vehicle is the flagship). If false, then the
    -- MinimumSpeed will be used instead.
-   StopOnStationaryWaypoint = true,
+   -- If nil, it will use the script's default, which is usually "true".
+   StopOnStationaryWaypoint = nil,
    -- Constants for throttle PID, used when within ApproachDistance.
    ThrottlePIDConfig = {
       Kp = .01,
