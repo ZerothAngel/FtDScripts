@@ -169,7 +169,7 @@ function Airplane.Update(I)
 end
 
 function Airplane.Disable(I)
-   Airplane_RequestControl(I, 1, MAINPROPULSION, MAINPROPULSION, Airplane_DesiredThrottle)
+   Airplane_RequestControl(I, 1, MAINPROPULSION, MAINPROPULSION, 0)
    Airplane_CurrentThrottle = 0
    if Airplane_UsesSpinners then
       Airplane_ClassifySpinners(I)
