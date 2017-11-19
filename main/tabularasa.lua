@@ -11,7 +11,7 @@ SelectThrottleImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.new(I)
-   if FirstRun then FirstRun(I) end
+   FirstRun(I)
    if not C:IsDocked() then
       if ActivateWhen[I.AIMode] then
          TabulaRasa:Tick(I)

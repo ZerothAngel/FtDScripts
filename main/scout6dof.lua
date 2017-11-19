@@ -15,7 +15,7 @@ SelectRollImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.new(I, true)
-   if FirstRun then FirstRun(I) end
+   FirstRun(I)
    if not C:IsDocked() then
       Hover:Tick(I)
 

@@ -2,8 +2,10 @@
 FirstRunList = {}
 
 function FirstRun(I)
-   FirstRun = nil
+   -- Swap with a no-op function
+   FirstRun = function (_) end
 
+   -- And then call all registered functions
    for _,Function in pairs(FirstRunList) do
       Function(I)
    end
