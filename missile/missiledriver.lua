@@ -52,17 +52,17 @@ function MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
 
    -- Only bother if there are slots to fire
    if Fire then
-      for _,Weapon in pairs(C:HullWeaponControllers()) do
+      for _,Weapon in pairs(C:WeaponControllers()) do
          local WeaponSlot = Weapon.Slot
          local AimPoint = SlotsToFire[WeaponSlot]
          if AimPoint and not Weapon.PlayerControl then
             local WeaponType = Weapon.Type
-            -- Top-level turrets and missile controllers only
+            -- Turrets and missile controllers only
             if WeaponType == TURRET or WeaponType == MISSILECONTROL then
                -- Relative to weapon position
                local Offset = AimPoint - Weapon.Position
-               if I:AimWeaponInDirection(Weapon.Index, Offset.x, Offset.y, Offset.z, WeaponSlot) > 0 then
-                  I:FireWeapon(Weapon.Index, WeaponSlot)
+               if I:AimWeaponInDirectionOnSubConstruct(Weapon.SubConstructId, Weapon.Index, Offset.x, Offset.y, Offset.z, WeaponSlot) > 0 and WeaponType == MISSILECONTROL then
+                  I:FireWeaponOnSubConstruct(Weapon.SubConstructId, Weapon.Index, WeaponSlot)
                end
             end
          end

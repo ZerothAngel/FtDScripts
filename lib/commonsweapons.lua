@@ -1,8 +1,8 @@
 --@ commons
-function Commons.AddWeapon(Weapons, WeaponInfo, TurretIndex, WeaponIndex)
+function Commons.AddWeapon(Weapons, WeaponInfo, SubConstructId, WeaponIndex)
    local Weapon = {
+      SubConstructId = SubConstructId,
       Index = WeaponIndex,
-      TurretIndex = TurretIndex,
       Type = WeaponInfo.WeaponType,
       Slot = WeaponInfo.WeaponSlot,
       Position = WeaponInfo.GlobalPosition,
@@ -12,40 +12,20 @@ function Commons.AddWeapon(Weapons, WeaponInfo, TurretIndex, WeaponIndex)
    table.insert(Weapons, Weapon)
 end
 
-function Commons:HullWeaponControllers()
-   if not self._HullWeaponControllers then
-      local Weapons = {}
-      for windex = 0,self.I:GetWeaponCount()-1 do
-         local Info = self.I:GetWeaponInfo(windex)
-         Commons.AddWeapon(Weapons, Info, nil, windex)
-      end
-      self._HullWeaponControllers = Weapons
-   end
-   return self._HullWeaponControllers
-end
-
-function Commons:TurretWeaponControllers()
-   if not self._TurretWeaponControllers then
-      local Weapons = {}
-      for tindex = 0,self.I:GetTurretSpinnerCount()-1 do
-         for windex = 0,self.I:GetWeaponCountOnTurretOrSpinner(tindex)-1 do
-            local Info = self.I:GetWeaponInfoOnTurretOrSpinner(tindex, windex)
-            Commons.AddWeapon(Weapons, Info, tindex, windex)
-         end
-      end
-      self._TurretWeaponControllers = Weapons
-   end
-   return self._TurretWeaponControllers
-end
-
 function Commons:WeaponControllers()
    if not self._WeaponControllers then
       local Weapons = {}
-      for _,Weapon in pairs(self:HullWeaponControllers()) do
-         table.insert(Weapons, Weapon)
+      for windex = 0,self.I:GetWeaponCount()-1 do
+         local Info = self.I:GetWeaponInfo(windex)
+         -- Note that main hull is designated as subconstruct ID 0 (apparently)
+         -- Take advantage of this so we have an easier time aiming & firing.
+         Commons.AddWeapon(Weapons, Info, 0, windex)
       end
-      for _,Weapon in pairs(self:TurretWeaponControllers()) do
-         table.insert(Weapons, Weapon)
+      for _,subid in pairs(self.I:GetAllSubConstructs()) do
+         for windex = 0,self.I:GetWeaponCountOnSubConstruct(subid)-1 do
+            local Info = self.I:GetWeaponInfoOnSubConstruct(subid, windex)
+            Commons.AddWeapon(Weapons, Info, subid, windex)
+         end
       end
       self._WeaponControllers = Weapons
    end

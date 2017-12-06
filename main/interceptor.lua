@@ -29,11 +29,10 @@ function Interceptor_Update(I)
       if MissileInterceptorWeaponSlot then
          -- Just "aim" at first warning
          local AimPoint = Warnings[1].Position
-         -- Only hull-mounted interceptors for now
-         for _,Weapon in pairs(C:HullWeaponControllers()) do
-            if Weapon.Slot == MissileInterceptorWeaponSlot and Weapon.Type == MISSILECONTROL and not Weapon.PlayerControl then
-               if I:AimWeaponInDirection(Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, MissileInterceptorWeaponSlot) > 0 then
-                  I:FireWeapon(Weapon.Index, MissileInterceptorWeaponSlot)
+         for _,Weapon in pairs(C:WeaponControllers()) do
+            if Weapon.Slot == MissileInterceptorWeaponSlot and (Weapon.Type == TURRET or Weapon.Type == MISSILECONTROL) and not Weapon.PlayerControl then
+               if I:AimWeaponInDirectionOnSubConstruct(Weapon.SubConstructId, Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, MissileInterceptorWeaponSlot) > 0 and Weapon.Type == MISSILECONTROL then
+                  I:FireWeaponOnSubConstruct(Weapon.SubConstructId, Weapon.Index, MissileInterceptorWeaponSlot)
                end
             end
          end

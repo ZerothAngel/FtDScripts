@@ -13,8 +13,7 @@ function Evade(Evasion, Perp)
 end
 
 function Gunship_GetWeaponSpeed(WeaponSlot)
-   -- Only consider hull mounted cannons or missile controllers
-   for _,Weapon in pairs(C:HullWeaponControllers()) do
+   for _,Weapon in pairs(C:WeaponControllers()) do
       if Weapon.Slot == WeaponSlot and (Weapon.Type == CANNON or Weapon.Type == MISSILECONTROL) then
          -- Just use the first one found
          return Weapon.Speed

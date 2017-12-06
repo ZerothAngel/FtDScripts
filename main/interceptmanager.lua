@@ -45,12 +45,12 @@ function InterceptManager_Update(I)
          local WeaponSlot = InterceptWeaponSlot[Type][Quadrant]
          if WeaponSlot and not Fired[WeaponSlot] then
             -- Fire weapons
-            for _,Weapon in pairs(C:HullWeaponControllers()) do
+            for _,Weapon in pairs(C:WeaponControllers()) do
                if Weapon.Slot == WeaponSlot and (Weapon.Type == TURRET or Weapon.Type == MISSILECONTROL) and not Weapon.PlayerControl then
                   -- Aim and fire each weapon. Don't really care what we aim at,
                   -- but it's necessary.
-                  if I:AimWeaponInDirection(Weapon.Index, Offset.x, Offset.y, Offset.z, WeaponSlot) > 0 then
-                     I:FireWeapon(Weapon.Index, WeaponSlot)
+                  if I:AimWeaponInDirectionOnSubConstruct(Weapon.SubConstructId, Weapon.Index, Offset.x, Offset.y, Offset.z, WeaponSlot) > 0 and Weapon.Type == MISSILECONTROL then
+                     I:FireWeaponOnSubConstruct(Weapon.SubConstructId, Weapon.Index, WeaponSlot)
                   end
                end
             end

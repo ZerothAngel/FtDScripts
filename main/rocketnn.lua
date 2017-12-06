@@ -170,12 +170,12 @@ function RocketControl_Update(I)
    end
    if Target then
       -- Aim & fire all turrets/missile controllers of the appropriate slot
-      for _,Weapon in pairs(C:HullWeaponControllers()) do
+      for _,Weapon in pairs(C:WeaponControllers()) do
          if Weapon.Slot == RocketWeaponSlot and (Weapon.Type == TURRET or Weapon.Type == MISSILECONTROL) and not Weapon.PlayerControl then
             -- Calculate aim point
             local AimPoint = RocketControl_Predict(Weapon, Target)
-            if AimPoint and I:AimWeaponInDirection(Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, RocketWeaponSlot) > 0 then
-               I:FireWeapon(Weapon.Index, RocketWeaponSlot)
+            if AimPoint and I:AimWeaponInDirectionOnSubConstruct(Weapon.SubConstructId, Weapon.Index, AimPoint.x, AimPoint.y, AimPoint.z, RocketWeaponSlot) > 0 and Weapon.Type == MISSILECONTROL then
+               I:FireWeaponOnSubConstruct(Weapon.SubConstructId, Weapon.Index, RocketWeaponSlot)
             end
          end
       end
