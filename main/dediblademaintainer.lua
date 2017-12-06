@@ -1,7 +1,7 @@
 --! dediblademaintainer
 --@ periodic drivemaintainer spinnercontrol
 ThrottleController = DriveMaintainer.new(ThrottleDriveMaintainerFacing)
-PropulsionSpinners = SpinnerControl.new(Vector3.forward, UseSpinners, UseDediBlades)
+PropulsionSpinners = SpinnerControl.new(Vector3.forward)
 
 DesiredThrottle = 0
 

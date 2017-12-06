@@ -106,11 +106,9 @@ end
 function AllDoF_ClassifySpinners(I)
    local Infos = {}
 
-   for i = 0,I:GetSpinnerCount()-1 do
-      if I:IsSpinnerDedicatedHelispinner(i) then
-         local BlockInfo = I:GetSpinnerInfo(i)
-         AllDoF_Classify(i, BlockInfo, true, SpinnerFractions, Infos)
-      end
+   for i = 0,I:GetDedibladeCount()-1 do
+      local BlockInfo = I:GetDedibladeInfo(i)
+      AllDoF_Classify(i, BlockInfo, true, SpinnerFractions, Infos)
    end
 
    return Infos
@@ -160,7 +158,7 @@ function AllDoF.Update(I)
       for _,Info in pairs(Infos) do
          -- Sum up inputs and constrain
          local Output = Clamp(AltitudeCV * Info.AltitudeSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + NorthCV * Info.NorthSign + EastCV * Info.EastSign + ForwardCV * Info.ForwardSign, -30, 30)
-         I:SetSpinnerContinuousSpeed(Info.Index, Output)
+         I:SetDedibladeContinuousSpeed(Info.Index, Output)
       end
    end
 
@@ -178,7 +176,7 @@ function AllDoF.Disable(I)
       local Infos = AllDoF_ClassifySpinners(I)
       -- Stop spinners
       for _,Info in pairs(Infos) do
-         I:SetSpinnerContinuousSpeed(Info.Index, 0)
+         I:SetDedibladeContinuousSpeed(Info.Index, 0)
       end
    end
 end

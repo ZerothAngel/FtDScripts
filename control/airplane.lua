@@ -86,17 +86,15 @@ function Airplane_Classify(Index, BlockInfo, Fractions, Infos)
 end
 
 function Airplane_ClassifySpinners(I)
-   local SpinnerCount = I:GetSpinnerCount()
+   -- Only process dediblades for now
+   local SpinnerCount = I:GetDedibladeCount()
    if SpinnerCount ~= Airplane_LastSpinnerCount then
       Airplane_LastSpinnerCount = SpinnerCount
       Airplane_SpinnerInfos = {}
 
       for i = 0,SpinnerCount-1 do
-         -- Only process dediblades for now
-         if I:IsSpinnerDedicatedHelispinner(i) then
-            local BlockInfo = I:GetSpinnerInfo(i)
-            Airplane_Classify(i, BlockInfo, SpinnerFractions, Airplane_SpinnerInfos)
-         end
+         local BlockInfo = I:GetDedibladeInfo(i)
+         Airplane_Classify(i, BlockInfo, SpinnerFractions, Airplane_SpinnerInfos)
       end
    end
 end
@@ -161,7 +159,7 @@ function Airplane.Update(I)
       for _,Info in pairs(Airplane_SpinnerInfos) do
          -- Sum up inputs and constrain
          local Output = Clamp(YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign, -1, 1)
-         I:SetSpinnerContinuousSpeed(Info.Index, 30 * Output)
+         I:SetDedibladeContinuousSpeed(Info.Index, 30 * Output)
       end
    end
 
@@ -175,7 +173,7 @@ function Airplane.Disable(I)
       Airplane_ClassifySpinners(I)
       -- And stop spinners as well
       for _,Info in pairs(Airplane_SpinnerInfos) do
-         I:SetSpinnerContinuousSpeed(Info.Index, 0)
+         I:SetDedibladeContinuousSpeed(Info.Index, 0)
       end
    end
 end

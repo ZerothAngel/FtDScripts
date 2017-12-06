@@ -131,17 +131,15 @@ function SixDoF_ClassifyJets(I)
 end
 
 function SixDoF_ClassifySpinners(I)
-   local SpinnerCount = I:GetSpinnerCount()
+   -- Only process dediblades for now
+   local SpinnerCount = I:GetDedibladeCount()
    if SpinnerCount ~= SixDoF_LastSpinnerCount then
       SixDoF_LastSpinnerCount = SpinnerCount
       SixDoF_SpinnerInfos = {}
 
       for i = 0,SpinnerCount-1 do
-         -- Only process dediblades for now
-         if I:IsSpinnerDedicatedHelispinner(i) then
-            local BlockInfo = I:GetSpinnerInfo(i)
-            SixDoF_Classify(i, BlockInfo, true, SpinnerFractions, SixDoF_SpinnerInfos)
-         end
+         local BlockInfo = I:GetDedibladeInfo(i)
+         SixDoF_Classify(i, BlockInfo, true, SpinnerFractions, SixDoF_SpinnerInfos)
       end
 
       if DediBladesAlwaysUp then
@@ -234,7 +232,7 @@ function SixDoF.Update(I)
          if Info.IsVertical or PlanarMovement then
             -- Sum up inputs and constrain
             local Output = Clamp(AltitudeCV * Info.UpSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign, -30, 30)
-            I:SetSpinnerContinuousSpeed(Info.Index, Output)
+            I:SetDedibladeContinuousSpeed(Info.Index, Output)
          end
       end
    end
@@ -259,7 +257,7 @@ function SixDoF.Disable(I)
       SixDoF_ClassifySpinners(I)
       -- Stop spinners
       for _,Info in pairs(SixDoF_SpinnerInfos) do
-         I:SetSpinnerContinuousSpeed(Info.Index, 0)
+         I:SetDedibladeContinuousSpeed(Info.Index, 0)
       end
    end
    if SixDoF_UsesControls then
@@ -275,7 +273,7 @@ function SixDoF.Release(I)
          SixDoF_ClassifySpinners(I)
          for _,Info in pairs(SixDoF_SpinnerInfos) do
             if not Info.IsVertical then
-               I:SetSpinnerContinuousSpeed(Info.Index, 0)
+               I:SetDedibladeContinuousSpeed(Info.Index, 0)
             end
          end
       end

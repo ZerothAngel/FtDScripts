@@ -22,11 +22,6 @@ UpdateRate = 4
 -- Other useful values: Vector3.left, Vector3.right, Vector3.back, etc.
 ThrottleDriveMaintainerFacing = Vector3.forward
 
--- To use forward (or reverse!) spinners as propulsion,
--- set either or both of the following options to true.
-UseSpinners = false
-UseDediBlades = true
-
 -- Simply set throttle to the given value (-1 to 1) on these AI modes.
 -- If a mode is not listed below, then the dediblade speed will be
 -- based on the drive maintainer reading (assuming it is actually
