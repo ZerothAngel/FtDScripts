@@ -95,6 +95,8 @@ But it was an interesting exercise, and it **does** seem to be quite a bit more 
 
 I tend to build small and because of that, I avoid having more than a few Lua boxes. So I assemble and use combo scripts that are made up of many of my own scripts. This saves on Lua boxes and is also more efficient &mdash; stuff like targeting and weapon control only needs to happen once per run.
 
+Note that most combo scripts include my generalmissile-based multiprofile missile script. While more flexible, it's quite a bit harder to configure. Be sure to disable it (by setting `Missile_UpdateRate` to `nil`) if you'd like to use a different missile script (in another Lua box).
+
   * [airplane](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airplane.lua) &mdash; Combo script: naval-ai + airplane + multiprofile + shieldmanager
   * [airship](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/airship.lua) &mdash; Combo script: naval-ai + hover + multiprofile + shieldmanager ([Demo ship](https://steamcommunity.com/sharedfiles/filedetails/?id=764284410))
   * [carrier](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/carrier.lua) &mdash; Combo script: naval-ai + dockmanager + shieldmanager

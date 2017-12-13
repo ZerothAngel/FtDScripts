@@ -2,11 +2,6 @@
 -- is fine. But if you have more than one (e.g. anti-air & torpedoes),
 -- look at my "umultiprofile" script instead. It's a wrapper around this one.
 
--- Have a decent editor or are you somewhat familiar with coding? (Lua
--- knowledge not necessary.) Have a look at my generalmissile-based
--- scripts instead. Lots of options, lots of docs!
--- https://tyrannyofheaven.org/ZerothAngel/public-ftd-scripts.html
-
 -- CONFIGURATION
 
 -- Generally these should match the settings on your Local Weapon Controller.
