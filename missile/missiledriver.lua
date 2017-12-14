@@ -78,11 +78,10 @@ MissileDriver_TargetSelectors = {
       return Targets[1]
    end,
 
-   -- Split based on TransceiverIndex and MissileIndex
+   -- Pseudo-random split putting our faith in the builtin math.random function
    function (I, TransceiverIndex, MissileIndex, Targets) -- luacheck: ignore 212
       if #Targets > 0 then
-         -- Multiply both indices by prime numbers, take modulo
-         return Targets[1 + (TransceiverIndex * 1009 + MissileIndex * 1013) % #Targets]
+         return Targets[math.random(#Targets)]
       else
          return nil
       end
