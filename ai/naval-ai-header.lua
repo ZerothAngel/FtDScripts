@@ -80,5 +80,9 @@ ForceAttackTime = 30
 -- rotate to the proper angle.
 MinAttackTime = 10
 
+-- Evasion values to use when in formation mode.
+-- Can either explicitly set values or just copy one of the above.
+FleetMoveEvasion = AttackEvasion
+
 -- Return-to-origin settings
 ReturnToOrigin = true

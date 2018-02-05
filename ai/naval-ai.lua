@@ -102,7 +102,7 @@ function AdjustHeadingToTarget(I)
    else
       Bearing = GetBearingToPoint(TargetPosition)
       Bearing = Bearing - (PreferredBroadside or Sign(Bearing, 1)) * TargetAngle
-      Bearing = Bearing + Evade(Evasion, Bearing)
+      Bearing = Bearing + Evade(Evasion)
       Bearing = NormalizeBearing(Bearing)
       DodgeAltitudeOffset = nil
    end
@@ -117,8 +117,25 @@ function NavalAI_Reset()
    DodgeAltitudeOffset = nil
 end
 
+function FormationMove_Evade(DesiredBearing)
+   if not C:FirstTarget() then return DesiredBearing end
+
+   -- TODO refactor with above version
+   local Bearing
+   local DodgeAngle,DodgeY,Dodging = Dodge()
+   if Dodging then
+      Bearing = DodgeAngle
+      DodgeAltitudeOffset = DodgeY * VehicleRadius
+   else
+      Bearing = NormalizeBearing(DesiredBearing + Evade(FleetMoveEvasion))
+      DodgeAltitudeOffset = nil
+   end
+
+   return Bearing
+end
+
 function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
-   MoveToWaypoint(Waypoint, function (Bearing) V.AdjustHeading(Avoidance(I, Bearing)) end, WaypointVelocity)
+   MoveToWaypoint(Waypoint, function (Bearing) V.AdjustHeading(Avoidance(I, FormationMove_Evade(Bearing))) end, WaypointVelocity)
 end
 
 function FormationMove(I)
