@@ -16,7 +16,7 @@ Airplane_SpinnerInfos = {}
 
 Airplane_UsesSpinners = (SpinnerFractions.Yaw > 0 or SpinnerFractions.Pitch > 0 or SpinnerFractions.Roll > 0 or SpinnerFractions.Throttle > 0)
 
-Airplane_MaxPitch = LookupTable.new(MaxPitch[1][1], math.max(500, MaxPitch[#MaxPitch][1]), MaxPitch[1][2], MaxPitch[#MaxPitch][2], 100, MaxPitch)
+Airplane_MaxPitch = LookupTable.new(MaxPitch[1][1], math.max(Airplane_MaxAltitude, MaxPitch[#MaxPitch][1]), MaxPitch[1][2], MaxPitch[#MaxPitch][2], 100, MaxPitch)
 
 Airplane_Active = false
 
