@@ -16,7 +16,7 @@ function Depth_Control(I)
    DepthControl_Max = -HardMinDepth
 
    local DesiredDepth,Absolute
-   if ManualDepthDriveMaintainerFacing and ManualDepthWhen[I.AIMode] then
+   if ManualDepthDriveMaintainerFacing and ManualDepthWhen[C:MovementMode()] then
       -- Manual depth control
       local ManualDesiredDepth = ManualDepthController:GetThrottle(I)
       if ManualDesiredDepth > 0 then

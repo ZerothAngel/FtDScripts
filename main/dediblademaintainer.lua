@@ -6,7 +6,7 @@ PropulsionSpinners = SpinnerControl.new(Vector3.forward)
 DesiredThrottle = 0
 
 function DediBladeMaintainer_Control(I)
-   local Throttle = ThrottleWhen[I.AIMode]
+   local Throttle = ThrottleWhen[I:GetAIMovementMode()]
    if Throttle then
       DesiredThrottle = Throttle
    else
@@ -28,7 +28,7 @@ end
 DediBladeMaintainer = Periodic.new(UpdateRate, DediBladeMaintainer_Control)
 
 function Update(I) -- luacheck: ignore 131
-   if ActivateWhen[I.AIMode] then
+   if ActivateWhen[I:GetAIMovementMode()] then
       if not I:IsDocked() then
          DediBladeMaintainer:Tick(I)
 

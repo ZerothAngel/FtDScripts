@@ -126,8 +126,7 @@ end
 function DropAI_Update(I)
    V.Reset()
 
-   local AIMode = I.AIMode
-   if AIMode ~= "fleetmove" then
+   if C:MovementMode() ~= "Fleet" then
       if not DropAI_Main(I) then
          DropAI_Reset()
          if ReturnToOrigin then

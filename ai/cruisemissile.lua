@@ -199,8 +199,7 @@ end
 function CruiseAI_Update(I)
    V.Reset()
 
-   local AIMode = I.AIMode
-   if AIMode ~= "fleetmove" then
+   if C:MovementMode() ~= "Fleet" then
       local Target = CruiseGetTarget()
       if Target then
          CruiseGuidance(I, Target)

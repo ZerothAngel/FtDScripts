@@ -1,14 +1,13 @@
 -- ALTITUDE CONTROL
 
--- Switch to manual altitude control on these AI modes. Valid keys are "off",
--- "on", "combat", "patrol", and "fleetmove".
+-- Switch to manual altitude control on these AI modes. Valid keys are "Off",
+-- "Manual", "Automatic", and "Fleet".
 -- Only used when ManualAltitudeDriveMaintainerFacing below is non-nil.
 ManualAltitudeWhen = {
-   off = true,
-   on = true,
-   combat = true,
-   patrol = true,
-   fleetmove = true,
+   Off = true,
+   Manual = true,
+   Automatic = true,
+   Fleet = true,
 }
 
 -- Manual altitude control (optional, default disabled)

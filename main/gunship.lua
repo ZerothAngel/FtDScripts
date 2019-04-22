@@ -19,7 +19,7 @@ function Update(I) -- luacheck: ignore 131
    if not C:IsDocked() then
       AltitudeControl:Tick(I)
 
-      if ActivateWhen[I.AIMode] then
+      if ActivateWhen[C:MovementMode()] then
          GunshipAI:Tick(I)
 
          -- Suppress default AI

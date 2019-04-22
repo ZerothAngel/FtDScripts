@@ -22,8 +22,7 @@ end
 function TargetAI_Update(I)
    V.Reset()
 
-   local AIMode = I.AIMode
-   if AIMode ~= "fleetmove" then
+   if C:MovementMode() ~= "Fleet" then
       if not TargetHeading then
          TargetHeading = C:Yaw()
       end

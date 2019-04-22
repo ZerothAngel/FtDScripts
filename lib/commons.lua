@@ -133,3 +133,16 @@ function Commons:Ground()
    return self._Ground
 end
 
+function Commons:MovementMode()
+   if not self._MovementMode then
+      self._MovementMode = self.I:GetAIMovementMode(0)
+   end
+   return self._MovementMode
+end
+
+function Commons:FiringMode()
+   if not self._FiringMode then
+      self._FiringMode = self.I:GetAIFiringMode(0)
+   end
+   return self._FiringMode
+end

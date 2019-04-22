@@ -1,14 +1,13 @@
 -- DEPTH CONTROL
 
--- Switch to manual depth control on these AI modes. Valid keys are "off",
--- "on", "combat", "patrol", and "fleetmove".
+-- Switch to manual depth control on these AI modes. Valid keys are "Off",
+-- "Manual", "Automatic", and "Fleet".
 -- Only used when ManualDepthDriveMaintainerFacing below is non-nil.
 ManualDepthWhen = {
-   off = true,
-   on = true,
-   combat = true,
-   patrol = true,
-   fleetmove = true,
+   Off = true,
+   Manual = true,
+   Automatic = true,
+   Fleet = true,
 }
 
 -- Manual depth control (optional, default disabled)

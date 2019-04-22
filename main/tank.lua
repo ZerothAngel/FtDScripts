@@ -14,8 +14,7 @@ function Update(I) -- luacheck: ignore 131
    FirstRun(I)
    if not C:IsDocked() then
       if AccelerationSamples then CalculateTargetAcceleration(AccelerationSamples) end
-      local AIMode = I.AIMode
-      if ActivateWhen[AIMode] then
+      if ActivateWhen[C:MovementMode()] then
          NavalAI:Tick(I)
 
          -- Suppress default AI
@@ -28,7 +27,7 @@ function Update(I) -- luacheck: ignore 131
 
       TankSteer.Update(I)
 
-      if AIMode ~= "off" then
+      if C:FiringMode() ~= "Off" then
          Cannon:Tick(I)
       end
       MissileMain:Tick(I)

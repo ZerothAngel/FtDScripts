@@ -94,7 +94,7 @@ function MissileDriver_Update(I, GuidanceInfos, SelectGuidance)
    if #TargetsByPriority > 0 then
       LastTimeTargetSeen = Now
 
-      if I.AIMode ~= "off" then
+      if C:FiringMode() ~= "Off" then
          MissileDriver_FireControl(I, GuidanceInfos, TargetsByPriority)
       end
 

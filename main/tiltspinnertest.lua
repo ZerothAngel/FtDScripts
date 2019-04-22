@@ -12,7 +12,7 @@ TiltSpinnerTest = Periodic.new(UpdateRate, TiltSpinnerTest_Update)
 function Update(I) -- luacheck: ignore 131
    C = Commons.new(I)
    if not C:IsDocked() then
-      if ActivateWhen[I.AIMode] then
+      if ActivateWhen[C:MovementMode()] then
          TiltSpinnerTest:Tick(I)
       end
    else

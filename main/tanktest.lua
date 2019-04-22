@@ -46,7 +46,7 @@ function Update(I) -- luacheck: ignore 131
    C = Commons.new(I)
    FirstRun(I)
    if not C:IsDocked() then
-      if ActivateWhen[I.AIMode] then
+      if ActivateWhen[C:MovementMode()] then
          if LastTurn and math.abs(Mathf.DeltaAngle(C:Yaw(), MyHeading)) < 0.1 then
             local DeltaTime = C:Now() - LastTurn[1]
             local SqrDistance = (C:CoM() - LastTurn[2]).sqrMagnitude

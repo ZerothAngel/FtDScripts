@@ -123,7 +123,7 @@ function GunshipAI_Update(I)
       AdjustPositionToTarget(I)
    end
 
-   if I.AIMode ~= "fleetmove" then
+   if C:MovementMode() ~= "Fleet" then
       if not C:FirstTarget() then
          if ReturnToOrigin then
             FormationMove(I)

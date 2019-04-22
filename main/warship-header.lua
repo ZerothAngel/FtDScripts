@@ -5,12 +5,12 @@
 
 -- CONFIGURATION
 
--- Activate on these AI modes. Valid keys are "off", "on", "combat",
--- "patrol", and "fleetmove".
+-- Activate on these AI modes. Valid keys are "Off", "Manual", "Automatic",
+-- and "Fleet".
 ActivateWhen = {
---   on = true,
-   combat = true,
-   fleetmove = true,
+--   Manual = true,
+   Automatic = true,
+   Fleet = true,
 }
 
 -- How often to run. At 1, it will run every update. At 10,

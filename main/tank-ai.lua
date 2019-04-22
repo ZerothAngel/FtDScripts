@@ -10,7 +10,7 @@ function Update(I) -- luacheck: ignore 131
    C = Commons.new(I)
    FirstRun(I)
    if not C:IsDocked() then
-      if ActivateWhen[I.AIMode] then
+      if ActivateWhen[C:MovementMode()] then
          NavalAI:Tick(I)
 
          -- Suppress default AI

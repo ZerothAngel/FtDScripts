@@ -37,7 +37,7 @@ function Update(I) -- luacheck: ignore 131
    FirstRun(I)
    if not C:IsDocked() then
       if AccelerationSamples then CalculateTargetAcceleration(AccelerationSamples) end
-      if ActivateWhen[I.AIMode] then
+      if ActivateWhen[C:MovementMode()] then
          NavalAI:Tick(I)
 
          -- Suppress default AI

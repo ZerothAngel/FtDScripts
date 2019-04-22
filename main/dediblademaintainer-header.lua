@@ -1,13 +1,12 @@
 -- CONFIGURATION
 
--- Activate on these AI modes. Valid keys are "off", "on", "combat",
--- "patrol", and "fleetmove".
+-- Activate on these AI modes. Valid keys are "Off", "Manual", "Automatic",
+-- and "Fleet".
 ActivateWhen = {
    off = true,
-   on = true,
---   combat = true,
-   patrol = true,
-   fleetmove = true,
+   Manual = true,
+--   Automatic = true,
+   Fleet = true,
 }
 
 -- How often to run. At 1, it will run every update. At 10,
@@ -30,6 +29,5 @@ ThrottleDriveMaintainerFacing = Vector3.forward
 -- "patrol" and "fleetmove" will go full throttle.
 -- Note that "combat" is assumed to be taken care of by the combat AI...
 ThrottleWhen = {
-   patrol = 1,
-   fleetmove = 1,
+   Fleet = 1,
 }

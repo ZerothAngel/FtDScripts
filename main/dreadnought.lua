@@ -26,7 +26,7 @@ function Update(I) -- luacheck: ignore 131
       if AccelerationSamples then CalculateTargetAcceleration(AccelerationSamples) end
       AltitudeControl:Tick(I)
 
-      if ActivateWhen[I.AIMode] then
+      if ActivateWhen[C:MovementMode()] then
          NavalAI:Tick(I)
 
          -- Suppress default AI

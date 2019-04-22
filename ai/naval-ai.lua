@@ -150,8 +150,7 @@ end
 function NavalAI_Update(I)
    V.Reset()
 
-   local AIMode = I.AIMode
-   if AIMode ~= "fleetmove" then
+   if C:MovementMode() ~= "Fleet" then
       if C:FirstTarget() then
          AdjustHeadingToTarget(I)
       elseif ReturnToOrigin then
