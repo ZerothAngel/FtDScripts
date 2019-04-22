@@ -24,7 +24,9 @@ end
 
 function GetResourceZones(I, ReferencePosition)
    local ResourceZones = {}
-   for _,ResourceZone in ipairs(I.ResourceZones) do
+   local zones = I.ResourceZones
+   for i = 1,#zones do
+      local ResourceZone = zones[i]
       local Distance = (ResourceZone.Position - ReferencePosition).sqrMagnitude
       if Distance < GatherMaxDistance and ResourceZone.Resources.NaturalTotal > 0 then
          local RZInfo = {

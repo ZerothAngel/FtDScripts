@@ -21,7 +21,9 @@ function Commons:WeaponControllers()
          -- Take advantage of this so we have an easier time aiming & firing.
          Commons.AddWeapon(Weapons, Info, 0, windex)
       end
-      for _,subid in pairs(self.I:GetAllSubConstructs()) do
+      local subids = self.I:GetAllSubConstructs()
+      for sindex = 1,#subids do
+         local subid = subids[sindex]
          for windex = 0,self.I:GetWeaponCountOnSubConstruct(subid)-1 do
             local Info = self.I:GetWeaponInfoOnSubConstruct(subid, windex)
             Commons.AddWeapon(Weapons, Info, subid, windex)

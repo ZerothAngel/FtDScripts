@@ -39,7 +39,9 @@ function MissileCommand.new(I, TransceiverIndex, MissileIndex)
 
    -- Read current settings
    local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
-   for _,Part in ipairs(MissileInfo.Parts) do
+   local parts = MissileInfo.Parts
+   for i = 1,#parts do
+      local Part = parts[i]
       -- For most parts, the last one looked at wins.
       -- Except var thrusters, fuel tanks, and regulators, which are summed.
       local f = switch[Part.Name]
@@ -117,7 +119,9 @@ function MissileCommand:SendUpdate(I, TransceiverIndex, MissileIndex, Command)
 
    if DoUpdate then
       local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
-      for _,Part in ipairs(MissileInfo.Parts) do
+      local parts = MissileInfo.Parts
+      for i = 1,#parts do
+         local Part = parts[i]
          local f = switch[Part.Name]
          if f then f(Part) end
       end
