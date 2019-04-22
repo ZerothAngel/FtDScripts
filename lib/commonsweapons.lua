@@ -1,4 +1,11 @@
 --@ commons
+function CommonsWeapons_CustomName(self, I)
+   if not self._CustomName then
+      self._CustomName = I:GetWeaponBlockInfoOnSubConstruct(self.SubConstructId, self.Index).CustomName
+   end
+   return self._CustomName
+end
+
 function Commons.AddWeapon(Weapons, WeaponInfo, SubConstructId, WeaponIndex)
    local Weapon = {
       SubConstructId = SubConstructId,
@@ -8,6 +15,8 @@ function Commons.AddWeapon(Weapons, WeaponInfo, SubConstructId, WeaponIndex)
       Position = WeaponInfo.GlobalPosition,
       Speed = WeaponInfo.Speed,
       PlayerControl = WeaponInfo.PlayerCurrentlyControllingIt,
+      -- Lazy init methods
+      CustomName = CommonsWeapons_CustomName
    }
    table.insert(Weapons, Weapon)
 end

@@ -41,10 +41,14 @@ MissileProfiles = {
 --         Direction = { Vector3.left, Vector3.right },
 --      },
 --      SelectBy = {
---         -- By weapon slot of the closest missile controller
---         -- within a set (straight-line) distance
+--         -- By weapon slot of the first matching missile controller
+--         -- on the same subconstruct.
 --         WeaponSlot = 1,
---         Distance = 5,
+--      },
+--      SelectBy = {
+--         -- By custom name of the first matching missile controller
+--         -- on the same subconstruct.
+--         Name = "MyMissile",
 --      },
       -- Set to a number 1-5 to have the script fire this weapon slot itself.
       -- An LWC is not needed in that case. However, script-fired weapons

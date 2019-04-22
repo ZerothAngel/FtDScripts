@@ -4,6 +4,8 @@
 GuidanceInfos = {}
 -- Weapon slot to index (into GuidanceInfos) mapping
 MultiProfileMCMap = {}
+-- Custom name to index (into GuidanceInfos) mapping
+MultiProfileMCNameMap = {}
 -- Flag to enable scanning missile controllers (kinda expensive)
 MultiProfileScanMCs = false
 
@@ -31,7 +33,15 @@ function MultiProfile_Init(DefaultMissileClass, MissileClassMap)
       if WeaponSlot then
          -- First profile using a weapon slot wins
          if not MultiProfileMCMap[WeaponSlot] then
-            MultiProfileMCMap[WeaponSlot] = { i, MP.SelectBy.Distance^2 }
+            MultiProfileMCMap[WeaponSlot] = i
+            MultiProfileScanMCs = true
+         end
+      end
+      local Name = MP.SelectBy.Name
+      if Name then
+         -- First one using this name wins
+         if not MultiProfileMCNameMap[Name] then
+            MultiProfileMCNameMap[Name] = i
             MultiProfileScanMCs = true
          end
       end
@@ -55,21 +65,19 @@ function SelectGuidance(I, TransceiverIndex)
             end
          end
       end
-      -- See if any profiles using weapon slot/distance selection match
-      local Closest,SelectedIndex = math.huge,nil
+      -- See if any profiles using weapon slot/name selection match
       for _,MC in pairs(MultiProfileMCs) do
-         local MCMap = MultiProfileMCMap[MC.Slot]
-         if MCMap then
-            local Index,BlockRange = unpack(MCMap)
-            local Distance = (BlockInfo.Position - MC.Position).sqrMagnitude
-            if Distance <= BlockRange and Distance < Closest then
-               Closest = Distance
-               SelectedIndex = Index
-            end
+         -- Can only match if transceiver & MC are on same subconstruct
+         if BlockInfo.SubConstructIdentifier == MC.SubConstructId then
+            -- See if weapon slot yields a profile
+            local SelectedIndex = MultiProfileMCMap[MC.Slot]
+            if SelectedIndex then return SelectedIndex end
+            -- Then try name
+            SelectedIndex = MultiProfileMCNameMap[MC:CustomName(I)]
+            if SelectedIndex then return SelectedIndex end
          end
       end
 
-      if SelectedIndex then return SelectedIndex end
       -- Otherwise fall through
    end
 
