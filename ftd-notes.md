@@ -66,4 +66,4 @@ You will typically benefit from increasing `Kp` for the yaw PID. (I usually use 
 
 Just remember: assuming any sort of "evasion" is off, if your vehicle oscillates too much while attempting to go in a straight line, you will have to lower `Kp`.
 
-You may also be interested in my [yawtest](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/yawtest.lua) script to help in tuning, which, while moving forward at various speeds, rotates the vehicle every 90 degrees every minute or so. It also outputs informative stats like turning radius and turning time.
+You may also be interested in my [yawtest](https://zerothangel.com/FtDScripts/yawtest.lua) script to help in tuning, which, while moving forward at various speeds, rotates the vehicle every 90 degrees every minute or so. It also outputs informative stats like turning radius and turning time.

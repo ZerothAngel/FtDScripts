@@ -4,7 +4,7 @@ A collection of From the Depths Lua scripts and the libraries/modules used to bu
 
 ## Scripts ##
 
-**If you're just looking for scripts to use, don't download anything above.** You want to go to my [Public FtD Scripts page](https://tyrannyofheaven.org/ZerothAngel/public-ftd-scripts.html) instead.
+**If you're just looking for scripts to use, don't download anything above.** You want to go to my [Public FtD Scripts page](https://zerothangel.com/public-ftd-scripts.html) instead.
 
 ## Building ##
 

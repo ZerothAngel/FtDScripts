@@ -1,6 +1,6 @@
 # multiprofile Configuration #
 
-My [multiprofile missile script](https://tyrannyofheaven.org/ZerothAngel/FtDScripts/multiprofile.lua), which is also available as part of many of my "combo scripts," solves one particular problem: When you have multiple missile scripts with different behaviors, how do you assign them to each Lua transceiver?
+My [multiprofile missile script](https://zerothangel.com/FtDScripts/multiprofile.lua), which is also available as part of many of my "combo scripts," solves one particular problem: When you have multiple missile scripts with different behaviors, how do you assign them to each Lua transceiver?
 
 The multiprofile script is basically a wrapper around my generalmissile module, and more details about configuring *that* can be found [in its own docs](https://github.com/ZerothAngel/FtDScripts/blob/master/missile/generalmissile.md). The multiprofile script allows the use of one or more generalmissile instances on a single vehicle, where each instance can have a totally different behavior (e.g. anti-air missiles and torpedoes).
 
