@@ -48,7 +48,7 @@ function CannonControl_Update(I)
          local FireSlot = ToFire[WeaponSlot]
          if FireSlot and (WeaponType == TURRET or WeaponType == CANNON) and not Weapon.PlayerControl then
             local Target,CannonAimPoint = unpack(FireSlot)
-            local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.Position, Target.RelativeVelocity, Gravity+(Target.Acceleration or Vector3.zero))
+            local AimPoint = BallisticAimPoint(Weapon.Speed, CannonAimPoint - Weapon.FirePoint, Target.RelativeVelocity, Gravity+(Target.Acceleration or Vector3.zero))
             if AimPoint then
                -- Docs say this doesn't have to be normalized, but as of
                -- 2.02 or so, it does. (Otherwise crazy recoil happens...)

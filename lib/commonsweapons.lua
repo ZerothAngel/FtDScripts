@@ -13,6 +13,7 @@ function Commons.AddWeapon(Weapons, WeaponInfo, SubConstructId, WeaponIndex)
       Type = WeaponInfo.WeaponType,
       Slot = WeaponInfo.WeaponSlot,
       Position = WeaponInfo.GlobalPosition,
+      FirePoint = WeaponInfo.GlobalFirePoint,
       Speed = WeaponInfo.Speed,
       PlayerControl = WeaponInfo.PlayerCurrentlyControllingIt,
       -- Lazy init methods
