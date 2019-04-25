@@ -104,7 +104,7 @@ function GeneralMissile_UpdateMissileState(I, TransceiverIndex, MissileIndex, Po
       local CurrentThrust = Command.VarThrust or 0
       -- Also factor in short range thrusters, as long as they are still active
       if Command.ThrustCount and Now > Command.ThrustDelay and (Command.ThrustDelay + Command.ThrustDuration) > Now then
-         CurrentThrust = CurrentThrust + 1000
+         CurrentThrust = CurrentThrust + 6000
       end
       -- TODO torpedo props?
       Fuel = Fuel - CurrentThrust * TimeStep -- Assumes 1 fuel per thrust per second

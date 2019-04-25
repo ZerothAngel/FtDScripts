@@ -5,7 +5,8 @@ function Update(I)
       for tindex = 0,I:GetLuaTransceiverCount()-1 do
          for mindex = 0,I:GetLuaControlledMissileCount(tindex)-1 do
             local MissileInfo = I:GetMissileInfo(tindex, mindex)
-            for i,part in pairs(MissileInfo.Parts) do
+            for i = 1,#MissileInfo.Parts do
+               local part = MissileInfo.Parts[i]
                I:Log(string.format("%d %s", i, part.Name))
             end
             KeepGoing = false
