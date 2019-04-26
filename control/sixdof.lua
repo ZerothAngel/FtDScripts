@@ -251,13 +251,15 @@ function SixDoF.Update(I)
    end
 end
 
-function SixDoF.Disable(I)
+function SixDoF.Disable(I, HorizOnly)
    SixDoF_CurrentThrottle = 0
    if SixDoF_UsesSpinners then
       SixDoF_ClassifySpinners(I)
       -- Stop spinners
       for _,Info in pairs(SixDoF_SpinnerInfos) do
-         I:SetDedibladeContinuousSpeed(Info.Index, 0)
+         if not HorizOnly or not Info.IsVertical then
+            I:SetDedibladeContinuousSpeed(Info.Index, 0)
+         end
       end
    end
    if SixDoF_UsesControls then
@@ -267,16 +269,9 @@ function SixDoF.Disable(I)
 end
 
 function SixDoF.Release(I)
-   -- Disable non-vertical spinners just once
    if SixDoF_NeedsRelease then
-      if SixDoF_UsesSpinners then
-         SixDoF_ClassifySpinners(I)
-         for _,Info in pairs(SixDoF_SpinnerInfos) do
-            if not Info.IsVertical then
-               I:SetDedibladeContinuousSpeed(Info.Index, 0)
-            end
-         end
-      end
+      -- Be sure to only disable non-vertical spinners
+      SixDoF.Disable(I, true)
       SixDoF_NeedsRelease = false
    end
 end
