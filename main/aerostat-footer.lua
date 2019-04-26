@@ -1,1 +1,0 @@
-PumpType = HELIUMPUMP
