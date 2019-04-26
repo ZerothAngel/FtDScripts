@@ -1,7 +1,7 @@
---@ commons
+--@ commons commonsmainframe
 function Commons:MissileWarnings()
    if not self._MissileWarnings then
-      local Mainframe = CommonsWarningConfig.MissileWarningMainframe
+      local Mainframe = self:MainframeIndex(CommonsWarningConfig.MissileWarningMainframe)
       local Warnings = {}
       for i = 0,self.I:GetNumberOfWarnings(Mainframe)-1 do
          local Warning = self.I:GetMissileWarning(Mainframe, i)

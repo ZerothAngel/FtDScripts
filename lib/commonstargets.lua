@@ -1,4 +1,4 @@
---@ commons
+--@ commons commonsmainframe
 --# These will actually be a methods for Target instances
 --# Note that I don't want them to be closures for the ConvertTarget method
 --# below, so they will require I to be passed in.
@@ -37,7 +37,8 @@ function Commons:GatherTargets(Targets, StartIndex, MaxTargets)
    local CoM = self:CoM()
    local AttackSalvage = self.AttackSalvage
    -- Query mainframes in the preferred order
-   for _,mindex in ipairs(CommonsTargetConfig.PreferredTargetMainframes) do
+   for _,mspec in ipairs(CommonsTargetConfig.PreferredTargetMainframes) do
+      local mindex = self:MainframeIndex(mspec)
       local TargetCount = self.I:GetNumberOfTargets(mindex)
       if TargetCount > 0 then
          if not StartIndex then StartIndex = 0 end
