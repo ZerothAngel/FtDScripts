@@ -37,6 +37,13 @@ def create_chunk(fn, strip=False, strip_comments=False, strip_empty=False):
             with open(fn, 'rU') as content:
                 for line in content:
                     if strip:
+                        if strip_comments:
+                            trail_comment = line.rfind('--')
+                            if trail_comment > -1:
+                                # Only strip trailing comment if it doesn't have a directive for the checker
+                                if 'luacheck' not in line[trail_comment+2:]:
+                                    line = line[:trail_comment]
+                                    # Fall through and whitespace strip anything else at the end
                         line = line.strip()
                         if line or not strip_empty:
                             if not strip_comments or not line.startswith('--'):
