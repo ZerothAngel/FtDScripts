@@ -39,7 +39,7 @@ ControlFractions = {
 -- ALL DOF CONFIGURATION
 
 -- PID values
-AllDoFPIDConfig = {
+True6DoFPIDConfig = {
    Altitude = {
       Kp = .5,
       Ti = 5,
