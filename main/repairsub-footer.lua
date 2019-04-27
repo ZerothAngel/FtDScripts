@@ -4,4 +4,4 @@
 Mode = WATER
 
 -- Default minimum speed is 2 for submarines.
-if not WaypointMoveConfig.MinimumSpeed then WaypointMoveConfig.MinimumSpeed = 2 end
+if not VehicleConfig.MinimumSpeed then VehicleConfig.MinimumSpeed = 2 end

@@ -1,8 +1,5 @@
---@ commons control pid planarvector quadraticintercept getbearingtopoint sign clamp
+--@ commons control planarvector quadraticintercept getbearingtopoint sign
 -- Waypoint move module
-MTW_ThrottlePID = PID.new(WaypointMoveConfig.ThrottlePIDConfig, -1, 1)
-
-if not WaypointMoveConfig.MinimumSpeed then WaypointMoveConfig.MinimumSpeed = 0 end
 if WaypointMoveConfig.StopOnStationaryWaypoint == nil then WaypointMoveConfig.StopOnStationaryWaypoint = true end
 
 -- Scale desired speed up (or down) depending on angle between velocities
@@ -14,7 +11,7 @@ function MTW_MatchSpeed(Velocity, TargetVelocity, Faster)
    local TargetVelocityDirection = TargetVelocity / TargetSpeed
 
    local CosAngle = Vector3.Dot(TargetVelocityDirection, VelocityDirection)
-   local MinimumSpeed = WaypointMoveConfig.MinimumSpeed
+   local MinimumSpeed = VehicleConfig.MinimumSpeed
    if CosAngle > 0 then
       local DesiredSpeed = TargetSpeed
       -- Can take CosAngle into account and scale RelativeApproachSpeed appropriately,
@@ -44,9 +41,7 @@ function MoveToWaypoint(Waypoint, AdjustHeading, WaypointVelocity)
          -- Set minimum speed and constantly adjust bearing
          local Bearing = GetBearingToPoint(Waypoint)
          AdjustHeading(Bearing)
-         local CV = MTW_ThrottlePID:Control(WaypointMoveConfig.MinimumSpeed - C:ForwardSpeed())
-         local Drive = Clamp(V.GetThrottle() + CV, 0, 1)
-         V.SetThrottle(Drive)
+         V.SetSpeed(0) -- Will be clamped to minimum
       end
    else
       local Direction = Offset / Distance
@@ -69,11 +64,7 @@ function MoveToWaypoint(Waypoint, AdjustHeading, WaypointVelocity)
          local Faster = Vector3.Dot(C:ForwardVector(), Direction)
          -- Attempt to match speed
          local DesiredSpeed,Speed = MTW_MatchSpeed(Velocity, TargetVelocity, Faster)
-         -- Use PID to set throttle
-         local Error = DesiredSpeed - Speed
-         local CV = MTW_ThrottlePID:Control(Error)
-         local Drive = Clamp(V.GetThrottle() + CV, 0, 1)
-         V.SetThrottle(Drive)
+         V.SetSpeed(DesiredSpeed, Speed)
       end
    end
 end

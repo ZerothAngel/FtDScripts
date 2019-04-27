@@ -2,7 +2,7 @@
 Mode = AIR
 
 -- Default minimum speed is 40 for airplanes.
-if not WaypointMoveConfig.MinimumSpeed then WaypointMoveConfig.MinimumSpeed = 40 end
+if not VehicleConfig.MinimumSpeed then VehicleConfig.MinimumSpeed = 40 end
 -- And don't stop at waypoints
 if WaypointMoveConfig.StopOnStationaryWaypoint == nil then WaypointMoveConfig.StopOnStationaryWaypoint = false end
 

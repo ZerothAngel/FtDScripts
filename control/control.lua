@@ -1,5 +1,8 @@
---@ commons
+--@ commons pid clamp
 -- Vehicle control module
+Vehicle_ThrottlePID = PID.new(VehicleConfig.ThrottlePIDConfig, -1, 1)
+
+if not VehicleConfig.MinimumSpeed then VehicleConfig.MinimumSpeed = 0 end
 
 -- The one global for vehicle controls
 V = {}
@@ -11,6 +14,15 @@ function Vehicle_MakeReset(Table)
       if ResetThrottle then ResetThrottle() end
       if ResetPosition then ResetPosition() end
    end
+end
+
+function Vehicle_SetSpeed(Table, DesiredSpeed, CurrentSpeed) -- luacheck: ignore 131
+   DesiredSpeed = math.max(VehicleConfig.MinimumSpeed, DesiredSpeed)
+   if not CurrentSpeed then CurrentSpeed = C:ForwardSpeed() end
+   local Error = DesiredSpeed - CurrentSpeed
+   local CV = Vehicle_ThrottlePID:Control(Error)
+   local Drive = Clamp(Table.GetThrottle() + CV, 0, 1)
+   Table.SetThrottle(Drive)
 end
 
 function SelectAltitudeImpl(Source, Table) -- luacheck: ignore 131
@@ -38,6 +50,9 @@ function SelectThrottleImpl(Source, Table) -- luacheck: ignore 131
    Table.ResetThrottle = Source.ResetThrottle
    function Table.AdjustThrottle(Delta)
       Table.SetThrottle(Table.GetThrottle() + Delta)
+   end
+   function Table.SetSpeed(DesiredSpeed, CurrentSpeed)
+      Vehicle_SetSpeed(Table, DesiredSpeed, CurrentSpeed)
    end
    Vehicle_MakeReset(Table)
 end
