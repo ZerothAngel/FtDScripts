@@ -23,7 +23,7 @@ function RepairAI_Main(I)
    if RepairTargetID then
       AdjustHeadingToRepairTarget(I)
    else
-      V.SetThrottle(0)
+      V.SetSpeed(0)
    end
 end
 

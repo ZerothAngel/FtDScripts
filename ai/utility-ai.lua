@@ -2,15 +2,15 @@
 -- Utility AI module (yaw & throttle)
 
 function UtilityAI_RunAway(I, EnemyDirection)
-   local Drive = 0
    if EnemyDirection then
       -- And head in the opposite direction
       local Bearing = GetBearingToPoint(C:CoM() - EnemyDirection)
       Bearing = Bearing + CalculateEvasion(RunAwayEvasion)
       V.AdjustHeading(Avoidance(I, Bearing))
-      Drive = RunAwayDrive
+      V.SetThrottle(RunAwayDrive)
+   else
+      V.SetSpeed(0)
    end
-   V.SetThrottle(Drive)
 end
 
 function UtilityAI_MoveToCollect(I, Destination)
@@ -22,13 +22,13 @@ end
 function UtilityAI_MoveToGather(I, RZInfo)
    local Target,_ = PlanarVector(C:CoM(), RZInfo.Position)
    local Distance = Target.magnitude - GatherZoneEdge * RZInfo.Radius
-   local Drive = 0
    if Distance >= 0 then
       local Bearing = GetBearingToPoint(RZInfo.Position)
       V.AdjustHeading(Avoidance(I, Bearing))
-      Drive = Clamp(GatherDriveGain * Distance, 0, 1)
+      V.SetThrottle(Clamp(GatherDriveGain * Distance, 0, 1))
+   else
+      V.SetSpeed(0)
    end
-   V.SetThrottle(Drive)
 end
 
 function Control_MoveToWaypoint(I, Waypoint, WaypointVelocity)
