@@ -76,7 +76,7 @@ function ShieldManager_Update(I)
 end
 
 function ShieldManager_Disable(I)
-   for i=0,I:Component_GetCount(SHIELDPROJECTOR) do
+   for i=0,I:Component_GetCount(SHIELDPROJECTOR)-1 do
       ShieldManager_SetShield(I, i, false)
    end
 end
