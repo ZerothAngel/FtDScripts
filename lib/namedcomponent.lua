@@ -7,15 +7,16 @@ function NamedComponent.new(Type)
    self.Type = Type
    self.LastCount = 0
    self.IndexCache = {}
+   self.AllIndexCache = {}
 
+   self.Gather = NamedComponent.Gather
    self.GetIndex = NamedComponent.GetIndex
+   self.GetIndices = NamedComponent.GetIndices
 
    return self
 end
 
-function NamedComponent:GetIndex(I, Name, Default)
-   if not Default then Default = -1 end
-
+function NamedComponent:Gather(I)
    -- We keeps count cached in commons (gets cleared every update)
    local CountCache = C._NamedComponentCounts
    if not CountCache then
@@ -30,12 +31,12 @@ function NamedComponent:GetIndex(I, Name, Default)
       CountCache[Type] = ComponentCount
    end
 
-   local IndexCache = self.IndexCache
-
    if ComponentCount ~= self.LastCount then
       self.LastCount = ComponentCount
-      IndexCache = {}
+      local IndexCache = {}
       self.IndexCache = IndexCache
+      local AllIndexCache = {}
+      self.AllIndexCache = AllIndexCache
 
       for i = 0,ComponentCount-1 do
          local BlockInfo = I:Component_GetBlockInfo(Type, i)
@@ -45,14 +46,39 @@ function NamedComponent:GetIndex(I, Name, Default)
             if not IndexCache[CustomName] then
                IndexCache[CustomName] = i
             end
+            -- And capture duplicates in a list
+            local Indices = AllIndexCache[CustomName]
+            if not Indices then
+               Indices = {}
+               AllIndexCache[CustomName] = Indices
+            end
+            table.insert(Indices, i)
          end
       end
    end
+end
 
-   local Index = IndexCache[Name]
+function NamedComponent:GetIndex(I, Name, Default)
+   if not Default then Default = -1 end
+
+   self:Gather(I)
+
+   local Index = self.IndexCache[Name]
    if Index then
       return Index
    else
       return Default
+   end
+end
+
+function NamedComponent:GetIndices(I, Name)
+   self:Gather(I)
+
+   local Indices = self.AllIndexCache[Name]
+   if Indices then
+      -- Return a copy
+      return { unpack(Indices) }
+   else
+      return {}
    end
 end
