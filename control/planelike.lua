@@ -9,6 +9,7 @@ PlaneLike_DesiredHeading = nil
 PlaneLike_DesiredPosition = nil
 
 PlaneLike_MaxPitch = LookupTable.new(MaxPitch[1][1], math.max(PlaneLike_MaxAltitude, MaxPitch[#MaxPitch][1]), MaxPitch[1][2], MaxPitch[#MaxPitch][2], 100, MaxPitch)
+PlaneLike_MaxRoll = LookupTable.new(MaxRoll[1][1], math.max(PlaneLike_MaxAltitude, MaxRoll[#MaxRoll][1]), MaxRoll[1][2], MaxRoll[#MaxRoll][2], 100, MaxRoll)
 
 PlaneLike = {}
 
@@ -53,7 +54,8 @@ function PlaneLike.Update(_)
    if AngleBeforeRoll and DesiredHeading then
       local Bearing = NormalizeBearing(DesiredHeading - GetVectorAngle(C:ForwardVector()))
       local AbsBearing = math.abs(Bearing)
-      if AbsBearing > AngleBeforeRoll and Altitude >= MinAltitudeForRoll then
+      if AbsBearing > AngleBeforeRoll then
+         local MaxRollAngle = PlaneLike_MaxRoll:Lookup(Altitude)
          local RollAngle = RollAngleGain and math.min(MaxRollAngle, (AbsBearing - AngleBeforeRoll) * RollAngleGain) or MaxRollAngle
          DesiredRoll = -Sign(Bearing) * RollAngle
       end
