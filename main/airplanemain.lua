@@ -1,24 +1,28 @@
 --! airplane
 --@ commons control firstrun periodic
---@ shieldmanager balloonmanager multiprofile airplane altitudecontrol naval-ai
--- Airship main
+--@ shieldmanager balloonmanager multiprofile sixdof planelike planelikedefaults altitudecontrol naval-ai
+-- Airplane (plane-like) main
 BalloonManager = Periodic.new(BalloonManager_UpdateRate, BalloonManager_Control, 4)
 ShieldManager = Periodic.new(ShieldManager_UpdateRate, ShieldManager_Control, 3)
 MissileMain = Periodic.new(Missile_UpdateRate, MissileMain_Update, 2)
 AltitudeControl = Periodic.new(AltitudeControl_UpdateRate, Altitude_Control, 1)
 NavalAI = Periodic.new(AI_UpdateRate, NavalAI_Update)
 
-SelectHeadingImpl(Airplane)
-SelectThrottleImpl(Airplane)
-SelectAltitudeImpl(Airplane)
+SelectHeadingImpl(SixDoF, PlaneLikeControl)
+SelectPitchImpl(SixDoF, PlaneLikeControl)
+SelectRollImpl(SixDoF, PlaneLikeControl)
+
+SelectHeadingImpl(PlaneLike)
+SelectThrottleImpl(SixDoF)
+SelectAltitudeImpl(PlaneLike)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.new(I)
    FirstRun(I)
    if not C:IsDocked() then
       if ActivateWhen[C:MovementMode()] then
-         -- Note that the airplane module is wholly dependent on
-         -- the AI, so AltitudeControl and Airplane.Update
+         -- Note that the planelike module is wholly dependent on
+         -- the AI, so AltitudeControl and PlaneLike.Update
          -- have been moved here.
          AltitudeControl:Tick(I)
 
@@ -30,16 +34,19 @@ function Update(I) -- luacheck: ignore 131
          if BalloonManager_Kill() then V.Reset() end
 
          Altitude_Apply(I, DodgeAltitudeOffset)
-         Airplane.Update(I)
+         PlaneLike.Update(I)
       else
          NavalAI_Reset()
-         Airplane.Release(I)
+         V.Reset()
+         SixDoF.Release(I)
       end
+
+      SixDoF.Update(I)
 
       MissileMain:Tick(I)
    else
       NavalAI_Reset()
-      Airplane.Disable(I)
+      SixDoF.Disable(I)
    end
 
    ShieldManager:Tick(I)

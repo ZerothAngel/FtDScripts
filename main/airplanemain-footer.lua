@@ -7,4 +7,4 @@ if not VehicleConfig.MinimumSpeed then VehicleConfig.MinimumSpeed = 40 end
 if WaypointMoveConfig.StopOnStationaryWaypoint == nil then WaypointMoveConfig.StopOnStationaryWaypoint = false end
 
 -- Max altitude for interpolation of pitch table
-Airplane_MaxAltitude = 500
+PlaneLike_MaxAltitude = 500
