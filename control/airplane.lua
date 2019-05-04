@@ -133,7 +133,10 @@ function Airplane.Update(I)
    -- Determine angles
    local z = TargetVector.z
    local Yaw = math.deg(math.atan2(TargetVector.x, z))
-   local Pitch = math.deg(math.atan2(TargetVector.y, z))
+   --# Pitch must be [-90, 90], so use normal atan
+   --# Lua is apparently fine with dividing by zero.
+   --# Divide by 0 -> +/- infinity -> atan -> +/- 90. Perfect!
+   local Pitch = math.deg(math.atan(TargetVector.y / z))
 
    -- Run through PIDs
    local YawCV = Airplane_YawPID:Control(Yaw)
