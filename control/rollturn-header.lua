@@ -1,5 +1,9 @@
 -- ROLL TURN CONFIGURATION
 
+-- This is more for "Rule of Cool" for my 2D AIs (naval-ai, repair-ai, etc.)
+-- If it has any positive impact on turning, it is probably insignificant
+-- (because of the AI's lack of pitch controls).
+
 RollTurn = {
    -- Set to a number to enable banked turns.
    -- If the difference between desired heading and current heading
