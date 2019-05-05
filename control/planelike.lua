@@ -22,6 +22,7 @@ function PlaneLike.SetHeading(Heading)
 end
 
 function PlaneLike.ResetHeading()
+   PlaneLikeControl.ResetHeading()
    PlaneLike_DesiredHeading = nil
 end
 
@@ -31,6 +32,7 @@ function PlaneLike.SetPosition(Pos)
 end
 
 function PlaneLike.ResetPosition()
+   PlaneLikeControl.ResetPosition()
    PlaneLike_DesiredPosition = nil
 end
 
