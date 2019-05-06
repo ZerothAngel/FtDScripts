@@ -57,6 +57,7 @@ function AdjustPositionToTarget(I)
          TargetAngle = 0
       end
    end
+
    local Bearing = GetBearingToPoint(TargetPosition)
    Bearing = Bearing - Sign(Bearing, 1) * TargetAngle
    local Offset
@@ -72,14 +73,13 @@ function AdjustPositionToTarget(I)
    V.AdjustHeading(Bearing)
    V.AdjustPosition(Avoidance(I, Offset, true))
 
-   -- Determine pitch
-   local DesiredPitch = (Target:Elevation(I) >= AirTargetAboveElevation) and TargetPitch.Air or TargetPitch.Surface
-   if RelativePitch.Enabled then
-      local TargetElevation = 90 - math.deg(math.atan2(Distance, Target.AimPoint.y - C:Altitude()))
-      DesiredPitch = DesiredPitch + TargetElevation
-      -- Constrain
-      DesiredPitch = Clamp(DesiredPitch, RelativePitch.MinPitch, RelativePitch.MaxPitch)
-   end
+   -- Determine pitch (via target's elevation)
+   --# Note to self: If we were leading the target, the y position will probably
+   --# need to be constrained by the ground. I'll leave that for future me when
+   --# I actually need it.
+   local TargetElevation = 90 - math.deg(math.atan2(Distance, TargetPosition.y - C:Altitude()))
+   -- Constrain
+   local DesiredPitch = Clamp(TargetElevation, TargetPitch[1], TargetPitch[2])
    V.SetPitch(DesiredPitch)
 end
 
