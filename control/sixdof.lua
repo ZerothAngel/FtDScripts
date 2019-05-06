@@ -141,18 +141,6 @@ function SixDoF_ClassifySpinners(I)
          local BlockInfo = I:GetDedibladeInfo(i)
          SixDoF_Classify(i, BlockInfo, true, SpinnerFractions, SixDoF_SpinnerInfos)
       end
-
-      if DediBladesAlwaysUp then
-         -- Flip signs on any spinners with negative UpSign
-         for _,Info in pairs(SixDoF_SpinnerInfos) do
-            local UpSign = Info.UpSign
-            if UpSign < 0 then
-               Info.UpSign = -UpSign
-               Info.PitchSign = -Info.PitchSign
-               Info.RollSign = -Info.RollSign
-            end
-         end
-      end
    end
 end
 
@@ -162,12 +150,8 @@ function SixDoF.Update(I)
    local AltitudeCV = 0
    if SixDoF_ControlAltitude then
       local AltitudeDelta = SixDoF_DesiredAltitude - C:Altitude()
-      if not DediBladesAlwaysUp then
-         -- Scale by vehicle up vector's Y component
-         AltitudeDelta = AltitudeDelta * C:UpVector().y
-      end
-      -- Otherwise, the assumption is that it always points straight up
-      -- ("always up")
+      -- Scale by vehicle up vector's Y component
+      AltitudeDelta = AltitudeDelta * C:UpVector().y
       AltitudeCV = SixDoF_AltitudePID:Control(AltitudeDelta)
    end
    local YawCV = SixDoF_DesiredHeading and SixDoF_YawPID:Control(NormalizeBearing(SixDoF_DesiredHeading - C:Yaw())) or 0

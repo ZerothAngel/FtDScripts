@@ -8,8 +8,6 @@
 
  * Adopt the game's lingo for certain options, e.g. wander distance.
 
- * Get rid of dediblade "always up" options.
-
  * sixdof: Consider converting fully to vehicle control outputs. However, current Lua interface
    does not allow RequestControl on strafe or hover axes.
    Unfortunately, Lua cannot write to (non-stim) secondary & tertiary drives either.
