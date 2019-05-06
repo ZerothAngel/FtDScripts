@@ -6,7 +6,7 @@ function MoveToRepairTarget(I)
       local RepairTargetCoM = RepairTarget.CenterOfMass + RepairTarget.ForwardVector * RepairTargetOffset.z + RepairTarget.RightVector * RepairTargetOffset.x
       V.SetPosition(Avoidance(I, RepairTargetCoM))
       local Offset,_ = PlanarVector(C:CoM(), RepairTargetCoM)
-      if Offset.magnitude >= OriginMaxDistance then
+      if Offset.magnitude >= MaxWanderDistance then
          V.SetHeading(GetVectorAngle(Offset))
       else
          V.SetHeading(GetVectorAngle(RepairTarget.ForwardVector))
@@ -30,12 +30,12 @@ function RepairAI_FormationMove(I)
    local Flagship = I.Fleet.Flagship
    if not I.IsFlagship and Flagship.Valid then
       local FlagshipRotation = Flagship.Rotation
-      -- NB We don't bother with OriginMaxDistance
+      -- NB We don't bother with MaxWanderDistance
       -- This leads to tighter formations.
       local Waypoint = Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition
       V.SetPosition(Avoidance(I, Waypoint))
       local Offset,_ = PlanarVector(C:CoM(), Waypoint)
-      if Offset.magnitude >= OriginMaxDistance then
+      if Offset.magnitude >= MaxWanderDistance then
          V.SetHeading(GetVectorAngle(Offset))
       else
          V.SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
@@ -43,7 +43,7 @@ function RepairAI_FormationMove(I)
    else
       -- Head to fleet waypoint
       local Offset,_ = PlanarVector(C:CoM(), I.Waypoint)
-      if Offset.magnitude >= OriginMaxDistance then
+      if Offset.magnitude >= MaxWanderDistance then
          V.AdjustPosition(Avoidance(I, Offset, true))
          V.SetHeading(GetVectorAngle(Offset))
       end

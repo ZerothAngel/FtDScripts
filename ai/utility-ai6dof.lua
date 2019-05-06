@@ -8,7 +8,7 @@ function MoveToWaypoint(I, Waypoint, Evasion)
    if Evasion then
       Offset = Offset + Vector3.Cross(Offset / Distance, Vector3.up) * CalculateEvasion(Evasion)
    end
-   if Distance >= OriginMaxDistance then
+   if Distance >= MaxWanderDistance then
       V.SetHeading(GetVectorAngle(Offset))
    end
 end
@@ -33,12 +33,12 @@ function UtilityAI_FormationMove(I)
    local Flagship = I.Fleet.Flagship
    if not I.IsFlagship and Flagship.Valid then
       local FlagshipRotation = Flagship.Rotation
-      -- NB We don't bother with OriginMaxDistance
+      -- NB We don't bother with MaxWanderDistance
       -- This leads to tighter formations.
       local Waypoint = Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition
       V.SetPosition(Avoidance(I, Waypoint))
       local Offset,_ = PlanarVector(C:CoM(), Waypoint)
-      if Offset.magnitude >= OriginMaxDistance then
+      if Offset.magnitude >= MaxWanderDistance then
          V.SetHeading(GetVectorAngle(Offset))
       else
          V.SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
@@ -46,7 +46,7 @@ function UtilityAI_FormationMove(I)
    else
       -- Head to fleet waypoint
       local Offset,_ = PlanarVector(C:CoM(), I.Waypoint)
-      if Offset.magnitude >= OriginMaxDistance then
+      if Offset.magnitude >= MaxWanderDistance then
          V.AdjustPosition(Avoidance(I, Offset, true))
          V.SetHeading(GetVectorAngle(Offset))
       end

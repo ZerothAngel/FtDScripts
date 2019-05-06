@@ -30,5 +30,5 @@ CruiseMissileConfig = {
    CruiseKey = nil,
 }
 
--- Return-to-origin settings
-ReturnToOrigin = true
+-- Return-to-formation settings
+ReturnToFormation = true

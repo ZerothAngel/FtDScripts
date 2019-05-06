@@ -31,7 +31,7 @@ This governs how the plane behaves when heading toward the 'M' map waypoint or w
 
 Inside `WaypointMoveConfig`:
 
- 1. Set both `MaxDistance` and `ApproachDistance` to larger distances, something like 500-1000 depending on the speed of your plane. This ensures it drops down to minimum speed sooner.
+ 1. Set both `MaxWanderDistance` and `MaxFormationDistance` to larger distances, something like 500-1000 depending on the speed of your plane. This ensures it drops down to minimum speed sooner.
  2. Set `MinimumSpeed` to some number. This is in meters per second. It's the speed of the plane while it loiters out-of-combat or in fleet formation.
  3. Set `StopOnStationaryWaypoint` to `false`.
 

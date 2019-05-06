@@ -87,7 +87,7 @@ function RepairAI_Update(I)
       if C:FirstTarget() then
          RepairAI_Main(I)
       else
-         if ReturnToOrigin then
+         if ReturnToFormation then
             RepairAI_Reset()
             RepairAI_FormationMove(I)
          else

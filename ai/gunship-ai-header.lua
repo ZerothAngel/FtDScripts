@@ -66,9 +66,9 @@ RelativePitch = {
 }
 
 -- Set to true to return to the fleet waypoint/spawn location.
-ReturnToOrigin = true
+ReturnToFormation = true
 -- Measured in meters, when closer than this to the fleet waypoint, it
 -- will try to match the heading of the fleet flagship.
 -- If this vehicle is the flagship, this represents how close
 -- it will attempt to stay near the fleet waypoint.
-OriginMaxDistance = 100
+MaxWanderDistance = 100

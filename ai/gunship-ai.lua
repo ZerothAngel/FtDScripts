@@ -87,13 +87,13 @@ function FormationMove(I)
    local Flagship = I.Fleet.Flagship
    if not I.IsFlagship and Flagship.Valid then
       local FlagshipRotation = Flagship.Rotation
-      -- NB We don't bother with OriginMaxDistance
+      -- NB We don't bother with MaxWanderDistance
       -- This leads to tighter formations.
       local Waypoint = Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition
       V.SetPosition(Avoidance(I, Waypoint))
       if not C:FirstTarget() then
          local Offset,_ = PlanarVector(C:CoM(), Waypoint)
-         if Offset.magnitude >= OriginMaxDistance then
+         if Offset.magnitude >= MaxWanderDistance then
             V.SetHeading(GetVectorAngle(Offset))
          else
             V.SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
@@ -102,7 +102,7 @@ function FormationMove(I)
    else
       -- Head to fleet waypoint
       local Offset,_ = PlanarVector(C:CoM(), I.Waypoint)
-      if Offset.magnitude >= OriginMaxDistance then
+      if Offset.magnitude >= MaxWanderDistance then
          V.AdjustPosition(Avoidance(I, Offset, true))
          -- Only change heading if not in combat
          if not C:FirstTarget() then
@@ -125,7 +125,7 @@ function GunshipAI_Update(I)
 
    if C:MovementMode() ~= "Fleet" then
       if not C:FirstTarget() then
-         if ReturnToOrigin then
+         if ReturnToFormation then
             FormationMove(I)
          end
          V.SetPitch(0)

@@ -26,5 +26,5 @@ DamageWeight = 100.0
 -- Parent's score multiplied by this bonus (or penalty if <1)
 ParentBonus = 1.1
 
--- Return-to-origin settings
-ReturnToOrigin = false
+-- Return-to-formation settings
+ReturnToFormation = false

@@ -203,7 +203,7 @@ function CruiseAI_Update(I)
       local Target = CruiseGetTarget()
       if Target then
          CruiseGuidance(I, Target)
-      elseif ReturnToOrigin then
+      elseif ReturnToFormation then
          CruiseAI_Reset()
          FormationMove(I)
       else

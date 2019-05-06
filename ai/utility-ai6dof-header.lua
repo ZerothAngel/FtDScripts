@@ -3,4 +3,4 @@
 -- These are settings specific to the 6DoF
 -- version of the Utility AI
 
-OriginMaxDistance = 100
+MaxWanderDistance = 100

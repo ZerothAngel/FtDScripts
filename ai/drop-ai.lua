@@ -70,7 +70,7 @@ function DropAI_Main(I)
    local Offset = PlanarVector(C:CoM(), DropTargetPosition)
    local Distance = Offset.magnitude
    local DodgeX,DodgeY,DodgeZ,Dodging = Dodge()
-   DropAI_Closing = Distance > OriginMaxDistance
+   DropAI_Closing = Distance > MaxWanderDistance
    if DropAI_Closing then
       if Dodging then
          -- Continue moving toward target, so don't take DodgeZ into account
@@ -103,12 +103,12 @@ function FormationMove(I)
    local Flagship = I.Fleet.Flagship
    if not I.IsFlagship and Flagship.Valid then
       local FlagshipRotation = Flagship.Rotation
-      -- NB We don't bother with OriginMaxDistance
+      -- NB We don't bother with MaxWanderDistance
       -- This leads to tighter formations.
       local Waypoint = Flagship.ReferencePosition + FlagshipRotation * I.IdealFleetPosition
       V.SetPosition(Avoidance(I, Waypoint))
       local Offset,_ = PlanarVector(C:CoM(), Waypoint)
-      if Offset.magnitude >= OriginMaxDistance then
+      if Offset.magnitude >= MaxWanderDistance then
          V.SetHeading(GetVectorAngle(Offset))
       else
          V.SetHeading(GetVectorAngle((FlagshipRotation * I.IdealFleetRotation) * Vector3.forward))
@@ -116,7 +116,7 @@ function FormationMove(I)
    else
       -- Head to fleet waypoint
       local Offset,_ = PlanarVector(C:CoM(), I.Waypoint)
-      if Offset.magnitude >= OriginMaxDistance then
+      if Offset.magnitude >= MaxWanderDistance then
          V.AdjustPosition(Avoidance(I, Offset, true))
          V.SetHeading(GetVectorAngle(Offset))
       end
@@ -129,7 +129,7 @@ function DropAI_Update(I)
    if C:MovementMode() ~= "Fleet" then
       if not DropAI_Main(I) then
          DropAI_Reset()
-         if ReturnToOrigin then
+         if ReturnToFormation then
             FormationMove(I)
          end
       end

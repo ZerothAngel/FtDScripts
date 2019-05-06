@@ -14,9 +14,9 @@ function MTW_MatchSpeed(Velocity, TargetVelocity, Faster)
    local MinimumSpeed = VehicleConfig.MinimumSpeed
    if CosAngle > 0 then
       local DesiredSpeed = TargetSpeed
-      -- Can take CosAngle into account and scale RelativeApproachSpeed appropriately,
+      -- Can take CosAngle into account and scale RelativeClosingSpeed appropriately,
       -- but K.I.S.S. for now.
-      DesiredSpeed = DesiredSpeed + Sign(Faster) * WaypointMoveConfig.RelativeApproachSpeed
+      DesiredSpeed = DesiredSpeed + Sign(Faster) * WaypointMoveConfig.RelativeClosingSpeed
       return math.max(MinimumSpeed, DesiredSpeed),Speed
    else
       -- Angle between velocities >= 90 degrees, go minimum speed
@@ -31,7 +31,7 @@ function MoveToWaypoint(Waypoint, AdjustHeading, WaypointVelocity)
 
    if not WaypointVelocity then
       -- Stationary waypoint, just point and go
-      if Distance >= WaypointMoveConfig.MaxDistance then
+      if Distance >= WaypointMoveConfig.MaxWanderDistance then
          local Bearing = GetBearingToPoint(Waypoint)
          AdjustHeading(Bearing)
          V.SetThrottle(WaypointMoveConfig.ClosingDrive)
@@ -56,7 +56,7 @@ function MoveToWaypoint(Waypoint, AdjustHeading, WaypointVelocity)
       local Bearing = GetBearingToPoint(TargetPoint)
       AdjustHeading(Bearing)
 
-      if Distance >= WaypointMoveConfig.ApproachDistance then
+      if Distance >= WaypointMoveConfig.MaxFormationDistance then
          -- Go full throttle and catch up
          V.SetThrottle(WaypointMoveConfig.ClosingDrive)
       else

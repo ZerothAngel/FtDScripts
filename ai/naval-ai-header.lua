@@ -78,5 +78,5 @@ MinAttackTime = 10
 -- Can either explicitly set values or just copy one of the above.
 FleetMoveEvasion = AttackEvasion
 
--- Return-to-origin settings
-ReturnToOrigin = true
+-- Return-to-formation settings
+ReturnToFormation = true

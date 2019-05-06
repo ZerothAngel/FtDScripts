@@ -144,7 +144,7 @@ function NavalAI_Update(I)
    if C:MovementMode() ~= "Fleet" then
       if C:FirstTarget() then
          AdjustHeadingToTarget(I)
-      elseif ReturnToOrigin then
+      elseif ReturnToFormation then
          NavalAI_Reset()
          FormationMove(I)
       else

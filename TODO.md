@@ -6,8 +6,6 @@
 
  * Simplificaton of gunship-ai configuration, especially the pitch/hull weapon aiming stuff.
 
- * Adopt the game's lingo for certain options, e.g. wander distance.
-
  * sixdof: Consider converting fully to vehicle control outputs. However, current Lua interface
    does not allow RequestControl on strafe or hover axes.
    Unfortunately, Lua cannot write to (non-stim) secondary & tertiary drives either.
