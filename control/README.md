@@ -1,26 +1,21 @@
 # Control Modules #
 
-Various modules for moving or rotating the ship along 1 or more degrees of freedom. Modules that
-control complementary DoFs can be combined.
+Various modules for moving or rotating the ship along 1 or more degrees of freedom.
 
-## Libraries ##
+## Meta-Modules ##
 
   * altitudecontrol &mdash; Automatic/manual altitude control for anything above sea level.
   * depthcontrol &mdash; Automatic/manual altitude control for anything below sea level.
-  * spinnercontrol &mdash; Generic module for controlling spinners oriented along a given axis.
-  
+  * planelike &mdash; Meta-module (does not control any actual "hardware") for airplane-like flight. Altitude & heading parameters are converted to the necessary yaw/pitch/roll control outputs to achieve them. Suitable for airplanes or submarines.
+  * rollturn &mdash; Meta-module for banked turns. More for "Rule of Cool" than anything else since it does not control pitch to pull into the turn.
+
 ## 2 Degrees of Freedom ##
 
-  * pitchrollstab &mdash; Pitch & roll stabilization by using standard ship pitch & roll controls.
+  * tanksteer &mdash; Controls dual drive maintainers, one assigned to a tank's left track and the other to the right. For true analog differential steering. Provides yaw & longitudinal movement.
 
 ## 3 Degrees of Freedom ##
 
   * subcontrol &mdash; Depth and pitch/roll control using hydrofoils.
-  * threedofpump &mdash; Pump control for altitude/pitch/roll.
-
-## 4 Degrees of Freedom ##
-
-  * airplane &mdash; Uses standard ship controls for yaw/pitch/roll/throttle for airplane flight. Technically 3DoF as only altitude, heading, and throttle can be directly modified. Altitude & heading parameters are converted to the necessary yaw/pitch/roll control outputs to achieve them.
 
 ## 6 Degrees of Freedom ##
 
@@ -42,8 +37,3 @@ Reset* &mdash; Hint to release control along this/these degree(s) of freedom
   * SetPitch/SetRoll &mdash; Pitch & roll
   * SetThrottle/AdjustThrottle/ResetThrottle &mdash; Forward/reverse throttle (Longitudinal axis)
   * Reset &mdash; Typically releases control along X & Z plane. Main module's responsibility to actually map this function.
-
-## Combinations ##
-
-  * airplane cannot be combined with other DoF modules.
-  * sixdof can be combined with any 3DoF module so long as altitude/pitch/roll are not enabled.
