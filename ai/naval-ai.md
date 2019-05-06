@@ -111,8 +111,6 @@ Setting an evasion option to nil will disable it:
 
 Deleting the option will do the same thing.
 
-And then there's the "air raid" settings. When the primary target is above a certain altitude (`AirRaidAboveAltitude`), then `AirRaidEvasion` is used, overriding any other evasion setting. That is, unless it is nil.
-
 ## Control Configuration ##
 
 My naval AI is typically packaged with my 6dof/sixdof (6 degrees-of-freedom) module. However, only the yaw & forward axes are used.

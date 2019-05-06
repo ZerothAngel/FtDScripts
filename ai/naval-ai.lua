@@ -8,15 +8,6 @@ DodgeAltitudeOffset = nil -- luacheck: ignore 131
 
 AttackPID = PID.new(AttackPIDConfig, -1, 1)
 
--- Modifies bearing by some amount for evasive maneuvers
-function Evade(Evasion)
-   if AirRaidEvasion and C:FirstTarget():Elevation(C.I) >= AirRaidAboveElevation then
-      Evasion = AirRaidEvasion
-   end
-
-   return CalculateEvasion(Evasion)
-end
-
 -- Adjusts heading according to configured behaviors
 function AdjustHeadingToTarget(I)
    local TargetPosition = C:FirstTarget().Position
@@ -102,7 +93,7 @@ function AdjustHeadingToTarget(I)
    else
       Bearing = GetBearingToPoint(TargetPosition)
       Bearing = Bearing - (PreferredBroadside or Sign(Bearing, 1)) * TargetAngle
-      Bearing = Bearing + Evade(Evasion)
+      Bearing = Bearing + CalculateEvasion(Evasion)
       Bearing = NormalizeBearing(Bearing)
       DodgeAltitudeOffset = nil
    end
@@ -127,7 +118,7 @@ function FormationMove_Evade(DesiredBearing)
       Bearing = DodgeAngle
       DodgeAltitudeOffset = DodgeY * VehicleRadius
    else
-      Bearing = NormalizeBearing(DesiredBearing + Evade(FleetMoveEvasion))
+      Bearing = NormalizeBearing(DesiredBearing + CalculateEvasion(FleetMoveEvasion))
       DodgeAltitudeOffset = nil
    end
 

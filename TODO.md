@@ -8,8 +8,6 @@
 
  * Adopt the game's lingo for certain options, e.g. wander distance.
 
- * naval-ai: Get rid of AirRaidEvasion.
-
  * Get rid of dediblade "always up" options.
 
  * sixdof: Consider converting fully to vehicle control outputs. However, current Lua interface

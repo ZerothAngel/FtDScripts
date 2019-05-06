@@ -48,12 +48,6 @@ EscapeAngle = 120
 EscapeDrive = 1
 EscapeEvasion = { 20, .25 }
 
--- Air raid evasion
--- Overrides current evasion settings when target is
--- above a certain elevation (i.e. altitude relative to ground)
-AirRaidAboveElevation = 50
-AirRaidEvasion = { 40, .25 }
-
 -- Preferred side to face toward enemy.
 -- 1 = Starboard (right)
 -- -1 = Port (left)
