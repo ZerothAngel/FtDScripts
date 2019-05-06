@@ -6,8 +6,8 @@ TankSteer_DesiredHeading = nil
 TankSteer_DesiredThrottle = nil
 TankSteer_CurrentThrottle = 0
 
-TankSteer_LeftTrackControl = DriveMaintainer.new(TankSteerConfig.LeftTrackDriveMaintainerFacing)
-TankSteer_RightTrackControl = DriveMaintainer.new(TankSteerConfig.RightTrackDriveMaintainerFacing)
+TankSteer_LeftTrackControl = DriveMaintainer.new(TankSteerConfig.LeftTrackDriveMaintainerName)
+TankSteer_RightTrackControl = DriveMaintainer.new(TankSteerConfig.RightTrackDriveMaintainerName)
 
 TankSteer_NeedsRelease = false
 

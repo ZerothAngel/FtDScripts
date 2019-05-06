@@ -7,6 +7,6 @@ TankSteerConfig = {
       Td = .1,
    },
 
-   LeftTrackDriveMaintainerFacing = Vector3.left,
-   RightTrackDriveMaintainerFacing = Vector3.right,
+   LeftTrackDriveMaintainerName = "LeftTrack",
+   RightTrackDriveMaintainerName = "RightTrack",
 }

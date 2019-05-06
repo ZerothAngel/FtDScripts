@@ -1,6 +1,6 @@
 --@ commonstargets commons control drivemaintainer evasion terraincheck sign clamp
 -- Altitude Control module
-ManualAltitudeController = DriveMaintainer.new(ManualAltitudeDriveMaintainerFacing)
+ManualAltitudeController = DriveMaintainer.new(ManualAltitudeDriveMaintainerName)
 HalfMaxManualAltitude = (MaxManualAltitude - MinManualAltitude) / 2
 
 AltitudeControl_Desired = 0
@@ -29,7 +29,7 @@ function Altitude_Control(I)
    end
 
    local NewAltitude = DesiredAltitudeIdle
-   if ManualAltitudeDriveMaintainerFacing and ManualAltitudeWhen[C:MovementMode()] then
+   if ManualAltitudeDriveMaintainerName and ManualAltitudeWhen[C:MovementMode()] then
       NewAltitude = MinManualAltitude + HalfMaxManualAltitude + ManualAltitudeController:GetThrottle(I) * HalfMaxManualAltitude
       if ManualEvasion and Target then
          AltitudeControl_Offset = CalculateEvasion(AltitudeEvasion)

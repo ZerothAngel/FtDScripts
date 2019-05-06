@@ -2,7 +2,7 @@
 
 -- Switch to manual altitude control on these AI modes. Valid keys are "Off",
 -- "Manual", "Automatic", and "Fleet".
--- Only used when ManualAltitudeDriveMaintainerFacing below is non-nil.
+-- Only used when ManualAltitudeDriveMaintainerName below is non-nil.
 ManualAltitudeWhen = {
    Off = true,
    Manual = true,
@@ -11,16 +11,14 @@ ManualAltitudeWhen = {
 }
 
 -- Manual altitude control (optional, default disabled)
--- Set the following to an axis-aligned unit Vector3, i.e. Vector3.forward,
--- Vector3.up, Vector3.left, etc.
--- Then place a drive maintainer block facing that direction. It should be the
--- only drive maintainer facing that direction.
-ManualAltitudeDriveMaintainerFacing = nil
+-- To enable, set the following to the name of a drive maintainer (e.g.
+-- "AltControl").
+ManualAltitudeDriveMaintainerName = nil
 
 -- Determines scaling for manual altitude control. -1.0 throttle on the
 -- drive maintainer means MinManualAltitude, 1.0 throttle means
 -- MaxManualAltitude.
--- Only used when ManualAltitudeDriveMaintainerFacing above is non-nil.
+-- Only used when ManualAltitudeDriveMaintainerName above is non-nil.
 MinManualAltitude = 0
 MaxManualAltitude = 400
 

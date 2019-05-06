@@ -1,6 +1,6 @@
 --! dediblademaintainer
---@ periodic drivemaintainer spinnercontrol
-ThrottleController = DriveMaintainer.new(ThrottleDriveMaintainerFacing)
+--@ commons periodic drivemaintainer spinnercontrol
+ThrottleController = DriveMaintainer.new(ThrottleDriveMaintainerName)
 PropulsionSpinners = SpinnerControl.new(Vector3.forward)
 
 DesiredThrottle = 0
@@ -28,6 +28,7 @@ end
 DediBladeMaintainer = Periodic.new(UpdateRate, DediBladeMaintainer_Control)
 
 function Update(I) -- luacheck: ignore 131
+   C = Commons.new(I)
    if ActivateWhen[I:GetAIMovementMode()] then
       if not I:IsDocked() then
          DediBladeMaintainer:Tick(I)

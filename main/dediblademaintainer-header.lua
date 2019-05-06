@@ -14,12 +14,8 @@ ActivateWhen = {
 -- responsive it will be, but it will also take more processing time.
 UpdateRate = 4
 
--- Drive maintainer to read for propulsion. Since the Lua interface
--- lacks a method to uniquely identify blocks, using their orientation
--- is one way to find them. The first drive maintainer facing in
--- this direction will be used as throttle for the dediblades.
--- Other useful values: Vector3.left, Vector3.right, Vector3.back, etc.
-ThrottleDriveMaintainerFacing = Vector3.forward
+-- Name of the drive maintainer to read for propulsion.
+ThrottleDriveMaintainerName = "DediThrottle"
 
 -- Simply set throttle to the given value (-1 to 1) on these AI modes.
 -- If a mode is not listed below, then the dediblade speed will be
