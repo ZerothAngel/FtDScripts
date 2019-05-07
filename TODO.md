@@ -12,5 +12,3 @@
    (Also note that drive maintainers cannot be hooked up to dediblades. WTF!)
    This would leave only 1 drive maintainer for any sort of manual control (e.g. altitude).
    Also drive maintainers might be on their way out...
-
- * multiprofile: When using weapon slot or custom name matching, it is possible to match the incorrect profile. Removing the range check (or rather the closest-missile-controller check) was a mistake.

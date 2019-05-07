@@ -65,17 +65,29 @@ function SelectGuidance(I, TransceiverIndex)
             end
          end
       end
-      -- See if any profiles using weapon slot/name selection match
+
+      -- First, find the closest MC to this transceiver
+      local Closest,ClosestMC = math.huge,nil
       for _,MC in pairs(MultiProfileMCs) do
          -- Can only match if transceiver & MC are on same subconstruct
          if BlockInfo.SubConstructIdentifier == MC.SubConstructId then
-            -- See if weapon slot yields a profile
-            local SelectedIndex = MultiProfileMCMap[MC.Slot]
-            if SelectedIndex then return SelectedIndex end
-            -- Then try name
-            SelectedIndex = MultiProfileMCNameMap[MC:CustomName(I)]
-            if SelectedIndex then return SelectedIndex end
+            local Distance = (BlockInfo.Position - MC.Position).sqrMagnitude
+            if Distance < Closest then
+               -- This is the closest so far (but keep scanning... ugh)
+               Closest = Distance
+               ClosestMC = MC
+            end
          end
+      end
+
+      -- Then see if the weapon slot or name match a profile
+      if ClosestMC then
+         -- See if weapon slot yields a profile
+         local Index = MultiProfileMCMap[ClosestMC.Slot]
+         if Index then return Index end
+         -- If not, try name
+         Index = MultiProfileMCNameMap[ClosestMC:CustomName(I)]
+         if Index then return Index end
       end
 
       -- Otherwise fall through
