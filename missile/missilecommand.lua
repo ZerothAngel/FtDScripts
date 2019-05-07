@@ -9,30 +9,29 @@ function MissileCommand.new(I, TransceiverIndex, MissileIndex)
    -- instance because they may change.
    -- We leave tracking (by missile ID) to the caller.
 
-   local Fuel,Lifetime,VarThrustCount,VarThrust,ThrustCount = 0,45,0,0,0
+   local Fuel,Lifetime,VarThrustCount,VarThrust,ThrustCount = 0,MissileConst_LifetimeStart,0,0,0
 
    local switch = {}
-   -- All names have a spaces, so can't use shortcut
-   switch["Variable Thruster"] = function (Part)
+   switch[MissileConst_VarThrust] = function (Part)
       VarThrustCount = VarThrustCount + 1
       VarThrust = VarThrust + Part.Registers[2]
    end
-   switch["Fuel Tank"] = function (_)
-      Fuel = Fuel + 10000
+   switch[MissileConst_FuelTank] = function (_)
+      Fuel = Fuel + MissileConst_FuelAmount
    end
-   switch["Regulator"] = function (_)
-      Lifetime = Lifetime + 180
+   switch[MissileConst_Regulator] = function (_)
+      Lifetime = Lifetime + MissileConst_LifetimeAdd
    end
-   switch["Short Range Thruster"] = function (Part)
+   switch[MissileConst_ShortRange] = function (Part)
       ThrustCount = ThrustCount + 1
       self.ThrustDelay = Part.Registers[1]
       self.ThrustDuration = Part.Registers[2]
    end
-   switch["Magnet (for mines)"] = function (Part)
+   switch[MissileConst_ShortRange] = function (Part)
       self.MagnetRange = Part.Registers[1]
       self.MagnetDelay = Part.Registers[2]
    end
-   switch["Ballast Tanks"] = function (Part)
+   switch[MissileConst_BallastTank] = function (Part)
       self.BallastDepth = Part.Registers[1]
       self.BallastBuoyancy = Part.Registers[2]
    end
@@ -64,57 +63,38 @@ function MissileCommand.new(I, TransceiverIndex, MissileIndex)
    return self
 end
 
-function MissileCommand.ShouldUpdate(Command, Current)
-   return Command and Current and (Command ~= Current)
-end
-
 function MissileCommand:SendUpdate(I, TransceiverIndex, MissileIndex, Command)
    local switch = {}
    --# Is there really no way to get the size of a non-sequential table?
    local DoUpdate = false
 
-   local ShouldUpdate = MissileCommand.ShouldUpdate
-   if ShouldUpdate(Command.VarThrust, self.VarThrust) then
-      -- Divide desired thrust among all variable thrusters
-      local Thrust = Clamp(Command.VarThrust / self.VarThrustCount, 300, 3000)
-      switch["Variable Thruster"] = function (Part)
-         Part:SendRegister(2, Thrust)
+   for _,Spec in pairs(MissileUpdateData) do
+      local Queue = {}
+      for RegName,RegInfo in pairs(Spec[2]) do
+         local CommandVal = Command[RegName]
+         local CurrentVal = self[RegName]
+         -- Only if command is present and differs from current
+         if CommandVal and CurrentVal and (CommandVal ~= CurrentVal) then
+            local RegNo,RegMin,RegMax = unpack(RegInfo)
+            -- TODO missile scaling on RegMin/RegMax
+            -- Queue it up
+            local NewVal = Clamp(CommandVal, RegMin, RegMax)
+            table.insert(Queue, { RegNo, NewVal })
+            self[RegName] = NewVal
+         end
       end
-      self.VarThrust = Command.VarThrust
-      DoUpdate = true
-   end
-   if ShouldUpdate(Command.ThrustDelay, self.ThrustDelay) or ShouldUpdate(Command.ThrustDuration, self.ThrustDuration) then
-      local Delay = Command.ThrustDelay and Clamp(Command.ThrustDelay, 0, 20) or nil
-      local Duration = Command.ThrustDuration and Clamp(Command.ThrustDuration, .1, 5) or nil
-      switch["Short Range Thruster"] = function (Part)
-         if Delay then Part:SendRegister(1, Delay) end
-         if Duration then Part:SendRegister(2, Duration) end
+      if #Queue == 1 then -- Want to avoid loop overhead inside the closure...
+         switch[Spec[1]] = function (Part)
+            Part:SendRegister(Queue[1][1], Queue[1][2])
+         end
+         DoUpdate = true
+      elseif #Queue == 2 then -- ...so handle both cases explicitly.
+         switch[Spec[1]] = function (Part)
+            Part:SendRegister(Queue[1][1], Queue[1][2])
+            Part:SendRegister(Queue[2][1], Queue[2][2])
+         end
+         DoUpdate = true
       end
-      if Delay then self.ThrustDelay = Delay end
-      if Duration then self.ThrustDuration = Duration end
-      DoUpdate = true
-   end
-   if ShouldUpdate(Command.MagnetRange, self.MagnetRange) or ShouldUpdate(Command.MagnetDelay, self.MagnetDelay) then
-      local Range = Command.MagnetRange and Clamp(Command.MagnetRange, 5, 200) or nil
-      local Delay = Command.MagnetDelay and Clamp(Command.MagnetDelay, 3, 30) or nil
-      switch["Magnet (for mines)"] = function (Part)
-         if Range then Part:SendRegister(1, Range) end
-         if Delay then Part:SendRegister(2, Delay) end
-      end
-      if Range then self.MagnetRange = Range end
-      if Delay then self.MagnetDelay = Delay end
-      DoUpdate = true
-   end
-   if ShouldUpdate(Command.BallastDepth, self.BallastDepth) or ShouldUpdate(Command.BallastBuoyancy, self.BallastBuoyancy) then
-      local Depth = Command.BallastDepth and Clamp(Command.BallastDepth, 0, 500) or nil
-      local Buoyancy = Command.BallastBuoyancy and Clamp(Command.BallastBuoyancy, -.5, .5) or nil
-      switch["Ballast Tanks"] = function (Part)
-         if Depth then Part:SendRegister(1, Depth) end
-         if Buoyancy then Part:SendRegister(2, Buoyancy) end
-      end
-      if Depth then self.BallastDepth = Depth end
-      if Buoyancy then self.BallastBuoyancy = Buoyancy end
-      DoUpdate = true
    end
 
    if DoUpdate then
