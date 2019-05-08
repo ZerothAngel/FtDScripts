@@ -45,7 +45,7 @@ Config = {
    Phases = {
       {
          -- Terminal phase
-         Distance = 150,
+         Distance = 350,
          -- Uncomment the following (the "Change" line) to adjust variable
          -- thrusters for max burn once heading within 10 degrees of aim point.
          -- Recommend you set default thrust in other phases as well (see below).
@@ -53,13 +53,13 @@ Config = {
       },
       {
          -- Middle phase: hold current altitude
-         Distance = 300,
+         Distance = 650,
          AboveSeaLevel = true,
          MinElevation = 3,
          Altitude = 0,
          RelativeTo = 4,
          -- Uncomment the following to set default thrust to 300 (or whatever)
---         Change = { Thrust = 300, },
+--         Change = { Thrust = 1000, },
       },
       {
          -- Closing phase: climb to 300m absolute

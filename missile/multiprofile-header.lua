@@ -7,13 +7,17 @@
 -- Each profile can select Lua transceivers in one of three ways:
 --   By launcher orientation (vertical, horizontal)
 --   By launcher direction (right, left, up, down, forward, back)
---   By weapon slot of the missile controller within a given distance
+--   By custom name of the launcher.
 
--- If a Lua transceiver potentially matches multiple profiles, then:
---   1. A matching profile that uses weapon slot/distance selection
---      always wins
---   2. Otherwise the first matching profile (going down the list)
---      will be used
+-- If using custom names, you MUST name the launch pad. I also
+-- recommend giving the associated Lua transceiver the same name as
+-- a fall back measure (in case of damage).
+
+-- If a Lua transceiver potentially matches multiple profiles, then
+-- they are matched in the following priority:
+--   1. By custom name
+--   2. Direction
+--   3. Orientation
 
 -- If a Lua transceiver matches no profiles (due to damage or
 -- misconfiguration), then the 1st profile is used.
@@ -41,13 +45,7 @@ MissileProfiles = {
 --         Direction = { Vector3.left, Vector3.right },
 --      },
 --      SelectBy = {
---         -- By weapon slot of the first matching missile controller
---         -- on the same subconstruct.
---         WeaponSlot = 1,
---      },
---      SelectBy = {
---         -- By custom name of the first matching missile controller
---         -- on the same subconstruct.
+--         -- By custom name of the launcher.
 --         Name = "MyMissile",
 --      },
       -- Set to a number 1-5 to have the script fire this weapon slot itself.
@@ -87,7 +85,7 @@ MissileProfiles = {
 
          Phases = {
             {
-               Distance = 150,
+               Distance = 350,
 --               Change = { When = { Angle = 10, }, Thrust = -1, },
             },
             {
@@ -96,7 +94,7 @@ MissileProfiles = {
                MinElevation = 3,
                Altitude = 0,
                RelativeTo = 4,
---               Change = { Thrust = 300, },
+--               Change = { Thrust = 1000, },
             },
             {
                Distance = 50,
