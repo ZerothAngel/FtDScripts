@@ -1,4 +1,4 @@
---@ commonsweapons missiledriver weapontypes
+--@ missiledriver
 -- Multi profile module (common)
 
 GuidanceInfos = {}

@@ -58,7 +58,7 @@ Config = {
          MinElevation = 3,
          Altitude = 0,
          RelativeTo = 4,
-         -- Uncomment the following to set default thrust to 300 (or whatever)
+         -- Uncomment the following to set default thrust to 1000 (or whatever)
 --         Change = { Thrust = 1000, },
       },
       {
