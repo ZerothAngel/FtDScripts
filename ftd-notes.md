@@ -1,5 +1,5 @@
 Title: FtD Script Notes
-Date: 2017-04-05 00:00
+Date: 2019-05-09 00:00
 Category: From the Depths
 Tags: fromthedepths
 
@@ -20,23 +20,8 @@ Unfortunately, I don't get much feedback from other people. What I write is gene
 I pretty much regularly use all scripts that I have listed on my public page. But there's a handful of exceptions, and you should be wary about using them as well:
 
  * airplane &mdash; This is still too new, and I have no airplane design of my own. I have been testing with the SD Wyvern, SS Retribution, and a workshop plane. All but the Retribution are just "aerodynamic bricks" &mdash; they don't actually have any lift. So something to be aware of.
- * aerostat/subpump &mdash; I just created these out of curiosity. I don't have any helium airships nor do I use air pumps for depth control of my submarines.
  * multiprofile &mdash; Though I use this regularly (it's now my standard missile script), I don't use the weapon slot or direction selectors at all.
- * umultiprofile/unifiedmissile &mdash; These are obsolete, but they're written on top of generalmissile, so everything underneath the configuration is still well-tested.
  * rocketcontrol &mdash; Created this due to a request, but I don't use it myself.
- * interceptmanager &mdash; This was necessary on my adventure sub because I couldn't get the firing constraints to work for the side-firing anti-torpedo torpedoes. But I've since switched to LAMS.
-
-## Mainframes ##
-
-The Lua interface to mainframes is very barebones and minimal. And like the other block-oriented Lua bindings, there's no method to directly address specific blocks.
-
-**So I build with only one mainframe**.
-
-With multiple mainframes, when one gets destroyed and then rebuilt, it gets put at the end of the mainframe list. Since mainframes can only be addressed by their index into this list, this is a big problem. We have no access to the mainframe names, only to their *world* coordinates (which changes from frame to frame as the vehicle moves/rotates). It's probably possible to map this back to local coordinates, but it may still be iffy.
-
-Additionally, `I.AIMode` (which returns the AI's state &mdash; "off", "on", "combat", etc.) only looks at mainframe 0. Depending on damage, mainframe 0 may not be the one with the required cards.
-
-So when using my script (or any Lua script, really), it's best to use a single mainframe **or** equip each mainframe identically (same cards). Something I'm experimenting with is having a single set of cards shared by multiple mainframes (all transmitting on the same channel).
 
 ## Thrusters ##
 
@@ -52,6 +37,18 @@ Additionally, since axes are often related (e.g. altitude/pitch/roll use upward-
 
 See the `APRThrustHackKey`, `YLLThrustHackKey` and `ThrustHackKey` options of appropriate scripts.
 
+## Control Axes ##
+
+With recent versions of FtD, almost every component has the freedom to listen on one or more control axes (e.g. "hover", "yaw", "main", "A", etc.) This is very flexible!
+
+Unfortunately, Lua can only control a small subset (via `I:RequestControl`): Yaw, Pitch, Roll, Main. (And Lua can only read a different subset: Main, Secondary, Tertiary.)
+
+So true hybrid control systems are still out of reach. What's more, the old drive maintainer axes (now called STIM Primary, STIM Secondary, STIM Tertiary) seem to be deprecated, which is unfortunate since those axes could be fully read & controlled by Lua. (Though inexplicably, you could not assign them to dediblades, which limited their usefulness.)
+
+With all that said, it is probably best to use standard control axes (e.g. set `ControlFractions` to 1 for everything). But this is only feasible if your ship does not hover or strafe.
+
+Otherwise, use 1's where appropriate in `JetFractions` and `SpinnerFractions` and zero-out `ControlFractions` where necessary.
+
 ## Missiles ##
 
 I'm typically pretty conservative with my missiles. I often hear talk about monstrous 8- or 10- block long missiles.
@@ -62,7 +59,7 @@ I'm typically pretty conservative with my missiles. I often hear talk about mons
 
 The yaw PID of my scripts is typically undertuned. It seems to be common nowadays to stack multiple rudders and such.
 
-You will typically benefit from increasing `Kp` for the yaw PID. (I usually use around 7.5 for single rudder designs and scale appropriate for designs with 2 or more.)
+You will typically benefit from increasing `Kp` for the yaw PID. (I usually use around 3.75 for single rudder designs and scale appropriate for designs with 2 or more.)
 
 Just remember: assuming any sort of "evasion" is off, if your vehicle oscillates too much while attempting to go in a straight line, you will have to lower `Kp`.
 

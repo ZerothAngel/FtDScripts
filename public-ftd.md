@@ -1,5 +1,5 @@
 Title: Public FtD Scripts
-Date: 2017-04-05 00:00
+Date: 2019-05-09 00:00
 Category: From the Depths
 Tags: fromthedepths
 
@@ -46,22 +46,16 @@ When using with an altitude control script, try using a combo script that includ
 
 ### Altitude/Depth Control (Only) ###
 
+Note: Nowadays, it is probably better to use the in-game breadboard or PIDs to control altitude/pitch/roll.
+
 These scripts only provide altitude or depth control. They are meant to be used alongside a 2-dimensional AI, like the Naval AI card (or many of my AI scripts above). They also work fine with manual yaw & propulsion. All scripts will also allow manual (analog) control of the altitude/depth using a drive maintainer.
 
 Again, if you're going to use these with my AI scripts, using a combo script (below) provides better integration and is more efficient.
 
-  * [aerostat](https://zerothangel.com/FtDScripts/aerostat.lua) &mdash; Controls helium pumps for lift and pitch/roll stabilization. I don't use this myself, so YMMV. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
   * [subcontrol](https://zerothangel.com/FtDScripts/subcontrol.lua) &mdash; Hydrofoil script with pitch, roll, depth control + manual depth option. ([Forum post #1](http://www.fromthedepthsgame.com/forum/showthread.php?tid=21908) [Forum post #2](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
-  * [subpump](https://zerothangel.com/FtDScripts/subpump.lua) &mdash; Controls air pumps for lift and pitch/roll stabilization. I don't use this myself as I prefer hydrofoil-based subs, but it's here for completeness. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=23335))
   * [hover](https://zerothangel.com/FtDScripts/hover.lua) &mdash; Upward- or downward-facing jets and/or spinners for lift and pitch/roll control.
 
 ### Missile Scripts ###
-
-Note that the "unifiedmissile" module and all scripts based on it have been
-superceded by a newer, more general missile module (uncreatively named
-"generalmissile"). It can do everything unifiedmissile can do and more.
-
-The generalmissile module is quite a bit harder to configure properly &mdash; using a Lua-aware editor is recommended &mdash; so I haven't bothered making any public posts about it. But it's available here.
 
 #### generalmissile-based ####
 
@@ -74,13 +68,6 @@ These use the new configuration scheme detailed [in this doc](https://github.com
 
   * [smartmine](https://zerothangel.com/FtDScripts/smartmine.lua) &mdash; aka mobilemine. Rocket-propelled magnetic mines that automatically match depth and minimizes magnetic range when friendlies are nearby.
 
-#### Legacy ####
-
-These all use generalmissile under the hood, but continue to be configured as they were before. I will most likely not add any new configuration options, but they should continue to work for the foreseeable future.
-
-  * [umultiprofile](https://zerothangel.com/FtDScripts/umultiprofile.lua) &mdash; Multiple profile missile script, based on unifiedmissile. Profiles can be selected by weapon slot, launcher direction (left, right up, etc.) or launcher orientation (horizontal/vertical). ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=21639)) ([Demo platform](https://steamcommunity.com/sharedfiles/filedetails/?id=807779571))
-  * [unifiedmissile](https://zerothangel.com/FtDScripts/unifiedmissile.lua) &mdash; Highly configurable advanced missile script that supports a variety of attack profiles. ([Forum post](http://www.fromthedepthsgame.com/forum/showthread.php?tid=21639))
-
 ### Turret Scripts ###
 
 I've only recently started dabbling in Lua-aimed cannon turrets. Frankly, I don't see any solid advantages yet (aside from making the LWC/receiver/failsafe combo unnecessary). And you lose quite a bit, like failsafes and the ability to have AI-assisted manual targeting.
@@ -89,7 +76,6 @@ But it was an interesting exercise, and it **does** seem to be quite a bit more 
 
   * [cameratrack](https://zerothangel.com/FtDScripts/cameratrack.lua) &mdash; Controls turrets on a single weapon group and points them at the highest-priority enemy. Meant for cameras (so you can have a non-cheaty pseudo-3rd person view in adventure mode), **does not compute firing solutions for weapons**. Also useful for directing sensor turrets without the need for a missile controller+LWC.
   * [cannoncontrol](https://zerothangel.com/FtDScripts/cannoncontrol.lua) &mdash; Cannon fire control script. Uses the quartic (4th degree) ballistic trajectory formula, so it takes gravity (of course) and relative target velocity into account. Can control one or more weapon groups with a different set of targeting limitations for each.
-  * [rocketcontrol](https://zerothangel.com/FtDScripts/rocketcontrol.lua) &mdash; Turret controller for dumbfire rockets or torpedoes. The missiles must not have any fins or guidance. ([Demo platform](http://www.fromthedepthsgame.com/forum/showthread.php?tid=25545&pid=292608#pid292608))
 
 ### Combo Scripts ###
 
@@ -118,8 +104,6 @@ Note that most combo scripts include my generalmissile-based multiprofile missil
 
 ### Miscellaneous ###
 
-  * [dediblademaintainer](https://zerothangel.com/FtDScripts/dediblademaintainer.lua) &mdash; Allows linking a drive maintainer to forward/reverse-oriented dediblades for propulsion. This gives you full manual *analog* control of dediblades, allowing a quick way to zero-out the throttle (as with the "water drive") and also go in reverse.
-  * [interceptmanager](https://zerothangel.com/FtDScripts/interceptmanager.lua) &mdash; Fires a weapon slot (presumably a missile interceptor launcher) associated with one of the 4 directional quadrants whenever hostile missiles are detected. Distinguishes between incoming missiles & torpedoes. Saves ammo.
   * [shieldmanager](https://zerothangel.com/FtDScripts/shieldmanager.lua) &mdash; Only activates shields facing enemies. Saves power.
   * [dockmanager](https://zerothangel.com/FtDScripts/dockmanager.lua) &mdash; Staggered release of tractor beams (front-to-back) after first enemy detection. Delayed recall of fighters after last enemy dies.
 
@@ -127,11 +111,6 @@ Note that most combo scripts include my generalmissile-based multiprofile missil
 
 More or less functional, but still works-in-progress.
 
-The "alldof" module is basically a version of the sixdof module that continuously calculates the facing of all propulsive elements, making it suitable for tilt-rotor & vectored thrust vehicles.
-
-  * [airshipadof](https://zerothangel.com/FtDScripts/airshipadof.lua) &mdash; Combo script: naval-ai + alldof + multiprofile + shieldmanager
-  * [gunshipadof](https://zerothangel.com/FtDScripts/gunshipadof.lua) &mdash; Combo script: gunship-ai + alldof + multiprofile + shieldmanager
-  * [quadtilt](https://zerothangel.com/FtDScripts/quadtilt.lua) &mdash; Combo script: naval-ai + quadtilt + alldof + multiprofile + shieldmanager. Quad-tilt rotor/thruster script. I'm not really satisfied with the way it works (weak altitude control), I'll probably start anew if I ever get interested in these types of vehicles again. **Very tricky to set up, just avoid using it**.
-  * [interceptor](https://zerothangel.com/FtDScripts/interceptor.lua) &mdash; Full-fledged Lua-guided missile interceptor script. Attempts to assign interceptors 1-to-1 to missiles, also uses quadratic predictive guidance to guide interceptors to their missile. Still useless since interceptors are pretty weak against missiles, especially with the missile HP buff.
+  * [rocketcontrol](https://zerothangel.com/FtDScripts/rocketcontrol.lua) &mdash; Turret controller for dumbfire rockets or torpedoes. The missiles must not have any fins or guidance. ([Demo platform](http://www.fromthedepthsgame.com/forum/showthread.php?tid=25545&pid=292608#pid292608))
   * [rocketlerp](https://zerothangel.com/FtDScripts/rocketlerp.lua) &mdash; Adaptive turret controller for dumbfire rockets. Linear interpolation version. ([Demo platform](http://www.fromthedepthsgame.com/forum/showthread.php?tid=25545&pid=328398#pid328398))
   * [rocketnn](https://zerothangel.com/FtDScripts/rocketnn.lua) &mdash; Adaptive turret controller for dumbfire rockets. Neural network version. ([Demo platform](http://www.fromthedepthsgame.com/forum/showthread.php?tid=25545&pid=328398#pid328398))
