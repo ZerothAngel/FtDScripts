@@ -1,3 +1,8 @@
+Title: FtD Airplane
+Date: 2019-05-11 00:00
+Category: From the Depths
+Tags: fromthedepths
+
 # airplane Configuration #
 
 ## Overview ##

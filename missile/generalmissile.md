@@ -1,3 +1,8 @@
+Title: FtD GeneralMissile
+Date: 2019-05-11 00:00
+Category: From the Depths
+Tags: fromthedepths
+
 # generalmissile Configuration #
 
 ## How It Works ##

@@ -35,7 +35,7 @@ All the combat-oriented scripts (everything but repair-ai and utility-ai) have t
 
 When using with an altitude control script, try using a combo script that includes the desired AI module (see below). It will have better integration (e.g. missile dodging also modifies altitude) and it will be more efficient in terms of CPU usage.
 
-  * [airplane](https://zerothangel.com/FtDScripts/airplane.lua) &mdash; This is actually just naval-ai below packaged in a combo script meant for anything that flies like an airplane, i.e. responds to yaw/pitch/roll/propulsion controls. Supports banked turns and like naval-ai, supports broadside and attack run behaviors. Similar to the stock Aerial AI, but potentially much smoother since it has a number of built-in PIDs. See [the brief guide](https://github.com/ZerothAngel/FtDScripts/blob/master/main/airplane.md).
+  * [airplane](https://zerothangel.com/FtDScripts/airplane.lua) &mdash; This is actually just naval-ai below packaged in a combo script meant for anything that flies like an airplane, i.e. responds to yaw/pitch/roll/propulsion controls. Supports banked turns and like naval-ai, supports broadside and attack run behaviors. Similar to the stock Aerial AI, but potentially much smoother since it has a number of built-in PIDs. See [the brief guide]({filename}airplane.md).
   * [cruisemissile](https://zerothangel.com/FtDScripts/cruisemissile.lua) &mdash; Cruise missile/kamikaze AI that supports multiple phases and interaction with ACBs (through complex controller keys). Meant for anything that flies like an airplane, configured similarly to my airplane script. ([Forum post](http://fromthedepthsgame.com/forum/showthread.php?tid=30980) and [Demo ship](https://steamcommunity.com/sharedfiles/filedetails/?id=1172433813))
   * drop-ai &mdash; Dropship/boarding AI which follows the closest enemy and keeps the ship directly above (or below) it. This comes as a combo script, [a 6DoF jet/spinner version](https://zerothangel.com/FtDScripts/drop.lua). There's currently no standalone version. ([Demo ship](https://steamcommunity.com/sharedfiles/filedetails/?id=839137591))
   * gunship-ai &mdash; A standoff AI that attempts to keep at a set distance from the target while continuously facing it. Moves laterally and longitudinally (forward *and* backward) to do so. Comes as a combo script, [a 6DoF jet/spinner version](https://zerothangel.com/FtDScripts/gunship.lua). No standalone version currently available. ([Demo ship](https://steamcommunity.com/sharedfiles/filedetails/?id=764285025))
@@ -59,10 +59,10 @@ Again, if you're going to use these with my AI scripts, using a combo script (be
 
 #### generalmissile-based ####
 
-These use the new configuration scheme detailed [in this doc](https://github.com/ZerothAngel/FtDScripts/blob/master/missile/generalmissile.md).
+These use the new configuration scheme detailed [in this doc]({filename}generalmissile.md).
 
   * [generalmissile](https://zerothangel.com/FtDScripts/generalmissile.lua) &mdash; Highly configurable missile script that supports dual-mode operation (AA or profile), an arbitrary number of profile phases, directional approach, and variable thrust control. Only bother with this script if you're interested in only having a single type of missile on your vehicle. Otherwise, use multiprofile below.
-  * [multiprofile](https://zerothangel.com/FtDScripts/multiprofile.lua) &mdash; Multiple profile missile script, based on generalmissile. Profiles can be selected by weapon slot, launcher direction (left, right, up, etc.) or launcher orientation (horizontal/vertical). ([Documentation](https://github.com/ZerothAngel/FtDScripts/blob/master/missile/multiprofile.md))
+  * [multiprofile](https://zerothangel.com/FtDScripts/multiprofile.lua) &mdash; Multiple profile missile script, based on generalmissile. Profiles can be selected by weapon slot, launcher direction (left, right, up, etc.) or launcher orientation (horizontal/vertical). ([Documentation]({filename}multiprofile.md))
 
 #### Miscellaneous ####
 

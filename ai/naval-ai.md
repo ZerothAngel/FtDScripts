@@ -1,3 +1,8 @@
+Title: FtD NavalAI
+Date: 2019-05-11 00:00
+Category: From the Depths
+Tags: fromthedepths
+
 # ZerothAngel's Naval AI Configuration #
 
 ## Modes of Operation ##
