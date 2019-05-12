@@ -21,46 +21,45 @@ Tags: fromthedepths
  * Profiles are divided into an arbitrary number of phases. There are always at least
    two phases: closing phase and terminal phase.
 
-   * The terminal phase is the inner-most phase. The closing phase is the outer-most.
+    * The terminal phase is the inner-most phase. The closing phase is the outer-most.
 
-   * For the anti-air profile, the current phase is selected by the range (straight
-     line distance) from the target.
+    * For the anti-air profile, the current phase is selected by the range (straight
+      line distance) from the target.
 
-   * For the surface profile, the current phase is selected by the ground distance from
-     the target, i.e. the distance without taking the altitude of either the target or
-     missile into account.
+    * For the surface profile, the current phase is selected by the ground distance from
+      the target, i.e. the distance without taking the altitude of either the target or
+      missile into account.
 
-   * The closing phase is selected when no other phases match.
+    * The closing phase is selected when no other phases match.
 
-   * In the terminal phase, the missile will pursue the target without any restrictions,
-     i.e. no regards for terrain. The altitude of the final aim point may be raised or
-     lowered in some way.
+    * In the terminal phase, the missile will pursue the target without any restrictions,
+      i.e. no regards for terrain. The altitude of the final aim point may be raised or
+      lowered in some way.
 
-   * In a sense, for the anti-air profile, the phases can be thought of as concentric
-     spheres around the target. For the surface profile, they are concentric
-     cylinders.
+    * In a sense, for the anti-air profile, the phases can be thought of as concentric
+      spheres around the target. For the surface profile, they are concentric
+      cylinders.
  
-   * In non-terminal phases, by default the missile will aim at a point that is between
-     its current position and the *border* of the next inner phase.
+    * In non-terminal phases, by default the missile will aim at a point that is between
+      its current position and the *border* of the next inner phase.
+      This point can be modified in two ways:
 
-     This point can be modified in two ways:
+        * It can be rotated about the target (using the target's velocity to determine which
+          way is "front"). Currently, only available to the surface profile.
 
-     * It can be rotated about the target (using the target's velocity to determine which
-       way is "front"). Currently, only available to the surface profile.
+        * It can also be raised or lowered relative to some other object, e.g. the target's
+          current altitude, the ground underneath the target, or the target's depth under
+          the ocean.
 
-     * It can also be raised or lowered relative to some other object, e.g. the target's
-       current altitude, the ground underneath the target, or the target's depth under
-       the ocean.
+        * For the surface profile, if no aim point modification is done, it will simply
+          hug the terrain.
 
-     * For the surface profile, if no aim point modification is done, it will simply
-       hug the terrain.
+    * All phases may conditionally modify thrust and other missile parameters, such as
+      magnet range or ballast depth.
 
-   * All phases may conditionally modify thrust and other missile parameters, such as
-     magnet range or ballast depth.
-
-   * Non-terminal phases may apply pseudo-random horizontal evasion (which is pretty
-     useless against most anti-missile defenses, but is there for rule-of-cool).
-     Currently only available to the surface profile.
+    * Non-terminal phases may apply pseudo-random horizontal evasion (which is pretty
+      useless against most anti-missile defenses, but is there for rule-of-cool).
+      Currently only available to the surface profile.
 
 ## Example ##
 
@@ -131,9 +130,11 @@ I try to keep the use of certain words consistent in the parameter names, regard
 Both anti-air and surface profiles have a *Phases* array. The first phase in the array is always the terminal phase. The last is always the closing phase. The array must be sorted from least to greatest according to their *Range* value (for anti-air) or *Distance* value (for surface) except for the very last (aka closing) phase.
 
  * For the anti-air profile:
-   * The *Range* value is used to deterimine when this phase is active. This is the straight-line distance between the missile and target.
-   * The closing phase may be omitted if there are no other phases other than the terminal phase. In this case, the terminal phase may also omit its *Range*.
-   * If there is a closing phase, it may omit its *Range* (the range for the closing phase is always taken to be infinite).
+
+    * The *Range* value is used to deterimine when this phase is active. This is the straight-line distance between the missile and target.
+    * The closing phase may be omitted if there are no other phases other than the terminal phase. In this case, the terminal phase may also omit its *Range*.
+    * If there is a closing phase, it may omit its *Range* (the range for the closing phase is always taken to be infinite).
+
  * For the surface profile, the *Distance* value is used to determine when the phase is active. This is the ground distance between missile and target.
 
 ## Common Phase Parameters ##
@@ -143,14 +144,17 @@ These are parameters that may be present in both anti-air and surface phases.
  * Altitude &mdash; If non-nil, the altitude will be modified by adding this number with another. See *RelativeTo*
 
    For the terminal phase, this allows modification of the final aim point, e.g. to constrain it above (or below) the water line.
+
  * RelativeTo &mdash; Determines what *Altitude* is relative to. May be a number from 0 to 6:
-   * 0 &mdash; *Altitude* is an absolute altitude
-   * 1 &mdash; *Altitude* is added to the target's absolute altitude
-   * 2 &mdash; *Altitude* is added to the target's sea depth, which will be negative and at most 0 (so not really a true depth).
-   * 3 &mdash; *Altitude* is added to the target's ground, which will be at the very least 0 and take into account terrain directly underneath the target.
-   * 4 &mdash; *Altitude* is added to the missile's current altitude. Using 0 for *Altitude* is probably best.
-   * 5 &mdash; *Altitude* is a lower bound, i.e. max(target altitude, *Altitude*)
-   * 6 &mdash; *Altitude* is an upper bound, i.e. min(target altitude, *Altitude*)
+
+    * 0 &mdash; *Altitude* is an absolute altitude
+    * 1 &mdash; *Altitude* is added to the target's absolute altitude
+    * 2 &mdash; *Altitude* is added to the target's sea depth, which will be negative and at most 0 (so not really a true depth).
+    * 3 &mdash; *Altitude* is added to the target's ground, which will be at the very least 0 and take into account terrain directly underneath the target.
+    * 4 &mdash; *Altitude* is added to the missile's current altitude. Using 0 for *Altitude* is probably best.
+    * 5 &mdash; *Altitude* is a lower bound, i.e. max(target altitude, *Altitude*)
+    * 6 &mdash; *Altitude* is an upper bound, i.e. min(target altitude, *Altitude*)
+
  * Change &mdash; An optional (i.e. can be nil or omitted) table of parameters that specify changes to the missile's state, e.g. variable thrust change, ballast depth change, etc. See the section below for more details.
 
 ## Anti-Air Phase Parameters ##
