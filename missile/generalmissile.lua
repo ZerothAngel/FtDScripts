@@ -7,6 +7,39 @@ function GeneralMissile_PrepareAngle(Angle, Default)
    return Angle and math.cos(math.rad(Angle)) or Default
 end
 
+-- Calculate minimum terminal distance
+function GeneralMissile_MinTerminal(TurnRadius, AltitudeDelta)
+   if TurnRadius <= AltitudeDelta then
+      -- Simply the turn radius. Round up to nearest 25.
+      return 25 * math.ceil(TurnRadius / 25)
+   else
+      -- Calculate and round up to nearest 25.
+      local MinTerminal = math.sqrt(AltitudeDelta * (2 * TurnRadius - AltitudeDelta))
+      return 25 * math.ceil(MinTerminal / 25)
+   end
+end
+
+function GeneralMissile_DynamicDistances(Config)
+   -- Need both velocity and turn rate
+   local Velocity,TurnRate = Config.Velocity,Config.TurnRate
+   if not Velocity or not TurnRate then return end
+
+   local TurnRadius = Velocity / math.rad(TurnRate)
+   local MinTerminal = function (AltitudeDelta)
+      return GeneralMissile_MinTerminal(TurnRadius, math.abs(AltitudeDelta))
+   end
+
+   -- Scan each phase (of the 2D profile)
+   for _,Phase in pairs(Config.Phases) do
+      -- And only act on those that are a function
+      if type(Phase.Distance) == "function" then
+         -- Resolve actual distance by calling the function
+         local NewDistance = Phase.Distance(MinTerminal, TurnRadius)
+         Phase.Distance = NewDistance
+      end
+   end
+end
+
 function GeneralMissile.new(Config)
    local self = deepcopy(Config)
 
@@ -59,6 +92,8 @@ function GeneralMissile.new(Config)
    end
    -- Set 3D closing range (currently unused)
    self.AntiAir.Phases[#self.AntiAir.Phases].Range = math.huge
+
+   GeneralMissile_DynamicDistances(self)
 
    -- Methods (because no setmetatable)
    self.GetTerrainHeight = GeneralMissile.GetTerrainHeight

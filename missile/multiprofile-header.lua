@@ -24,6 +24,9 @@ MissileProfiles = {
       },
       -- Javelin-style missiles
       Config = {
+         Velocity = 155,
+         TurnRate = 31.4,
+
          MinAltitude = 0,
          DetonationRange = nil,
          DetonationAngle = 30,
@@ -41,11 +44,11 @@ MissileProfiles = {
 
          Phases = {
             {
-               Distance = 350,
-               Change = { When = { Angle = 10, }, Thrust = -1, },
+               Distance = function (MinTerminal) return MinTerminal(300) end,
+               Change = { When = { Angle = 5, }, Thrust = -1, },
             },
             {
-               Distance = 650,
+               Distance = function (MinTerminal) return MinTerminal(300) * 2 end,
                AboveSeaLevel = true,
                MinElevation = 3,
                Altitude = 0,
@@ -76,6 +79,9 @@ MissileProfiles = {
       },
       -- Bottom-attack torpedoes
       Config = {
+         Velocity = 66,
+         TurnRate = 30,
+
          MinAltitude = -500,
          DetonationRange = 15,
          DetonationAngle = 30,
@@ -84,7 +90,7 @@ MissileProfiles = {
 
          Phases = {
             {
-               Distance = 175,
+               Distance = function (MinTerminal) return MinTerminal(50) end,
                Altitude = 0,
                RelativeTo = 6,
             },

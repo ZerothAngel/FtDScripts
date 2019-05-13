@@ -2,25 +2,11 @@
 -- Multi profile module (simplemissile)
 SimpleMissile = {}
 
-function SimpleMissile_TurnRadius(Velocity, TurnRate)
-   return Velocity / math.rad(TurnRate)
-end
-
-function SimpleMissile_MinTerminal(TurnRadius, AltitudeDelta)
-   if TurnRadius <= AltitudeDelta then
-      -- Simply the turn radius. Round up to nearest 25.
-      return 25 * math.ceil(TurnRadius / 25)
-   else
-      -- Calculate and round up to nearest 25.
-      local MinTerminal = math.sqrt(AltitudeDelta * (2 * TurnRadius - AltitudeDelta))
-      return 25 * math.ceil(MinTerminal / 25)
-   end
-end
-
 function SimpleMissile_TopAttack(Config)
-   local TurnRadius = SimpleMissile_TurnRadius(Config.Velocity, Config.TurnRate)
-   local MinTerminal = SimpleMissile_MinTerminal(TurnRadius, Config.AscentAltitude)
    local GMConfig = {
+      Velocity = Config.Velocity,
+      TurnRate = Config.TurnRate,
+
       MinAltitude = 0,
       DetonationRange = nil,
       DetonationAngle = 30,
@@ -38,11 +24,11 @@ function SimpleMissile_TopAttack(Config)
 
       Phases = {
          {
-            Distance = MinTerminal,
+            Distance = function (MinTerminal) return MinTerminal(Config.AscentAltitude) end,
             Change = { When = { Angle = Config.TerminalAngle, }, Thrust = Config.TerminalThrust, },
          },
          {
-            Distance = MinTerminal * Config.CruiseDistanceMultiplier,
+            Distance = function (MinTerminal) return MinTerminal(Config.AscentAltitude) * Config.CruiseDistanceMultiplier end,
             AboveSeaLevel = true,
             MinElevation = 3,
             Altitude = 0,
@@ -63,8 +49,10 @@ function SimpleMissile_TopAttack(Config)
 end
 
 function SimpleMissile_Torpedo(Config)
-   local TurnRadius = SimpleMissile_TurnRadius(Config.Velocity, Config.TurnRate)
    local GMConfig = {
+      Velocity = Config.Velocity,
+      TurnRate = Config.TurnRate,
+
       MinAltitude = -500,
       DetonationRange = nil,
       DetonationAngle = 30,
@@ -73,7 +61,7 @@ function SimpleMissile_Torpedo(Config)
 
       Phases = {
          {
-            Distance = SimpleMissile_MinTerminal(TurnRadius, Config.RelativeDepth),
+            Distance = function (MinTerminal) return MinTerminal(Config.RelativeDepth) end,
             Altitude = 0,
             RelativeTo = 6,
          },
