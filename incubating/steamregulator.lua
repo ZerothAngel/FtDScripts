@@ -1,16 +1,16 @@
 --! steamregulator
---@ commons periodic namedcomponent pid clamp
+--@ commons periodic namedcomponent pid
 SteamRegulator = {}
 
 STEAMBOILER = 17
 SteamRegulator_NamedComponent = NamedComponent.new(STEAMBOILER)
-SteamRegulator_PID = PID.new(SteamRegulatorConfig.PIDConfig, -SteamRegulatorConfig.MaxBurnRate, SteamRegulatorConfig.MaxBurnRate)
+SteamRegulator_PID = PID.new(SteamRegulatorConfig.PIDConfig, 0, SteamRegulatorConfig.MaxBurnRate)
 
 function SteamRegulator.Update(I)
    local Energy = I:GetEnergyFraction()
 
    -- No such thing as negative burn rate, so clamp appropriately
-   local CV = Clamp(SteamRegulator_PID:Control(SteamRegulatorConfig.TargetLevel - Energy), 0, SteamRegulatorConfig.MaxBurnRate)
+   local CV = SteamRegulator_PID:Control(SteamRegulatorConfig.TargetLevel - Energy)
    I:LogToHud(string.format("Energy = %f, CV = %f", Energy, CV))
    for _,index in ipairs(SteamRegulator_NamedComponent:GetIndices(I, SteamRegulatorConfig.Name)) do
       I:Component_SetFloatLogic(STEAMBOILER, index, CV)
