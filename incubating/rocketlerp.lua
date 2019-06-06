@@ -15,6 +15,13 @@ AddFirstRun(function (_)
 function RocketControl_Train(I)
    -- Sort so we can figure out the last value
    table.sort(TrainingSets, function (a,b) return a[1] < b[1] end)
+   if DumpTrainingSet then
+      I:ClearLogs()
+      for i = 1,#TrainingSets do
+         I:Log(string.format("%f %f", TrainingSets[i][1], TrainingSets[i][2]))
+      end
+      I:Crash()
+   end
    -- Create lookup table
    local MaxRange = math.ceil(TrainingSets[#TrainingSets][2])
    DistanceTable = LookupTable.new(0, TimeScale, 0, MaxRange, LookupTableSize, TrainingSets)

@@ -1,5 +1,7 @@
 -- CONFIGURATION
 
+DumpTrainingSet = false
+
 -- Activate on these AI modes. Valid keys are "Off", "Manual", "Automatic",
 -- and "Fleet".
 ActivateWhen = {
