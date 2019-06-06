@@ -12,7 +12,6 @@ end
 function CannonControl_Update(I)
    -- Pick highest priority target for each configured weapon slot
    local ToFire = {}
-   local Fire = false -- Because # operator only works on sequences
    local Targets = C:Targets()
    local Velocity = C:Velocity()
    for Slot,Limits in pairs(CannonLimits) do
@@ -31,13 +30,12 @@ function CannonControl_Update(I)
             AimPoint = Vector3(AimPoint.x, (Waterline and math.max(Waterline, AimPoint.y) or AimPoint.y), AimPoint.z)
             -- And queue up this slot
             ToFire[Slot] = { Target, AimPoint }
-            Fire = true
             break
          end
       end
    end
 
-   if Fire then
+   if next(ToFire) then
       -- Just assume all weapons have the same gravity
       local Gravity = -I:GetGravityForAltitude(C:Altitude())
 

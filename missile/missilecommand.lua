@@ -65,8 +65,6 @@ end
 
 function MissileCommand:SendUpdate(I, TransceiverIndex, MissileIndex, Command)
    local switch = {}
-   --# Is there really no way to get the size of a non-sequential table?
-   local DoUpdate = false
 
    for _,Spec in pairs(MissileUpdateData) do
       local Queue = {}
@@ -87,17 +85,15 @@ function MissileCommand:SendUpdate(I, TransceiverIndex, MissileIndex, Command)
          switch[Spec[1]] = function (Part)
             Part:SendRegister(Queue[1][1], Queue[1][2])
          end
-         DoUpdate = true
       elseif #Queue == 2 then -- ...so handle both cases explicitly.
          switch[Spec[1]] = function (Part)
             Part:SendRegister(Queue[1][1], Queue[1][2])
             Part:SendRegister(Queue[2][1], Queue[2][2])
          end
-         DoUpdate = true
       end
    end
 
-   if DoUpdate then
+   if next(switch) then
       local MissileInfo = I:GetMissileInfo(TransceiverIndex, MissileIndex)
       local parts = MissileInfo.Parts
       for i = 1,#parts do
