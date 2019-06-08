@@ -54,24 +54,12 @@ function GetTerrainHeight(I, Velocity, MinAltitude, MaxAltitude)
       local RemainingAltitude = math.max(0, MaxAltitude - C:Altitude())
       LookAheadTime = math.max(1, TerrainCheckBufferFactor * RemainingAltitude / CurrentMaxVerticalSpeed)
    end
-   local MaxDistance = Speed * LookAheadTime
 
-   -- Calculate (mid-point) distances for this velocity once
-   local Distances = {}
-   for d = 0,MaxDistance-1,TerrainCheckResolution do
-      table.insert(Distances, C:CoM() + Direction * d)
-   end
-
-   -- Make sure end point is also checked
-   -- (Generally it won't be evenly divisible by TerrainCheckResolution)
-   table.insert(Distances, C:CoM() + Direction * MaxDistance)
-
+   local LookAhead = (MinAltitude < 0) and I.GetTerrainAltitudeLookingAhead or I.GetWaveOrTerrainAltitudeLookingAhead
+   local MaxDistance = Velocity * LookAheadTime
    for _,Offset in pairs(TerrainCheckPoints) do
-      local Side = Perp * Offset
-      for _,Distance in ipairs(Distances) do
-         local TestPoint = Distance + Side
-         Height = math.max(Height, I:GetTerrainAltitudeForPosition(TestPoint))
-      end
+      local TestPoint = C:CoM() + Perp * Offset
+      Height = math.max(Height, LookAhead(I, TestPoint, MaxDistance, TerrainCheckResolution))
    end
 
    return Height

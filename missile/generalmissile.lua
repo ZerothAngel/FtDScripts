@@ -174,24 +174,21 @@ function GeneralMissile_HandleMissileChange(I, TransceiverIndex, MissileIndex, P
 end
 
 -- Return highest terrain seen within look-ahead distance
-function GeneralMissile:GetTerrainHeight(I, Position, Velocity, MaxDistance)
+function GeneralMissile:GetTerrainHeight(I, Position, Velocity, MaxDistance, AboveSeaLevel)
    if not MaxDistance then MaxDistance = math.huge end
 
-   local LookAheadTime,LookAheadResolution = self.LookAheadTime,self.LookAheadResolution
-   if not LookAheadTime or LookAheadResolution <= 0 then return -500 end
+   local Height = AboveSeaLevel and 0 or -500
 
-   local Height = -500
-   local PlanarVelocity = Vector3(Velocity.x, 0, Velocity.z)
-   local Speed = PlanarVelocity.magnitude
-   local Direction = PlanarVelocity / Speed
+   local LookAheadTime,LookAheadResolution = self.LookAheadTime,self.LookAheadResolution
+   if not LookAheadTime or LookAheadResolution <= 0 then return Height end
+
+   local Speed = Velocity.magnitude
+   local Direction = Velocity / Speed
 
    local Distance = math.min(Speed * LookAheadTime, MaxDistance)
 
-   for d = 0,Distance-1,LookAheadResolution do
-      Height = math.max(Height, I:GetTerrainAltitudeForPosition(Position + Direction * d))
-   end
-
-   Height = math.max(Height, I:GetTerrainAltitudeForPosition(Position + Direction * Distance))
+   local LookAhead = AboveSeaLevel and I.GetWaveOrTerrainAltitudeLookingAhead or I.GetTerrainAltitudeLookingAhead
+   Height = math.max(Height, LookAhead(I, Position, Direction * Distance, LookAheadResolution))
 
    return Height
 end
@@ -244,11 +241,7 @@ end
 
 -- Modify altitude according to flavor (2D version)
 function GeneralMissile:GetPhaseAltitude2D(I, Position, Velocity, Phase, MaxDistance)
-   local Height = self:GetTerrainHeight(I, Position, Velocity, MaxDistance)
-   if Phase.AboveSeaLevel then
-      -- Constrain terrain hugging to sea level
-      Height = math.max(Height, 0)
-   end
+   local Height = self:GetTerrainHeight(I, Position, Velocity, MaxDistance, Phase.AboveSeaLevel)
    Height = Height + Phase.MinElevation
 
    local Altitude = Phase.Altitude
