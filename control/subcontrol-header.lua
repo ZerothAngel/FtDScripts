@@ -26,8 +26,3 @@ SubControlPIDConfig = {
       Td = 0,
    },
 }
-
--- If true then the angles of hydrofoils closer to the Center of Mass
--- (on both X and Z axes) will be scaled up in proportion to the
--- distance of the furthest hydrofoil.
-ScaleByCoMOffset = true

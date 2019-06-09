@@ -54,19 +54,6 @@ function SubControl_ClassifyHydrofoils(I)
       SubControl_HydrofoilInfos = {}
       SubControl_LastHydrofoilCount = HydrofoilCount
 
-      -- Keep track of max negative and positive offsets
-      -- Note: The numbers stored are always non-negative.
-      -- Sign of offset is tracked using the table index (-1 or 1)
-      local XMax = {}
-      XMax[-1] = 0
-      XMax[0] = 0
-      XMax[1] = 0
-
-      local ZMax = {}
-      ZMax[-1] = 0
-      ZMax[0] = 0
-      ZMax[1] = 0
-
       local DepthFraction,PitchFraction,RollFraction = HydrofoilControl.Depth,HydrofoilControl.Pitch,HydrofoilControl.Roll
 
       -- And repopulate it
@@ -78,46 +65,16 @@ function SubControl_ClassifyHydrofoils(I)
             -- Only care about hydrofoils oriented forwards/backwards on XZ
             -- plane
             local CoMOffset = BlockInfo.LocalPositionRelativeToCom
-            local CoMOffsetX = CoMOffset.x
-            local CoMOffsetZ = CoMOffset.z
-            local RollScale = Sign(CoMOffsetX)
-            local PitchScale = Sign(CoMOffsetZ)
             local Info = {
                Index = i,
                LocalSign = LocalSign,
                DepthScale = DepthFraction,
                -- Default scale is 1, -1, or 0 depending on sign of offset
-               RollScale = RollScale,
-               PitchScale = PitchScale,
-               CoMOffsetX = CoMOffsetX,
-               CoMOffsetZ = CoMOffsetZ,
+               RollScale = RollFraction * Sign(CoMOffset.x),
+               PitchScale = PitchFraction * Sign(CoMOffset.z),
             }
             table.insert(SubControl_HydrofoilInfos, Info)
-
-            -- Also keep track of furthest hydrofoil on each axis
-            CoMOffsetX = math.abs(CoMOffsetX)
-            XMax[RollScale] = math.max(XMax[RollScale], CoMOffsetX)
-
-            CoMOffsetZ = math.abs(CoMOffsetZ)
-            ZMax[PitchScale] = math.max(ZMax[PitchScale], CoMOffsetZ)
          end
-      end
-
-      -- Now go back and pre-calculate scale
-      for _,Info in pairs(SubControl_HydrofoilInfos) do
-         if ScaleByCoMOffset then
-            local CoMOffsetX = Info.CoMOffsetX
-            if CoMOffsetX ~= 0 then
-               Info.RollScale = XMax[Info.RollScale] / CoMOffsetX
-            end
-
-            local CoMOffsetZ = Info.CoMOffsetZ
-            if CoMOffsetZ ~= 0 then
-               Info.PitchScale = ZMax[Info.PitchScale] / CoMOffsetZ
-            end
-         end
-         Info.RollScale = RollFraction * Info.RollScale
-         Info.PitchScale = PitchFraction * Info.PitchScale
       end
    end
 end
