@@ -74,9 +74,32 @@ function Vanilla_CalculateDodge()
    end
 end
 
+function Modded_CalculateDodge()
+   -- Our method returns a MissileWarningInfo, which will be Valid if we need
+   -- to dodge. Position & Id will be mapped to DodgeDirection & ProjectileId.
+   local Mainframe = C:MainframeIndex(CommonsWarningConfig.MissileWarningMainframe)
+   local result = C.I:CalculateDodge(Mainframe, VehicleRadius, DodgeTimeHorizon)
+   if result.Valid then
+      local Direction = result.Position
+      return { Sign(Direction.x, 1), Sign(Direction.y, 1), Sign(Direction.z, 1) },result.Id
+   else
+      return nil
+   end
+end
+
+function CalculateDodge()
+   -- Choose modded or vanilla implementation on first run
+   if C.I.CalculateDodge then
+      CalculateDodge = Modded_CalculateDodge
+   else
+      CalculateDodge = Vanilla_CalculateDodge
+   end
+   return CalculateDodge()
+end
+
 function Dodge()
    if DodgingEnabled then
-      local DodgeDirection,ProjectileId = Vanilla_CalculateDodge()
+      local DodgeDirection,ProjectileId = CalculateDodge()
 
       if DodgeDirection then
          -- First dodge or different projectile or different quadrant?
