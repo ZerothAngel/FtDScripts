@@ -24,7 +24,7 @@ end
 AddFirstRun(Dodge_FirstRun)
 
 -- Return octant of impact point or nil if no impact
-function CalculateDodge(Projectile)
+function CalculateDodgeForProjectile(Projectile)
    local RelativePosition = Projectile.Position - C:CoM()
    local RelativeVelocity = Projectile.Velocity - C:Velocity()
 
@@ -51,22 +51,32 @@ function CalculateDodge(Projectile)
    -- (already relative to CoM, just rotate)
    ImpactPoint = C:ToLocal() * ImpactPoint
 
-   -- Return signs of impact point coordinates along with impact time.
-   -- Note table.pack doesn't seem to be implemented, so...
-   return { Sign(ImpactPoint.x, 1), Sign(ImpactPoint.y, 1), Sign(ImpactPoint.z, 1) },ImpactTime
+   return { ImpactPoint.x, ImpactPoint.y, ImpactPoint.z },ImpactTime
+end
+
+function Vanilla_CalculateDodge()
+   local DodgeDirection,Soonest,ProjectileId = nil,math.huge,nil
+   for _,Projectile in pairs(C:MissileWarnings()) do
+      local Direction,ImpactTime = CalculateDodgeForProjectile(Projectile)
+      if Direction and ImpactTime <= DodgeTimeHorizon and ImpactTime < Soonest then
+         DodgeDirection = Direction
+         Soonest = ImpactTime
+         ProjectileId = Projectile.Id
+      end
+   end
+
+   if DodgeDirection then
+      -- Return signs of impact point coordinates along with impact time.
+      -- Note table.pack doesn't seem to be implemented, so...
+      return { Sign(DodgeDirection.x, 1), Sign(DodgeDirection.y, 1), Sign(DodgeDirection.z, 1) },ProjectileId
+   else
+      return nil
+   end
 end
 
 function Dodge()
    if DodgingEnabled then
-      local DodgeDirection,Soonest,ProjectileId = nil,math.huge,nil
-      for _,Projectile in pairs(C:MissileWarnings()) do
-         local Direction,ImpactTime = CalculateDodge(Projectile)
-         if Direction and ImpactTime <= DodgeTimeHorizon and ImpactTime < Soonest then
-            DodgeDirection = Direction
-            Soonest = ImpactTime
-            ProjectileId = Projectile.Id
-         end
-      end
+      local DodgeDirection,ProjectileId = Vanilla_CalculateDodge()
 
       if DodgeDirection then
          -- First dodge or different projectile or different quadrant?
