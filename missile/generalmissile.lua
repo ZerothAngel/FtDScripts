@@ -173,8 +173,30 @@ function GeneralMissile_HandleMissileChange(I, TransceiverIndex, MissileIndex, P
    MissileState.Command:SendUpdate(I, TransceiverIndex, MissileIndex, Change)
 end
 
--- Return highest terrain seen within look-ahead distance
-function GeneralMissile:GetTerrainHeight(I, Position, Velocity, MaxDistance, AboveSeaLevel)
+function GeneralMissile_Vanilla_GetTerrainHeight(self, I, Position, Velocity, MaxDistance, AboveSeaLevel)
+   if not MaxDistance then MaxDistance = math.huge end
+
+   local Height = AboveSeaLevel and 0 or -500
+
+   local LookAheadTime,LookAheadResolution = self.LookAheadTime,self.LookAheadResolution
+   if not LookAheadTime or LookAheadResolution <= 0 then return Height end
+
+   local PlanarVelocity = Vector3(Velocity.x, 0, Velocity.z)
+   local Speed = PlanarVelocity.magnitude
+   local Direction = PlanarVelocity / Speed
+
+   local Distance = math.min(Speed * LookAheadTime, MaxDistance)
+
+   for d = 0,Distance-1,LookAheadResolution do
+      Height = math.max(Height, I:GetTerrainAltitudeForPosition(Position + Direction * d))
+   end
+
+   Height = math.max(Height, I:GetTerrainAltitudeForPosition(Position + Direction * Distance))
+
+   return Height
+end
+
+function GeneralMissile_Modded_GetTerrainHeight(self, I, Position, Velocity, MaxDistance, AboveSeaLevel)
    if not MaxDistance then MaxDistance = math.huge end
 
    local Height = AboveSeaLevel and 0 or -500
@@ -191,6 +213,17 @@ function GeneralMissile:GetTerrainHeight(I, Position, Velocity, MaxDistance, Abo
    Height = math.max(Height, LookAhead(I, Position, Direction * Distance, LookAheadResolution))
 
    return Height
+end
+
+-- Return highest terrain seen within look-ahead distance
+function GeneralMissile:GetTerrainHeight(I, Position, Velocity, MaxDistance, AboveSeaLevel)
+   -- First run through, determine if modded extensions are available
+   if I.GetWaveOrTerrainAltitudeLookingAhead and I.GetTerrainAltitudeLookingAhead then
+      self.GetTerrainHeight = GeneralMissile_Modded_GetTerrainHeight
+   else
+      self.GetTerrainHeight = GeneralMissile_Vanilla_GetTerrainHeight
+   end
+   return self:GetTerrainHeight(I, Position, Velocity, MaxDistance, AboveSeaLevel)
 end
 
 -- Modify an altitude according to RelativeTo
