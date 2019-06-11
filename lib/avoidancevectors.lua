@@ -37,7 +37,7 @@ function Avoidance_FirstRun(I)
 end
 AddFirstRun(Avoidance_FirstRun)
 
-function GetTerrainHits(I, Angle, LowerEdge, Speed)
+function Vanilla_GetTerrainHits(I, Angle, LowerEdge, Speed)
    local Hits = 0
    local Rotation = Quaternion.Euler(0, Angle, 0) -- NB Angle is world
 
@@ -72,6 +72,73 @@ function GetTerrainHits(I, Angle, LowerEdge, Speed)
    return Hits
 end
 
+function Modded_GetTerrainHits(I, Angle, LowerEdge, _)
+   return I:GetTerrainHits(Angle, LowerEdge, LookAheadTime, LookAheadResolution, Avoidance_CheckPoints)
+end
+
+function GetTerrainHits(I, Angle, LowerEdge, Speed)
+   -- First run, use modded version if available
+   if I.GetTerrainHits then
+      GetTerrainHits = Modded_GetTerrainHits
+   else
+      GetTerrainHits = Vanilla_GetTerrainHits
+   end
+   return GetTerrainHits(I, Angle, LowerEdge, Speed)
+end
+
+function Vanilla_CalculateFriendlyAvoidanceVector(UpperEdge, LowerEdge, Velocity, MinDistance, AvoidanceTime)
+   local FCount,FAvoid = 0,Vector3.zero
+   for _,Friend in pairs(C:Friendlies()) do
+      -- Only consider friendlies within our altitude range
+      if (Friend.AxisAlignedBoundingBoxMinimum.y <= UpperEdge and
+          Friend.AxisAlignedBoundingBoxMaximum.y >= LowerEdge) then
+         local Offset,_ = PlanarVector(C:CoM(), Friend.CenterOfMass)
+         local Distance = Offset.magnitude
+         if Distance < FriendlyCheckMaxDistance and Distance > FriendlyCheckMinDistance then
+            local Direction = Offset / Distance -- aka Offset.normalized
+            local Collision = false
+            if Distance < MinDistance then
+               Collision = true
+            else
+               -- Calculate relative speed along offset vector
+               local RelativeVelocity = Velocity - Friend.Velocity
+               local RelativeSpeed = Vector3.Dot(RelativeVelocity, Direction)
+               if RelativeSpeed > 0.0 and Distance / RelativeSpeed < AvoidanceTime then
+                  Collision = true
+               end
+            end
+            if Collision then
+               -- Collision imminent
+               FCount = FCount + 1
+               FAvoid = FAvoid - Direction
+            end
+         end
+      end
+   end
+   return FCount,FAvoid
+end
+
+function Modded_CalculateFriendlyAvoidanceVector(UpperEdge, LowerEdge, _, MinDistance, AvoidanceTime)
+   -- Extension method returns a FriendlyInfo
+   -- We're intersted in Type (FCount) and Velocity (FAvoid)
+   local result = C.I:CalculateFriendlyAvoidanceVector(UpperEdge, LowerEdge, FriendlyCheckMinDistance, FriendlyCheckMaxDistance, MinDistance, AvoidanceTime)
+   if result.Valid then
+      return result.Type,result.Velocity
+   else
+      return 0,Vector3.zero
+   end
+end
+
+function CalculateFriendlyAvoidanceVector(UpperEdge, LowerEdge, Velocity, MinDistance, AvoidanceTime)
+   -- First time, determine if modded extension if available
+   if C.I.CalculateFriendlyAvoidanceVector then
+      CalculateFriendlyAvoidanceVector = Modded_CalculateFriendlyAvoidanceVector
+   else
+      CalculateFriendlyAvoidanceVector = Vanilla_CalculateFriendlyAvoidanceVector
+   end
+   return CalculateFriendlyAvoidanceVector(UpperEdge, LowerEdge, Velocity, MinDistance, AvoidanceTime)
+end
+
 function FriendlyAvoidanceVector(UpperEdge, LowerEdge, Velocity)
    -- Look for nearby friendlies
    local FCount,FAvoid = 0,Vector3.zero
@@ -82,33 +149,7 @@ function FriendlyAvoidanceVector(UpperEdge, LowerEdge, Velocity)
       else
          AvoidanceTime,MinDistance = unpack(FriendlyAvoidanceIdle)
       end
-      for _,Friend in pairs(C:Friendlies()) do
-         -- Only consider friendlies within our altitude range
-         if (Friend.AxisAlignedBoundingBoxMinimum.y <= UpperEdge and
-             Friend.AxisAlignedBoundingBoxMaximum.y >= LowerEdge) then
-            local Offset,_ = PlanarVector(C:CoM(), Friend.CenterOfMass)
-            local Distance = Offset.magnitude
-            if Distance < FriendlyCheckMaxDistance and Distance > FriendlyCheckMinDistance then
-               local Direction = Offset / Distance -- aka Offset.normalized
-               local Collision = false
-               if Distance < MinDistance then
-                  Collision = true
-               else
-                  -- Calculate relative speed along offset vector
-                  local RelativeVelocity = Velocity - Friend.Velocity
-                  local RelativeSpeed = Vector3.Dot(RelativeVelocity, Direction)
-                  if RelativeSpeed > 0.0 and Distance / RelativeSpeed < AvoidanceTime then
-                     Collision = true
-                  end
-               end
-               if Collision then
-                  -- Collision imminent
-                  FCount = FCount + 1
-                  FAvoid = FAvoid - Direction
-               end
-            end
-         end
-      end
+      FCount,FAvoid = CalculateFriendlyAvoidanceVector(UpperEdge, LowerEdge, Velocity, MinDistance, AvoidanceTime)
       if FCount > 0 then
          -- Project onto velocity and use rejection
          local VNorm = Velocity.normalized
