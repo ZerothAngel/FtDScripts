@@ -2,12 +2,12 @@
 --# Packages don't exist, and screw accessing everything through a table.
 --# It's just a search/replace away to convert to 'proper' Lua anyway.
 -- 6DoF module (Altitude, Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
-SixDoF_AltitudePID = PID.new(SixDoFPIDConfig.Altitude, -30, 30)
-SixDoF_YawPID = PID.new(SixDoFPIDConfig.Yaw, -30, 30)
-SixDoF_PitchPID = PID.new(SixDoFPIDConfig.Pitch, -30, 30)
-SixDoF_RollPID = PID.new(SixDoFPIDConfig.Roll, -30, 30)
-SixDoF_ForwardPID = PID.new(SixDoFPIDConfig.Forward, -30, 30)
-SixDoF_RightPID = PID.new(SixDoFPIDConfig.Right, -30, 30)
+SixDoF_AltitudePID = PID.new(SixDoFPIDConfig.Altitude, -1, 1)
+SixDoF_YawPID = PID.new(SixDoFPIDConfig.Yaw, -1, 1)
+SixDoF_PitchPID = PID.new(SixDoFPIDConfig.Pitch, -1, 1)
+SixDoF_RollPID = PID.new(SixDoFPIDConfig.Roll, -1, 1)
+SixDoF_ForwardPID = PID.new(SixDoFPIDConfig.Forward, -1, 1)
+SixDoF_RightPID = PID.new(SixDoFPIDConfig.Right, -1, 1)
 
 SixDoF_DesiredAltitude = 0
 SixDoF_DesiredHeading = nil
@@ -144,7 +144,7 @@ function SixDoF_ClassifySpinners(I)
    end
 end
 
-SixDoF_RequestControl = MakeRequestControl(1/30)
+SixDoF_RequestControl = MakeRequestControl()
 
 function SixDoF.Update(I)
    local AltitudeCV = 0
@@ -166,7 +166,7 @@ function SixDoF.Update(I)
       ForwardCV = SixDoF_ForwardPID:Control(ZProj)
       RightCV = SixDoF_RightPID:Control(XProj)
    elseif SixDoF_DesiredThrottle then
-      ForwardCV = 30 * SixDoF_DesiredThrottle -- PID is scaled, so scale up
+      ForwardCV = SixDoF_DesiredThrottle
       SixDoF_CurrentThrottle = SixDoF_DesiredThrottle
    end
 
@@ -199,8 +199,8 @@ function SixDoF.Update(I)
       for _,Info in pairs(SixDoF_PropulsionInfos) do
          if Info.IsVertical or PlanarMovement then
             -- Sum up inputs and constrain
-            local Output = Clamp(AltitudeCV * Info.UpSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign, 0, 30)
-            I:Component_SetFloatLogic(PROPULSION, Info.Index, Output / 30)
+            local Output = Clamp(AltitudeCV * Info.UpSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign, 0, 1)
+            I:Component_SetFloatLogic(PROPULSION, Info.Index, Output)
          else
             -- Restore full drive fraction for manual/stock AI control
             I:Component_SetFloatLogic(PROPULSION, Info.Index, 1)
@@ -215,31 +215,30 @@ function SixDoF.Update(I)
       for _,Info in pairs(SixDoF_SpinnerInfos) do
          if Info.IsVertical or PlanarMovement then
             -- Sum up inputs and constrain
-            local Output = Clamp(AltitudeCV * Info.UpSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign, -30, 30)
-            I:SetDedibladeContinuousSpeed(Info.Index, Output)
+            local Output = Clamp(AltitudeCV * Info.UpSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign, -1, 1)
+            I:SetDedibladeContinuousSpeed(Info.Index, Output * 30)
          end
       end
    end
 
    if SixDoF_UsesControls then
       if I.SetInputs then
-         local Scale = 1/30
          --# Only set YLL if doing planar movement. Allows for manual control.
          local yllValues
          if PlanarMovement then
             yllValues = {
-               YawCV * ControlFractions.Yaw * Scale,
-               ForwardCV * ControlFractions.Forward * Scale,
-               RightCV * ControlFractions.Right * Scale
+               YawCV * ControlFractions.Yaw,
+               ForwardCV * ControlFractions.Forward,
+               RightCV * ControlFractions.Right
             }
          else
             yllValues = {}
          end
          I:SetInputs(yllValues,
                      --# These are unconditionally set
-                     { AltitudeCV * ControlFractions.Altitude * Scale,
-                       PitchCV * ControlFractions.Pitch * Scale,
-                       RollCV * ControlFractions.Roll * Scale })
+                     { AltitudeCV * ControlFractions.Altitude,
+                       PitchCV * ControlFractions.Pitch,
+                       RollCV * ControlFractions.Roll })
       else
          -- Vanilla
          SixDoF_RequestControl(I, ControlFractions.Pitch, NOSEUP, NOSEDOWN, PitchCV)
