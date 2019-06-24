@@ -40,4 +40,7 @@ ControlFractions = {
    Roll = 0,
    -- Clashes with JetFractions.Yaw, Forward, AND Right
    Forward = 1,
+   -- Fake controls, only available through my mod
+   Altitude = 0,
+   Right = 0,
 }

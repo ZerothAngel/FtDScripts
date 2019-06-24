@@ -28,10 +28,10 @@ SixDoF_UsesHorizontalJets = (JetFractions.Yaw > 0 or JetFractions.Forward > 0 or
 SixDoF_UsesVerticalJets = (JetFractions.Altitude > 0 or JetFractions.Pitch > 0 or JetFractions.Roll > 0)
 SixDoF_UsesJets = SixDoF_UsesHorizontalJets or SixDoF_UsesVerticalJets
 SixDoF_UsesSpinners = (SpinnerFractions.Altitude > 0 or SpinnerFractions.Yaw > 0 or SpinnerFractions.Pitch > 0 or SpinnerFractions.Roll > 0 or SpinnerFractions.Forward > 0 or SpinnerFractions.Right > 0)
-SixDoF_UsesControls = (ControlFractions.Yaw > 0 or ControlFractions.Pitch > 0 or ControlFractions.Roll > 0 or ControlFractions.Forward > 0)
+SixDoF_UsesControls = (ControlFractions.Yaw > 0 or ControlFractions.Pitch > 0 or ControlFractions.Roll > 0 or ControlFractions.Forward > 0 or ControlFractions.Altitude > 0 or ControlFractions.Right > 0)
 
 -- Through configuration, these axes can be skipped entirely
-SixDoF_ControlAltitude = (JetFractions.Altitude > 0 or SpinnerFractions.Altitude > 0)
+SixDoF_ControlAltitude = (JetFractions.Altitude > 0 or SpinnerFractions.Altitude > 0 or ControlFractions.Altitude > 0)
 SixDoF_ControlPitch = (JetFractions.Pitch > 0 or SpinnerFractions.Pitch > 0 or ControlFractions.Pitch > 0)
 SixDoF_ControlRoll = (JetFractions.Roll > 0 or SpinnerFractions.Roll > 0 or ControlFractions.Roll > 0)
 -- The others (yaw/forward/right) depend on an AI
@@ -222,11 +222,32 @@ function SixDoF.Update(I)
    end
 
    if SixDoF_UsesControls then
-      SixDoF_RequestControl(I, ControlFractions.Pitch, NOSEUP, NOSEDOWN, PitchCV)
-      SixDoF_RequestControl(I, ControlFractions.Roll, ROLLLEFT, ROLLRIGHT, RollCV)
-      if PlanarMovement then
-         SixDoF_RequestControl(I, ControlFractions.Yaw, YAWRIGHT, YAWLEFT, YawCV * Sign(C:ForwardSpeed(), 1))
-         SixDoF_RequestControl(I, ControlFractions.Forward, MAINPROPULSION, MAINPROPULSION, ForwardCV)
+      if I.SetInputs then
+         local Scale = 1/30
+         --# Only set YLL if doing planar movement. Allows for manual control.
+         local yllValues
+         if PlanarMovement then
+            yllValues = {
+               YawCV * ControlFractions.Yaw * Scale,
+               ForwardCV * ControlFractions.Forward * Scale,
+               RightCV * ControlFractions.Right * Scale
+            }
+         else
+            yllValues = {}
+         end
+         I:SetInputs(yllValues,
+                     --# These are unconditionally set
+                     { AltitudeCV * ControlFractions.Altitude * Scale,
+                       PitchCV * ControlFractions.Pitch * Scale,
+                       RollCV * ControlFractions.Roll * Scale })
+      else
+         -- Vanilla
+         SixDoF_RequestControl(I, ControlFractions.Pitch, NOSEUP, NOSEDOWN, PitchCV)
+         SixDoF_RequestControl(I, ControlFractions.Roll, ROLLLEFT, ROLLRIGHT, RollCV)
+         if PlanarMovement then
+            SixDoF_RequestControl(I, ControlFractions.Yaw, YAWRIGHT, YAWLEFT, YawCV * Sign(C:ForwardSpeed(), 1))
+            SixDoF_RequestControl(I, ControlFractions.Forward, MAINPROPULSION, MAINPROPULSION, ForwardCV)
+         end
       end
    end
 
