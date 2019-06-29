@@ -67,8 +67,17 @@ function GeneralMissile.new(Config)
       }
    end
 
+   if not self.AntiAir.Phases[1].PN then
+      self.AntiAir.Phases[1].PN = { Gain = nil }
+   end
+   if not self.Phases[1].PN then
+      self.Phases[1].PN = { Gain = nil }
+   end
+
    -- Calculate cosine of all angle parameters ahead of time
    self.DetonationAngle = GeneralMissile_PrepareAngle(self.DetonationAngle, 1)
+   self.AntiAir.Phases[1].PN.Angle = GeneralMissile_PrepareAngle(self.AntiAir.Phases[1].PN.Angle, -1)
+   self.Phases[1].PN.Angle = GeneralMissile_PrepareAngle(self.Phases[1].PN.Angle, -1)
    for _,Phase in pairs(self.AntiAir.Phases) do
       if Phase.Change and Phase.Change.When then
          Phase.Change.When.Angle = GeneralMissile_PrepareAngle(Phase.Change.When.Angle)
@@ -98,6 +107,7 @@ function GeneralMissile.new(Config)
    -- Methods (because no setmetatable)
    self.GetTerrainHeight = GeneralMissile.GetTerrainHeight
    self.ModifyAltitude = GeneralMissile.ModifyAltitude
+   self.TerminalGuidance = GeneralMissile.TerminalGuidance
    self.GetPhaseAltitude2D = GeneralMissile.GetPhaseAltitude2D
    self.ExecuteProfile2D = GeneralMissile.ExecuteProfile2D
    self.ExecuteProfile3D = GeneralMissile.ExecuteProfile3D
@@ -272,6 +282,58 @@ function GeneralMissile:ModifyAltitude(Position, AimPoint, Altitude, RelativeTo)
    end
 end
 
+function GeneralMissile:TerminalGuidance(I, TransceiverIndex, MissileIndex, Position, Velocity, TrueAimPoint, Phase, MissileState, QuadAimPoint, ImpactTime)
+   local AimPoint
+   local Gain = Phase.PN.Gain
+   if Gain then
+      -- Check angle
+      local IsTerminal = MissileState.IsTerminal
+      if not IsTerminal and MissileState.TargetCosAngle >= Phase.PN.Angle then
+         IsTerminal = true
+         MissileState.IsTerminal = IsTerminal
+         -- Reset previous positions
+         MissileState.PreviousTargetPosition = nil
+         MissileState.PreviousMissilePosition = nil
+      end
+      if IsTerminal then
+         -- Use PN
+         local PreviousTargetPosition = MissileState.PreviousTargetPosition
+         local PreviousMissilePosition = MissileState.PreviousMissilePosition
+
+         if PreviousTargetPosition and PreviousMissilePosition then
+            local PreviousOffset = PreviousTargetPosition - PreviousMissilePosition
+            local Offset = TrueAimPoint - Position
+            local RelativeVelocity = Offset - PreviousOffset
+            local Omega = Vector3.Cross(Offset, RelativeVelocity) / Vector3.Dot(Offset, Offset)
+            local Direction = Velocity.normalized
+            local Acceleration = Vector3.Cross(Direction * -Gain * RelativeVelocity.magnitude, Omega)
+
+            AimPoint = Position + Velocity * MissileState.TimeStep + Acceleration * 0.5
+         end
+
+         MissileState.PreviousTargetPosition = TrueAimPoint
+         MissileState.PreviousMissilePosition = Position
+      end
+      if not AimPoint then
+         -- Pursuit guidance until angle is good
+         AimPoint = TrueAimPoint
+      end
+   else
+      -- Use quadratic aim point, which was already calculated
+      AimPoint = QuadAimPoint
+   end
+
+   -- Modify final aim point, if configured to do so
+   local Altitude = Phase.Altitude
+   if Altitude then
+      AimPoint = Vector3(AimPoint.x, self:ModifyAltitude(Position, AimPoint, Altitude, Phase.RelativeTo), AimPoint.z)
+   end
+
+   GeneralMissile_HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, MissileState, ImpactTime, Phase.Change)
+
+   return AimPoint
+end
+
 -- Modify altitude according to flavor (2D version)
 function GeneralMissile:GetPhaseAltitude2D(I, Position, Velocity, Phase, MaxDistance)
    local Height = self:GetTerrainHeight(I, Position, Velocity, MaxDistance, Phase.AboveSeaLevel)
@@ -289,6 +351,7 @@ end
 
 -- Adjust aim point according to current profile phase
 function GeneralMissile:ExecuteProfile2D(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, TargetVelocity, MissileState)
+   local OrigAimPoint = AimPoint
    -- Use quadratic prediction to determine aim point and predicted impact time
    local ImpactTime
    AimPoint,ImpactTime = QuadraticIntercept(Position, Vector3.Dot(Velocity, Velocity), AimPoint, TargetVelocity, 9999)
@@ -301,16 +364,10 @@ function GeneralMissile:ExecuteProfile2D(I, TransceiverIndex, MissileIndex, Posi
    -- First check if within terminal distance
    local TerminalPhase = self.Phases[1]
    if GroundDistance < TerminalPhase.Distance then
-      -- Modify aim point, if configured to do so
-      local Altitude = TerminalPhase.Altitude
-      if Altitude then
-         AimPoint = Vector3(AimPoint.x, self:ModifyAltitude(Position, AimPoint, Altitude, TerminalPhase.RelativeTo), AimPoint.z)
-      end
-
-      GeneralMissile_HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, MissileState, ImpactTime, TerminalPhase.Change)
-
-      return AimPoint
+      return self:TerminalGuidance(I, TransceiverIndex, MissileIndex, Position, Velocity, OrigAimPoint, TerminalPhase, MissileState, AimPoint, ImpactTime)
    end
+
+   MissileState.IsTerminal = false
 
    -- The assumption is that the phases are in order, closest to farthest
    -- Except for the last, which is always the closing phase regardless of
@@ -371,6 +428,7 @@ function GeneralMissile:ExecuteProfile2D(I, TransceiverIndex, MissileIndex, Posi
 end
 
 function GeneralMissile:ExecuteProfile3D(I, TransceiverIndex, MissileIndex, Position, Velocity, AimPoint, TargetVelocity, MissileState)
+   local OrigAimPoint = AimPoint 
    -- Use quadratic prediction to determine aim point and predicted impact time
    local ImpactTime
    AimPoint,ImpactTime = QuadraticIntercept(Position, Vector3.Dot(Velocity, Velocity), AimPoint, TargetVelocity, 9999)
@@ -381,16 +439,10 @@ function GeneralMissile:ExecuteProfile3D(I, TransceiverIndex, MissileIndex, Posi
    -- First check if within terminal distance
    local TerminalPhase = self.AntiAir.Phases[1]
    if TargetRange < TerminalPhase.Range then
-      -- Modify aim point, if configured to do so
-      local Altitude = TerminalPhase.Altitude
-      if Altitude then
-         AimPoint = Vector3(AimPoint.x, self:ModifyAltitude(Position, AimPoint, Altitude, TerminalPhase.RelativeTo), AimPoint.z)
-      end
-
-      GeneralMissile_HandleMissileChange(I, TransceiverIndex, MissileIndex, Position, MissileState, ImpactTime, TerminalPhase.Change)
-
-      return AimPoint
+      return self:TerminalGuidance(I, TransceiverIndex, MissileIndex, Position, Velocity, OrigAimPoint, TerminalPhase, MissileState, AimPoint, ImpactTime)
    end
+
+   MissileState.IsTerminal = false
 
    -- The assumption is that the phases are in order, closest to farthest
    -- Except for the last, which is always the closing phase regardless of
