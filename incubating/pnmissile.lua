@@ -1,5 +1,5 @@
 --! pnmissile
---@ commons periodic missiledriver pnguidance
+--@ commons periodic missiledriver pnguidance targetaccel
 GuidanceInfos = {
    {
       Controller = PNGuidance.new(Config),
@@ -26,6 +26,7 @@ MissileMain = Periodic.new(UpdateRate, MissileMain_Update)
 function Update(I) -- luacheck: ignore 131
    C = Commons.new(I)
    if not C:IsDocked() then
+      if AccelerationSamples then CalculateTargetAcceleration(AccelerationSamples) end
       MissileMain:Tick(I)
    end
 end

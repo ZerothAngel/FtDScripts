@@ -1,10 +1,10 @@
+--@ deepcopy
 PNGuidance = {}
 
 function PNGuidance.new(Config)
-   local self = {}
+   local self = deepcopy(Config)
 
-   self.Gain = Config.Gain
-   self.OneTurnAngle = math.cos(math.rad(Config.OneTurnAngle))
+   self.OneTurnAngle = math.cos(math.rad(self.OneTurnAngle))
 
    self.Guide = PNGuidance.Guide
 
@@ -27,10 +27,13 @@ function PNGuidance:Guide(I, TransceiverIndex, MissileIndex, Target, Missile, Mi
       local MissileVelocity = Missile.Velocity
       local TargetCosAngle = Vector3.Dot(Offset.normalized, MissileVelocity.normalized)
 
-      if TargetCosAngle < self.OneTurnAngle then
-         -- One-turn
-         AimPoint = TargetPosition
-      else
+      AimPoint = TargetPosition
+
+      local IsTerminal = MissileState.IsTerminal
+      if not IsTerminal and TargetCosAngle >= self.OneTurnAngle then
+         MissileState.IsTerminal = true
+      end
+      if IsTerminal then
          local TimeStep = Now - PreviousTime
 
          local PreviousOffset = PreviousTargetPosition - PreviousMissilePosition
@@ -38,6 +41,15 @@ function PNGuidance:Guide(I, TransceiverIndex, MissileIndex, Target, Missile, Mi
          local Omega = Vector3.Cross(Offset, RelativeVelocity) / Vector3.Dot(Offset, Offset)
          local Direction = MissileVelocity.normalized
          local Acceleration = Vector3.Cross(Direction * -self.Gain * RelativeVelocity.magnitude, Omega)
+         if Target.Acceleration then
+            -- Add augmented term
+            local TargetAcceleration = Target.Acceleration * TimeStep
+            -- Project onto LOS
+            local LOS = Offset.normalized
+            local Proj = LOS * Vector3.Dot(TargetAcceleration, LOS)
+            -- And use rejection (which should be ortho LOS) for augmented term
+            Acceleration = Acceleration + (TargetAcceleration - Proj) * self.Gain * 0.5
+         end
 
          AimPoint = MissilePosition + MissileVelocity * TimeStep + Acceleration * 0.5
       end

@@ -24,6 +24,11 @@ MissileTargetSelector = 1
 
 -- Configuration for your missile class goes here
 Config = {
-   Gain = 10,
-   OneTurnAngle = 60,
+   Gain = 50,
+   OneTurnAngle = 30,
 }
+
+-- Number of acceleration samples to take for *each* target.
+-- Note that a running average is maintained, so it's best to keep this small.
+-- Set to nil to disable acceleration sampling.
+AccelerationSamples = nil
