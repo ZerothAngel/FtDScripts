@@ -6,12 +6,24 @@ function CommonsWeapons_CustomName(self, I)
    return self._CustomName
 end
 
+-- FIXME Quick workaround until we can deal with masks
+function Commons_ConvertWeaponSlotMask(Mask)
+   -- First (lowest) one wins
+   -- Does this Lua have bitwise ops? Just assume it's a single slot for now
+   if Mask == 3 then return 1 end
+   if Mask == 5 then return 2 end
+   if Mask == 9 then return 3 end
+   if Mask == 17 then return 4 end
+   if Mask == 33 then return 5 end
+   return 0
+end
+
 function Commons.AddWeapon(Weapons, WeaponInfo, SubConstructId, WeaponIndex)
    local Weapon = {
       SubConstructId = SubConstructId,
       Index = WeaponIndex,
       Type = WeaponInfo.WeaponType,
-      Slot = WeaponInfo.WeaponSlot,
+      Slot = Commons_ConvertWeaponSlotMask(WeaponInfo.WeaponSlotMask),
       Position = WeaponInfo.GlobalPosition,
       FirePoint = WeaponInfo.GlobalFirePoint,
       Speed = WeaponInfo.Speed,
