@@ -24,6 +24,8 @@ function DockManager_Classify(I)
             --# Negated so it goes front-to-back
             RelativeOrder = -BlockInfo.LocalPositionRelativeToCom.z,
             ReleaseDelay = ReleaseDelay,
+            -- Local flag
+            Released = false,
          }
          table.insert(DockManager_DockInfos, Info)
       end
@@ -66,14 +68,17 @@ function DockManager_Update(I)
       end
 
       for _,Info in pairs(DockManager_DockInfos) do
-         if DockManager_FirstTimeEnemySeen + Info.ReleaseDelay <= Now then
+         -- Only release once until next recall (allows for manual recall)
+         if DockManager_FirstTimeEnemySeen + Info.ReleaseDelay <= Now and not Info.Released then
             I:Component_SetBoolLogic(TRACTORBEAM, Info.Index, false)
+            Info.Released = true
          end
       end
    elseif DockManager_LastTimeEnemySeen + DockManagerConfig.RecallDelay <= Now then
       --# They all recall at the same time... for now
       for _,Info in pairs(DockManager_DockInfos) do
          I:Component_SetBoolLogic(TRACTORBEAM, Info.Index, true)
+         Info.Released = false
       end
 
       -- Only reset first seen timer once recall triggers
