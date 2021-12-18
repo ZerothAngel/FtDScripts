@@ -9,19 +9,14 @@ LastShieldCount = 0
 ShieldActivationTimes = {}
 
 function ShieldManager_SetShield(I, Index, State)
-   if ShieldActivationMode then
-      -- Set to configured mode or turn off
-      I:Component_SetIntLogic(SHIELDPROJECTOR, Index, State and ShieldActivationMode or 0)
-   else
-      -- Scale strength up or down
-      local Current = I:Component_GetFloatLogic(SHIELDPROJECTOR, Index)
-      -- Only change if different
-      local Scale = 16 -- Power of 2 that's >10
-      if Current < 1 and State then
-         I:Component_SetFloatLogic(SHIELDPROJECTOR, Index, Current * Scale)
-      elseif Current >= 1 and not State then
-         I:Component_SetFloatLogic(SHIELDPROJECTOR, Index, Current / Scale)
-      end
+   -- Scale strength up or down
+   local Current = I:Component_GetFloatLogic(SHIELDPROJECTOR, Index)
+   -- Only change if different
+   local Scale = 16 -- Power of 2 that's >10
+   if Current < 1 and State then
+      I:Component_SetFloatLogic(SHIELDPROJECTOR, Index, Current * Scale)
+   elseif Current >= 1 and not State then
+      I:Component_SetFloatLogic(SHIELDPROJECTOR, Index, Current / Scale)
    end
 end
 
