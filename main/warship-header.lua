@@ -20,3 +20,4 @@ ActivateWhen = {
 AI_UpdateRate = 4
 Missile_UpdateRate = 4
 ShieldManager_UpdateRate = nil
+DockManager_UpdateRate = nil

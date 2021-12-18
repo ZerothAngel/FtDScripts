@@ -1,7 +1,8 @@
 --! warship
 --@ commons control firstrun periodic
---@ shieldmanager multiprofile rollturn sixdof ytdefaults naval-ai
+--@ shieldmanager dockmanager multiprofile rollturn sixdof ytdefaults naval-ai
 -- Warship main
+DockManager = Periodic.new(DockManager_UpdateRate, DockManager_Update, 3)
 ShieldManager = Periodic.new(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 MissileMain = Periodic.new(Missile_UpdateRate, MissileMain_Update, 1)
 NavalAI = Periodic.new(AI_UpdateRate, NavalAI_Update)
@@ -36,4 +37,5 @@ function Update(I) -- luacheck: ignore 131
    end
 
    ShieldManager:Tick(I)
+   DockManager:Tick(I)
 end

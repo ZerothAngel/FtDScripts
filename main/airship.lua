@@ -1,7 +1,8 @@
 --! airship
 --@ commons control firstrun periodic
---@ shieldmanager balloonmanager multiprofile rollturn sixdof altitudecontrol airshipdefaults naval-ai
+--@ shieldmanager balloonmanager dockmanager multiprofile rollturn sixdof altitudecontrol airshipdefaults naval-ai
 -- Airship main
+DockManager = Periodic.new(DockManager_UpdateRate, DockManager_Update, 5)
 BalloonManager = Periodic.new(BalloonManager_UpdateRate, BalloonManager_Control, 4)
 ShieldManager = Periodic.new(ShieldManager_UpdateRate, ShieldManager_Control, 3)
 MissileMain = Periodic.new(Missile_UpdateRate, MissileMain_Update, 2)
@@ -47,4 +48,5 @@ function Update(I) -- luacheck: ignore 131
 
    ShieldManager:Tick(I)
    BalloonManager:Tick(I)
+   DockManager:Tick(I)
 end
