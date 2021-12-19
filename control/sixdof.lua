@@ -269,6 +269,10 @@ function SixDoF.Disable(I, HorizOnly)
    if SixDoF_UsesControls then
       -- Only MAINPROPULSION is stateful
       SixDoF_RequestControl(I, ControlFractions.Forward, MAINPROPULSION, MAINPROPULSION, 0)
+      if I.SetInput then
+         -- And altitide too, apparently
+         I:SetInputs({}, { 0 })
+      end
    end
 end
 
