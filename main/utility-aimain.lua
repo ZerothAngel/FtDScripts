@@ -25,6 +25,7 @@ function Update(I) -- luacheck: ignore 131
          SixDoF.Release(I)
       end
 
+      PitchThrottle.Update(I)
       SixDoF.Update(I)
    else
       UtilityAI_Reset()
