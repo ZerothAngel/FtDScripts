@@ -15,7 +15,6 @@ function MakeRequestControl(Scale)
             end
          else
             -- Generally propulsion
-            if CV == 0 then CV = .001 end -- Temporary workaround for bug
             I:RequestControl(Mode, PosControl, CV)
          end
       end
