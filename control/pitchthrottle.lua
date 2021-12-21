@@ -7,30 +7,40 @@ PitchThrottle_DesiredThrottle = nil
 PitchThrottle_CurrentThrottle = 0
 
 function PitchThrottle.SetThrottle(Throttle)
-    PitchThrottle_DesiredThrottle = Clamp(Throttle, -1, 1)
+    --# Note: We can't swap the PitchThrottle.*Throttle methods at runtime because
+    --# we more or less bind immediately before the first Update.
+    if PitchThrottle.DesiredPitch then
+        PitchThrottle_DesiredThrottle = Clamp(Throttle, -1, 1)
+    else
+        -- Just pass through
+        PitchThrottleControl.SetThrottle(Throttle)
+    end
 end
 
 function PitchThrottle.GetThrottle()
-    return PitchThrottle_CurrentThrottle
+    if PitchThrottle.DesiredPitch then
+        return PitchThrottle_CurrentThrottle
+    else
+        -- Just pass through
+        return PitchThrottleControl.GetThrottle()
+    end
 end
 
 function PitchThrottle.ResetThrottle()
-    PitchThrottle_DesiredThrottle = nil
     PitchThrottleControl.ResetThrottle()
+    PitchThrottle_DesiredThrottle = nil
 end
 
 function PitchThrottle.Update(I)
-    if PitchThrottle_DesiredThrottle then
-        PitchThrottle_CurrentThrottle = PitchThrottle_DesiredThrottle
+    if PitchThrottle.DesiredPitch then
+        if PitchThrottle_DesiredThrottle then
+            PitchThrottle_CurrentThrottle = PitchThrottle_DesiredThrottle
 
-        if PitchThrottle.DesiredPitch then
             local PitchCV = Clamp(PitchThrottle_PitchPID:Control(PitchThrottle.DesiredPitch - C:Pitch()), -1, 0)
             -- Modulate based on current pitch CV
             local MaxThrottle = 1 + PitchCV
             PitchThrottleControl.SetThrottle(PitchThrottle_CurrentThrottle * MaxThrottle)
-        else
-            -- Just pass it through
-            PitchThrottleControl.SetThrottle(PitchThrottle_CurrentThrottle)
         end
     end
+    -- If not enabled, do nothing
 end
