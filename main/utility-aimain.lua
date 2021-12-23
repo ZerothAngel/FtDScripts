@@ -9,6 +9,7 @@ SelectRollImpl(SixDoF, RollTurnControl)
 
 SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(PitchThrottle)
+SelectAltitudeImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.new(I)
@@ -25,6 +26,7 @@ function Update(I) -- luacheck: ignore 131
          SixDoF.Release(I)
       end
 
+      V.SetAltitude(FixedAltitude)
       PitchThrottle.Update(I)
       SixDoF.Update(I)
    else

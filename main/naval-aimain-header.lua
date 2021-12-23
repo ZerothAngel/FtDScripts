@@ -17,3 +17,8 @@ ActivateWhen = {
 -- it will run every 10th update. The lower it is, the more
 -- responsive it will be, but it will also take more processing time.
 UpdateRate = 4
+
+-- Fixed altitude, measured from CoM (negative for below sea level).
+-- Only used when controlling altitude in some way.
+-- (see CONTROL CONFIGURATION)
+FixedAltitude = 0

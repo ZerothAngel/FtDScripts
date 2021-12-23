@@ -21,3 +21,8 @@ AI_UpdateRate = 4
 Missile_UpdateRate = 4
 ShieldManager_UpdateRate = nil
 DockManager_UpdateRate = nil
+
+-- Fixed altitude, measured from CoM (negative for below sea level).
+-- Only used when controlling altitude in some way.
+-- (see CONTROL CONFIGURATION)
+FixedAltitude = 0

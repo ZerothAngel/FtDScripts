@@ -8,6 +8,7 @@ SelectRollImpl(SixDoF, RollTurnControl)
 
 SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
+SelectAltitudeImpl(SixDoF)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.new(I)
@@ -24,6 +25,7 @@ function Update(I) -- luacheck: ignore 131
          SixDoF.Release(I)
       end
 
+      V.SetAltitude(FixedAltitude)
       SixDoF.Update(I)
    else
       NavalAI_Reset()
