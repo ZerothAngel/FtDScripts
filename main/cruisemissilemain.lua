@@ -8,6 +8,7 @@ AltitudeControl = Periodic.new(AltitudeControl_UpdateRate, Altitude_Control, 1)
 CruiseAI = Periodic.new(AI_UpdateRate, CruiseAI_Update)
 
 SelectHeadingImpl(SixDoF, PlaneLikeControl)
+SelectPositionImpl(SixDoF, PlaneLikeControl)
 SelectPitchImpl(SixDoF, PlaneLikeControl)
 SelectRollImpl(SixDoF, PlaneLikeControl)
 
