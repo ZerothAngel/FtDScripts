@@ -11,18 +11,12 @@ ManualDepthWhen = {
 }
 
 -- Manual depth control (optional, default disabled)
--- There's no easy way to get input from the player, so this is a bit of
--- a hack.
--- To enable, set the following to the name of a drive maintainer. (e.g.
--- "DepthControl")
--- You can then assign keys to that drive maintainer. If you have other drive
--- maintainers, make sure this one uses an unused drive (primary/secondary/
--- tertiary).
 -- Positive drive means relative to sea floor: 0 = 500m above sea floor,
 --   1 = 0m above sea floor (not recommended)
 -- Negative drive corresponds to absolute depth: 0 = 0m, -1 = -500m
+-- Can be nil, "Secondary" or "Tertiary" (include quotes)
 -- Set to nil to use the configured depth settings (below).
-ManualDepthDriveMaintainerName = nil
+ManualDepthDrive = nil
 
 -- Desired depths for combat and out-of-combat.
 -- First value is the desired depth or elevation and should always be

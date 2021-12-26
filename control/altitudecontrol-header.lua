@@ -11,9 +11,8 @@ ManualAltitudeWhen = {
 }
 
 -- Manual altitude control (optional, default disabled)
--- To enable, set the following to the name of a drive maintainer (e.g.
--- "AltControl").
-ManualAltitudeDriveMaintainerName = nil
+-- Can be nil, "Secondary" or "Tertiary" (include quotes)
+ManualAltitudeDrive = nil
 
 -- Determines scaling for manual altitude control. -1.0 throttle on the
 -- drive maintainer means MinManualAltitude, 1.0 throttle means
