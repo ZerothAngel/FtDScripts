@@ -1,18 +1,18 @@
 --! repairsub
 --@ commons control firstrun periodic
---@ shieldmanager subcontrol rollturn sixdof depthcontrol ytdefaults repair-ai repair-aicommon
+--@ shieldmanager rollturn sixdof depthcontrol ytdefaults repair-ai repair-aicommon
 -- Repair submarine main
 ShieldManager = Periodic.new(ShieldManager_UpdateRate, ShieldManager_Control, 2)
 DepthControl = Periodic.new(DepthControl_UpdateRate, Depth_Control, 1)
 RepairAI = Periodic.new(AI_UpdateRate, RepairAI_Update)
 
 SelectHeadingImpl(SixDoF, RollTurnControl)
-SelectRollImpl(SubControl, RollTurnControl)
+SelectRollImpl(SixDoF, RollTurnControl)
 
 SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
-SelectAltitudeImpl(SubControl)
-SelectPitchImpl(SubControl)
+SelectAltitudeImpl(SixDoF)
+SelectPitchImpl(SixDoF)
 SelectRollImpl(RollTurn)
 
 function Update(I) -- luacheck: ignore 131
@@ -33,7 +33,6 @@ function Update(I) -- luacheck: ignore 131
       end
 
       Depth_Apply(I)
-      SubControl.Update(I)
       SixDoF.Update(I)
    else
       RepairAI_Reset()

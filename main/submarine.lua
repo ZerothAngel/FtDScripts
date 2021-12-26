@@ -1,6 +1,6 @@
 --! submarine
 --@ commons control firstrun periodic
---@ shieldmanager dockmanager multiprofile rollturn subcontrol sixdof depthcontrol ytdefaults naval-ai
+--@ shieldmanager dockmanager multiprofile rollturn sixdof depthcontrol ytdefaults naval-ai
 -- Submarine main
 DockManager = Periodic.new(DockManager_UpdateRate, DockManager_Update, 4)
 ShieldManager = Periodic.new(ShieldManager_UpdateRate, ShieldManager_Control, 3)
@@ -9,12 +9,12 @@ DepthControl = Periodic.new(DepthControl_UpdateRate, Depth_Control, 1)
 NavalAI = Periodic.new(AI_UpdateRate, NavalAI_Update)
 
 SelectHeadingImpl(SixDoF, RollTurnControl)
-SelectRollImpl(SubControl, RollTurnControl)
+SelectRollImpl(SixDoF, RollTurnControl)
 
 SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
-SelectAltitudeImpl(SubControl)
-SelectPitchImpl(SubControl)
+SelectAltitudeImpl(SixDoF)
+SelectPitchImpl(SixDoF)
 SelectRollImpl(RollTurn)
 
 function Update(I) -- luacheck: ignore 131
@@ -35,7 +35,6 @@ function Update(I) -- luacheck: ignore 131
       end
 
       Depth_Apply(I, DodgeAltitudeOffset)
-      SubControl.Update(I)
       SixDoF.Update(I)
 
       MissileMain:Tick(I)

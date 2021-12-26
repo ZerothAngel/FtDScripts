@@ -1,6 +1,6 @@
 --! cruiser
 --@ commons control firstrun periodic
---@ shieldmanager dockmanager multiprofile cannoncontrol targetaccel rollturn subcontrol sixdof ytdefaults naval-ai
+--@ shieldmanager dockmanager multiprofile cannoncontrol targetaccel rollturn sixdof ytdefaults naval-ai
 -- Cruiser main
 DockManager = Periodic.new(DockManager_UpdateRate, DockManager_Update, 3)
 ShieldManager = Periodic.new(ShieldManager_UpdateRate, ShieldManager_Control, 2)
@@ -8,28 +8,13 @@ MissileMain = Periodic.new(Missile_UpdateRate, MissileMain_Update, 1)
 Cannon = Periodic.new(Cannon_UpdateRate, CannonControl_Update)
 NavalAI = Periodic.new(AI_UpdateRate, NavalAI_Update)
 
--- Set up a hybrid control system for altitude-pitch-roll
-Hybrid = {}
-function Hybrid.SetAltitude(Alt)
-   SubControl.SetAltitude(Alt)
-   SixDoF.SetAltitude(Alt)
-end
-function Hybrid.SetPitch(Angle)
-   SubControl.SetPitch(Angle)
-   SixDoF.SetPitch(Angle)
-end
-function Hybrid.SetRoll(Angle)
-   SubControl.SetRoll(Angle)
-   SixDoF.SetRoll(Angle)
-end
-
 SelectHeadingImpl(SixDoF, RollTurnControl)
-SelectRollImpl(Hybrid, RollTurnControl)
+SelectRollImpl(SixDoF, RollTurnControl)
 
 SelectHeadingImpl(RollTurn)
 SelectThrottleImpl(SixDoF)
-SelectAltitudeImpl(Hybrid)
-SelectPitchImpl(Hybrid)
+SelectAltitudeImpl(SixDoF)
+SelectPitchImpl(SixDoF)
 SelectRollImpl(RollTurn)
 
 function Update(I) -- luacheck: ignore 131
@@ -49,7 +34,6 @@ function Update(I) -- luacheck: ignore 131
       end
 
       V.SetAltitude(FixedAltitude)
-      SubControl.Update(I)
       SixDoF.Update(I)
 
       Cannon:Tick(I)
