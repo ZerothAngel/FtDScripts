@@ -7,13 +7,20 @@ MissileMain = Periodic.new(Missile_UpdateRate, MissileMain_Update, 2)
 DepthControl = Periodic.new(DepthControl_UpdateRate, Depth_Control, 1)
 NavalAI = Periodic.new(AI_UpdateRate, NavalAI_Update)
 
+-- Set up a hybrid control system for altitude
+Hybrid = {}
+function Hybrid.SetAltitude(Alt)
+   SixDoF.SetAltitude(Alt)
+   PlaneLike.SetAltitude(Alt)
+end
+
 SelectHeadingImpl(SixDoF, PlaneLikeControl)
 SelectPitchImpl(SixDoF, PlaneLikeControl)
 SelectRollImpl(SixDoF, PlaneLikeControl)
 
 SelectHeadingImpl(PlaneLike)
 SelectThrottleImpl(SixDoF)
-SelectAltitudeImpl(SixDoF)
+SelectAltitudeImpl(Hybrid)
 
 function Update(I) -- luacheck: ignore 131
    C = Commons.new(I)
