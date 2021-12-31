@@ -31,7 +31,7 @@ function PitchThrottle.ResetThrottle()
     PitchThrottle_DesiredThrottle = nil
 end
 
-function PitchThrottle.Update(I)
+function PitchThrottle.Update(_)
     if PitchThrottle.DesiredPitch then
         if PitchThrottle_DesiredThrottle then
             PitchThrottle_CurrentThrottle = PitchThrottle_DesiredThrottle
