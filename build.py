@@ -34,7 +34,7 @@ def scan_modules():
 def create_chunk(fn, strip=False, strip_comments=False, strip_empty=False):
     if os.path.exists(fn):
         with io.StringIO() as out:
-            with open(fn, 'rU') as content:
+            with open(fn, 'r') as content:
                 for line in content:
                     if strip:
                         if strip_comments:
@@ -125,7 +125,7 @@ def build_script(version, available_modules, dependencies, root, output,
 def get_metadata(fn):
     output = None
     deps = []
-    with open(fn, 'rU') as content:
+    with open(fn, 'r') as content:
         for line in content:
             line = line.strip()
             # Skip blank lines
@@ -142,11 +142,17 @@ def get_metadata(fn):
 
 def main(strip=False, verbose=False):
     # Fetch version
-    if os.path.isdir('.hg'):
-        with subprocess.Popen('hg identify -i', shell=True, stdout=subprocess.PIPE,
+    if os.path.isdir('.git'):
+        with subprocess.Popen('git status --porcelain', shell=True, stdout=subprocess.PIPE,
+                              close_fds=True) as p:
+            out, _ = p.communicate()
+        dirty = len(out) > 0
+        with subprocess.Popen('git rev-parse --short HEAD', shell=True, stdout=subprocess.PIPE,
                               close_fds=True) as p:
             version, err = p.communicate()
             version = version.decode(sys.getdefaultencoding()).strip()
+            if dirty:
+                version += '+'
     else:
         version = 'UNKNOWN'
 
