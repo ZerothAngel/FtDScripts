@@ -33,19 +33,3 @@ SixDoFPIDConfig = {
       Td = .1,
    },
 }
-
--- THRUST HACK CONFIGURATION
-
--- Use thrust hack instead of standard Lua control of thrusters.
--- Select a complex controller key for each related axes.
--- All related jets should be bound to that key as a green input.
--- See Lua box help > Propulsion > RequestComplexControllerStimulus
--- for key mapping.
-
--- Complex controller key for altitude/pitch/roll
--- (upward- and downward-facing thrusters)
-APRThrustHackKey = nil
-
--- Complex controller key for yaw/longitudinal/lateral
--- (forward-, reverse-, left-, and right-facing thrusters)
-YLLThrustHackKey = nil

@@ -8,15 +8,6 @@
 -- vehicle controls. It can optionally augment yaw/throttle with
 -- dediblades spinners.
 
--- Control fractions dedicated to jets & spinners for each axis
-JetFractions = {
-   Altitude = 0,
-   Yaw = 0,
-   Pitch = 0,
-   Roll = 0,
-   Forward = 0,
-   Right = 0,
-}
 -- Control fractions dedicated to vehicle controls for each axis
 -- Note that this clashes with JetFractions. Where a clash is
 -- indicated, the corresponding axes in JetFractions should be zeroed.

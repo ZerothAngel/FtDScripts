@@ -1,4 +1,4 @@
---@ commons componenttypes propulsionapi requestcontrol normalizebearing sign pid clamp
+--@ commons componenttypes propulsionapi normalizebearing sign pid clamp
 --# Packages don't exist, and screw accessing everything through a table.
 --# It's just a search/replace away to convert to 'proper' Lua anyway.
 -- 6DoF module (Altitude, Yaw, Pitch, Roll, Forward/Reverse, Right/Left)
@@ -17,20 +17,10 @@ SixDoF_CurrentThrottle = 0
 SixDoF_DesiredPitch = 0
 SixDoF_DesiredRoll = 0
 
--- Keep them separated for now
-SixDoF_LastPropulsionCount = 0
-SixDoF_PropulsionInfos = {}
-
--- Figure out what's being used
-SixDoF_UsesHorizontalJets = (JetFractions.Yaw > 0 or JetFractions.Forward > 0 or JetFractions.Right > 0)
-SixDoF_UsesVerticalJets = (JetFractions.Altitude > 0 or JetFractions.Pitch > 0 or JetFractions.Roll > 0)
-SixDoF_UsesJets = SixDoF_UsesHorizontalJets or SixDoF_UsesVerticalJets
-SixDoF_UsesControls = (ControlFractions.Yaw > 0 or ControlFractions.Pitch > 0 or ControlFractions.Roll > 0 or ControlFractions.Forward > 0 or ControlFractions.Altitude > 0 or ControlFractions.Right > 0)
-
 -- Through configuration, these axes can be skipped entirely
-SixDoF_ControlAltitude = (JetFractions.Altitude > 0 or ControlFractions.Altitude > 0)
-SixDoF_ControlPitch = (JetFractions.Pitch > 0 or ControlFractions.Pitch > 0)
-SixDoF_ControlRoll = (JetFractions.Roll > 0 or ControlFractions.Roll > 0)
+SixDoF_ControlAltitude = ControlFractions.Altitude > 0
+SixDoF_ControlPitch = ControlFractions.Pitch > 0
+SixDoF_ControlRoll = ControlFractions.Roll > 0
 -- The others (yaw/forward/right) depend on an AI
 
 SixDoF_NeedsRelease = false
@@ -79,56 +69,6 @@ function SixDoF.SetRoll(Angle)
    SixDoF_DesiredRoll = Angle
 end
 
-SixDoF_Eps = .001
-
-function SixDoF_Classify(Index, BlockInfo, Fractions, Infos)
-   local CoMOffset = BlockInfo.LocalPositionRelativeToCom
-   local LocalForwards = BlockInfo.LocalForwards
-   local Info = {
-      Index = Index,
-      UpSign = 0,
-      YawSign = 0,
-      PitchSign = 0,
-      RollSign = 0,
-      ForwardSign = 0,
-      RightSign = 0,
-      IsVertical = false,
-   }
-   local UpSign = Sign(LocalForwards.y, 0, SixDoF_Eps)
-   if UpSign ~= 0 then
-      -- Vertical
-      Info.UpSign = UpSign * Fractions.Altitude
-      Info.PitchSign = Sign(CoMOffset.z) * UpSign * Fractions.Pitch
-      Info.RollSign = Sign(CoMOffset.x) * UpSign * Fractions.Roll
-      Info.IsVertical = true
-   else
-      -- Horizontal
-      local ForwardSign = Sign(LocalForwards.z, 0, SixDoF_Eps)
-      local RightSign = Sign(LocalForwards.x, 0, SixDoF_Eps)
-      Info.YawSign = RightSign * Sign(CoMOffset.z) * Fractions.Yaw
-      Info.ForwardSign = ForwardSign * Fractions.Forward
-      Info.RightSign = RightSign * Fractions.Right
-   end
-   if Info.UpSign ~= 0 or Info.PitchSign ~= 0 or Info.RollSign ~= 0 or Info.YawSign ~= 0 or Info.ForwardSign ~= 0 or Info.RightSign ~= 0 then
-      table.insert(Infos, Info)
-   end
-end
-
-function SixDoF_ClassifyJets(I)
-   local PropulsionCount = I:Component_GetCount(PROPULSION)
-   if PropulsionCount ~= SixDoF_LastPropulsionCount then
-      SixDoF_LastPropulsionCount = PropulsionCount
-      SixDoF_PropulsionInfos = {}
-
-      for i = 0,PropulsionCount-1 do
-         local BlockInfo = I:Component_GetBlockInfo(PROPULSION, i)
-         SixDoF_Classify(i, BlockInfo, JetFractions, SixDoF_PropulsionInfos)
-      end
-   end
-end
-
-SixDoF_RequestControl = MakeRequestControl()
-
 function SixDoF.Update(I)
    local AltitudeCV = 0
    if SixDoF_ControlAltitude then
@@ -155,76 +95,33 @@ function SixDoF.Update(I)
 
    local PlanarMovement = SixDoF_DesiredHeading or SixDoF_DesiredPosition or SixDoF_DesiredThrottle
 
-   if SixDoF_UsesJets then
-      SixDoF_ClassifyJets(I)
-
-      -- TODO There's apparently I:RequestThrustControl(int, float) that
-      -- gives access to axis + fraction. However, it is doing MakeRequest
-      -- instead of SetRequest, so it will be subject to thrust balancing.
-      -- I:SetPropulsionRequest for vanilla is the only hope.
-      -- Scrap jet control when?
-      if SixDoF_UsesHorizontalJets and PlanarMovement then
-         -- Blip horizontal thrusters
-         if not YLLThrustHackKey then
-            for i = 0,3 do
-               I:RequestThrustControl(i)
-            end
-         else
-            I:RequestComplexControllerStimulus(YLLThrustHackKey)
-         end
-      end
-      if SixDoF_UsesVerticalJets then
-         -- Blip top & bottom thrusters
-         if not APRThrustHackKey then
-            I:RequestThrustControl(4)
-            I:RequestThrustControl(5)
-         else
-            I:RequestComplexControllerStimulus(APRThrustHackKey)
-         end
-      end
-
-      -- Set drive fraction accordingly
-      for _,Info in pairs(SixDoF_PropulsionInfos) do
-         if Info.IsVertical or PlanarMovement then
-            -- Sum up inputs and constrain
-            local Output = Clamp(AltitudeCV * Info.UpSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign, 0, 1)
-            I:Component_SetFloatLogic(PROPULSION, Info.Index, Output)
-         else
-            -- Restore full drive fraction for manual/stock AI control
-            I:Component_SetFloatLogic(PROPULSION, Info.Index, 1)
-         end
-      end
-   end
-
-   if SixDoF_UsesControls then
-      if I.SetInputs then
-         --# Only set YLL if doing planar movement. Allows for manual control.
-         local yllValues
-         if PlanarMovement then
-            yllValues = {
-               YawCV * ControlFractions.Yaw,
-               ForwardCV * ControlFractions.Forward,
-               RightCV * ControlFractions.Right
-            }
-         else
-            yllValues = {}
-         end
-         I:SetInputs(yllValues,
-                     --# These are unconditionally set
-                     { AltitudeCV * ControlFractions.Altitude,
-                       PitchCV * ControlFractions.Pitch,
-                       RollCV * ControlFractions.Roll })
+   if I.SetInputs then
+      --# Only set YLL if doing planar movement. Allows for manual control.
+      local yllValues
+      if PlanarMovement then
+         yllValues = {
+            YawCV * ControlFractions.Yaw,
+            ForwardCV * ControlFractions.Forward,
+            RightCV * ControlFractions.Right
+         }
       else
-         -- Vanilla
-         -- TODO If I ever care about vanilla again, rewrite the following in
-         -- terms of I:SetPropulsionRequest(int, float)
-         SixDoF_RequestControl(I, ControlFractions.Pitch, NOSEUP, NOSEDOWN, PitchCV)
-         SixDoF_RequestControl(I, ControlFractions.Roll, ROLLLEFT, ROLLRIGHT, RollCV)
-         if PlanarMovement then
-            SixDoF_RequestControl(I, ControlFractions.Yaw, YAWRIGHT, YAWLEFT, YawCV * Sign(C:ForwardSpeed(), 1))
-            SixDoF_RequestControl(I, ControlFractions.Forward, MAINPROPULSION, MAINPROPULSION, ForwardCV)
-         end
+         yllValues = {}
       end
+      I:SetInputs(yllValues,
+                  --# These are unconditionally set
+                  { AltitudeCV * ControlFractions.Altitude,
+                     PitchCV * ControlFractions.Pitch,
+                     RollCV * ControlFractions.Roll })
+   else
+      -- Vanilla (untested)
+      if PlanarMovement then
+         I:SetPropulsionRequest(DRIVETYPE_YAW, YawCV * ControlFractions.Yaw)
+         I:SetPropulsionRequest(DRIVETYPE_FORWARDS, ForwardCV * ControlFractions.Forward)
+         I:SetPropulsionRequest(DRIVETYPE_RIGHT, RightCV * ControlFractions.Right)
+      end
+      I:SetPropulsionRequest(DRIVETYPE_UP, AltitudeCV * ControlFractions.Altitude)
+      I:SetPropulsionRequest(DRIVETYPE_PITCH, PitchCV * ControlFractions.Pitch)
+      I:SetPropulsionRequest(DRIVETYPE_ROLL, RollCV * ControlFractions.Roll)
    end
 
    if PlanarMovement then
@@ -234,13 +131,13 @@ end
 
 function SixDoF.Disable(I, HorizOnly)
    SixDoF_CurrentThrottle = 0
-   if SixDoF_UsesControls then
-      -- Only MAINPROPULSION is stateful
-      SixDoF_RequestControl(I, ControlFractions.Forward, MAINPROPULSION, MAINPROPULSION, 0)
-      if I.SetInput then
-         -- And altitide too, apparently
-         I:SetInputs({}, { 0 })
-      end
+   -- Only MAINPROPULSION is stateful
+   I:SetPropulsionRequest(DRIVETYPE_FORWARDS, 0)
+   -- And altitide too, apparently
+   if I.SetInput then
+      I:SetInputs({}, { 0 })
+   else
+      I:SetPropulsionRequest(DRIVETYPE_UP, 0)
    end
 end
 
