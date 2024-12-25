@@ -20,20 +20,17 @@ SixDoF_DesiredRoll = 0
 -- Keep them separated for now
 SixDoF_LastPropulsionCount = 0
 SixDoF_PropulsionInfos = {}
-SixDoF_LastSpinnerCount = 0
-SixDoF_SpinnerInfos = {}
 
 -- Figure out what's being used
 SixDoF_UsesHorizontalJets = (JetFractions.Yaw > 0 or JetFractions.Forward > 0 or JetFractions.Right > 0)
 SixDoF_UsesVerticalJets = (JetFractions.Altitude > 0 or JetFractions.Pitch > 0 or JetFractions.Roll > 0)
 SixDoF_UsesJets = SixDoF_UsesHorizontalJets or SixDoF_UsesVerticalJets
-SixDoF_UsesSpinners = (SpinnerFractions.Altitude > 0 or SpinnerFractions.Yaw > 0 or SpinnerFractions.Pitch > 0 or SpinnerFractions.Roll > 0 or SpinnerFractions.Forward > 0 or SpinnerFractions.Right > 0)
 SixDoF_UsesControls = (ControlFractions.Yaw > 0 or ControlFractions.Pitch > 0 or ControlFractions.Roll > 0 or ControlFractions.Forward > 0 or ControlFractions.Altitude > 0 or ControlFractions.Right > 0)
 
 -- Through configuration, these axes can be skipped entirely
-SixDoF_ControlAltitude = (JetFractions.Altitude > 0 or SpinnerFractions.Altitude > 0 or ControlFractions.Altitude > 0)
-SixDoF_ControlPitch = (JetFractions.Pitch > 0 or SpinnerFractions.Pitch > 0 or ControlFractions.Pitch > 0)
-SixDoF_ControlRoll = (JetFractions.Roll > 0 or SpinnerFractions.Roll > 0 or ControlFractions.Roll > 0)
+SixDoF_ControlAltitude = (JetFractions.Altitude > 0 or ControlFractions.Altitude > 0)
+SixDoF_ControlPitch = (JetFractions.Pitch > 0 or ControlFractions.Pitch > 0)
+SixDoF_ControlRoll = (JetFractions.Roll > 0 or ControlFractions.Roll > 0)
 -- The others (yaw/forward/right) depend on an AI
 
 SixDoF_NeedsRelease = false
@@ -84,9 +81,9 @@ end
 
 SixDoF_Eps = .001
 
-function SixDoF_Classify(Index, BlockInfo, IsSpinner, Fractions, Infos)
+function SixDoF_Classify(Index, BlockInfo, Fractions, Infos)
    local CoMOffset = BlockInfo.LocalPositionRelativeToCom
-   local LocalForwards = IsSpinner and (BlockInfo.LocalRotation * Vector3.up) or BlockInfo.LocalForwards
+   local LocalForwards = BlockInfo.LocalForwards
    local Info = {
       Index = Index,
       UpSign = 0,
@@ -125,21 +122,7 @@ function SixDoF_ClassifyJets(I)
 
       for i = 0,PropulsionCount-1 do
          local BlockInfo = I:Component_GetBlockInfo(PROPULSION, i)
-         SixDoF_Classify(i, BlockInfo, false, JetFractions, SixDoF_PropulsionInfos)
-      end
-   end
-end
-
-function SixDoF_ClassifySpinners(I)
-   -- Only process dediblades for now
-   local SpinnerCount = I:GetDedibladeCount()
-   if SpinnerCount ~= SixDoF_LastSpinnerCount then
-      SixDoF_LastSpinnerCount = SpinnerCount
-      SixDoF_SpinnerInfos = {}
-
-      for i = 0,SpinnerCount-1 do
-         local BlockInfo = I:GetDedibladeInfo(i)
-         SixDoF_Classify(i, BlockInfo, true, SpinnerFractions, SixDoF_SpinnerInfos)
+         SixDoF_Classify(i, BlockInfo, JetFractions, SixDoF_PropulsionInfos)
       end
    end
 end
@@ -175,6 +158,11 @@ function SixDoF.Update(I)
    if SixDoF_UsesJets then
       SixDoF_ClassifyJets(I)
 
+      -- TODO There's apparently I:RequestThrustControl(int, float) that
+      -- gives access to axis + fraction. However, it is doing MakeRequest
+      -- instead of SetRequest, so it will be subject to thrust balancing.
+      -- I:SetPropulsionRequest for vanilla is the only hope.
+      -- Scrap jet control when?
       if SixDoF_UsesHorizontalJets and PlanarMovement then
          -- Blip horizontal thrusters
          if not YLLThrustHackKey then
@@ -208,19 +196,6 @@ function SixDoF.Update(I)
       end
    end
 
-   if SixDoF_UsesSpinners then
-      SixDoF_ClassifySpinners(I)
-
-      -- Set spinner speed
-      for _,Info in pairs(SixDoF_SpinnerInfos) do
-         if Info.IsVertical or PlanarMovement then
-            -- Sum up inputs and constrain
-            local Output = Clamp(AltitudeCV * Info.UpSign + YawCV * Info.YawSign + PitchCV * Info.PitchSign + RollCV * Info.RollSign + ForwardCV * Info.ForwardSign + RightCV * Info.RightSign, -1, 1)
-            I:SetDedibladeContinuousSpeed(Info.Index, Output * 30)
-         end
-      end
-   end
-
    if SixDoF_UsesControls then
       if I.SetInputs then
          --# Only set YLL if doing planar movement. Allows for manual control.
@@ -241,6 +216,8 @@ function SixDoF.Update(I)
                        RollCV * ControlFractions.Roll })
       else
          -- Vanilla
+         -- TODO If I ever care about vanilla again, rewrite the following in
+         -- terms of I:SetPropulsionRequest(int, float)
          SixDoF_RequestControl(I, ControlFractions.Pitch, NOSEUP, NOSEDOWN, PitchCV)
          SixDoF_RequestControl(I, ControlFractions.Roll, ROLLLEFT, ROLLRIGHT, RollCV)
          if PlanarMovement then
@@ -257,15 +234,6 @@ end
 
 function SixDoF.Disable(I, HorizOnly)
    SixDoF_CurrentThrottle = 0
-   if SixDoF_UsesSpinners then
-      SixDoF_ClassifySpinners(I)
-      -- Stop spinners
-      for _,Info in pairs(SixDoF_SpinnerInfos) do
-         if not HorizOnly or not Info.IsVertical then
-            I:SetDedibladeContinuousSpeed(Info.Index, 0)
-         end
-      end
-   end
    if SixDoF_UsesControls then
       -- Only MAINPROPULSION is stateful
       SixDoF_RequestControl(I, ControlFractions.Forward, MAINPROPULSION, MAINPROPULSION, 0)

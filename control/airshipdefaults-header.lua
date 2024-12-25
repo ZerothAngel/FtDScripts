@@ -10,19 +10,11 @@
 
 -- Control fractions dedicated to jets & spinners for each axis
 JetFractions = {
-   Altitude = 1,
+   Altitude = 0,
    Yaw = 0,
-   Pitch = 1,
-   Roll = 1,
+   Pitch = 0,
+   Roll = 0,
    Forward = 0,
-   Right = 0,
-}
-SpinnerFractions = {
-   Altitude = 1,
-   Yaw = 0, -- Set to positive number to enable dediblade yaw
-   Pitch = 1,
-   Roll = 1,
-   Forward = 0, -- Set to positive number to enable dediblade propulsion
    Right = 0,
 }
 -- Control fractions dedicated to vehicle controls for each axis
@@ -32,12 +24,12 @@ ControlFractions = {
    -- Clashes with JetFractions.Yaw, Forward, AND Right
    Yaw = 1,
    -- Clashes with JetFractions.Altitude, Pitch, AND Roll
-   Pitch = 0,
+   Pitch = 1,
    -- Clashes with JetFractions.Altitude, Pitch, AND Roll
-   Roll = 0,
+   Roll = 1,
    -- Clashes with JetFractions.Yaw, Forward, AND Right
    Forward = 1,
    -- Fake controls, only available through my mod
-   Altitude = 0,
+   Altitude = 1,
    Right = 0,
 }

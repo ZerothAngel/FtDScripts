@@ -15,14 +15,6 @@ JetFractions = {
    Forward = 0,
    Right = 0,
 }
-SpinnerFractions = {
-   Altitude = 0,
-   Yaw = 1, -- Set to positive number to enable dediblade yaw
-   Pitch = 1,
-   Roll = 1,
-   Forward = 1, -- Set to positive number to enable dediblade propulsion
-   Right = 0,
-}
 -- Control fractions dedicated to vehicle controls for each axis
 -- Note that this clashes with JetFractions. Where a clash is
 -- indicated, the corresponding axes in JetFractions should be zeroed.

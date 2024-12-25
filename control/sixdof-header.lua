@@ -3,7 +3,7 @@
 -- PID values
 SixDoFPIDConfig = {
    Altitude = {
-      Kp = .15,
+      Kp = .1,
       Ti = 5,
       Td = .3,
    },
@@ -13,22 +13,22 @@ SixDoFPIDConfig = {
       Td = .4,
    },
    Pitch = {
-      Kp = .015,
+      Kp = .01,
       Ti = 5,
       Td = .1,
    },
    Roll = {
-      Kp = .015,
+      Kp = .01,
       Ti = 5,
       Td = .1,
    },
    Forward = {
-      Kp = .015,
+      Kp = .01,
       Ti = 5,
       Td = .1,
    },
    Right = {
-      Kp = .015,
+      Kp = .01,
       Ti = 5,
       Td = .1,
    },
