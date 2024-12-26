@@ -129,7 +129,7 @@ function SixDoF.Update(I)
    end
 end
 
-function SixDoF.Disable(I, HorizOnly)
+function SixDoF.Disable(I)
    SixDoF_CurrentThrottle = 0
    -- Only MAINPROPULSION is stateful
    I:SetPropulsionRequest(DRIVETYPE_FORWARDS, 0)
@@ -144,7 +144,7 @@ end
 function SixDoF.Release(I)
    if SixDoF_NeedsRelease then
       -- Be sure to only disable non-vertical spinners
-      SixDoF.Disable(I, true)
+      SixDoF.Disable(I)
       SixDoF_NeedsRelease = false
    end
 end

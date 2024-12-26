@@ -28,3 +28,7 @@ Vector3.forward = Vector3(0, 0, 1)
 Vector3.left = Vector3(-1, 0, 0)
 Vector3.right = Vector3(1, 0, 0)
 Vector3.up = Vector3(0, 1, 0)
+
+-- In Lua 5.2, unpack was moved to table.unpack
+-- Does it still work in FtD's Lua???
+unpack = table.unpack
