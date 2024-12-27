@@ -6,15 +6,30 @@ function CommonsWeapons_CustomName(self, I)
    return self._CustomName
 end
 
+-- The following is a pure function so just memoize the results
+-- Note: If the user goes crazy with the slot selection, we'll have a very
+-- large table...
+Commons_SlotMask = {}
+
 -- FIXME Quick workaround until we can deal with masks
 function Commons_ConvertWeaponSlotMask(Mask)
-   -- First (lowest) one wins
-   -- Does this Lua have bitwise ops? Just assume it's a single slot for now
-   if Mask == 3 then return 1 end
-   if Mask == 5 then return 2 end
-   if Mask == 9 then return 3 end
-   if Mask == 17 then return 4 end
-   if Mask == 33 then return 5 end
+   local Result = Commons_SlotMask[Mask]
+   if Result then
+      return Result
+   end
+
+   -- First (lowest) slot wins
+   -- Check each bit from 1 to 9
+   -- (Bit 0 is ignored since it represents "all slots")
+   for i = 1, 9 do
+         -- Shift the mask right by i and check if the least significant bit is 1
+         if math.floor(Mask / (2 ^ i)) % 2 == 1 then
+            Commons_SlotMask[Mask] = i
+            return i
+         end
+   end
+   -- If no bits are set, return 0
+   Commons_SlotMask[Mask] = 0
    return 0
 end
 
